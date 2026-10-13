@@ -629,6 +629,55 @@ body.ytp-on{overflow:hidden}
 .osq{display:flex;gap:6px;margin-bottom:6px}.osq input{flex:1;min-width:0}.ostt img{width:34px;height:34px;object-fit:cover;border:2px solid #000}
 .ostv.au{aspect-ratio:auto;min-height:84px;display:flex;align-items:center;justify-content:center}.ostv.au iframe{width:100%;height:120px;border:0}.ostv.au .spx{width:100%}.btn.big{font-size:12px;padding:14px 18px}.orec{text-align:center;padding:10px 0}
 .trlau{width:100%;min-height:160px;display:flex;align-items:center;justify-content:center}.trlau iframe{width:100%;height:166px;border:0}#thm .thh{position:absolute;width:1px;height:1px;overflow:hidden;opacity:0}
+#ytp{background:#07060d;font-family:var(--pix);color:#f1ecff}
+#ytp .yamb{position:absolute;inset:-20%;background:center/cover no-repeat;filter:blur(48px) saturate(1.8) brightness(.55);opacity:.85;pointer-events:none;transition:background-image .4s}
+#ytp .yscan{position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.28) 0 1px,transparent 1px 3px);mix-blend-mode:multiply}
+#ytp .yv{z-index:1;box-shadow:0 18px 40px -8px hsla(var(--hue),90%,55%,.55)}#ytp .ymin,#ytp .yx{font:10px var(--pix);border-radius:0;background:rgba(7,6,13,.7);box-shadow:inset 0 0 0 2px rgba(255,255,255,.18)}
+#ytp .yi{position:relative;z-index:1;border:0;box-shadow:none;padding:16px 16px 100px;font-family:var(--pix)}
+#ytp .yhd h2{font:12px/1.7 var(--pix);margin:0 0 8px;text-shadow:2px 2px 0 #000}#ytp .ysub{font:7px/1.6 var(--pix);color:hsl(var(--hue),70%,75%);letter-spacing:1px}#ytp .ysub i{font-style:normal;opacity:.5;font-size:5px;vertical-align:2px}
+#ytp .ydock{display:flex;gap:10px;justify-content:center;margin:20px auto 22px;padding:8px;width:max-content;background:rgba(7,6,13,.6);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 0 0 2px #000,0 0 0 4px rgba(255,255,255,.12),0 10px 24px rgba(0,0,0,.5)}
+#ytp .ydock button{width:58px;height:54px;border:0;background:transparent;color:#f1ecff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font:6px var(--pix);letter-spacing:1px}#ytp .ydock i{font-style:normal;font-size:16px;line-height:1;font-family:var(--pix)}#ytp .ydock button:active{transform:translateY(2px)}
+#ytp .ydock button:hover i,#ytp .ydock button:active i{color:hsl(var(--hue),90%,70%)}
+#ytp .ynh{font:8px var(--pix);letter-spacing:2px;color:#ffcc00;margin:0 0 10px}
+#ytp .ycar{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-inline:16px;margin:0 -16px;padding:4px 16px 14px;scrollbar-width:none}#ytp .ycar::-webkit-scrollbar{display:none}
+#ytp .ycard{flex:none;width:62%;scroll-snap-align:start;background:none;border:0;padding:0;text-align:left;color:#f1ecff}
+#ytp .yci{display:block;position:relative;aspect-ratio:16/9;overflow:hidden;box-shadow:0 0 0 2px #000,0 0 0 4px rgba(255,255,255,.1)}#ytp .yci img{width:100%;height:100%;object-fit:cover;image-rendering:auto}#ytp .yci em{position:absolute;right:4px;bottom:4px;font:6px var(--pix);font-style:normal;background:#000;padding:3px 4px}
+#ytp .ycard b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font:7px/1.7 var(--pix);margin-top:8px}#ytp .ycard small{font:6px var(--pix);color:#8d86a8}
+#ytp .yld{font:8px var(--pix);color:#8d86a8}
+/* pixel dissolve */
+#ytp.pxin{animation:pxin .42s steps(6) both}#ytp.pxout{animation:pxin .38s steps(6) reverse both}
+@keyframes pxin{0%{clip-path:inset(50% 50%);filter:contrast(3) saturate(0)}60%{filter:contrast(1.6)}100%{clip-path:inset(0 0);filter:none}}
+/* option B: arcade cabinet */
+#ytp.opt-b{background:#05040a}#ytp.opt-b .yamb{filter:blur(64px) saturate(2.2) brightness(.45);opacity:.6}
+#ytp.opt-b .yv{box-shadow:0 0 0 2px #000,0 0 30px hsla(var(--hue),90%,55%,.6)}
+#ytp.opt-b .ymq{overflow:hidden;white-space:nowrap;font:11px var(--pix);color:#ffcc00;text-shadow:0 0 8px rgba(255,204,0,.6);padding:4px 0 10px;border-bottom:2px dashed rgba(255,255,255,.15);margin-bottom:8px}#ytp.opt-b .ymq span{display:inline-block;padding-left:100%;animation:mq 12s linear infinite}
+@keyframes mq{to{transform:translateX(-100%)}}
+#ytp.opt-b .ydock{width:auto;background:none;backdrop-filter:none;box-shadow:none;gap:8px;justify-content:space-between;padding:0}
+#ytp.opt-b .ydock button{flex:1;height:64px;background:#141022;box-shadow:inset -3px -3px 0 rgba(0,0,0,.5),inset 3px 3px 0 rgba(255,255,255,.08),0 0 0 2px #000}#ytp.opt-b .ydock button:nth-child(1) i{color:#39d353}#ytp.opt-b .ydock button:nth-child(2) i{color:#ffcc00}#ytp.opt-b .ydock button:nth-child(3) i{color:hsl(var(--hue),90%,65%)}#ytp.opt-b .ydock button:nth-child(4) i{color:#ff4d6d}
+#ytp.opt-b .ycard{width:44%}#ytp.opt-b .yci{box-shadow:0 0 0 2px #000,0 0 0 4px #ffcc00}#ytp.opt-b .ycard:not(:first-child) .yci{box-shadow:0 0 0 2px #000,0 0 0 4px #2a2440;filter:saturate(.6)}
+/* video corner controls */
+#ytp .yvc{position:absolute;right:8px;bottom:8px;display:flex;gap:6px;z-index:3;opacity:.85}#ytp.mini .yvc{display:none}
+#ytp .yvc button{width:34px;height:30px;border:0;background:rgba(7,6,13,.72);box-shadow:inset 0 0 0 2px rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;gap:3px;color:#f1ecff;font:6px var(--pix)}#ytp .yvc button.on{box-shadow:inset 0 0 0 2px #ffcc00;color:#ffcc00}
+#ytp .yvc em{font-style:normal}
+#ytp [data-ypc=fs]::before{content:'';width:14px;height:14px;background:linear-gradient(currentColor,currentColor) 0 0/6px 2px,linear-gradient(currentColor,currentColor) 0 0/2px 6px,linear-gradient(currentColor,currentColor) 100% 0/6px 2px,linear-gradient(currentColor,currentColor) 100% 0/2px 6px,linear-gradient(currentColor,currentColor) 0 100%/6px 2px,linear-gradient(currentColor,currentColor) 0 100%/2px 6px,linear-gradient(currentColor,currentColor) 100% 100%/6px 2px,linear-gradient(currentColor,currentColor) 100% 100%/2px 6px;background-repeat:no-repeat;color:#f1ecff}
+.pxcc{width:16px;height:12px;box-shadow:inset 0 0 0 2px currentColor;position:relative;display:inline-block}.pxcc::after{content:'';position:absolute;left:4px;top:5px;width:2px;height:2px;background:currentColor;box-shadow:2px 0 0 currentColor,4px 0 0 currentColor,6px 0 0 currentColor}
+#ytp.flip .yv{position:fixed;left:50%;top:50%;width:100vh;width:100dvh;height:100vw;aspect-ratio:auto;transform:translate(-50%,-50%) rotate(90deg);z-index:999;padding:0}
+#ytp .yv:fullscreen{width:100%;height:100%}
+/* comments */
+#ytp .ycm{margin-top:18px}#ytp .ycmh{display:flex;align-items:center;gap:8px}#ytp .ycmh button{border:0;background:none;color:#f1ecff;font:8px var(--pix);letter-spacing:2px;display:flex;align-items:center;gap:8px;padding:6px 0}#ytp .ycmh button.tb{opacity:.5;letter-spacing:1px;font-size:7px}#ytp .ycmh button.tb.on{opacity:1;color:#ffcc00}
+#ytp .ycmh em{font-style:normal;font-size:6px;color:#07060d;background:hsl(var(--hue),80%,70%);padding:3px 4px}#ytp .ycmh .car{margin-left:auto;font:8px var(--pix);color:#8d86a8}
+.pxbub{width:12px;height:9px;background:currentColor;position:relative;display:inline-block}.pxbub::after{content:'';position:absolute;left:2px;bottom:-3px;width:3px;height:3px;background:currentColor}
+.pxdot{width:6px;height:6px;background:#ff4d6d;display:inline-block;animation:tvp 1s steps(2) infinite}
+.pxht{display:inline-block;width:2px;height:2px;margin:0 8px 4px 2px;color:#ff4d6d;background:currentColor;box-shadow:-2px -2px 0 currentColor,2px -2px 0 currentColor,-2px 0 0 currentColor,0 0 0 currentColor,2px 0 0 currentColor,0 2px 0 currentColor,-4px -2px 0 currentColor,4px -2px 0 currentColor}
+#ytp .ycl{margin-top:8px}#ytp .yc{display:flex;gap:10px;padding:12px 0;border-top:2px dotted rgba(255,255,255,.08)}
+#ytp .ypa{flex:none;width:30px;height:30px;box-shadow:0 0 0 2px #000,0 0 0 4px hsl(var(--hue),70%,60%);overflow:hidden;display:flex;align-items:center;justify-content:center;background:#141022;margin:2px}#ytp .ypa img{width:100%;height:100%;object-fit:cover;image-rendering:pixelated;filter:contrast(1.1)}#ytp .ypa b{font:9px var(--pix)}
+#ytp .ycb{flex:1;min-width:0}#ytp .ycn{display:flex;gap:8px;align-items:baseline}#ytp .ycn b{font:7px var(--pix);color:hsl(var(--hue),80%,78%);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#ytp .ycn small{font:6px var(--pix);color:#6f6890;flex:none}
+#ytp .ycb p{margin:7px 0 6px;font:13px/1.45 var(--body,ui-monospace,monospace);color:#e8e3fa;white-space:pre-wrap;word-break:break-word;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}#ytp .ycb p.open{-webkit-line-clamp:unset;display:block}
+#ytp .ycf{display:flex;gap:14px;font:6px var(--pix);color:#8d86a8}#ytp .ycf span{display:flex;align-items:center}
+#ytp .ymore{width:100%;margin-top:10px;padding:12px;border:0;background:#141022;color:#ffcc00;font:7px var(--pix);letter-spacing:2px;box-shadow:0 0 0 2px #000,inset 0 -3px 0 rgba(0,0,0,.4)}
+#ytp .ylc{margin-top:8px;max-height:300px;overflow-y:auto;background:rgba(7,6,13,.55);box-shadow:inset 0 0 0 2px rgba(255,255,255,.08);padding:8px 10px}#ytp .ylm{display:flex;gap:8px;align-items:flex-start;font:12px/1.4 var(--body,ui-monospace,monospace);color:#e8e3fa;padding:4px 0}#ytp .ylm .ypa{width:18px;height:18px;margin:2px}#ytp .ylm b{font:6px/2.4 var(--pix);color:hsl(var(--hue),80%,78%);flex:none;max-width:30%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#ytp.opt-b .ypa{box-shadow:0 0 0 2px #000,0 0 0 4px #ffcc00}#ytp.opt-b .ycmh button.on{color:#ffcc00}
+#ytp .yvc [data-ypc=cc]{width:auto;padding:0 7px;gap:5px}#ytp .yvc [data-ypc=cc] .pxcc{flex:none}#ytp .yvc em{line-height:1}
 </style></head><body>
 <div id="splash" aria-label="Logged"></div>
 <header><div class="hin">
@@ -2703,4 +2752,59 @@ function recUpload(title, lid) { var du = localStorage.getItem('lg_rec_' + lid);
 setTimeout(function retryRecs() { if (!rows || !rows.length) return setTimeout(retryRecs, 3000); var me = WHO || 'sam'; rows.forEach(function (r) { var c = r.theme && r.theme[me]; if (c && c.src === 'rec' && /^local-/.test(c.rec) && localStorage.getItem('lg_rec_' + c.rec)) recUpload(r.title, c.rec); }); }, 8000);
 /* player sees non-YT themes in the 🎵 rows */
 var _ostHtmlA = ostHtml; ostHtml = function (r) { return _ostHtmlA(r).replace(/(<small>[^<]*?)(\d+:\d\d–\d+:\d\d)<\/small>/g, '$1$2</small>'); };
+/* ---------- R24: Logged-native player (8-bit identity), two looks: A = ambient glow, B = arcade cabinet ---------- */
+var YTOPT = window.YTOPT || 'b';
+function ytHue(id) { var h = 0; for (var i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) % 360; return h; }
+ytnRender = function (o) { var P = $('ytp'), id = o.id, th = 'https://i.ytimg.com/vi/' + id + '/hqdefault.jpg', hue = ytHue(id), r = rows.filter(function (x) { return isYT(x) && x.ytm && x.ytm.id === id; })[0];
+  P.className = P.className.replace(/\bopt-\w\b/g, '') + ' opt-' + YTOPT; P.style.setProperty('--hue', hue);
+  var bg = P.querySelector('.yamb'); if (!bg) { P.insertAdjacentHTML('afterbegin', '<div class="yamb"></div><div class="yscan"></div>'); bg = P.querySelector('.yamb'); } bg.style.backgroundImage = 'url(' + th + ')';
+  var dock = '<div class="ydock">' + [['log', r ? '✓' : '＋', r ? 'LOGGED' : 'LOG'], ['rate', '★', 'RATE'], ['next', '▶▶', 'NEXT'], ['yt', '↗', 'YT']].map(function (d) { return '<button data-yta="' + d[0] + '"><i>' + d[1] + '</i><span>' + d[2] + '</span></button>'; }).join('') + '</div>';
+  var nx = (o.next || []).map(function (v, i) { return '<button class="ycard" data-ytn="' + i + '"><span class="yci"><img loading="lazy" src="' + ytnEsc(v.th) + '" alt=""><em>' + ytnEsc(v.dur || '') + '</em></span><b>' + ytnEsc(v.t) + '</b><small>' + ytnEsc(v.ch) + '</small></button>'; }).join('');
+  P.querySelector('.yi').innerHTML = '<div class="yhd">' + (YTOPT === 'b' ? '<div class="ymq"><span>' + ytnEsc(o.t || YTX.t) + '</span></div>' : '<h2>' + ytnEsc(o.t || YTX.t) + '</h2>') + '<div class="ysub">' + ytnEsc(o.ch || '') + (o.views ? ' <i>■</i> ' + ytnEsc(o.views.replace(/ views?/, '')) + ' VIEWS' : '') + '</div></div>' + dock +
+    '<div class="ynh">' + (YTOPT === 'b' ? 'SELECT NEXT' : 'UP NEXT') + '</div>' + (o.ld ? '<div class="yld">LOADING<i>...</i></div>' : '<div class="ycar">' + nx + '</div>'); };
+var _ytnOpenB = ytnOpen; ytnOpen = function (id, t) { var P = $('ytp'), was = P.classList.contains('open'); _ytnOpenB(id, t); if (!was) { P.classList.remove('pxin'); void P.offsetWidth; P.classList.add('pxin'); } };
+var _ytnCloseB = ytnClose; ytnClose = function () { var P = $('ytp'); if (!P.classList.contains('open') || P.classList.contains('mini')) return _ytnCloseB(); P.classList.add('pxout'); setTimeout(function () { P.classList.remove('pxout'); _ytnCloseB(); }, 380); };
+$('ytp').addEventListener('click', function (e) { var a = e.target.closest('[data-yta]'); if (!a) return; var k = a.dataset.yta;
+  if (k === 'next') { e.stopImmediatePropagation(); var c = $('ytp').querySelector('.ycar'); if (c) c.scrollBy({ left: c.clientWidth * .8, behavior: 'smooth' }); return; }
+  if (k === 'yt') { e.stopImmediatePropagation(); window.open('https://www.youtube.com/watch?v=' + YTX.id, '_blank', 'noopener'); } }, true);
+/* R24b: comments (real, live from the video) + live chat + fullscreen + captions */
+var YCM = {}, YLC = null;
+function ccPref() { try { return JSON.parse(localStorage.getItem('lg_cc_' + me()) || '{}'); } catch (e) { return {}; } }
+function ccSave(o) { localStorage.setItem('lg_cc_' + me(), JSON.stringify(o)); }
+function ytFrame() { return $('ytp').querySelector('.yvb iframe'); }
+var _ytnOpenC = ytnOpen; ytnOpen = function (id, t) { var cc = ccPref(); window.__ccq = cc.on ? '&cc=1' + (cc.lang ? '&cl=' + encodeURIComponent(cc.lang) : '') : ''; ytLcStop(); _ytnOpenC(id, t); var f = ytFrame(); if (f && window.__ccq) f.src += window.__ccq;
+  var v = $('ytp').querySelector('.yv'); if (!v.querySelector('.yvc')) v.insertAdjacentHTML('beforeend', '<div class="yvc"><button data-ypc="cc" aria-label="Subtitles"></button><button data-ypc="fs" aria-label="Full screen"></button></div>'); ytCcPaint();
+  YCM[id] = YCM[id] && Date.now() - YCM[id].at < 300000 ? YCM[id] : null; ytCmLoad(id); ytLcStart(id); };
+function ytCcPaint(tracks) { var b = $('ytp').querySelector('[data-ypc=cc]'); if (!b) return; var cc = ccPref(); b.classList.toggle('on', !!cc.on); b.innerHTML = '<i class="pxcc"></i>' + (cc.on && cc.lang ? '<em>' + esc(cc.lang.toUpperCase().slice(0, 2)) + '</em>' : ''); }
+window.addEventListener('message', function (e) { var d = e.data; if (!d || d.logged !== 'yt' || !d.cctracks) return; YTX.cct = d.cctracks; });
+function ytCcToggle() { var cc = ccPref(), L = (YTX.cct || []).map(function (t) { return t.languageCode; });
+  if (!cc.on) { cc.on = 1; cc.lang = cc.lang || L[0] || 'en'; } else if (L.length > 1 && L.indexOf(cc.lang) < L.length - 1) cc.lang = L[L.indexOf(cc.lang) + 1]; else { cc.on = 0; }
+  ccSave(cc); ytCcPaint(); var f = ytFrame(); if (f) try { f.contentWindow.postMessage({ logged: 'cmd', cc: cc.on ? 1 : 0, lang: cc.lang }, '*'); } catch (x) {} savedTick(cc.on ? 'CC ' + String(cc.lang).toUpperCase() : 'CC OFF'); }
+function ytFs() { var P = $('ytp'), v = P.querySelector('.yv'); if (P.classList.contains('flip') || document.fullscreenElement) { P.classList.remove('flip'); try { screen.orientation.unlock(); } catch (e) {} try { document.fullscreenElement && document.exitFullscreen(); } catch (e) {} return; }
+  var p = v.requestFullscreen ? v.requestFullscreen() : null; if (p && p.then && screen.orientation && screen.orientation.lock) p.then(function () { return screen.orientation.lock('landscape'); }).catch(function () { if (document.fullscreenElement) try { document.exitFullscreen(); } catch (x) {} P.classList.add('flip'); }); else P.classList.add('flip'); }
+function ytCmLoad(id, more) { var s = YCM[id]; if (s && !more) return ytCmPaint(); if (!s) s = YCM[id] = { at: Date.now(), items: [], next: '', busy: 0 }; if (s.busy) return; s.busy = 1; ytCmPaint();
+  run('ytComments', [id, more ? s.next : ''], function (o) { s.busy = 0; s.items = s.items.concat((o && o.items) || []); s.next = (o && o.next) || ''; if (YTX.id === id) ytCmPaint(); }, function () { s.busy = 0; s.err = 1; if (YTX.id === id) ytCmPaint(); }); }
+function ytK(n) { var x = Number(n); if (!isFinite(x) || String(n).trim() === '') return n; return x >= 1e6 ? (x / 1e6).toFixed(x < 1e7 ? 1 : 0).replace('.0', '') + 'M' : x >= 1e3 ? (x / 1e3).toFixed(x < 1e4 ? 1 : 0).replace('.0', '') + 'K' : String(x); }
+function ytAvatar(c) { return '<span class="ypa">' + (c.av ? '<img src="' + ytnEsc(c.av) + '" alt="" loading="lazy" referrerpolicy="no-referrer">' : '<b>' + ytnEsc(String(c.a || '?').replace('@', '').charAt(0).toUpperCase()) + '</b>') + '</span>'; }
+function ytCmPaint() { var P = $('ytp'), box = P.querySelector('.ycm'); if (!box) { P.querySelector('.yi').insertAdjacentHTML('beforeend', '<div class="ycm"></div>'); box = P.querySelector('.ycm'); }
+  var s = YCM[YTX.id] || {}, shut = localStorage.lg_cmshut === '1', live = YLC && YLC.vid === YTX.id && YLC.live, tab = live ? (YLC.tab || 'chat') : 'cm';
+  var h = '<div class="ycmh"><button data-ycm="tog" class="' + (shut ? '' : 'on') + '"><i class="pxbub"></i>' + (live ? '' : 'COMMENTS') + (s.items && s.items.length && !live ? '<em>' + s.items.length + (s.next ? '+' : '') + '</em>' : '') + '</button>' + (live ? '<button data-ycm="chat" class="tb' + (tab === 'chat' ? ' on' : '') + '"><i class="pxdot"></i>LIVE CHAT</button><button data-ycm="cm" class="tb' + (tab === 'cm' ? ' on' : '') + '">COMMENTS</button>' : '') + '<span class="car">' + (shut ? '▸' : '▾') + '</span></div>';
+  if (!shut) { if (tab === 'chat') h += '<div class="ylc">' + (YLC.items.length ? YLC.items.map(function (c) { return '<div class="ylm">' + ytAvatar(c) + '<b>' + ytnEsc(c.a) + '</b> ' + ytnEsc(c.t) + '</div>'; }).join('') : '<div class="yld">TUNING IN<i>...</i></div>') + '</div>';
+    else h += '<div class="ycl">' + (s.items || []).map(function (c, i) { return '<div class="yc">' + ytAvatar(c) + '<div class="ycb"><div class="ycn"><b>' + ytnEsc(c.a) + '</b><small>' + ytnEsc(c.ago) + '</small></div><p data-ycx="' + i + '">' + ytnEsc(c.t) + '</p><div class="ycf">' + (c.likes && c.likes !== '0' ? '<span><i class="pxht"></i>' + ytnEsc(ytK(c.likes)) + '</span>' : '') + (c.rep ? '<span>↳ ' + c.rep + ' REPL' + (c.rep === 1 ? 'Y' : 'IES') + '</span>' : '') + '</div></div></div>'; }).join('') +
+      (s.busy ? '<div class="yld">LOADING<i>...</i></div>' : s.err && !(s.items || []).length ? '<div class="yld">COMMENTS UNAVAILABLE</div>' : !(s.items || []).length ? '<div class="yld">NO COMMENTS</div>' : s.next ? '<button class="ymore" data-ycm="more">▼ LOAD MORE</button>' : '') + '</div>'; }
+  box.innerHTML = h; var lc = box.querySelector('.ylc'); if (lc) lc.scrollTop = lc.scrollHeight; }
+var _ytnRenderC = ytnRender; ytnRender = function (o) { _ytnRenderC(o); if (YTX.id) ytCmPaint(); };
+function ytLcStop() { if (YLC) clearTimeout(YLC.t); YLC = null; }
+function ytLcStart(id) { YLC = { vid: id, items: [], live: false, tab: 'chat' }; var me2 = YLC;
+  var poll = function (cont) { if (YLC !== me2 || !$('ytp').classList.contains('open')) return; run('ytLiveChat', [id, cont || ''], function (o) { if (YLC !== me2) return; if (!o || !o.live) { if (!me2.live) return; me2.t = setTimeout(function () { poll(''); }, 15000); return; }
+      var first = !me2.live; me2.live = true; var seen = {}; me2.items.forEach(function (x) { seen[x.id] = 1; }); me2.items = me2.items.concat(o.items.filter(function (x) { return !seen[x.id]; })).slice(-60); if (YTX.id === id) ytCmPaint();
+      me2.t = setTimeout(function () { poll(o.next); }, document.hidden || localStorage.lg_cmshut === '1' ? 20000 : o.wait || 6000); }, function () { if (YLC === me2 && me2.live) me2.t = setTimeout(function () { poll(''); }, 15000); }); };
+  poll(''); }
+var _ytnCloseC = ytnClose; ytnClose = function () { ytLcStop(); $('ytp').classList.remove('flip'); return _ytnCloseC(); };
+$('ytp').addEventListener('click', function (e) { var b = e.target.closest('[data-ycm],[data-ypc],[data-ycx]'); if (!b) return; e.stopImmediatePropagation(); var x = b.dataset;
+  if (x.ypc === 'fs') return ytFs(); if (x.ypc === 'cc') return ytCcToggle();
+  if (x.ycx != null) return b.classList.toggle('open');
+  if (x.ycm === 'tog') { localStorage.lg_cmshut = localStorage.lg_cmshut === '1' ? '0' : '1'; return ytCmPaint(); }
+  if (x.ycm === 'more') return ytCmLoad(YTX.id, 1);
+  if (x.ycm === 'chat' || x.ycm === 'cm') { YLC.tab = x.ycm; if (localStorage.lg_cmshut === '1') localStorage.lg_cmshut = '0'; return ytCmPaint(); } }, true);
 </script></body></html>
