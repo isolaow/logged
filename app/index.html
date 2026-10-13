@@ -2259,7 +2259,11 @@ function ytRow(name, ic, L, grp, big) { L = (L || []).filter(function (v) { retu
   return '<div class="ytsec"><h3><span>' + ic + '</span>' + name + '</h3><div class="' + (big ? 'ytgrid' : 'ytrow') + '">' + L.map(function (v, i) { return ytCard(v, i, grp); }).join('') + '</div></div>'; }
 function ytSeeds() { var Y = rows.filter(isYT), sc = function (r) { return (num(r.samRating) || 5) + (num(r.lewyRating) || 5) + Object.keys((r.ytw || {}).sam || {}).length + Object.keys((r.ytw || {}).lewy || {}).length; };
   var s = Y.sort(function (a, b) { return sc(b) - sc(a); }).map(function (r) { return (r.ytm && r.ytm.ch) || r.title.replace(/ \(Channel\)$/, ''); });
-  (window.YTIMP || []).forEach(function (x) { if (x.k === 'channel') s.push(x.t); }); return s.filter(function (x, i) { return x && s.indexOf(x) === i; }).slice(0, 4); }
+  (window.YTIMP || []).forEach(function (x) { if (x.k === 'channel') s.push(x.t); }); s = s.filter(function (x, i) { return x && s.indexOf(x) === i; }).slice(0, 2);
+  var T = rows.filter(function (r) { return !isYT(r) && (isY(r.samWatched) || isY(r.lewyWatched) || r.samWatched === 'As we speak' || r.lewyWatched === 'As we speak'); }).sort(function (a, b) { return (b.dates ? 1 : 0) - (a.dates ? 1 : 0) || (score(b) || 0) - (score(a) || 0) || b.row - a.row; });
+  var day = Math.floor(Date.now() / 864e5), pick = T.slice(0, 12), kinds = [' best scenes', ' behind the scenes', ' official clip', ' cast interview'];
+  for (var i = 0; s.length < 4 && pick.length && i < 4; i++) { var r = pick[(day + i * 5) % pick.length]; s.push(r.title.replace(/\s*\(S\d+\)$/, '') + kinds[(day + i) % kinds.length]); }
+  return s; }
 function ytSubs() { return rows.filter(function (r) { return isYT(r) && r.ytm && r.ytm.k === 'channel'; }); }
 function openYTHome() { $('ytpage').classList.add('open'); navHi('navYT'); ytDraw(); ytLoad(); }
 function ytLoad() { YH.feed = null; ytDraw(); run('ytFeed', [{ cat: YH.cat, seeds: ytSeeds() }], function (f) { YH.feed = f || {}; ytDraw(); }, function () { YH.feed = {}; ytDraw(); });
@@ -2274,9 +2278,11 @@ function ytDraw() { var B = $('ytBody'); if (!B) return; YG = {};
   var pos = ytLS('lg_ytpos'), cont = Object.keys(pos).map(function (k) { return pos[k]; }).filter(function (p) { return p.d && p.p > 20 && p.p / p.d < 0.9; }).sort(function (a, b) { return b.at - a.at; }),
     hist = ytLS('lg_ythist'), rec = Object.keys(hist).map(function (k) { return hist[k]; }).sort(function (a, b) { return b.at - a.at; }), F = YH.feed || {};
   var subsBar = ytSubs().length ? '<div class="ytsubs">' + ytSubs().map(function (r) { return '<button data-ytch="' + esc(r.ytm.id) + '" data-ytchn="' + esc(r.ytm.ch || r.title) + '">' + art(r) + '<span>' + esc((r.ytm.ch || r.title).replace(/ \(Channel\)$/, '')) + '</span></button>'; }).join('') + '</div>' : '';
-  B.innerHTML = head + chips + (YH.cat ? '' : ytRow('CONTINUE WATCHING', '⏯', cont, 'cont') + ytRow('RECENTLY WATCHED', '🕑', rec.slice(0, 15), 'rec')) +
+  var seenV = {}; Object.keys(hist).forEach(function (k) { seenV[k] = 1; }); rows.forEach(function (r) { if (r.ytm) seenV[r.ytm.id] = 1; Object.keys(((r.ytw || {}).sam) || {}).concat(Object.keys(((r.ytw || {}).lewy) || {})).forEach(function (k) { seenV[k] = 1; }); });
+  var recL = (F.rec || []).filter(function (v) { return (!v.k || v.k === 'video') && !seenV[v.id]; }); if (F.trending && recL.length < 6) recL = recL.concat(F.trending.filter(function (v) { return !seenV[v.id]; }).slice(0, 6 - recL.length));
+  B.innerHTML = head + chips + (F.rec ? ytRow('RECOMMENDED FOR YOU', '★', recL, 'rf', 1) : '<div class="meta ytload">FINDING RECOMMENDATIONS…</div>') + (YH.cat ? '' : ytRow('CONTINUE WATCHING', '⏯', cont, 'cont') + ytRow('RECENTLY WATCHED', '🕑', rec.slice(0, 15), 'rec')) +
     (YH.cat ? '' : '<div class="ytsec"><h3><span>👤</span>SUBSCRIPTIONS</h3>' + (subsBar || '<div class="meta">Follow channels to see their new uploads here.</div>') + '</div>' + ytRow('NEW FROM SUBSCRIPTIONS', '🔔', YH.subs || [], 'subs')) +
-    (F.rec ? ytRow('RECOMMENDED FOR YOU', '★', F.rec, 'rf', 1) : '') + (F.trending ? ytRow('TRENDING · AU', '🔥', F.trending, 'tr', 1) : '<div class="meta ytload">LOADING FEED…</div>') +
+    (F.trending ? ytRow('TRENDING · AU', '🔥', F.trending, 'tr', 1) : '<div class="meta ytload">LOADING FEED…</div>') +
     (YH.cat ? '' : ytRow('IN YOUR LOG', '<img src="' + LOGGING_ICON + '" style="height:12px;image-rendering:pixelated" alt="">', rows.filter(function (r) { return isYT(r) && r.ytm && r.ytm.k === 'video'; }).map(function (r) { return { id: r.ytm.id, t: r.title, ch: r.ytm.ch, chId: r.ytm.chId, th: r.poster }; }), 'log')); }
 function ytVid(grp, i) { var L = YG[grp] || [], v = L[i]; if (!v) return; var nx = L.slice(i + 1, i + 11).map(function (x) { return x.id; }), r = rows.filter(function (x) { return isYT(x) && x.ytm && x.ytm.id === v.id; })[0];
   var h = ytLS('lg_ythist'); h[v.id] = Object.assign(ytMeta(v), { at: Date.now() }); var ks = Object.keys(h); if (ks.length > 60) delete h[ks.sort(function (a, b) { return h[a].at - h[b].at; })[0]]; localStorage.lg_ythist = JSON.stringify(h);
