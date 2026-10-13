@@ -1,0 +1,22 @@
+<!doctype html><html><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Logged · Trailer</title>
+<style>html,body{margin:0;height:100%;background:#000;overflow:hidden}#p,#p iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+#e{position:absolute;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px;color:#ffcc33;font:14px monospace;text-align:center}
+#e a{color:#fff;border:2px solid #fff;padding:10px 14px;text-decoration:none}</style>
+</head><body><div id="p"></div><div id="e"><div>Can't play here</div><a id="ea" target="_blank" rel="noopener">▶ WATCH ON YOUTUBE</a></div>
+<script>
+var q = new URLSearchParams(location.search), v = (q.get('v') || '').replace(/[^\w-]/g, '').slice(0, 20);
+document.getElementById('ea').href = 'https://www.youtube.com/watch?v=' + v;
+function fail() { document.getElementById('e').style.display = 'flex'; }
+if (!v) fail();
+window.onYouTubeIframeAPIReady = function () {
+  new YT.Player('p', { host: 'https://www.youtube-nocookie.com', videoId: v,
+    playerVars: { autoplay: 1, playsinline: 1, rel: 0, modestbranding: 1, origin: location.origin },
+    events: { onReady: function (e) { try { e.target.playVideo(); } catch (x) {} window.__ready = 1; },
+      onStateChange: function (e) { window.__state = e.data; },
+      onError: function (e) { window.__err = e.data; fail(); } } });
+};
+if (v) { var s = document.createElement('script'); s.src = 'https://www.youtube.com/iframe_api'; document.head.appendChild(s); }
+</script></body></html>
