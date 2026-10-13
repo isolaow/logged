@@ -11,21 +11,27 @@ var q = new URLSearchParams(location.search), v = (q.get('v') || '').replace(/[^
 function tell(o) { try { o.logged = 'yt'; parent.postMessage(o, '*'); } catch (x) {} }
 document.getElementById('ea').href = 'https://www.youtube.com/watch?v=' + v;
 /* Ask YouTube for the best quality. These calls are deprecated/no-ops on many clients; YouTube may still choose by bandwidth/size. */
-function hq(p) { try { var L = (p.getAvailableQualityLevels && p.getAvailableQualityLevels()) || [], best = L[0] || 'highres';
+function hq(p) { if (window.__qlock) return; try { var L = (p.getAvailableQualityLevels && p.getAvailableQualityLevels()) || [], best = L[0] || 'highres';
   if (p.setPlaybackQualityRange) p.setPlaybackQualityRange(best, best); if (p.setPlaybackQuality) p.setPlaybackQuality(best); } catch (x) {} }
 function fail() { document.getElementById('e').style.display = 'flex'; }
 if (!v && !list) fail();
 window.onYouTubeIframeAPIReady = function () {
   window.__p = new YT.Player('p', { host: 'https://www.youtube-nocookie.com', videoId: v,
     width: Math.round(innerWidth), height: Math.round(innerHeight),
-    playerVars: { cc_load_policy: q.get('cc') === '1' ? 1 : undefined, cc_lang_pref: q.get('cl') || undefined, autoplay: 1, playsinline: 1, rel: 0, modestbranding: 1, vq: 'hd2160', hd: 1, origin: location.origin, start: st, end: en || undefined, listType: list ? 'playlist' : undefined, list: list || undefined, playlist: (!list && nxt) ? nxt : undefined },
+    playerVars: { controls: q.get('ctl') === '0' ? 0 : 1, disablekb: q.get('ctl') === '0' ? 1 : 0, fs: q.get('ctl') === '0' ? 0 : 1, iv_load_policy: 3, cc_load_policy: q.get('cc') === '1' ? 1 : undefined, cc_lang_pref: q.get('cl') || undefined, autoplay: 1, playsinline: 1, rel: 0, modestbranding: 1, vq: 'hd2160', hd: 1, origin: location.origin, start: st, end: en || undefined, listType: list ? 'playlist' : undefined, list: list || undefined, playlist: (!list && nxt) ? nxt : undefined },
     events: { onReady: function (e) { hq(e.target); try { e.target.setVolume(Math.max(0, Math.min(100, vol))); } catch (x) {} try { e.target.playVideo(); } catch (x) {} window.__ready = 1; setTimeout(function () { try { e.target.loadModule('captions'); setTimeout(function () { var L = e.target.getOption('captions', 'tracklist') || []; tell({ cctracks: L.map(function (t) { return { languageCode: t.languageCode, name: t.displayName }; }) }); if (q.get('cc') !== '1') e.target.unloadModule('captions'); }, 1500); } catch (x) {} }, 1200); },
       onPlaybackQualityChange: function (e) { window.__q = e.data; if (e.data !== 'highres' && e.data !== 'hd2160' && !window.__qtry) { window.__qtry = 1; hq(e.target); } },
       onStateChange: function (e) { window.__state = e.data; if (e.data === 1) hq(e.target); if (e.data === 0 && (loop || en)) { if (loop) e.target.seekTo(st, true); } try { var vd = e.target.getVideoData ? e.target.getVideoData().video_id : v; tell({ st: e.data, vid: vd, t: e.target.getCurrentTime(), d: e.target.getDuration() }); } catch (x) {} },
       onError: function (e) { window.__err = e.data; fail(); } } });
 };
 setInterval(function () { try { var p = window.__p; if (p && p.getPlayerState && p.getPlayerState() === 1) tell({ st: 1, vid: p.getVideoData().video_id, t: p.getCurrentTime(), d: p.getDuration() }); } catch (x) {} }, 10000);
+function tk() { try { var p = window.__p; if (!p || !p.getCurrentTime) return; var vd = p.getVideoData ? p.getVideoData() : {}; parent.postMessage({ logged: 'yt', tick: 1, id: vd.video_id, title: vd.title, t: p.getCurrentTime(), d: p.getDuration(), s: p.getPlayerState(), vol: p.getVolume(), m: p.isMuted(), r: p.getPlaybackRate(), rs: p.getAvailablePlaybackRates(), q: p.getPlaybackQuality(), qs: p.getAvailableQualityLevels(), b: p.getVideoLoadedFraction() }, '*'); } catch (x) {} }
+if (q.get('ctl') === '0') setInterval(tk, 250);
 if (v || list) { var s = document.createElement('script'); s.src = 'https://www.youtube.com/iframe_api'; document.head.appendChild(s); }
 window.addEventListener('message', function (m) { var d = m.data, p = window.__p; if (!d || d.logged !== 'cmd' || !p) return; if (m.origin !== 'https://isolaow.github.io' && m.origin !== 'null') return;
-  try { if (d.cc) { p.loadModule('captions'); if (d.lang) p.setOption('captions', 'track', { languageCode: d.lang }); } else p.unloadModule('captions'); } catch (x) {} });
+  try { if (d.op) { var o = d.op;
+      if (o === 'play') p.playVideo(); else if (o === 'pause') p.pauseVideo(); else if (o === 'seek') p.seekTo(Math.max(0, d.t), true); else if (o === 'rel') p.seekTo(Math.max(0, p.getCurrentTime() + d.t), true);
+      else if (o === 'vol') { p.setVolume(d.v); if (d.v > 0) p.unMute(); } else if (o === 'mute') { if (p.isMuted()) p.unMute(); else p.mute(); } else if (o === 'rate') p.setPlaybackRate(d.v); else if (o === 'q') { p.setPlaybackQualityRange && p.setPlaybackQualityRange(d.v, d.v); p.setPlaybackQuality && p.setPlaybackQuality(d.v); window.__qlock = d.v; }
+      else if (o === 'next') p.nextVideo(); else if (o === 'prev') p.previousVideo(); else if (o === 'replay') { p.seekTo(0, true); p.playVideo(); } tk(); return; }
+    if (d.cc) { p.loadModule('captions'); if (d.lang) p.setOption('captions', 'track', { languageCode: d.lang }); } else p.unloadModule('captions'); } catch (x) {} });
 </script></body></html>
