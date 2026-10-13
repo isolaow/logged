@@ -580,6 +580,22 @@ body nav#nav .nadd b,html.ytA body nav#nav .nyt b,body nav#nav .nyt b{background
 .trvlob .trvpush{background:#1d1d33;color:#ccc;font:8px var(--pix);padding:10px}
 body nav#nav .nadd b{display:flex!important;align-items:center;justify-content:center;font-size:0!important;line-height:0}body nav#nav .nadd b .pls{display:block;flex:none;width:22px;height:22px;filter:drop-shadow(2px 2px 0 #000)}body nav#nav .nadd b .pls path{fill:var(--red)}
 .tvi{image-rendering:pixelated;vertical-align:middle;display:inline-block;margin-right:5px}.trvbar span{display:flex;align-items:center}.trvbar .btn{display:inline-flex;align-items:center}.trvlob .big .tvi{margin:0}.trvk{font:7px var(--pix);color:var(--gold);display:flex;align-items:center}.trvq .snd .tvi{margin:0}.trvpush.off .tvi{opacity:.4;filter:grayscale(1)}.trvr .th .tvi{margin:0}
+.trvtmw{display:flex;align-items:center;gap:8px;margin:8px 0}.trvtmw .trvtm{flex:1;margin:0;height:14px;border:3px solid #000;background:#1d1d33;padding:0}
+.trvtm i{display:block;height:100%;background:repeating-linear-gradient(90deg,var(--gold) 0 calc(100%/15 - 2px),#000 0 calc(100%/15))!important;background-size:calc(100% * 15 / 15) 100%;transition:width .12s steps(2)}
+.trvtm i.lo{background:var(--red)!important;animation:tvb .5s steps(2) infinite}#trvSec{font:13px var(--pix);color:var(--gold);width:28px;text-align:right;text-shadow:2px 2px 0 var(--red)}
+.trvo.c4{grid-template-columns:1fr 1fr}.trvo.c4 button{min-height:78px;flex-direction:column;align-items:flex-start;justify-content:space-between;color:#fff;font-size:13px;text-shadow:1px 1px 0 #000;box-shadow:inset -3px -3px 0 rgba(0,0,0,.3),inset 3px 3px 0 rgba(255,255,255,.18),3px 3px 0 #000}
+.trvo.c4 button:nth-child(1){background:#d63a4f}.trvo.c4 button:nth-child(2){background:#2f6fd6}.trvo.c4 button:nth-child(3){background:#d6a21f;color:#111;text-shadow:none}.trvo.c4 button:nth-child(4){background:#2f9e48}
+.trvo.c4 .shp svg{width:16px;height:16px;fill:#fff;filter:drop-shadow(2px 2px 0 #000);display:block}.trvo.c4 button:nth-child(3) .shp svg{fill:#111;filter:none}
+.trvo.c4 button:active:not([disabled]){transform:translate(2px,2px);box-shadow:1px 1px 0 #000}.trvo.c4 button[disabled]:not(.pick):not(.ok):not(.bad){filter:saturate(.35) brightness(.6)}
+.trvo.c4 button.pick,.trvo.c4 button.lockin{outline:4px solid #fff;outline-offset:-4px;animation:tvp .6s ease-in-out infinite}.trvo.c4 button.ok{outline:4px solid #5f5;outline-offset:-4px;filter:none!important;animation:okp .4s steps(3)}.trvo.c4 button.bad{filter:grayscale(.6) brightness(.6)!important;outline:4px dashed #f66;outline-offset:-4px}
+@keyframes okp{50%{transform:scale(1.06)}}
+.trvfx{position:fixed;inset:0;pointer-events:none;z-index:5;animation:fxf .5s steps(4) forwards}.trvfx.ok{background:#5ac85a}.trvfx.bad{background:#ef476f}.trvfx.lock,.trvfx.opp{background:#fff;animation-duration:.25s}@keyframes fxf{from{opacity:.55}to{opacity:0}}
+.shake{animation:shk .4s steps(6)}@keyframes shk{20%{transform:translate(-6px,0)}40%{transform:translate(6px,2px)}60%{transform:translate(-4px,-2px)}80%{transform:translate(4px,0)}}
+.cnf{position:fixed;inset:0;pointer-events:none;z-index:6;overflow:hidden}.cnf i{position:absolute;top:-10px;width:8px;height:8px;animation:cnf 1.3s steps(12) forwards}@keyframes cnf{to{transform:translate(var(--dx),110vh) rotate(360deg)}}
+.trvpop{position:fixed;left:50%;top:38%;transform:translate(-50%,-50%);z-index:7;pointer-events:none;font:22px var(--pix);color:#fff;text-shadow:3px 3px 0 #000;text-align:center;animation:pop 1.2s steps(8) forwards}.trvpop small{display:block;font:10px var(--pix);color:var(--gold);margin-top:8px}
+.trvpop.ok{color:#7f7}.trvpop.bad{color:#f66;font-size:30px}.trvpop.lock,.trvpop.opp{font-size:11px;top:18%;background:#000;padding:8px 10px;border:3px solid var(--gold)}.trvpop.opp{color:#f9d}
+@keyframes pop{0%{transform:translate(-50%,-30%) scale(.5);opacity:0}20%{transform:translate(-50%,-50%) scale(1.15);opacity:1}80%{opacity:1}100%{transform:translate(-50%,-90%);opacity:0}}
+.trvsc>div{transition:none}.trvsc b{animation:none}
 </style></head><body>
 <div id="splash" aria-label="Logged"></div>
 <header><div class="hin">
@@ -2323,7 +2339,7 @@ function trvDraw(prev) { var s = TRV.st; prev = prev || {}; if (!s) return;
 function trvDaily() { TRV.daily = { load: 1 }; trvShow('<div class="trvlob"><p class="blink">LOADING TODAY\u2019S SET…</p></div>'); run('triviaDaily', [me()], function (d) { TRV.daily = d; if (d.mine) trvDailyRes(); else trvDailyIntro(); }, function (e) { trvShow('<div class="trvlob"><p>' + esc(String(e && e.message || e)) + '</p></div>'); }); }
 function trvStreak(S, p) { var s = ((S || {}).streak || {})[p] || {}; return (s.cur || 0); }
 function trvDailyIntro() { var d = TRV.daily; trvShow('<div class="trvlob"><div class="big">' + tvi('daily',64) + '</div><p>' + d.qs.length + ' QUESTIONS FROM TITLES YOU\u2019VE FINISHED</p><p>🔥 STREAK ' + trvStreak(d.stats, me()) + '</p>' + (d.other === 'done' ? '<p class="pulse">' + (me() === 'sam' ? 'LEWY' : 'SAM') + ' ALREADY PLAYED!</p>' : '') + '<button class="btn r" data-trvgo="1">▶ PLAY</button></div>'); }
-function trvDQ() { var d = TRV.daily, i = TRV.dq, q = d.qs[i]; if (!q) return trvDSubmit(); TRV.t0 = Date.now(); var dur = 20000;
+function trvDQ() { var d = TRV.daily, i = TRV.dq, q = d.qs[i]; if (!q) return trvDSubmit(); TRV.t0 = Date.now(); var dur = 15000;
   trvShow('<div class="trvn">Q' + (i + 1) + '/' + d.qs.length + '</div>' + trvCard(q, {})); if (q.img) trvPix(q.img, TRV.t0, dur * .85); trvTimer(TRV.t0, dur); if (q.audio) trvAudio(q.audio);
   clearTimeout(TRV.dt); TRV.dt = setTimeout(function () { if (TRV.dq === i) trvDPick(-1); }, dur); }
 function trvDPick(c) { clearTimeout(TRV.dt); trvAudio(); TRV.picks[TRV.dq] = c; TRV.ms[TRV.dq] = Date.now() - TRV.t0; SFX.blip(); TRV.dq++; setTimeout(trvDQ, 250); }
@@ -2367,4 +2383,35 @@ window.TVP = localStorage.lg_tvpush !== '0';
 var _trvDailyIntro2 = trvDailyIntro; trvDailyIntro = function () { _trvDailyIntro2(); var l = $('trvB').querySelector('.trvlob'); if (l) l.insertAdjacentHTML('beforeend', '<button class="btn trvpush" data-trvpush="1">' + (TVP ? tvi('ping') + ' QUIZ PINGS ON' : tvi('ping') + ' QUIZ PINGS OFF') + '</button>'); };
 document.addEventListener('click', function (e) { var b = e.target.closest('[data-trvpush]'); if (!b) return; e.preventDefault(); e.stopImmediatePropagation(); TVP = !TVP; localStorage.lg_tvpush = TVP ? '1' : '0'; b.innerHTML = tvi('ping') + (TVP ? ' QUIZ PINGS ON' : ' QUIZ PINGS OFF'); b.classList.toggle('off', !TVP); run('setTriviaPush', [me(), TVP], function () { toast(TVP ? '🔔 Quiz pings on' : '🔕 Quiz pings off'); }); }, true);
 setTimeout(function () { run('getTriviaPush', [me()], function (v) { TVP = v !== false; localStorage.lg_tvpush = TVP ? '1' : '0'; }); }, 2500);
+/* ---------- 13c) 15s timer, colour-coded 4-option buttons, juice (SFX, flash, shake, confetti, pop-ups, combo, opp lock-in) ---------- */
+SFX.sel = function () { tone(660, .04, 'square', .04); };
+SFX.lock = function () { tone(392, .06, 'square', .05); tone(784, .1, 'square', .05, .06); };
+SFX.right = function () { [784, 988, 1319].forEach(function (f, i) { tone(f, .12, 'square', .055, i * .07); }); tone(1568, .25, 'triangle', .06, .21); };
+SFX.wrong = function () { tone(140, .32, 'sawtooth', .07, 0, 90); noise(.12, 0, .04); };
+SFX.combo = function (n) { for (var i = 0; i < Math.min(n, 5); i++) tone(880 + i * 160, .06, 'square', .05, .3 + i * .06); };
+SFX.opp = function () { tone(523, .05, 'triangle', .07); tone(523, .05, 'triangle', .07, .08); };
+function buzz(p) { try { navigator.vibrate && navigator.vibrate(p); } catch (e) {} }
+var TVSHAPE = ['<path d="M3 0h2v2h1v2h1v2h1v2H0V6h1V4h1V2h1z"/>', '<path d="M3 0h2v1h1v1h1v1h1v2H7v1H6v1H5v1H3V7H2V6H1V5H0V3h1V2h1V1h1z"/>', '<path d="M2 0h4v1h1v1h1v4H7v1H6v1H2V7H1V6H0V2h1V1h1z"/>', '<path d="M0 0h8v8H0z"/>'];
+var _trvCardK = trvCard; trvCard = function (q, o) { var h = _trvCardK(q, o);
+  h = h.replace(/<span>([ABCD])<\/span>/g, function (m, L) { var i = 'ABCD'.indexOf(L); return '<span class="shp"><svg viewBox="0 0 8 8" shape-rendering="crispEdges">' + TVSHAPE[i] + '</svg></span>'; });
+  if (o && o.reveal) h = h.replace('<div class="trvtm"><i id="trvBar"></i></div>', '');
+  return h.replace('<div class="trvo">', '<div class="trvo c4">'); };
+trvTimer = function (t0, dur) { var b = $('trvBar'), last = -1, tot = Math.round(dur / 1000); (function f() { if (!b || !b.isConnected) return; var k = Math.max(0, 1 - (Date.now() - t0) / dur), s = Math.ceil(k * tot);
+  if (s !== last) { b.style.width = (s / tot * 100) + '%'; b.classList.toggle('lo', s <= 5); var n = $('trvSec'); if (n) n.textContent = s; if (s <= 5 && s > 0 && !document.querySelector('.trvo .pick')) SFX.tick(600 + s * 120); last = s; } if (k > 0) requestAnimationFrame(f); })(); };
+var _trvShowK = trvShow; trvShow = function (h) { _trvShowK(h.replace('<div class="trvtm"><i id="trvBar"></i></div>', '<div class="trvtmw"><div class="trvtm"><i id="trvBar"></i></div><b id="trvSec">15</b></div>')); };
+function fx(kind, txt) { var B = $('trv'); if (!B) return; var f = document.createElement('div'); f.className = 'trvfx ' + kind; B.appendChild(f); setTimeout(function () { f.remove(); }, 600);
+  if (kind === 'bad') { var i = $('trvB'); i.classList.remove('shake'); void i.offsetWidth; i.classList.add('shake'); }
+  if (kind === 'ok') { var c = document.createElement('div'); c.className = 'cnf'; var cols = ['#ffcc33', '#ef476f', '#4d96ff', '#5ac85a', '#f4f1ea']; for (var j = 0; j < 36; j++) { var p = document.createElement('i'); p.style.left = (Math.random() * 100) + '%'; p.style.background = cols[j % 5]; p.style.animationDelay = (Math.random() * .25) + 's'; p.style.setProperty('--dx', (Math.random() * 80 - 40) + 'px'); c.appendChild(p); } B.appendChild(c); setTimeout(function () { c.remove(); }, 1600); }
+  if (txt) { var t = document.createElement('div'); t.className = 'trvpop ' + kind; t.innerHTML = txt; B.appendChild(t); setTimeout(function () { t.remove(); }, 1300); } }
+TRV.combo = 0;
+var _trvDrawK = trvDraw; trvDraw = function (prev) { var s = TRV.st, p = prev || {}; _trvDrawK(prev); if (!s) return;
+  if (s.phase === 'reveal' && p.phase === 'q' && s.q) { var m = me(), A = s.ans && s.ans[m], ok = A && A.c === s.q.a, gain = (s.sc[m] || 0) - ((p.sc || {})[m] || 0);
+    if (ok) { TRV.combo++; SFX.right(); buzz(30); fx('ok', '+' + gain + (TRV.combo > 1 ? '<small>COMBO ×' + TRV.combo + '</small>' : '')); if (TRV.combo > 1) SFX.combo(TRV.combo); }
+    else { TRV.combo = 0; SFX.wrong(); buzz([60, 40, 60]); fx('bad', A ? '✗' : 'TIME!'); } }
+  if (s.phase === 'q' && p.phase === 'q' && p.i === s.i && s.locked && p.locked) { var o = me() === 'sam' ? 'lewy' : 'sam'; if (s.locked[o] && !p.locked[o]) { SFX.opp(); fx('opp', (o === 'sam' ? 'SAM' : 'LEWY') + ' LOCKED IN!'); } }
+  if (s.phase === 'q' && p.phase !== 'q') TRV.combo = TRV.combo; };
+var _trvGotK = trvGot; trvGot = function (st) { _trvGotK(st); };
+document.addEventListener('pointerdown', function (e) { var b = e.target.closest('.trvo button:not([disabled])'); if (b) SFX.sel(); }, true);
+document.addEventListener('click', function (e) { var b = e.target.closest('.trvo button:not([disabled])'); if (!b) return; SFX.lock(); buzz(15); b.classList.add('lockin'); setTimeout(function () { fx('lock', '🔒 LOCKED IN'); }, 0); }, true);
+var _trvDailyResK = trvDailyRes; trvDailyRes = function () { _trvDailyResK(); var d = TRV.daily; if (!d || !d.mine) return; SFX.fanfare(); var ok = (d.qs || []).filter(function (q, i) { return d.mine.p[i] === q.a; }).length; fx(ok >= d.qs.length / 2 ? 'ok' : 'bad', ok + '/' + d.qs.length + ' CORRECT'); };
 </script></body></html>
