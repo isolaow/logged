@@ -29,6 +29,9 @@
       .catch(function (e) { clearTimeout(t); if (!e.server) e.offline = true; throw e; });
   }
   window.__rpc = rpc;
+  /* data-cache version: bump to make every phone drop cached API data (e.g. after backend changes) */
+  var CK = 'd3_' + (LS.getItem('lg_who') || '') + '_';
+  if (LS.getItem('lg_cachev') !== '3') { LS.setItem('lg_cachev', '3'); dbp.then(function (db) { if (db) db.transaction('kv', 'readwrite').objectStore('kv').clear(); }); }
   /* offline edit queue */
   var QK = 'lg_queue', Q = function () { try { return JSON.parse(LS.getItem(QK) || '[]'); } catch (e) { return []; } }, QS = function (q) { LS.setItem(QK, JSON.stringify(q)); qBadge(); };
   var QUEUEABLE = { updateEntry: function (a) { return Object.assign({ row: a[0] }, a[1]); }, setDates: function (a) { return a[1]; }, setEpisode: function (a) { var o = {}; if (a[2]) o[a[1]] = { e: a[2] }; return o; }, saveProfile: function (a) { return a[1]; } };
@@ -44,16 +47,16 @@
     if (!tok()) return; /* setup screen first */
     if (CACHED[fn] && !servedCache[fn]) {
       servedCache[fn] = 1;
-      kv.get('c_' + fn).then(function (c) {
-        var net = rpc(fn, args).then(function (r) { kv.set('c_' + fn, r); return r; });
+      kv.get(CK + fn).then(function (c) {
+        var net = rpc(fn, args).then(function (r) { kv.set(CK + fn, r); return r; });
         if (c) { setTimeout(function () { ok(c); }, 0);
           net.then(function (r) { if (fn === 'getData' && r && c && r.version !== c.version && window.load) try { load(true); } catch (e) {} }, function () {}); }
         else net.then(ok, fail);
       }); return;
     }
-    rpc(fn, args).then(function (r) { if (CACHED[fn]) kv.set('c_' + fn, r); ok(r); }, function (e) {
+    rpc(fn, args).then(function (r) { if (CACHED[fn]) kv.set(CK + fn, r); ok(r); }, function (e) {
       if (e.offline && QUEUEABLE[fn]) { var q = Q(); q.push({ fn: fn, args: args, at: Date.now() }); QS(q); ok(QUEUEABLE[fn](args)); setTimeout(qBadge, 50); return; }
-      if (e.offline && CACHED[fn]) { kv.get('c_' + fn).then(function (c) { c ? ok(c) : fail(e); }); return; }
+      if (e.offline && CACHED[fn]) { kv.get(CK + fn).then(function (c) { c ? ok(c) : fail(e); }); return; }
       if (e.offline) e.message = 'Offline — try again when connected';
       if (String(e.message) === 'bad token') { LS.removeItem('lg_token'); setTimeout(function () { location.reload(); }, 800); }
       fail(e);
