@@ -2466,12 +2466,122 @@ setTimeout(achLoad, 2500);
 /* events only the client can see */
 var _openWrappedA = openWrapped; openWrapped = function () { evBump('wrapped'); return _openWrappedA.apply(this, arguments); };
 var _spinA = spin; spin = function () { var r = _spinA.apply(this, arguments); var iv = setInterval(function () { if (wheelState.spinning) return; clearInterval(iv); try { var it = wheelState.items[idxAtPointer()]; var t = it && (it.title || it.t || it); if (t && typeof t === 'string') evBump('spun', [t]); } catch (e) {} }, 300); return r; };
+var _saveFieldsA = saveFields; saveFields = function (r, f) { var h = new Date().getHours(); if (h < 4 && f && Object.keys(f).some(function (k) { return /Watched|Rating/.test(k); })) evBump('owl'); return _saveFieldsA.apply(this, arguments); };
+function achievements2(p) { p = p || me(); var o = p === 'sam' ? 'lewy' : 'sam', W = rows.filter(function (r) { return isY(r[p + 'Watched']); }), D = function (r, k) { return (r.dates || {})[k] || ''; };
+  var G = {}; W.forEach(function (r) { genresOf(r).forEach(function (g) { G[g] = (G[g] || 0) + 1; }); }), gm = function (re) { return W.filter(function (r) { return re.test(genresOf(r).join(',')); }).length; };
+  var dec = {}; W.forEach(function (r) { var y = +yearOf(r); if (y > 1900) dec[Math.floor(y / 10)] = 1; });
+  var byDay = {}; rows.forEach(function (r) { var d = D(r, p + 'Done'); if (d) byDay[d] = (byDay[d] || 0) + 1; }), dmax = Math.max.apply(null, [0].concat(Object.keys(byDay).map(function (k) { return byDay[k]; })));
+  var span = function (r) { var a = D(r, p + 'Start'), b = D(r, p + 'Done'); return a && b ? (new Date(b) - new Date(a)) / 864e5 : null; };
+  var pair = rows.filter(function (r) { return num(r.samRating) != null && num(r.lewyRating) != null; }), df = function (r) { return Math.abs(num(r.samRating) - num(r.lewyRating)); };
+  var base = function (t) { return String(t).replace(/\s*\((S|Season )?\d+\)\s*$/i, '').replace(/\s+(\d+|II|III|IV|Part \w+)$/i, '').trim().toLowerCase(); }, fr = {}, se = {};
+  W.forEach(function (r) { var b = base(r.title); fr[b] = (fr[b] || 0) + 1; var m = String(r.title).match(/\(S(\d+)\)\s*$/); if (m) (se[b] = se[b] || []).push(+m[1]); });
+  var saga = Object.keys(se).some(function (b) { var L = se[b], mx = Math.max.apply(null, L); if (mx < 3) return false; for (var i = 1; i <= mx; i++) if (L.indexOf(i) < 0) return false; return true; });
+  var mo = function (re, m) { return W.some(function (r) { var d = D(r, p + 'Done'); return re.test(r.title + ' ' + genresOf(r).join(',')) && d && +d.slice(5, 7) === m; }); };
+  var B = window.TVS || {}, me_ = B[p] || {}, days = window.TVDAYS || [], late = days.some(function (x) { return x[p] && x[p].late; });
+  var ytv = rows.reduce(function (t, r) { return t + Object.keys(((r.ytw || {})[p]) || {}).length; }, 0), themes = rows.filter(function (r) { return (r.theme || {})[p]; }).length, snd = ((profiles[p] || {}).snd || []).length;
+  var epr = rows.reduce(function (t, r) { return t + Object.keys((((r.ep || {})[p]) || {}).r || {}).length; }, 0), spun = (AEV.spun || []).filter(function (t) { var r = byTitle(t); return r && isY(r[p + 'Watched']); }).length;
+  var T = { w250: W.length >= 250, w500: W.length >= 500, gen20: Object.keys(G).length >= 20, dec5: Object.keys(dec).length >= 5, dec7: Object.keys(dec).length >= 7, triple: dmax >= 3,
+    binge: W.some(function (r) { var s = span(r); return r.type === 'TV Show' && s != null && s <= 3; }), sprint: W.some(function (r) { var s = span(r); return s != null && s < 1; }),
+    samedate: rows.some(function (r) { var a = D(r, 'samDone'); return a && a === D(r, 'lewyDone'); }), agree1: pair.filter(function (r) { return df(r) <= 1; }).length >= 25, agree25: pair.filter(function (r) { return df(r) === 0; }).length >= 25,
+    hot: pair.filter(function (r) { return df(r) >= 3; }).length >= 10, hot10: pair.some(function (r) { return df(r) >= 7; }), comeback: W.some(function (r) { var s = span(r); return s != null && s >= 60; }),
+    long3h: W.some(function (r) { return r.type === 'Movie' && runtimeOf(r) >= 180; }), shorty: W.some(function (r) { var m = runtimeOf(r); return r.type === 'Movie' && m > 0 && m <= 80; }),
+    xmas: mo(/christmas|xmas|holiday/i, 12), spooky: mo(/horror/i, 10), owl: (AEV.owl || 0) >= 1, horror5: gm(/horror/i) >= 5, comedy10: gm(/comedy/i) >= 10, anime: gm(/anime/i) >= 5,
+    world: Object.keys(G).filter(function (g) { return /korean|japanese|foreign|french|spanish|bollywood|indian|german|italian|nordic|k-drama|anime|world/i.test(g); }).length >= 3 || gm(/korean|japanese|foreign|french|spanish|bollywood|k-drama/i) >= 5,
+    doc: gm(/documentar/i) >= 3, franch: Object.keys(fr).some(function (b) { return fr[b] >= 3; }), saga: saga,
+    trv1: (me_.played || 0) + ((B.live || {})[p] || 0) >= 1, trvperf: ((B.perfect || {})[p] || 0) >= 1, trvstk7: (me_.bestStreak || 0) >= 7, trvclose: ((B.photo || {})[p] || 0) >= 1, trv5: ((B.runBest || {})[p] || 0) >= 5, trvlate: late,
+    yt10: ytv >= 10, yt50: ytv >= 50, ost1: themes >= 1, ost5: snd >= 5, spin5: spun >= 5, eprate: epr >= 10, wrapped: (AEV.wrapped || 0) >= 1 };
+  var L = BMETA.map(function (m) { return [m[0], '<img class="bico" src="' + BICO[m[0]] + '" alt="">', m[1], !!T[m[0]], m[2], m[3]]; });
+  var done = L.filter(function (a) { return a[0] !== 'secret' && a[3]; }).length; L[L.length - 1][3] = done >= L.length - 1; return L; }
+var TIERN = { b: 'BRONZE', s: 'SILVER', g: 'GOLD', L: 'LEGENDARY' };
+badgesHtml = function () { var A = achievements(), A2 = achievements2(), n = A.filter(function (a) { return a[3]; }).length + A2.filter(function (a) { return a[3]; }).length, tot = A.length + A2.length, dd = {}; try { dd = JSON.parse(localStorage.getItem('lg_ach_d_' + me()) || '{}'); } catch (e) {}
+  var h = '<div class="lbl">🏅 BADGES ' + n + '/' + tot + ' <small>' + (me() === 'sam' ? '1P SAM' : '2P LEWY') + '</small></div><div class="bpro"><i style="width:' + Math.round(n / tot * 100) + '%"></i></div>';
+  ['L', 'g', 's', 'b'].forEach(function (t) { var L = A2.filter(function (a) { return a[4] === t; }); if (!L.length) return;
+    h += '<div class="btier t' + t + '">' + TIERN[t] + ' <small>' + L.filter(function (a) { return a[3]; }).length + '/' + L.length + '</small></div><div class="bdg2">' + L.map(function (a) { var sec = a[5] && !a[3];
+      return '<div class="' + (a[3] ? 'on' : 'lk') + (sec ? ' sec' : '') + ' t' + t + '">' + (sec ? '<i class="q">?</i>' : a[1]) + '<span>' + (sec ? 'SECRET' : esc(a[2])) + '</span>' + (a[3] && dd[a[0]] ? '<em>' + dd[a[0]].slice(5) + '</em>' : '') + '</div>'; }).join('') + '</div>'; });
+  h += '<div class="btier">CLASSIC <small>' + A.filter(function (a) { return a[3]; }).length + '/' + A.length + '</small></div><div class="bdg">' + A.map(function (a) { return '<div class="' + (a[3] ? 'on' : 'lk') + '"><i>' + a[1] + '</i><span>' + a[2] + '</span></div>'; }).join('') + '</div>';
+  return h; };
+var _checkAchA = checkAch; checkAch = function () { _checkAchA(); if (!rows || !rows.length || !window.__achReady) return; var k = 'lg_ach_d_' + me(), got = null; try { got = JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) {}
+  var now = achievements2().filter(function (a) { return a[3]; }), first = !got; got = got || {}; var today = new Date().toISOString().slice(0, 10), nw = now.filter(function (a) { return !got[a[0]]; });
+  nw.forEach(function (a, i) { got[a[0]] = today; if (!first) setTimeout(function () { banner((a[4] === 'L' ? '🌟 LEGENDARY' : '🏆 UNLOCKED') + (a[5] ? ' · SECRET' : ''), a[1] + ' ' + esc(a[2])); SFX.fanfare && SFX.fanfare(); }, 900 + i * 2600); });
+  if (nw.length) { localStorage.setItem(k, JSON.stringify(got)); achSync(); } };
+setTimeout(function () { run('triviaDays', [me()], function (L) { window.TVDAYS = L || []; }); }, 3000);
+/* ---------- R21: iOS-safe trivia audio + YouTube auto-log with rate ping/deep link ---------- */
+var TRA = (function () { var a = document.createElement('audio'); a.id = 'trvA2'; a.preload = 'auto'; a.setAttribute('playsinline', ''); a.volume = .7; document.body.appendChild(a); return a; })(), TRA_OK = false;
+function trvUnlock() { if (TRA_OK) return; try { TRA.src = 'data:audio/wav;base64,UklGRkQDAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YSADAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgA=='; var p = TRA.play(); if (p && p.then) p.then(function () { TRA.pause(); TRA_OK = true; }, function () {}); else TRA_OK = true; } catch (e) {} try { ac(); } catch (e) {} }
+document.addEventListener('click', function (e) { if (e.target.closest('[data-trv],[data-trvnew],[data-trvjoin],[data-trvgo],#trvJ button,.trvo button')) trvUnlock(); }, true);
+trvAudio = function (src) { try { TRA.pause(); } catch (e) {} var old = $('trvA'); if (old) { old.pause(); old.remove(); } if (!src) return; if (muted) { setTimeout(function () { trvNeedTap(src, 'APP SOUND OFF · TAP TO PLAY'); }, 50); return; }
+  src = String(src).replace(/^http:/, 'https:'); TRA.src = src; try { TRA.currentTime = 0; } catch (e) {} var p = TRA.play(); if (p && p.catch) p.catch(function () { setTimeout(function () { trvNeedTap(src); }, 50); }); };
+function trvNeedTap(src, msg) { var b = document.querySelector('#trvB [data-trvsnd]'); if (!b) return; b.classList.add('need'); b.innerHTML = '▶<small>' + (msg || 'TAP TO PLAY CLIP') + '</small>'; b.dataset.src = src; }
+document.addEventListener('click', function (e) { var b = e.target.closest('[data-trvsnd]'); if (!b) return; e.preventDefault(); e.stopImmediatePropagation(); var q = TRV.daily && TRV.daily.qs ? TRV.daily.qs[TRV.dq] : TRV.st && TRV.st.q, src = b.dataset.src || (q && q.audio);
+  if (!src) return; TRA.src = String(src).replace(/^http:/, 'https:'); try { TRA.currentTime = 0; } catch (x) {} TRA.play().then(function () { TRA_OK = true; b.classList.remove('need'); b.innerHTML = '🔊<small>PLAYING · TAP TO REPLAY</small>'; }, function () { b.innerHTML = '✗<small>CLIP UNAVAILABLE</small>'; }); }, true);
+var _trvCloseA = trvClose; trvClose = function () { try { TRA.pause(); } catch (e) {} return _trvCloseA.apply(this, arguments); };
+var YAL = (function () { try { return JSON.parse(localStorage.lg_yal || '{}'); } catch (e) { return {}; } })();
+window.addEventListener('message', function (e) { var d = e.data; if (!d || d.logged !== 'yt' || !d.vid || !/^https:\/\/isolaow\.github\.io$/.test(String(e.origin))) return; ytAutoCheck(d); });
+function ytAutoCheck(d) { var p = me(), k = p + ':' + d.vid; if (YAL[k]) return; var done = d.st === 0 || (d.d > 0 && (d.d < 60 ? d.t >= d.d - 1 : d.t / d.d >= 0.7)); if (!done) return;
+  var m = (window.YTN_META || []).filter(function (x) { return x.id === d.vid; })[0], r = YTP && YTP.row ? byId(YTP.row) : null;
+  if (!m && r) m = { id: d.vid, t: r.title, ch: r.ytm && r.ytm.ch, chId: r.ytm && r.ytm.chId }; if (!m) return;
+  YAL[k] = Date.now(); localStorage.lg_yal = JSON.stringify(YAL); if (YTP) YTP.done = true;
+  run('ytAutoLog', [m, p], function (o) { if (!o || o.dup) return; if (o.logged) { toast('✓ Logged: ' + o.title); SFX.coin && SFX.coin(); }
+    load(true); setTimeout(function () { var rr = byTitle(o.title); if (rr && o.logged && num(rr[p + 'Rating']) == null) openQR(rr, [p]); }, 2500); }, function () { delete YAL[k]; localStorage.lg_yal = JSON.stringify(YAL); }); }
+(function () { var q = new URLSearchParams(location.search), t = q.get('rate'); if (!t) return; try { history.replaceState(null, '', location.pathname); } catch (e) {}
+  var n = 0, iv = setInterval(function () { if (++n > 60) return clearInterval(iv); if (!rows || !rows.length) return; clearInterval(iv); var r = byTitle(t); if (!r) return; var sp = document.getElementById('splash'); if (sp) sp.click(); setTimeout(function () { openQR(r, [me()]); }, 900); }, 500); })();
+/* ---------- R22: iPhone-safe shared AudioContext ---------- */
+var AC_N = 0, NZB = {};
+ac = function () { var C = window.AudioContext || window.webkitAudioContext;
+  if (AC && (AC.state === 'closed' || AC.state === 'interrupted')) { try { if (AC.state === 'interrupted') AC.resume(); } catch (e) {} if (AC.state === 'closed') { AC = null; NZB = {}; } }
+  if (!AC && C) { try { AC = new C(); } catch (e) {} }
+  if (AC && AC.state !== 'running') { try { AC.resume(); } catch (e) {} } return AC; };
+['pointerdown', 'touchend', 'keydown'].forEach(function (ev) { document.addEventListener(ev, function () { ac(); }, { passive: true, capture: true }); });
+document.addEventListener('visibilitychange', function () { if (!document.hidden) ac(); }); window.addEventListener('pageshow', function () { ac(); }); window.addEventListener('focus', function () { ac(); });
+function acOk() { if (muted) return false; ac(); return !!AC && AC_N < 24; }
+function acTrack(n, end) { AC_N++; var done = false, f = function () { if (!done) { done = true; AC_N = Math.max(0, AC_N - 1); } }; n.onended = f; setTimeout(f, (end + .3) * 1000); }
+tone = function (f, d, type, vol, when, slide) { if (!acOk()) return; try {
+  var t = AC.currentTime + (when || 0), o = AC.createOscillator(), g = AC.createGain();
+  o.type = type || 'square'; o.frequency.setValueAtTime(f, t); if (slide) o.frequency.exponentialRampToValueAtTime(slide, t + d);
+  g.gain.setValueAtTime(vol || .06, t); g.gain.exponentialRampToValueAtTime(.0001, t + d); o.connect(g); g.connect(AC.destination); o.start(t); o.stop(t + d + .02); acTrack(o, (when || 0) + d); } catch (e) {} };
+noise = function (d, when, vol) { if (!acOk()) return; try { var k = Math.round(d * 100), b = NZB[k];
+  if (!b) { var n = Math.max(1, Math.floor(AC.sampleRate * d)); b = AC.createBuffer(1, n, AC.sampleRate); var x = b.getChannelData(0); for (var i = 0; i < n; i++) x[i] = (Math.random() * 2 - 1) * (1 - i / n); NZB[k] = b; }
+  var s = AC.createBufferSource(), g = AC.createGain(); s.buffer = b; g.gain.value = vol || .05; s.connect(g); g.connect(AC.destination); s.start(AC.currentTime + (when || 0)); acTrack(s, (when || 0) + d); } catch (e) {} };
+
+/* ---------- R22: native-style YouTube player ---------- */
+var YTX = { id: null, info: {} };
+document.body.insertAdjacentHTML('beforeend', '<div id="ytp"><div class="yv"><div class="yvb"></div><button class="ymin" title="Minimise">⌄</button><button class="yx" title="Close">✕</button></div><div class="yi"></div></div>');
+function ytnEsc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+function ytnOpen(id, title) { var P = $('ytp'); YTX.id = id; YTX.t = title;
+  P.querySelector('.yvb').innerHTML = '<iframe src="' + PLAYER + '?v=' + encodeURIComponent(id) + trlQ() + '&rel=0&modestbranding=1&playsinline=1" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>';
+  P.classList.remove('mini'); P.classList.add('open'); document.body.classList.add('ytp-on'); P.querySelector('.yi').scrollTop = 0;
+  ytnRender(YTX.info[id] || { id: id, t: title, ld: 1 });
+  if (!YTX.info[id]) run('ytInfo', [id], function (o) { if (o) { YTX.info[id] = o; if (YTX.id === id) ytnRender(o); } }, function () { if (YTX.id === id) ytnRender({ id: id, t: title, next: [] }); }); }
+function ytnRender(o) { var lk = ytLS('lg_ytlike'), r = rows.filter(function (x) { return isYT(x) && x.ytm && x.ytm.id === o.id; })[0];
+  var h = '<h2 class="yt1">' + ytnEsc(o.t || YTX.t) + '</h2><div class="ym">' + ytnEsc([o.views, o.date].filter(Boolean).join(' · ')) + '</div>'
+    + '<div class="ych">' + (o.avatar ? '<img src="' + ytnEsc(o.avatar) + '" alt="">' : '<span class="av0"></span>') + '<div><b>' + ytnEsc(o.ch || '') + '</b><small>' + ytnEsc(o.subs || '') + '</small></div></div>'
+    + '<div class="yact"><button data-yta="like" class="' + (lk[o.id] ? 'on' : '') + '">♥ ' + (lk[o.id] ? 'Liked' : 'Like') + '</button><button data-yta="log">' + (r ? '✓ In Logged' : '＋ Log') + '</button><button data-yta="rate">★ Rate</button><a href="https://www.youtube.com/watch?v=' + ytnEsc(o.id) + '" target="_blank" rel="noopener">↗ YouTube</a></div>'
+    + (o.desc ? '<div class="ydesc" data-yta="desc">' + ytnEsc(o.desc) + '</div>' : '') + '<div class="yuh">Up next</div>';
+  h += o.ld ? '<div class="yld">Loading…</div>' : (o.next || []).map(function (v, i) { return '<div class="yn" data-ytn="' + i + '"><div class="yth"><img loading="lazy" src="' + ytnEsc(v.th) + '" alt="">' + (v.dur ? '<span class="' + (v.dur === 'LIVE' ? 'live' : '') + '">' + ytnEsc(v.dur) + '</span>' : '') + '</div><div class="ynt"><b>' + ytnEsc(v.t) + '</b><small>' + ytnEsc(v.ch) + '</small><small>' + ytnEsc(v.meta) + '</small></div></div>'; }).join('');
+  $('ytp').querySelector('.yi').innerHTML = h; }
+function ytnClose() { var P = $('ytp'); P.classList.remove('open', 'mini'); P.querySelector('.yvb').innerHTML = ''; document.body.classList.remove('ytp-on'); YTX.id = null; }
+$('ytp').addEventListener('click', function (e) { var P = $('ytp'), t = e.target;
+  if (t.closest('.yx')) { e.stopPropagation(); return ytnClose(); }
+  if (t.closest('.ymin')) { e.stopPropagation(); P.classList.add('mini'); document.body.classList.remove('ytp-on'); return; }
+  if (P.classList.contains('mini')) { P.classList.remove('mini'); document.body.classList.add('ytp-on'); return; }
+  var n = t.closest('[data-ytn]'); if (n) { var o = YTX.info[YTX.id] || {}, v = (o.next || [])[+n.dataset.ytn]; if (!v) return; var r = rows.filter(function (x) { return isYT(x) && x.ytm && x.ytm.id === v.id; })[0];
+    YTP = r ? { row: r.row, vid: v.id, done: false } : null; window.YTN_META = [{ id: v.id, t: v.t, ch: v.ch, th: v.th }]; return ytnOpen(v.id, v.t); }
+  var a = t.closest('[data-yta]'); if (!a) return; var k = a.dataset.yta, o2 = YTX.info[YTX.id] || { id: YTX.id, t: YTX.t }, rr = rows.filter(function (x) { return isYT(x) && x.ytm && x.ytm.id === YTX.id; })[0];
+  if (k === 'desc') return a.classList.toggle('open');
+  if (k === 'like') { var L = ytLS('lg_ytlike'); if (L[o2.id]) delete L[o2.id]; else L[o2.id] = { id: o2.id, t: o2.t, ch: o2.ch, chId: o2.chId, at: Date.now() }; localStorage.lg_ytlike = JSON.stringify(L); SFX.coin && SFX.coin(); return ytnRender(o2); }
+  if (k === 'log') { if (rr) return toast('Already in Logged'); a.disabled = true; a.textContent = '…';
+    run('addYouTube', [{ k: 'video', id: o2.id, t: o2.t || YTX.t, ch: o2.ch || '', chId: o2.chId || '', th: 'https://i.ytimg.com/vi/' + o2.id + '/hqdefault.jpg' }, { suggestedBy: WHO === 'lewy' ? 'Lewy' : 'Sam' }], function () { toast('✓ Added to Logged'); load(true); setTimeout(function () { ytnRender(o2); }, 2500); }); return; }
+  if (k === 'rate') { if (!rr) return toast('Log it first (＋ Log), or finish watching to auto-log'); P.classList.add('mini'); document.body.classList.remove('ytp-on'); openQR(rr, [me()]); } });
+var _ytVidN = ytVid; ytVid = function (g, i) { window.__ytn = 1; try { _ytVidN(g, i); } finally { window.__ytn = 0; } };
+var _ytPlayN = ytPlay; ytPlay = function (r, vid) { var m = r.ytm || {}; if (vid || m.k === 'video' || (!m.k && m.id)) { window.__ytn = 1; window.YTN_META = [{ id: vid || m.id, t: r.title, ch: m.ch, chId: m.chId }]; } try { _ytPlayN(r, vid); } finally { window.__ytn = 0; } };
+var _trlPlayN = trlPlay; trlPlay = function (id, title, fb) { if (window.__ytn && id && !window.TRL_LIST) return ytnOpen(id, title); _trlPlayN(id, title, fb); };
 /* ---------- R23: 'saved' pixel tick + auto-save everywhere ---------- */
 document.body.insertAdjacentHTML('beforeend', '<div id="svtk" aria-live="polite"><i></i>SAVED</div>');
 function savedTick(txt) { var t = $('svtk'); t.lastChild.textContent = txt || 'SAVED'; t.classList.remove('on'); void t.offsetWidth; t.classList.add('on'); clearTimeout(savedTick.h); savedTick.h = setTimeout(function () { t.classList.remove('on'); }, 1400); }
 function debounce(fn, ms) { var h; var d = function () { var a = arguments; clearTimeout(h); h = setTimeout(function () { h = null; fn.apply(null, a); }, ms); }; d.flush = function () { if (h) { clearTimeout(h); h = null; fn(); } }; return d; }
-var QSAVE = 0, _toastA = toast; toast = function (m, u) { if (m === 'Saved ✓' && Date.now() - QSAVE < 20000) return savedTick(); return _toastA.apply(this, arguments); };
-var _saveFieldsA = saveFields; saveFields = function (orig, fields, msg, isUndo) { if (msg === '__auto') { QSAVE = Date.now(); msg = 'Saved ✓'; } return _saveFieldsA(orig, fields, msg, isUndo); };
+/* detail sheet: every tap / keystroke saves (debounced); SAVE LOG → DONE */
+var QSAVE = 0, _toastR23 = toast; toast = function (m, u) { if (m === 'Saved ✓' && Date.now() - QSAVE < 20000) return savedTick(); return _toastR23.apply(this, arguments); };
+var _saveFieldsR23 = saveFields; saveFields = function (orig, fields, msg, isUndo) { if (msg === '__auto') { QSAVE = Date.now(); msg = 'Saved ✓'; } return _saveFieldsR23(orig, fields, msg, isUndo); };
 var detAuto = debounce(function () { if (!editing || !$('detail').classList.contains('open')) return; [].forEach.call($('detailBody').querySelectorAll('[data-t]'), function (el) { editing[el.dataset.t] = el.value; });
   var orig = byId(editing.row); if (!orig || orig.row >= 1e9) return; var f = {}, n = 0; FIELDS.forEach(function (k) { if (String(editing[k] || '') !== String(orig[k] || '')) { f[k] = editing[k]; n++; } }); if (n) saveFields(orig, f, '__auto'); }, 700);
 $('detailBody').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; if (b.id === 'eSave') return; if (b.dataset.cycle || b.dataset.e || (b.parentNode && b.parentNode.dataset && b.parentNode.dataset.k)) detAuto(); });
