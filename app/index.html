@@ -549,6 +549,35 @@ nav#nav .nadd{flex:0 0 58px}nav#nav .nadd b{width:50px;height:50px}nav#nav .nyt 
 .ytsubs button>*:first-child{width:52px;height:52px;border-radius:50%;overflow:hidden;border:3px solid var(--red);object-fit:cover}.ytsubs span{max-width:62px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ytchp{display:flex;align-items:center;gap:8px;margin:4px 0 12px;font:9px var(--pix)}.ytchp b{flex:1;color:#fff}.ytfol{font:7px var(--pix);color:var(--green,#5f5)}.ytchb{display:block;width:100%;margin:6px 0;text-align:left}
 nav#nav .nadd.on::after,nav#nav .nadd::after{display:none}nav#nav .nyt.on b{outline:3px solid var(--gold);outline-offset:1px}
+nav#nav .nyt b{background:#1d1d33}nav#nav .nyt b .tri{display:none}html.ytA nav#nav .nyt b{background:var(--red)}html.ytA nav#nav .nyt b img{display:none}html.ytA nav#nav .nyt b .tri{display:block;width:22px;height:24px;image-rendering:pixelated}
+.trvbar{display:flex;align-items:center;gap:6px;margin:8px 0;padding:8px;background:#1d1d33;border:3px solid #000;box-shadow:3px 3px 0 #000}.trvbar span{flex:1;font:8px var(--pix);color:var(--gold)}.trvbar .btn{font:7px var(--pix);padding:8px 7px}
+#trv.trvm{position:fixed!important;inset:0;z-index:2147483000;background:#0b0b14;display:none;padding:0}#trv.open{display:block}
+.trvin{height:100%;overflow-y:auto;padding:calc(10px + env(safe-area-inset-top)) 12px calc(16px + env(safe-area-inset-bottom));background:repeating-linear-gradient(0deg,#0000 0 3px,#ffffff05 3px 4px),radial-gradient(ellipse at top,#2a1a4a,#0b0b14 70%)}
+.trvhd{display:flex;align-items:center;justify-content:space-between;font:10px var(--pix);color:var(--gold);margin-bottom:8px}
+.trvlob{text-align:center;font:9px/1.8 var(--pix);color:#ddd;padding:30px 6px}.trvlob .big{font-size:56px;margin:10px 0}.trvlob .btn{display:block;width:100%;margin:12px 0;font:10px var(--pix);padding:14px}
+.trvlob .code{font:44px var(--pix);color:var(--gold);letter-spacing:8px;text-shadow:4px 4px 0 #000;margin:14px 0}#trvJ{display:flex;gap:6px}#trvJ input{flex:1;text-align:center;font:14px var(--pix);letter-spacing:6px;margin:0}
+.blink{animation:tvb 1s steps(2) infinite}@keyframes tvb{50%{opacity:.3}}.pulse{animation:tvp 1s ease-in-out infinite}@keyframes tvp{50%{transform:scale(1.04)}}.gold{color:var(--gold)}
+.trvsc{display:flex;align-items:center;gap:8px;margin:4px 0 8px}.trvsc>div:not(.vs){flex:1;padding:6px 8px;border:3px solid #000;box-shadow:3px 3px 0 #000;font:7px var(--pix);display:flex;align-items:center;gap:6px}.trvsc b{font:14px var(--pix);margin-left:auto}
+.trvsc .s{background:#1f6f5c;color:#cfe}.trvsc .l{background:#6a2a5c;color:#fce}.trvsc .vs{font:9px var(--pix);color:var(--red)}
+.trvn{font:7px var(--pix);color:var(--dim);margin:2px 0 6px}
+.trvimg{position:relative;border:4px solid #000;box-shadow:4px 4px 0 #000,0 0 0 2px var(--gold) inset;background:#000;aspect-ratio:16/9;overflow:hidden}.trvimg.por{aspect-ratio:3/4;width:62%;margin:0 auto}.trvimg canvas{width:100%;height:100%;display:block;image-rendering:pixelated}
+.trvimg em{position:absolute;left:6px;top:6px;font:6px var(--pix);font-style:normal;background:var(--gold);color:#000;padding:3px 5px;animation:tvb 1s steps(2) infinite}
+.trvq{min-height:150px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}.bub{position:relative;background:#f4f1ea;color:#111;font:10px/1.7 var(--pix);padding:14px;border:4px solid #000;box-shadow:4px 4px 0 #000;max-width:94%}
+.bub::after{content:"";position:absolute;left:24px;bottom:-16px;border:8px solid transparent;border-top-color:#000;border-left-color:#000}
+.trvq .snd{font-size:44px;background:#1d1d33;border:4px solid #000;box-shadow:4px 4px 0 #000;padding:12px 20px;display:flex;flex-direction:column;align-items:center}.trvq .snd small{font:6px var(--pix);color:var(--dim)}
+.eq{display:flex;gap:4px;height:26px;align-items:flex-end}.eq i{width:8px;background:var(--gold);animation:tveq .6s steps(4) infinite alternate}.eq i:nth-child(2){animation-delay:.2s}.eq i:nth-child(3){animation-delay:.4s}.eq i:nth-child(4){animation-delay:.1s}@keyframes tveq{from{height:4px}to{height:26px}}
+.trvtm{height:8px;background:#000;margin:8px 0;border:2px solid #000}.trvtm i{display:block;height:100%;background:linear-gradient(90deg,var(--red),var(--gold));width:100%}
+.trvqq{font:9px/1.7 var(--pix);color:#fff;margin:6px 0 10px}.trvmore{font:8px var(--pix);color:var(--gold);margin:-4px 0 8px}
+.trvo{display:grid;gap:8px}.trvo button{display:flex;align-items:center;gap:8px;text-align:left;font:13px var(--body,inherit);color:#fff;background:#1d1d33;border:3px solid #000;box-shadow:3px 3px 0 #000;padding:10px}.trvo button span{font:9px var(--pix);color:var(--gold)}
+.trvo button.pick{background:#3a3a6a;outline:2px solid var(--gold)}.trvo button.ok{background:#1f7a3a}.trvo button.bad{background:#7a1f2a}.trvo button b{margin-left:auto;font:7px var(--pix);padding:3px 4px;border:2px solid #000}.trvo b.s{background:#1f6f5c}.trvo b.l{background:#6a2a5c}
+.trvst{display:flex;gap:6px;margin:10px 0}.trvst div{flex:1;text-align:center;background:#1d1d33;border:3px solid #000;padding:8px 2px;font-size:16px}.trvst b{display:block;font:12px var(--pix);color:var(--gold);margin:4px 0}.trvst small{font:6px var(--pix);color:var(--dim)}
+.trvr{display:flex;gap:8px;margin:8px 0;background:#1d1d33;border:3px solid #000;padding:6px;font-size:12px}.trvr .th{flex:0 0 72px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;background:#000;overflow:hidden}.trvr .th img{width:100%;height:100%;object-fit:cover;image-rendering:pixelated}
+.trvr small{display:block;font:6px/1.6 var(--pix);color:var(--dim)}.trvr b{display:block;color:#fff;margin:2px 0}.trvr span{font:7px var(--pix);margin-right:6px}.trvr .ok{color:#5f5}.trvr .bad{color:#f66}
+body nav#nav .nadd b,html.ytA body nav#nav .nyt b,body nav#nav .nyt b{background:var(--gold);color:var(--red);border:3px solid #000;box-shadow:inset -3px -3px 0 rgba(0,0,0,.18),inset 3px 3px 0 rgba(255,255,255,.25),3px 3px 0 var(--red);text-shadow:2px 2px 0 #000}body nav#nav .nyt b img{display:none}body nav#nav .nyt b .tri{display:block;width:22px;height:24px;filter:drop-shadow(2px 2px 0 #000)}body nav#nav .nyt b .tri path{fill:var(--red)}body nav#nav .nadd:active b{box-shadow:1px 1px 0 var(--red)}
+.trvlb{width:100%;border-collapse:collapse;margin:10px 0;font:7px var(--pix);background:#1d1d33;border:3px solid #000;box-shadow:3px 3px 0 #000}.trvlb th,.trvlb td{padding:7px 4px;text-align:center;border-bottom:2px solid #0b0b14;color:#ccc}.trvlb td:nth-child(2){text-align:left}.trvlb th{color:var(--gold)}.trvlb th.s{color:#7fd}.trvlb th.l{color:#f9d}.trvlb td.w{color:var(--gold);text-shadow:1px 1px 0 var(--red)}
+.trvday{display:flex;width:100%;gap:8px;align-items:center;margin:6px 0;padding:9px;background:#1d1d33;border:3px solid #000;font:7px var(--pix);color:#ccc}.trvday b{color:var(--gold);width:44px;text-align:left}.trvday span{flex:1;text-align:left}.trvday i{font-style:normal;color:var(--red)}.trvday.miss{outline:2px dashed var(--gold)}
+.trvlate{font:7px var(--pix);color:var(--red);text-align:center;margin:8px 0}
+.trvlob .trvpush{background:#1d1d33;color:#ccc;font:8px var(--pix);padding:10px}
 </style></head><body>
 <div id="splash" aria-label="Logged"></div>
 <header><div class="hin">
@@ -2193,7 +2222,7 @@ function ytImport(tok) { var H = { headers: { Authorization: 'Bearer ' + tok } }
 document.addEventListener('click', function (e) { var b = e.target.closest('[data-ytconnect],[data-ytimp]'); if (!b) return; e.stopImmediatePropagation();
   if (b.dataset.ytconnect) return ytConnect(b.dataset.ytconnect);
   var it = YTIMP[Number(b.dataset.ytimp)]; b.disabled = true; b.querySelector('.k').textContent = '✓'; run('addYouTube', [it, { suggestedBy: WHO === 'lewy' ? 'Lewy' : 'Sam' }], function () { toast('Added to Logging'); load(true); }); }, true);
-(function(){var b=$('navYT');if(!b)return;b.firstChild.innerHTML=ytI(24);})();
+(function(){var b=$('navYT');if(!b)return;b.firstChild.innerHTML=ytI(24)+"<svg class=\"tri\" viewBox=\"0 0 7 8\" shape-rendering=\"crispEdges\"><path fill=\"#fff\" d=\"M0 0h2v1h2v1h2v1h1v2h-1v1h-2v1h-2v1h-2z\"/></svg>";if(localStorage.lg_ythb==='A')document.documentElement.classList.add('ytA');})();
 /* ---------- 12d) YouTube home (YouTube-like, 8-bit): feed, continue, recent, subs, chips, trending AU, shorts-free, channel pages, up-next ---------- */
 (function () { var d = document.createElement('div'); d.className = 'page'; d.id = 'ytpage'; d.innerHTML = '<div class="pagein" id="ytBody"></div>'; document.body.appendChild(d); })();
 var YH = { cat: '', feed: null, subs: null, q: '', res: null, ch: null, nosh: localStorage.lg_ytnosh === '1' };
@@ -2250,4 +2279,88 @@ document.addEventListener('click', function (e) { var b = e.target.closest('#nav
   if (D.ytchx) { YH.ch = null; return ytDraw(); }
   if (D.ytrx) { YH.res = null; YH.q = ''; return ytDraw(); }
   if (D.ytfollow) { var c = YH.ch; b.disabled = true; run('addYouTube', [{ k: 'channel', id: c.id, t: c.n, ch: c.n, chId: c.id, th: (c.L && c.L[0]) ? 'https://i.ytimg.com/vi/' + c.L[0].id + '/hqdefault.jpg' : '' }, { suggestedBy: WHO === 'lewy' ? 'Lewy' : 'Sam' }], function () { toast('✓ Following ' + c.n); YH.subs = null; load(true); setTimeout(ytLoad, 600); }); } }, true);
+/* ---------- 13) TRIVIA: live 1v1 + daily. Image-led (pixelated → reveal), quotes, soundtrack clips ---------- */
+var TRV = { code: '', poll: 0, st: null, img: null, iKey: '', raf: 0, daily: null, dq: 0, picks: [], ms: [], t0: 0 };
+var _spinBarT = spinBar; spinBar = function () { return _spinBarT() + '<div class="trvbar px"><span>🧠 TRIVIA</span><button class="btn r" data-trv="live">⚔ LIVE 1V1</button><button class="btn y" data-trv="daily">📅 DAILY</button></div>'; };
+(function () { var d = document.createElement('div'); d.className = 'modal trvm'; d.id = 'trv'; d.innerHTML = '<div class="trvin" id="trvB"></div>'; document.body.appendChild(d); })();
+function me() { return WHO === 'lewy' ? 'lewy' : 'sam'; }
+function trvShow(h) { $('trvB').innerHTML = '<div class="trvhd"><span>🧠 ' + (TRV.daily ? 'DAILY TRIVIA' : 'LIVE TRIVIA') + '</span><button class="btn" data-trvx="1">✕</button></div>' + h; $('trv').classList.add('open'); }
+function trvClose() { clearInterval(TRV.poll); cancelAnimationFrame(TRV.raf); TRV.poll = 0; TRV.code = ''; TRV.st = null; TRV.daily = null; trvAudio(); $('trv').classList.remove('open'); }
+function trvAudio(src) { var a = $('trvA'); if (a) { a.pause(); a.remove(); } if (src && !muted) { a = document.createElement('audio'); a.id = 'trvA'; a.src = src; a.volume = .6; document.body.appendChild(a); a.play().catch(function () {}); } }
+/* pixelated image: draw tiny then scale up (no smoothing); block size shrinks over the countdown → reveal */
+function trvPix(url, t0, dur, done) { cancelAnimationFrame(TRV.raf); var c = $('trvC'); if (!c || !url) return; var x = c.getContext('2d'), im = TRV.img && TRV.img.src === url ? TRV.img : new Image();
+  if (im !== TRV.img) { im.src = url; TRV.img = im; } var W = c.width = c.clientWidth * 2 || 700, H = c.height = c.clientHeight * 2 || 400;
+  var draw = function () { if (!im.complete || !im.naturalWidth) { TRV.raf = requestAnimationFrame(draw); return; } var k = done ? 1 : Math.max(0, 1 - (Date.now() - t0) / dur), bs = done ? 1 : Math.max(1, Math.round(4 + 44 * k * k));
+    var sw = Math.max(1, Math.ceil(W / bs)), sh = Math.max(1, Math.ceil(H / bs)), r = Math.max(sw / im.naturalWidth, sh / im.naturalHeight), iw = im.naturalWidth * r, ih = im.naturalHeight * r;
+    x.imageSmoothingEnabled = true; x.clearRect(0, 0, W, H); x.drawImage(im, (sw - iw) / 2, (sh - ih) / 2, iw, ih); x.imageSmoothingEnabled = false; x.drawImage(c, 0, 0, sw, sh, 0, 0, W, H);
+    if (!done && k > 0) TRV.raf = requestAnimationFrame(draw); }; draw(); }
+function trvCard(q, o) { o = o || {}; var media = q.img ? '<div class="trvimg' + (q.portrait ? ' por' : '') + '"><canvas id="trvC"></canvas>' + (q.pix && !o.reveal ? '<em>BONUS ▸ ANSWER EARLY</em>' : '') + '</div>'
+    : q.quote ? '<div class="trvq"><div class="bub">“' + esc(q.quote) + '”</div></div>' : q.audio ? '<div class="trvq"><button class="snd" data-trvsnd="1">🔊<small>TAP TO REPLAY</small></button><div class="eq"><i></i><i></i><i></i><i></i><i></i></div></div>' : '';
+  var opts = q.opts.map(function (t, i) { var cls = []; if (o.reveal) { if (i === q.a) cls.push('ok'); else if (o.mine === i) cls.push('bad'); } else if (o.mine === i) cls.push('pick');
+    var who = o.reveal ? (o.sam === i ? '<b class="s">S</b>' : '') + (o.lewy === i ? '<b class="l">L</b>' : '') : ''; return '<button class="' + cls.join(' ') + '" data-trva="' + i + '"' + (o.mine != null || o.reveal ? ' disabled' : '') + '><span>' + 'ABCD'[i] + '</span>' + esc(t) + who + '</button>'; }).join('');
+  return media + '<div class="trvtm"><i id="trvBar"></i></div><div class="trvqq">' + esc(q.q) + '</div>' + (o.reveal ? '<div class="trvmore">' + esc(q.t || '') + (q.more ? ' · ' + esc(q.more) : '') + '</div>' : '') + '<div class="trvo">' + opts + '</div>'; }
+function trvTimer(t0, dur) { var b = $('trvBar'), last = -1; (function f() { if (!b || !b.isConnected) return; var k = Math.max(0, 1 - (Date.now() - t0) / dur); b.style.width = k * 100 + '%'; var s = Math.ceil(k * dur / 1000); if (s !== last && s <= 5 && s > 0) { SFX.tick(600 + s * 120); } last = s; if (k > 0) requestAnimationFrame(f); })(); }
+function scoreBar(sc, lk) { return '<div class="trvsc"><div class="s">1P SAM<b>' + (sc.sam || 0) + '</b>' + (lk ? (lk.sam ? '🔒' : '…') : '') + '</div><div class="vs">VS</div><div class="l">2P LEWY<b>' + (sc.lewy || 0) + '</b>' + (lk ? (lk.lewy ? '🔒' : '…') : '') + '</div></div>'; }
+/* ----- live ----- */
+function trvLobby() { TRV.daily = null; trvShow('<div class="trvlob"><div class="big">⚔</div><p>SAME QUESTION · SAME TIME<br>ANSWERS HIDDEN TILL BOTH LOCK IN</p><button class="btn r" data-trvnew="1">▶ START GAME</button><div id="trvOpen"></div><form id="trvJ"><input class="f" name="c" inputmode="numeric" maxlength="4" placeholder="CODE"><button class="btn b">JOIN</button></form></div>');
+  run('triviaOpen', [], function (c) { if (c && $('trvOpen')) $('trvOpen').innerHTML = '<button class="btn y pulse" data-trvjoin="' + esc(c) + '">🎮 JOIN GAME ' + esc(c) + '</button>'; }); }
+function trvStart(st) { TRV.code = st.code; TRV.st = st; TRV.skew = Date.now() - st.now; trvDraw(); clearInterval(TRV.poll); TRV.poll = setInterval(function () { run('triviaState', [TRV.code, me()], trvGot); }, 1000); }
+function trvGot(st) { if (!st || !TRV.code) return; var p = TRV.st || {}; TRV.st = st; TRV.skew = Date.now() - st.now; if (st.phase !== p.phase || st.i !== p.i || JSON.stringify(st.locked) !== JSON.stringify(p.locked)) trvDraw(p); }
+function trvDraw(prev) { var s = TRV.st; prev = prev || {}; if (!s) return;
+  if (s.phase === 'gone') { trvShow('<div class="trvlob"><p>GAME ENDED</p></div>'); clearInterval(TRV.poll); return; }
+  if (s.phase === 'lobby') return trvShow('<div class="trvlob"><p>GAME CODE</p><div class="code">' + s.code + '</div><p class="blink">WAITING FOR ' + (s.host === 'sam' ? 'LEWY' : 'SAM') + '…</p><small>They tap 🧠 TRIVIA → ⚔ LIVE → JOIN</small></div>');
+  if (s.phase === 'done') { clearInterval(TRV.poll); var w = s.sc.sam > s.sc.lewy ? 'SAM' : s.sc.lewy > s.sc.sam ? 'LEWY' : 'NOBODY'; SFX.fanfare(); TRV.code = ''; return trvShow(scoreBar(s.sc) + '<div class="trvlob"><div class="big">👑</div><p>' + w + ' WINS!</p><button class="btn r" data-trvnew="1">▶ REMATCH</button></div>'); }
+  var t0 = s.at + TRV.skew, rev = s.phase === 'reveal', q = s.q, mine = s.mine ? s.mine.c : null;
+  if (s.phase === 'q' && t0 > Date.now()) { trvShow(scoreBar(s.sc) + '<div class="trvlob"><p>GET READY</p><div class="code">' + (s.i + 1) + '/' + s.n + '</div></div>'); setTimeout(trvDraw, t0 - Date.now() + 30); return; }
+  trvShow(scoreBar(s.sc, rev ? null : s.locked) + '<div class="trvn">Q' + (s.i + 1) + '/' + s.n + '</div>' + trvCard(q, { reveal: rev, mine: mine, sam: rev && s.ans.sam ? s.ans.sam.c : null, lewy: rev && s.ans.lewy ? s.ans.lewy.c : null }));
+  if (q.img) trvPix(q.img, t0, s.qms * .85, rev); if (!rev) trvTimer(t0, s.qms);
+  if (q.audio && (prev.i !== s.i || prev.phase !== s.phase) && !rev) trvAudio(q.audio); if (rev && prev.phase !== 'reveal') { trvAudio(); (mine === q.a ? SFX.coin : SFX.back)(); } }
+/* ----- daily ----- */
+function trvDaily() { TRV.daily = { load: 1 }; trvShow('<div class="trvlob"><p class="blink">LOADING TODAY\u2019S SET…</p></div>'); run('triviaDaily', [me()], function (d) { TRV.daily = d; if (d.mine) trvDailyRes(); else trvDailyIntro(); }, function (e) { trvShow('<div class="trvlob"><p>' + esc(String(e && e.message || e)) + '</p></div>'); }); }
+function trvStreak(S, p) { var s = ((S || {}).streak || {})[p] || {}; return (s.cur || 0); }
+function trvDailyIntro() { var d = TRV.daily; trvShow('<div class="trvlob"><div class="big">📅</div><p>' + d.qs.length + ' QUESTIONS FROM TITLES YOU\u2019VE FINISHED</p><p>🔥 STREAK ' + trvStreak(d.stats, me()) + '</p>' + (d.other === 'done' ? '<p class="pulse">' + (me() === 'sam' ? 'LEWY' : 'SAM') + ' ALREADY PLAYED!</p>' : '') + '<button class="btn r" data-trvgo="1">▶ PLAY</button></div>'); }
+function trvDQ() { var d = TRV.daily, i = TRV.dq, q = d.qs[i]; if (!q) return trvDSubmit(); TRV.t0 = Date.now(); var dur = 20000;
+  trvShow('<div class="trvn">Q' + (i + 1) + '/' + d.qs.length + '</div>' + trvCard(q, {})); if (q.img) trvPix(q.img, TRV.t0, dur * .85); trvTimer(TRV.t0, dur); if (q.audio) trvAudio(q.audio);
+  clearTimeout(TRV.dt); TRV.dt = setTimeout(function () { if (TRV.dq === i) trvDPick(-1); }, dur); }
+function trvDPick(c) { clearTimeout(TRV.dt); trvAudio(); TRV.picks[TRV.dq] = c; TRV.ms[TRV.dq] = Date.now() - TRV.t0; SFX.blip(); TRV.dq++; setTimeout(trvDQ, 250); }
+function trvDSubmit() { trvShow('<div class="trvlob"><p class="blink">LOCKING IN…</p></div>'); run('triviaDailyAnswer', [me(), TRV.picks, TRV.ms], function (d) { TRV.daily = d; SFX.coin(); trvDailyRes(); }); }
+function trvDailyRes() { var d = TRV.daily, o = me() === 'sam' ? 'lewy' : 'sam', mine = d.mine, oth = d.both ? d.other : null, sc = {}; sc[me()] = mine.sc; sc[o] = oth ? oth.sc : 0;
+  var L = d.qs.map(function (q, i) { return '<div class="trvr"><div class="th">' + (q.img ? '<img src="' + esc(q.img) + '" alt="">' : q.quote ? '💬' : q.audio ? '🎵' : '❓') + '</div><div><small>' + esc(q.q) + '</small><b>' + esc(q.opts[q.a]) + '</b>' +
+    '<span class="' + (mine.p[i] === q.a ? 'ok' : 'bad') + '">' + (me() === 'sam' ? 'S' : 'L') + (mine.p[i] === q.a ? '✓' : '✗') + '</span>' + (oth ? '<span class="' + (oth.p[i] === q.a ? 'ok' : 'bad') + '">' + (o === 'sam' ? 'S' : 'L') + (oth.p[i] === q.a ? '✓' : '✗') + '</span>' : '') + '</div></div>'; }).join('');
+  var S = d.stats || {}, dl = S.daily || {};
+  trvShow((d.both ? scoreBar(sc) : '<div class="trvlob"><p>YOU SCORED <b class="gold">' + mine.sc + '</b></p><p class="blink">RESULTS UNLOCK WHEN ' + o.toUpperCase() + ' PLAYS</p></div>') +
+    '<div class="trvst"><div>🔥<b>' + trvStreak(S, 'sam') + '</b><small>SAM STREAK</small></div><div>🔥<b>' + trvStreak(S, 'lewy') + '</b><small>LEWY STREAK</small></div><div>⚔<b>' + (dl.sam || 0) + '-' + (dl.lewy || 0) + '</b><small>DAILY H2H</small></div></div>' + (d.both ? L : '')); }
+/* ----- events ----- */
+document.addEventListener('click', function (e) { var b = e.target.closest('[data-trv],[data-trvx],[data-trvnew],[data-trvjoin],[data-trva],[data-trvgo],[data-trvsnd]'); if (!b) return; e.preventDefault(); e.stopImmediatePropagation(); var D = b.dataset; ac();
+  if (D.trv === 'live') return trvLobby(); if (D.trv === 'daily') return trvDaily(); if (D.trvx) return trvClose();
+  if (D.trvnew) { trvShow('<div class="trvlob"><p class="blink">BUILDING QUESTIONS…</p></div>'); return run('triviaNew', [me()], trvStart, function (er) { trvShow('<div class="trvlob"><p>' + esc(String(er && er.message || er)) + '</p></div>'); }); }
+  if (D.trvjoin) return run('triviaJoin', [D.trvjoin, me()], trvStart, function (er) { toast(String(er && er.message || er)); });
+  if (D.trvgo) { TRV.dq = 0; TRV.picks = []; TRV.ms = []; return trvDQ(); }
+  if (D.trvsnd) { var a = $('trvA'); if (a) { a.currentTime = 0; a.play(); } else { var q = TRV.daily && TRV.daily.qs ? TRV.daily.qs[TRV.dq] : TRV.st && TRV.st.q; if (q) trvAudio(q.audio); } return; }
+  if (D.trva != null) { var c = +D.trva; if (TRV.daily && TRV.daily.qs && !TRV.daily.mine) return trvDPick(c); if (!TRV.st) return; SFX.save(); [].forEach.call(document.querySelectorAll('[data-trva]'), function (x) { x.disabled = true; }); b.classList.add('pick');
+    run('triviaAnswer', [TRV.code, me(), TRV.st.i, c], trvGot); } }, true);
+document.addEventListener('submit', function (e) { if (e.target.id !== 'trvJ') return; e.preventDefault(); var c = e.target.c.value.replace(/\D/g, ''); if (c) run('triviaJoin', [c, me()], trvStart, function (er) { toast(String(er && er.message || er)); }); }, true);
+/* ----- Camp stats ----- */
+window.TVS = null; function trvLoadStats() { run('triviaStats', [], function (S) { var had = !!window.TVS; window.TVS = S || {}; if (!had && view === 'stats') render(); }); } setTimeout(trvLoadStats, 1500);
+var _personHtmlT = personHtml; personHtml = function (p) { var S = window.TVS || {}, lv = S.live || {}, dl = S.daily || {}, st = (S.streak || {})[p] || {};
+  return _personHtmlT(p) + '<div class="lbl">🧠 TRIVIA</div><div class="tlk"><div><i>⚔</i><b>' + (lv[p] || 0) + '</b><span>LIVE WINS</span></div><div><i>📅</i><b>' + (dl[p] || 0) + '</b><span>DAILY WINS</span></div><div><i>🔥</i><b>' + (st.cur || 0) + '</b><span>STREAK · BEST ' + (st.best || 0) + '</span></div><div><i>★</i><b>' + ((S.best || {})[p] || 0) + '</b><span>BEST SCORE</span></div></div>'; };
+/* ---------- 13b) Daily = 10 Qs per date, catch-up of missed days (played late), leaderboard ---------- */
+TRV.date = '';
+function trvBoard(B) { B = B || window.TVS || {}; var s = B.sam || {}, l = B.lewy || {}, row = function (ic, n, a, b, suf) { suf = suf || ''; return '<tr><td>' + ic + '</td><td>' + n + '</td><td class="' + (a > b ? 'w' : '') + '">' + a + suf + '</td><td class="' + (b > a ? 'w' : '') + '">' + b + suf + '</td></tr>'; };
+  return '<table class="trvlb"><tr><th></th><th>🏆 BOARD</th><th class="s">SAM</th><th class="l">LEWY</th></tr>' + row('👑', 'WINS', s.wins || 0, l.wins || 0) + row('★', 'POINTS', s.pts || 0, l.pts || 0) + row('🎯', 'ACCURACY', s.acc || 0, l.acc || 0, '%') + row('🔥', 'STREAK', s.streak || 0, l.streak || 0) + row('⚡', 'BEST STREAK', s.bestStreak || 0, l.bestStreak || 0) + row('⚔', 'LIVE WINS', (B.live || {}).sam || 0, (B.live || {}).lewy || 0) + '</table>'; }
+trvDaily = function (date) { TRV.date = date || ''; TRV.daily = { load: 1 }; trvShow('<div class="trvlob"><p class="blink">LOADING SET…</p></div>');
+  run('triviaDaily', [me(), TRV.date || undefined], function (d) { TRV.daily = d; if (d.stats) window.TVS = d.stats; if (d.mine) trvDailyRes(); else trvDailyIntro(); }, function (e) { trvShow('<div class="trvlob"><p>' + esc(String(e && e.message || e)) + '</p></div>'); }); };
+trvDailyIntro = function () { var d = TRV.daily; trvShow('<div class="trvlob"><div class="big">📅</div><p>' + (d.today ? 'TODAY' : d.d + ' · CATCH-UP (PLAYED LATE)') + '<br>' + d.qs.length + ' QUESTIONS · FINISHED TITLES ONLY</p>' + (d.other === 'done' ? '<p class="pulse">' + (me() === 'sam' ? 'LEWY' : 'SAM') + ' ALREADY PLAYED!</p>' : '') + '<button class="btn r" data-trvgo="1">▶ PLAY</button></div>' + trvBoard(d.stats) + '<div id="trvDays"></div>'); trvDaysLoad(); };
+function trvDaysLoad() { run('triviaDays', [me()], function (L) { var el = $('trvDays'); if (!el || !L) return; var m = me(), o = m === 'sam' ? 'lewy' : 'sam';
+  el.innerHTML = '<div class="lbl">⏪ PAST DAYS · CATCH UP</div>' + L.map(function (x) { var a = x[m], b = x[o]; return '<button class="trvday' + (a ? '' : ' miss') + '" data-trvday="' + x.d + '"><b>' + x.d.slice(5) + '</b><span>' + (a ? '✓ ' + a.sc + (a.late ? ' <i>LATE</i>' : '') : '▶ PLAY') + '</span><span>' + (o === 'sam' ? 'S ' : 'L ') + (b ? '✓ ' + b.sc + (b.late ? ' <i>LATE</i>' : '') : '–') + '</span></button>'; }).join(''); }); }
+trvDSubmit = function () { trvShow('<div class="trvlob"><p class="blink">LOCKING IN…</p></div>'); run('triviaDailyAnswer', [me(), TRV.picks, TRV.ms, TRV.daily.d], function (d) { TRV.daily = d; if (d.stats) window.TVS = d.stats; SFX.coin(); trvDailyRes(); }); };
+var _trvDailyRes = trvDailyRes; trvDailyRes = function () { _trvDailyRes(); var B = $('trvB'), d = TRV.daily, st = B.querySelector('.trvst'); if (st) st.outerHTML = (d.mine && d.mine.late ? '<div class="trvlate">⏪ PLAYED LATE · ' + d.d + '</div>' : '') + trvBoard(d.stats); B.insertAdjacentHTML('beforeend', '<div id="trvDays"></div>'); trvDaysLoad(); };
+document.addEventListener('click', function (e) { var b = e.target.closest('[data-trvday]'); if (!b) return; e.preventDefault(); e.stopImmediatePropagation(); trvDaily(b.dataset.trvday); }, true);
+var _personHtmlT2 = _personHtmlT; personHtml = function (p) { var B = window.TVS || {}, x = B[p] || {};
+  return _personHtmlT2(p) + '<div class="lbl">🧠 TRIVIA</div><div class="tlk"><div><i>👑</i><b>' + (x.wins || 0) + '</b><span>WINS</span></div><div><i>★</i><b>' + (x.pts || 0) + '</b><span>POINTS</span></div><div><i>🎯</i><b>' + (x.acc || 0) + '%</b><span>ACCURACY</span></div><div><i>🔥</i><b>' + (x.streak || 0) + '</b><span>STREAK · BEST ' + (x.bestStreak || 0) + '</span></div><div><i>📅</i><b>' + (x.played || 0) + '</b><span>DAILIES · ' + (x.late || 0) + ' LATE</span></div></div>' + (p === 'lewy' ? trvBoard() : ''); };
+/* quiz push toggle (per person, ntfy) */
+window.TVP = localStorage.lg_tvpush !== '0';
+var _trvDailyIntro2 = trvDailyIntro; trvDailyIntro = function () { _trvDailyIntro2(); var l = $('trvB').querySelector('.trvlob'); if (l) l.insertAdjacentHTML('beforeend', '<button class="btn trvpush" data-trvpush="1">' + (TVP ? '🔔 QUIZ PINGS ON' : '🔕 QUIZ PINGS OFF') + '</button>'); };
+document.addEventListener('click', function (e) { var b = e.target.closest('[data-trvpush]'); if (!b) return; e.preventDefault(); e.stopImmediatePropagation(); TVP = !TVP; localStorage.lg_tvpush = TVP ? '1' : '0'; b.textContent = TVP ? '🔔 QUIZ PINGS ON' : '🔕 QUIZ PINGS OFF'; run('setTriviaPush', [me(), TVP], function () { toast(TVP ? '🔔 Quiz pings on' : '🔕 Quiz pings off'); }); }, true);
+setTimeout(function () { run('getTriviaPush', [me()], function (v) { TVP = v !== false; localStorage.lg_tvpush = TVP ? '1' : '0'; }); }, 2500);
 </script></body></html>
