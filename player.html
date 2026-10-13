@@ -7,21 +7,23 @@
 #e a{color:#fff;border:2px solid #fff;padding:10px 14px;text-decoration:none}</style>
 </head><body><div id="p"></div><div id="e"><div>Can't play here</div><a id="ea" target="_blank" rel="noopener">▶ WATCH ON YOUTUBE</a></div>
 <script>
-var q = new URLSearchParams(location.search), v = (q.get('v') || '').replace(/[^\w-]/g, '').slice(0, 20);
+var q = new URLSearchParams(location.search), v = (q.get('v') || '').replace(/[^\w-]/g, '').slice(0, 20), st = Math.max(0, parseInt(q.get('start') || '0', 10) || 0), en = parseInt(q.get('end') || '0', 10) || 0, vol = parseInt(q.get('vol') || '100', 10), loop = q.get('loop') === '1', list = (q.get('list') || '').replace(/[^\w-]/g, '').slice(0, 60), nxt = (q.get('next') || '').replace(/[^\w,-]/g, '').slice(0, 400);
+function tell(o) { try { o.logged = 'yt'; parent.postMessage(o, '*'); } catch (x) {} }
 document.getElementById('ea').href = 'https://www.youtube.com/watch?v=' + v;
 /* Ask YouTube for the best quality. These calls are deprecated/no-ops on many clients; YouTube may still choose by bandwidth/size. */
 function hq(p) { try { var L = (p.getAvailableQualityLevels && p.getAvailableQualityLevels()) || [], best = L[0] || 'highres';
   if (p.setPlaybackQualityRange) p.setPlaybackQualityRange(best, best); if (p.setPlaybackQuality) p.setPlaybackQuality(best); } catch (x) {} }
 function fail() { document.getElementById('e').style.display = 'flex'; }
-if (!v) fail();
+if (!v && !list) fail();
 window.onYouTubeIframeAPIReady = function () {
-  new YT.Player('p', { host: 'https://www.youtube-nocookie.com', videoId: v,
+  window.__p = new YT.Player('p', { host: 'https://www.youtube-nocookie.com', videoId: v,
     width: Math.round(innerWidth), height: Math.round(innerHeight),
-    playerVars: { autoplay: 1, playsinline: 1, rel: 0, modestbranding: 1, vq: 'hd2160', hd: 1, origin: location.origin },
-    events: { onReady: function (e) { hq(e.target); try { e.target.playVideo(); } catch (x) {} window.__ready = 1; },
+    playerVars: { autoplay: 1, playsinline: 1, rel: 0, modestbranding: 1, vq: 'hd2160', hd: 1, origin: location.origin, start: st, end: en || undefined, listType: list ? 'playlist' : undefined, list: list || undefined, playlist: (!list && nxt) ? nxt : undefined },
+    events: { onReady: function (e) { hq(e.target); try { e.target.setVolume(Math.max(0, Math.min(100, vol))); } catch (x) {} try { e.target.playVideo(); } catch (x) {} window.__ready = 1; },
       onPlaybackQualityChange: function (e) { window.__q = e.data; if (e.data !== 'highres' && e.data !== 'hd2160' && !window.__qtry) { window.__qtry = 1; hq(e.target); } },
-      onStateChange: function (e) { window.__state = e.data; if (e.data === 1) hq(e.target); },
+      onStateChange: function (e) { window.__state = e.data; if (e.data === 1) hq(e.target); if (e.data === 0 && (loop || en)) { if (loop) e.target.seekTo(st, true); } try { var vd = e.target.getVideoData ? e.target.getVideoData().video_id : v; tell({ st: e.data, vid: vd, t: e.target.getCurrentTime(), d: e.target.getDuration() }); } catch (x) {} },
       onError: function (e) { window.__err = e.data; fail(); } } });
 };
-if (v) { var s = document.createElement('script'); s.src = 'https://www.youtube.com/iframe_api'; document.head.appendChild(s); }
+setInterval(function () { try { var p = window.__p; if (p && p.getPlayerState && p.getPlayerState() === 1) tell({ st: 1, vid: p.getVideoData().video_id, t: p.getCurrentTime(), d: p.getDuration() }); } catch (x) {} }, 10000);
+if (v || list) { var s = document.createElement('script'); s.src = 'https://www.youtube.com/iframe_api'; document.head.appendChild(s); }
 </script></body></html>
