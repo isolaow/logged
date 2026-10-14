@@ -807,7 +807,7 @@ body.ytp-on{overflow:hidden}
 #ytp .yv .ypo{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:manipulation}
 #thm.alb span{opacity:.85}
 .cnr.ex .cnt small{color:#ff8fa3}.cnb.re{background:#ff8fa3;color:#000}
-.mpclose{font:9px var(--pix);letter-spacing:1px;color:#000;background:#7cdcff;padding:8px 10px;margin:0 0 12px;box-shadow:3px 3px 0 #000}#ytp .yx{display:none}
+.mpclose{font:9px var(--pix);letter-spacing:1px;color:#000;background:#7cdcff;padding:8px 10px;margin:0 0 12px;box-shadow:3px 3px 0 #000}#banner .bico{display:inline-block;width:20px;height:20px;vertical-align:middle;margin:0 4px 0 0}#ytp .yx{display:none}
 .yback{position:fixed;left:calc(12px + env(safe-area-inset-left));bottom:calc(14px + env(safe-area-inset-bottom));z-index:960;min-width:48px;height:48px;padding:0 14px 0 10px;display:flex;align-items:center;gap:8px;border:0;background:#ffcc00;color:#000;font:10px var(--pix);letter-spacing:1px;box-shadow:3px 3px 0 #000,inset -3px -3px 0 rgba(0,0,0,.18);cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 .yback i{font-style:normal;font-size:14px}
 .yback:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #000}
@@ -1626,7 +1626,7 @@ function logTm(x, sn, go) {
   }, 200);
   s.addEventListener('click', function (e) { if (e.target.closest('#spMute')) return; ac(); if (!play()) done(); else $('spPs').textContent = '♪♫♪'; });
 })();
-function banner(t, sub) { var b = $('banner'); b.innerHTML = '<div>' + esc(t) + (sub ? '<small>' + esc(sub) + '</small>' : '') + '</div>'; b.style.display = 'block'; clearTimeout(banner.h); banner.h = setTimeout(function () { b.style.display = 'none'; }, 1900); }
+function banner(t, sub, raw) { var b = $('banner'); b.innerHTML = '<div>' + esc(t) + (sub ? '<small>' + (raw ? sub : esc(sub)) + '</small>' : '') + '</div>'; b.style.display = 'block'; clearTimeout(banner.h); banner.h = setTimeout(function () { b.style.display = 'none'; }, 1900); }
 /* 8-bit log logo (pixel grid -> SVG) */
 function logoSvg() { return '<img class="ltv" src="' + LOGO_TV + '" alt="Logged">'; }
 var LOGGING_ICON = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAkCAYAAAD7PHgWAAACMklEQVR4nM2XTUsCURSGX6NWbQpXNZsRaucvUEZdCG4UomWrNtJfKCUqMjdtokVQ/ocIklZBZugfKCJQaDbTJvqgbQtb1Bmu49yP0ZvOu1HP/Xp4z/HcGUCzrG6lp3O/KZ2b6YYbWVa30iMoq1vpLZ2u9bzxiYlg2O9szO/3xPUfQFprMPRanDO1Oxj57wOG0cun7XJNewcfbzbHS/Ons8MTAMDR1VdfPPQ1OOAg6andFC5sth6QSsaVDgky1ysuIACsltvCxUdX4nHe3PODRN9Ys/XAXScEBIDlHXUIFXX2fuFYV1PJOBdSqQbXcwtYzy1oQoQLpSKpg3ajDuSKKCdiWN5pw27UYWbyA5/kDGkmXcL3bbUvxmaDLR9vyllJHTQzeexu1QAADauA79uqLyQAOB/PcD6e3XXeGM0jOVZBdrwckCDcTa+jLqTfoew6nqjejLtLKaA0xaxDLKSRrWImXZIe4KdUMo5UUm1uYAdJznUU9vbpQJ3p1lAO6tDIfxKqE56DRvYN5v7G0GkGfrMgExeQ+pSfg0b2bSQwdh+ZlPqgmcmj81druuDYtIquOqU+SA7KUmrMx2DMx6QxL5ToVlF20BbNuSgCKMJcqfXFZU4T5EiAdI2pdP3Z+xp37PP9dajSULuLIe76Do5dCN1S64MQ90NKrapDoj9FYEB6SulovDGCPF0LAf06/Lge9UlcQFEagqQoyFw/hf6tLvQv7hHeJC8su0iHVPcPfYpDrx9Qqwy80uAD7gAAAABJRU5ErkJggg==';
@@ -2827,7 +2827,7 @@ badgesHtml = function () { var A = achievements(), A2 = achievements2(), n = A.f
   return h; };
 var _checkAchA = checkAch; checkAch = function () { _checkAchA(); if (!rows || !rows.length || !window.__achReady) return; var k = 'lg_ach_d_' + me(), got = null; try { got = JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) {}
   var now = achievements2().filter(function (a) { return a[3]; }), first = !got; got = got || {}; var today = new Date().toISOString().slice(0, 10), nw = now.filter(function (a) { return !got[a[0]]; });
-  nw.forEach(function (a, i) { got[a[0]] = today; if (!first) setTimeout(function () { banner((a[4] === 'L' ? '🌟 LEGENDARY' : '🏆 UNLOCKED') + (a[5] ? ' · SECRET' : ''), a[1] + ' ' + esc(a[2])); SFX.fanfare && SFX.fanfare(); }, 900 + i * 2600); });
+  nw.forEach(function (a, i) { got[a[0]] = today; if (!first) setTimeout(function () { banner((a[4] === 'L' ? '🌟 LEGENDARY' : '🏆 UNLOCKED') + (a[5] ? ' · SECRET' : ''), a[1] + ' ' + esc(a[2]), true); SFX.fanfare && SFX.fanfare(); }, 900 + i * 2600); });
   if (nw.length) { localStorage.setItem(k, JSON.stringify(got)); achSync(); } };
 setTimeout(function () { run('triviaDays', [me()], function (L) { window.TVDAYS = L || []; }); }, 3000);
 /* ---------- R21: iOS-safe trivia audio + YouTube auto-log with rate ping/deep link ---------- */
