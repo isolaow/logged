@@ -844,6 +844,12 @@ body.ytp-on{overflow:hidden}
 #ytp .ydock .yin.on{background:#3a1030;box-shadow:inset 0 0 0 2px #ff4f8b,0 0 0 2px #000}
 #ytp .ydock .ynot.on{background:#20202c;box-shadow:inset 0 0 0 2px #8a86a8,0 0 0 2px #000}
 #ytp .ydock .ynot.on span,#ytp .ydock .yin.on span{color:#fff}
+#thm.gp{left:calc(10px + env(safe-area-inset-left));right:calc(10px + env(safe-area-inset-right));bottom:calc(var(--ybkb,78px) + env(safe-area-inset-bottom));height:44px;padding:0 4px 0 10px;gap:8px;font:8px var(--pix);letter-spacing:1px;color:#f1ecff;background:rgba(14,12,26,.94);border:0;box-shadow:0 0 0 3px #000,4px 4px 0 #000,inset 0 -3px 0 #ffcc00;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+#thm.gp span{flex:1;min-width:0}
+#thm.gp.paused span{animation:none;opacity:.6}
+#thm.gp button{width:36px;height:36px;padding:0;font:11px var(--pix);background:#1c1c33;color:#fff;border:0;box-shadow:inset 0 0 0 2px #2c2c4a;flex:none}
+#thm.gp [data-gpp]{background:#ffcc00;color:#000;box-shadow:2px 2px 0 #000}
+#thm.gp.need{background:#ffcc00;color:#000}
 </style></head><body>
 <div id="splash" aria-label="Logged"></div>
 <header><div class="hin">
@@ -3775,5 +3781,31 @@ var _mpFitsV = mpFits; mpFits = function (r, a) { var x = _mpFitsV(r, a); if (!x
   var v = MPV[a.vibe]; if (v) { var g = genresOf(r), hit = g.filter(function (k) { return v[2].indexOf(k) >= 0; }); if (hit.length) { x.sc += 2; x.why.push(v[1] + ' VIBES'); } else x.sc -= 1; }
   var s = score(r) || 0, tm = Number(m.vote || m.tmdb || 0); if (a.fam === 'comfort') x.sc += (tm || s) / 3; if (a.fam === 'gem' && (m.votes || 0) && m.votes < 2000) { x.sc += 2; x.why.push('HIDDEN GEM'); }
   return x; };
+
+/* ===== R40: one global song player that survives view changes. The 🎵 chip (#thm) becomes a mini-player bar above the hotbar with ▶/❚❚ and ■; closing a detail page no longer kills the song; OST plays move into the bar; SFX play over (ducked); a YouTube video pauses it ===== */
+var GP = { c: null, t0: 0, pin: false, paused: false };
+function gpFrame() { var t = $('thm'); return t && t.querySelector('iframe'); }
+function gpAudio() { var t = $('thm'); return !!(t && t.querySelector('.thh') && THA && THA.src && !gpFrame()); }
+function gpBar() { var t = $('thm'); if (!t) return; t.classList.add('gp'); if (!t.querySelector('[data-gpp]')) { var x = t.querySelector('[data-thoff]'); if (x) { x.innerHTML = '■'; x.setAttribute('aria-label', 'Stop'); x.insertAdjacentHTML('beforebegin', '<button data-gpp="1" aria-label="Play or pause">❚❚</button>'); } }
+  var b = t.querySelector('[data-gpp]'); if (b) b.textContent = GP.paused ? '▶' : '❚❚'; t.classList.toggle('paused', GP.paused); }
+function gpCmd(op) { var f = gpFrame(); if (f) try { f.contentWindow.postMessage({ logged: 'cmd', op: op }, '*'); } catch (e) {} if (gpAudio()) try { op === 'pause' ? THA.pause() : THA.play(); } catch (e) {} }
+function gpPause() { if (!$('thm')) return; GP.paused = true; gpCmd('pause'); gpBar(); }
+function gpPlay() { if (!$('thm')) return; GP.paused = false; gpCmd('play'); gpBar(); }
+var _clipMountG = clipMount; clipMount = function (host, c, o) { GP.c = c; GP.t0 = Date.now(); GP.paused = false; var r = _clipMountG.apply(this, arguments); setTimeout(gpBar, 0); return r; };
+var _themeAutoG = themeAuto; themeAuto = function (r) { var t = $('thm'); if (t && GP.pin && !GP.paused) return; GP.pin = false; var x = _themeAutoG.apply(this, arguments); setTimeout(gpBar, 0); return x; };
+var _themeStopG = themeStop; themeStop = function () { GP.pin = false; GP.paused = false; return _themeStopG.apply(this, arguments); };
+/* leaving a title keeps the song: theme chip stays; an OST row that was playing moves into the bar at roughly the same spot */
+closeDetail = (function (orig) { return function () { var keep = themeStop, h = $('ostHost'), oc = (typeof OSTED !== 'undefined' && OSTED && OSTED.c && h && h.innerHTML.trim()) ? OSTED.c : null, el = (Date.now() - GP.t0) / 1000, rw = typeof OSTED !== 'undefined' && OSTED ? OSTED.row : null;
+  var playing = $('thm') && !GP.paused; if (playing || oc) themeStop = function () {}; try { var res = orig.apply(this, arguments); } finally { themeStop = keep; }
+  if (oc && !(playing && $('thm'))) { var nm = oc.n || (byId(rw) || {}).title || 'SOUNDTRACK'; if (CLIPSTOP) try { CLIPSTOP(); } catch (e) {} CLIPSTOP = null; var t = $('thm'); t && t.remove();
+    document.body.insertAdjacentHTML('beforeend', '<div id="thm"><div class="thh"></div><span>♪ ' + esc(nm) + '</span><button data-thoff="1" aria-label="Stop">■</button></div>'); THEME_NOW = rw;
+    clipMount($('thm').querySelector('.thh'), Object.assign({}, oc, { st: Math.round((oc.st || 0) + (oc.src === 'yt' ? el : 0)) }), { vol: 80, loop: 1 }); }
+  if ($('thm')) { GP.pin = true; gpBar(); } return res; }; })(closeDetail);
+document.addEventListener('click', function (e) { var b = e.target.closest('[data-gpp]'); if (!b) return; e.stopPropagation(); GP.paused ? gpPlay() : gpPause(); }, true);
+/* YouTube starting pauses the song */
+var _ytnOpenG = ytnOpen; ytnOpen = function () { gpPause(); return _ytnOpenG.apply(this, arguments); };
+/* other sounds play over the song instead of hijacking the shared element */
+var _AudioG = window.Audio; window.Audio = function (src) { if ($('thm') && gpAudio() && !THA.paused) { var a = new _AudioN(src); a.volume = 1; return a; } return _AudioG(src); };
+var _toneG = tone; tone = function () { if (gpAudio() && !THA.paused) { try { THA.volume = .35; clearTimeout(GP.dk); GP.dk = setTimeout(function () { THA.volume = 1; }, 700); } catch (e) {} } return _toneG.apply(this, arguments); };
 
 </script></body></html>
