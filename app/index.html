@@ -880,6 +880,24 @@ body.ytp-on{overflow:hidden}
 .xsw{display:flex;align-items:center;gap:12px;width:100%;margin:2px 0 16px;padding:12px;border:0;text-align:left;color:#fff;background:linear-gradient(90deg,#3a1030,#1a1430);box-shadow:0 0 0 3px #000,4px 4px 0 #000,inset 3px 0 0 #ff4f8b;cursor:pointer}
 .xsw b{display:block;font:10px var(--pix);letter-spacing:1px;color:#ff8fb3}.xsw small{font:6px var(--pix);opacity:.6;letter-spacing:1px}.xsw div{flex:1}.xsw em{font:16px var(--pix);font-style:normal;color:#ff4f8b}
 .xsc{position:relative;width:34px;height:44px;flex:none}.xsc i{position:absolute;inset:0;background:#2a2148;box-shadow:0 0 0 2px #000}.xsc i:nth-child(1){transform:rotate(-10deg)}.xsc i:nth-child(2){transform:rotate(6deg);background:#3a2a5a}.xsc i:nth-child(3){background:#ff4f8b;transform:rotate(-2deg)}
+#nav{gap:0}
+#nav>button{flex:1 1 0;min-width:0;font-size:5px!important;letter-spacing:0!important;white-space:nowrap;overflow:visible}
+#nav>button.nadd{flex:0 0 58px}
+#nav .nyt2 .nyti{display:flex;align-items:center;height:24px;filter:grayscale(1) brightness(1.2) contrast(.9)}
+#nav .nyt2 .nyti img{height:16px;width:auto;image-rendering:pixelated;display:block}
+#nav .nyt2.on .nyti{filter:none}
+#nav .nint{display:flex;align-items:center;justify-content:center;height:30px;color:#8f8ab0;filter:none!important}
+#nav .nint svg{width:21px;height:18px;display:block}
+#nav #navInt.on .nint{color:#ff4f8b}
+#v-int.on{animation:lgin .22s steps(4)}
+#v-int{padding-top:calc(4px + env(safe-area-inset-top))}
+.xmw{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:2px 0 14px}
+.xmw button{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-height:84px;padding:12px;border:0;text-align:left;color:#fff;overflow:hidden;box-shadow:0 0 0 3px #000,4px 4px 0 #000;cursor:pointer}
+.xmw button:active{transform:translate(2px,2px);box-shadow:0 0 0 3px #000,2px 2px 0 #000}
+.xmw [data-xmood]{background:linear-gradient(135deg,#3b1a5c,#1a1430);box-shadow:0 0 0 3px #000,4px 4px 0 #000,inset 0 -3px 0 #b07cff}
+.xmw [data-xspin]{background:linear-gradient(135deg,#123a3a,#10202a);box-shadow:0 0 0 3px #000,4px 4px 0 #000,inset 0 -3px 0 #39e4c0}
+.xmw .xmi{font-size:22px;line-height:1}.xmw .xspi{font:24px var(--pix);color:#39e4c0;animation:xspin 3s steps(8) infinite}@keyframes xspin{to{transform:rotate(360deg)}}
+.xmw b{font:9px var(--pix);letter-spacing:1px}.xmw small{font:6px var(--pix);opacity:.6;letter-spacing:1px;line-height:1.5}
 </style></head><body>
 <div id="splash" aria-label="Logged"></div>
 <header><div class="hin">
@@ -3930,5 +3948,25 @@ document.addEventListener('click', function (e) { var b = e.target.closest('[dat
 /* PICKS deck now lives inside BROWSE: just the two sorting tabs */
 var _renderInterestI = renderInterest; renderInterest = function () { if (IP.tab !== 'list' && IP.tab !== 'new') IP.tab = 'new'; if (IP.tab === 'list' && !IP.picked && !ipDeckFor('list').length) IP.tab = 'new'; IP.picked = 0; _renderInterestI.apply(this, arguments); var tb = $('iBody').querySelectorAll('[data-iptab=yes],[data-iptab=no]'); [].forEach.call(tb, function (x) { x.remove(); }); var h = $('iBody').querySelector('.ptop h2'); if (h) h.innerHTML = '✦ SWIPE NEW TITLES<br><small>♥ INTERESTED · ✕ NOT FOR ME</small>'; };
 document.addEventListener('click', function (e) { if (e.target.closest('[data-iptab]')) IP.picked = 1; }, true);
+
+/* ===== R43: hotbar = ♥ INTERESTED · BROWSE · LOGGING · [+] · LOGGED · CAMP · YOUTUBE. Only + is coloured. INTERESTED is its own full section; Explore is Browse again (swipe deck card stays inside Browse) ===== */
+(function () { var N = $('nav'), yt = $('navYT'), br = N.querySelector('[data-v=home]');
+  yt.className = 'nyt2'; yt.innerHTML = '<span class="nyti">' + ytI(20) + '</span>YOUTUBE'; N.appendChild(yt);
+  br.insertAdjacentHTML('beforebegin', '<button id="navInt" aria-label="Interested"><span class="nint"><svg viewBox="0 0 7 6" shape-rendering="crispEdges"><path fill="currentColor" d="M1 0h2v1h1v-1h2v1h1v2h-1v1h-1v1h-1v1h-1v-1h-1v-1h-1v-1h-1v-2h1z"/></svg></span>INTERESTED</button>');
+  var s = document.createElement('section'); s.className = 'view'; s.id = 'v-int'; document.querySelector('main').appendChild(s); })();
+XT.tab = 'browse'; localStorage.lg_xtab = 'browse';
+var _renderHomeN = renderHome; renderHome = function () { XT.tab = 'browse'; _renderHomeN.apply(this, arguments); var b = $('v-home').querySelector('.xtab'); b && b.remove(); if (view === 'int') renderIntView(); };
+function renderIntView() { var X = XT.tab; XT.tab = 'int'; $('v-int').innerHTML = renderInt(); XT.tab = X; }
+var _showN = show; show = function (v) { var I = $('v-int'); if (v !== 'int') { I.classList.remove('on'); return _showN.apply(this, arguments); }
+  kbClose(); ['bpage', 'gpage', 'ipage'].forEach(function (p) { try { closePage(p); } catch (e) {} }); try { $('ytpage').classList.remove('open'); } catch (e) {} view = 'int';
+  ['home', 'all', 'wheel', 'stats', 'logging'].forEach(function (x) { var el = $('v-' + x); el && el.classList.remove('on'); }); I.classList.add('on'); $('filt').style.display = 'none'; $('types').style.display = $('chips').style.display = 'none';
+  renderIntView(); navHi('navInt'); window.scrollTo(0, 0); };
+$('nav').onclick = (function (old) { return function (e) { var b = e.target.closest('button'); if (b && b.id === 'navInt') { show('int'); return; } if (b && (b.dataset.v || b.id === 'navLog')) $('v-int').classList.remove('on'); return old.call(this, e); }; })($('nav').onclick);
+/* the INTERESTED handlers act on #v-int too */
+document.addEventListener('click', function (e) { var b = e.target.closest('[data-xhid],[data-ipclear]'); if (!b || !$('v-int').contains(b)) return; e.stopPropagation(); if (b.dataset.ipclear) { intSet(b.dataset.ipclear, ''); return renderIntView(); } XT.hid = b.dataset.xhid === '1'; renderIntView(); window.scrollTo(0, 0); }, true);
+/* Explore: MOOD PICK + SPIN THE WHEEL as big tiles near the top of Browse (old shortcuts stay where they are) */
+var _renderHomeMW = renderHome; renderHome = function () { _renderHomeMW.apply(this, arguments); var H = $('v-home'), q = H.querySelector('.qt'); if (!q || H.querySelector('.xmw')) return;
+  q.insertAdjacentHTML('beforebegin', '<div class="xmw"><button data-xmood="1"><span class="xmi">🎭</span><b>MOOD PICK</b><small>ANSWER A FEW, GET 3 PICKS</small></button><button data-xspin="1"><span class="xmi xspi">◎</span><b>SPIN THE WHEEL</b><small>LET FATE DECIDE</small></button></div>'); };
+document.addEventListener('click', function (e) { var b = e.target.closest('[data-xmood],[data-xspin]'); if (!b) return; e.stopPropagation(); SFX.tap && SFX.tap(); if (b.dataset.xmood) return mpOpen(); show('wheel'); navHi(); }, true);
 
 </script></body></html>
