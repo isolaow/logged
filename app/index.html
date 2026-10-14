@@ -4003,7 +4003,7 @@ document.addEventListener('click', function (e) { if (e.target.closest('[data-ip
 
 /* ===== R43: hotbar = ♥ INTERESTED · BROWSE · LOGGING · [+] · LOGGED · CAMP · YOUTUBE. Only + is coloured. INTERESTED is its own full section; Explore is Browse again (swipe deck card stays inside Browse) ===== */
 (function () { var N = $('nav'), yt = $('navYT'), br = N.querySelector('[data-v=home]');
-  yt.className = 'nyt2'; yt.innerHTML = '<span class="nyti">' + ytI(20) + '</span>YOUTUBE'; N.appendChild(yt);
+  yt.className = 'nyt2'; yt.innerHTML = '<span class="nyti">' + ytI(20) + '</span>YOUTUBE'; N.appendChild(yt); var cp = N.querySelector('[data-v=stats]'); if (cp) N.appendChild(cp);
   br.insertAdjacentHTML('afterend', '<button id="navInt" aria-label="Interested"><span class="nint"><svg viewBox="0 0 7 6" shape-rendering="crispEdges"><path fill="currentColor" d="M1 0h2v1h1v-1h2v1h1v2h-1v1h-1v1h-1v1h-1v-1h-1v-1h-1v-1h-1v-2h1z"/></svg></span>INTERESTED</button>');
   var s = document.createElement('section'); s.className = 'view'; s.id = 'v-int'; document.querySelector('main').appendChild(s); })();
 XT.tab = 'browse'; localStorage.lg_xtab = 'browse';
