@@ -935,6 +935,7 @@ body.ytp-on{overflow:hidden}
 #adb .adx{border:0;width:30px;height:30px;font:11px var(--pix);background:#3a1020;color:#fff;box-shadow:inset 0 0 0 2px #ff4f8b;flex:none}
 #adb .adhm{margin-top:8px;font-size:7px;color:#7cdcff;text-align:center}
 #adb.muted{box-shadow:inset 0 0 0 2px #ff4f8b,4px 4px 0 #000}#adb.muted .adhm{color:#ff8fb3}
+body.navsw *,body.navsw *::before,body.navsw *::after{transition:none!important;animation-duration:0s!important}
 </style></head><body>
 <div id="splash" aria-label="Logged"></div>
 <header><div class="hin">
@@ -4104,5 +4105,23 @@ var _adEnd46 = adEnd; adEnd = function () { _adEnd46.apply(this, arguments); var
 document.addEventListener('click', function (e) { var t = e.target.closest && e.target.closest('[data-adgo],[data-adx],[data-admu]'); if (!t) return; e.stopPropagation();
   if (t.dataset.admu != null) return adSetMute(!AD2.m);
   if (t.dataset.adx != null || ADB.on) return adClose(); AD2.auto = false; adStart(); }, true);
+
+/* ===== R47: single-active navigation — debounce, close every overlay, cancel in-flight transitions ===== */
+var NAV = { t: 0 };
+var NAV_OV = ['add', 'bgm', 'bpage', 'detail', 'dpm', 'favm', 'gpage', 'ipage', 'lfm', 'trl', 'trv', 'wrp', 'yhp', 'ytpage', 'mpm'];
+function navReset() { document.body.classList.add('navsw');
+  NAV_OV.forEach(function (id) { var el = $(id); if (el && el.classList.contains('open')) { if (id === 'detail') try { closeDetail(); } catch (e) {} else if (id === 'bpage' || id === 'gpage' || id === 'ipage') try { closePage(id); } catch (e) { el.classList.remove('open'); } else el.classList.remove('open'); } });
+  document.body.style.overflow = '';
+  var P = $('ytp'); if (P && P.classList.contains('pxout')) { P.classList.remove('pxout'); }
+  if (P && P.classList.contains('open') && !P.classList.contains('mini')) { P.classList.add('mini'); document.body.classList.remove('ytp-on'); }
+  try { if ($('adb')) adClose(); } catch (e) {}
+  requestAnimationFrame(function () { requestAnimationFrame(function () { document.body.classList.remove('navsw'); }); }); }
+function navOnly() { var ids = ['home', 'all', 'wheel', 'stats', 'logging', 'int'], v = view; if (ids.indexOf(v) < 0) return;
+  ids.forEach(function (x) { var el = $('v-' + x); if (el) el.classList.toggle('on', x === v); }); }
+$('nav').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; var n = Date.now();
+  if (n - NAV.t < 320) { e.stopImmediatePropagation(); e.preventDefault(); return; } NAV.t = n; navReset();
+  setTimeout(navOnly, 0); }, true);
+/* also guard any programmatic show() */
+var _show47 = show; show = function () { var r = _show47.apply(this, arguments); navOnly(); return r; };
 
 </script></body></html>
