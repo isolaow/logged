@@ -971,6 +971,7 @@ body.navsw *,body.navsw *::before,body.navsw *::after{transition:none!important;
 #ostx li.play .oxn{animation:oxbl .6s steps(2) infinite}@keyframes oxbl{50%{opacity:.2}}
 #ostx .oxok{position:absolute;right:84px;top:50%;transform:translateY(-50%);font:7px var(--pix);background:#39e46c;color:#000;padding:4px 6px;box-shadow:2px 2px 0 #000;animation:adin .2s steps(3)}
 #ostx li>em{flex:none}
+#ostx .oxok.sv{background:#2c2c4a;color:#fff}
 #mpm .mpc[data-mpi]{cursor:pointer;transition:transform .1s steps(2)}#mpm .mpc[data-mpi]:active{transform:translateY(2px)}
 #detail .btn.back[data-mpback]{background:var(--gold);color:#000}
 .mpnew{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0 4px}.mpnew span{font:7px var(--pix);color:#7cdcff;letter-spacing:1px}
@@ -4234,7 +4235,11 @@ var _openDetail50 = openDetail; openDetail = function (r) { var res = _openDetai
 function oxClip(i) { var t = oxTrack(i), r = byId(OSX.r); if (!t) return; OXS.i = i; OXS.mode = 'clip'; spBar('♪ ' + oxLabel() + ' · 30s', true); oxPaint();
   var go = function (u) { if (OXS.i !== i) return; if (!u) { toast('NO PLAYABLE CLIP FOR THIS SONG'); OXS.playing = false; oxPaint(); return spBar('NO CLIP · ' + oxLabel(), false); }
     OXA.src = u; OXA.currentTime = 0; var p = OXA.play(); p && p.then(function () { spBar('♪ ' + oxLabel() + ' · 30s', true); }, function (er) { window.__oxerr = String(er); spBar('TAP ▶ TO PLAY · ' + oxLabel(), false); }); };
-  if (t.pv) return go(t.pv); ostPv(r ? r.title : t.n, { n: t.n, a: String(t.a || '').split(',')[0] }, function (o) { go(o && o.url); }); }
+  if (t.pv) return go(t.pv); var done = 0, fin = function (u) { if (done) return; if (u) { done = 1; t.pv = u; return go(u); } };
+  oxItunes(t.n + ' ' + String(t.a || '').split(',')[0], function (u) { if (u) fin(u); else ostPv(r ? r.title : t.n, { n: t.n, a: String(t.a || '').split(',')[0] }, function (o) { if (o && o.url) fin(o.url); else if (!done) { done = 1; go(''); } }); }); }
+function oxItunes(q, cb) { var n = 'oxit' + Date.now() + Math.floor(Math.random() * 1e4), s = document.createElement('script'), to = setTimeout(function () { cl(); cb(''); }, 6000), cl = function () { delete window[n]; s.remove(); clearTimeout(to); };
+  window[n] = function (j) { cl(); var R = (j && j.results || []).filter(function (x) { return x.previewUrl; }); cb(R[0] ? R[0].previewUrl : ''); };
+  s.src = 'https://itunes.apple.com/search?media=music&entity=song&limit=5&country=AU&term=' + encodeURIComponent(q) + '&callback=' + n; s.onerror = function () { cl(); cb(''); }; document.head.appendChild(s); }
 /* replace oxPlay: Spotify Connect when it's really available, else inline clip; same tap pauses */
 oxPlay = function (i) { var t = oxTrack(i); if (!t) return; oxBless();
   if (OXS.i === i && OXS.mode === 'clip') { if (OXA.paused) OXA.play(); else OXA.pause(); spBar('♪ ' + oxLabel() + ' · 30s', !OXA.paused); return; }
@@ -4254,9 +4259,9 @@ window.addEventListener('click', function (e) { var li = e.target.closest && e.t
 function oxPick(i) { var t = oxTrack(i), r = byId(OSX.r), p = me(); if (!t || !r) return; var mine = oxMine(), same = mine && (mine.sp ? mine.sp === t.id : mine.n === t.n), prev = r.theme ? Object.assign({}, r.theme) : null;
   var c = same ? null : { src: 'sp', sp: t.id || '', n: t.n, a: t.a, st: 0 }; if (c && !c.sp && t.pv) c.pv = t.pv;
   r.theme = Object.assign({}, r.theme || {}); if (c) r.theme[p] = c; else delete r.theme[p]; oxPaint(); var li = $('ostx').querySelector('li[data-oxt="' + i + '"]');
-  run('setTheme', [r.title, p, c], function (o) { r.theme = o || {}; oxPaint(); var ok = c ? !!(o && o[p] && o[p].n === c.n) : !(o && o[p]); if (!ok) { toast('COULDN\u2019T SAVE — TRY AGAIN'); return; } SFX.coin && SFX.coin();
-      if (li) { li.insertAdjacentHTML('beforeend', '<span class="oxok">✓ SAVED</span>'); setTimeout(function () { var s = li.querySelector('.oxok'); s && s.remove(); }, 1800); } toast(c ? '★ ' + t.n + ' is your soundtrack for ' + r.title : 'Soundtrack cleared'); },
-    function () { r.theme = prev; oxPaint(); toast('COULDN\u2019T SAVE — OFFLINE?'); }); }
+  var tries = 0, save = function () { run('setTheme', [r.title, p, c], function (o) { r.theme = o || {}; oxPaint(); var ok = c ? !!(o && o[p] && o[p].n === c.n) : !(o && o[p]); if (!ok) { toast('COULDN\u2019T SAVE — TRY AGAIN'); return; } SFX.coin && SFX.coin();
+      if (li) { var sv = li.querySelector('.oxok.sv'); sv && sv.remove(); li.insertAdjacentHTML('beforeend', '<span class="oxok">✓ SAVED</span>'); setTimeout(function () { var s = li.querySelector('.oxok'); s && s.remove(); }, 1800); } toast(c ? '★ ' + t.n + ' is your soundtrack for ' + r.title : 'Soundtrack cleared'); },
+    function () { if (tries++ < 1) return setTimeout(save, 1500); r.theme = prev; oxPaint(); toast('COULDN\u2019T SAVE — OFFLINE?'); }); }; save(); if (li) li.insertAdjacentHTML('beforeend', '<span class="oxok sv">SAVING…</span>'); }
 /* "pick manually" reveals the old picker */
 document.addEventListener('click', function (e) { if (e.target.closest && e.target.closest('[data-oxman]')) { var o = $('ost'); if (o) { o.classList.add('manual'); o.classList.remove('oxhide'); } } }, true);
 var _closeDetail50 = closeDetail; closeDetail = function () { var o = $('ost'); if (o) o.classList.remove('manual'); return _closeDetail50.apply(this, arguments); };
