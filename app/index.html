@@ -1233,6 +1233,13 @@ body.ytfull58 #ytpage,body.ytfull58 body>main{pointer-events:none}
 .otl{list-style:none;margin:0;padding:0}.otl li{display:flex;align-items:center;gap:6px;padding:6px 0;border-top:2px solid #22223a}.otl li b{color:#ffcc33;width:18px}.otl li span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:18px}.otl .ui-btn{font-size:9px;padding:6px 8px}
 .otadd{display:flex;align-items:center;gap:8px;margin:8px 0;font:8px var(--pix);color:#ffcc33}.otadd select{flex:1;min-width:0;background:#000;color:#fff;border:3px solid #000;padding:8px}
 .cbdv{font:9px var(--pix);color:#9a94b8;text-align:center;margin:14px 0 4px;letter-spacing:1px}
+/* r59: profile header = full-width pixel scene */
+#v-stats .lkh2{position:relative;overflow:hidden;width:100vw;max-width:100vw!important;margin-left:calc(50% - 50vw)!important;margin-right:0!important;border-left:0!important;border-right:0!important;box-sizing:border-box;min-height:118px;isolation:isolate}
+#v-stats .lkh2 canvas.bn59{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;z-index:-1;display:block;pointer-events:none}
+#v-stats .lkh2.bn59on{background:none}
+#v-stats .lkh2.bn59on::after{content:'';position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(10,8,20,.0),rgba(10,8,20,.0) 30%,rgba(10,8,20,.55));pointer-events:none}
+#v-stats .lkh2.bn59on h3,#v-stats .lkh2.bn59on small,#v-stats .lkh2.bn59on b{text-shadow:2px 2px 0 #000,-1px -1px 0 #000}
+#v-stats.view,#v-stats>.lk{overflow:visible!important}
 </style></head><body>
 <div id="splash" aria-label="Logged"></div>
 <header><div class="hin">
@@ -5434,7 +5441,22 @@ var _finishAdd58 = finishAdd; finishAdd = function (tmp, title) { var r = _finis
   if (MPH58 && title === MPH58) { MPH58 = null; setTimeout(function () { var row = rows.filter(function (x) { return x.title === title; })[0]; if (row) intSet(rKey(row), 'y', { t: row.title, p: posters[row.title] || '', k: row.type === 'TV Show' ? 'tv' : 'movie' }); }, 120); } return r; };
 
 /* r58h: ONE chip bar on YouTube home — 🎬 TRAILERS · ALL · genres (the small duplicate row is hidden) */
-var _ytRibbon58 = ytRibbon; ytRibbon = function (F) { return _ytRibbon58.apply(this, arguments).replace('data-ysec="trl">🎬 TRAILERS</button>', 'data-ysec="trl">🎬 TRAILERS</button><button class="chip' + (!R57.sec ? ' on' : '') + '" data-yall58="1">ALL</button>'); };
+var _ytRibbon58 = ytRibbon;
+var YT59K = [['F1', /\bf1\b|formula ?1|grand prix/i], ['MINECRAFT', /minecraft/i], ['FORTNITE', /fortnite/i], ['K-POP', /k-?pop|bts|blackpink|twice|stray kids/i], ['NBA', /\bnba\b|basketball/i], ['NFL', /\bnfl\b/i], ['AFL', /\bafl\b/i], ['NRL', /\bnrl\b|rugby league/i], ['CRICKET', /cricket/i], ['UFC', /\bufc\b|\bmma\b/i], ['FOOTBALL', /premier league|soccer|\bfifa\b|champions league/i], ['GOLF', /\bgolf/i], ['TENNIS', /tennis/i], ['CHESS', /\bchess\b/i],
+  ['LOFI', /lo-?fi/i], ['COOKING', /cook|recipe|chef/i], ['CAMPING', /camping|bushcraft|wilderness/i], ['VANLIFE', /\bvan ?life|van camping/i], ['FISHING', /fishing/i], ['SURVIVAL', /survival/i], ['ANIME', /anime/i], ['POKÉMON', /pok[eé]mon/i], ['LEGO', /\blego\b/i], ['CARS', /\bcar review|supercar|drift|motorsport/i], ['DRAG RACE', /drag race|rupaul/i], ['SPACE', /\bnasa\b|spacex|rocket launch|astronom/i], ['TECH', /iphone|unboxing|\btech\b/i], ['FITNESS', /workout|\bgym\b|fitness/i], ['TRAVEL', /travel|travelling|\btrip\b/i], ['TRUE CRIME', /true crime|murder|unsolved/i]];
+function ytTopics59() { var H = []; try { H = ytSecHist().slice(0, 25); } catch (e) {} var sc = {}, ch = {}; H.forEach(function (v, i) { var w = 25 - i, t = (v.t || '') + ' ' + (v.ch || ''); YT59K.forEach(function (k) { if (k[1].test(t)) sc[k[0]] = (sc[k[0]] || 0) + w; }); if (v.ch && v.ch.length <= 18) ch[v.ch.toUpperCase()] = (ch[v.ch.toUpperCase()] || 0) + w; });
+  var L = Object.keys(sc).sort(function (a, b) { return sc[b] - sc[a]; }).slice(0, 3); if (L.length < 2) Object.keys(ch).sort(function (a, b) { return ch[b] - ch[a]; }).forEach(function (c) { if (L.length < 3 && L.indexOf(c) < 0) L.push(c); }); return L.slice(0, 3); }
+var YT59G = [['gaming', 'GAMING'], ['music', 'MUSIC'], ['comedy', 'COMEDY'], ['sport', 'SPORT'], ['entertainment', 'ENTERTAINMENT']];
+ytRibbon = function (F) { var cats = ((F && F.cats) || []).filter(function (c) { return c.id; }), used = {}, h = '';
+  var chip = function (on, attr, t, cls) { return '<button class="chip' + (on ? ' on' : '') + (cls ? ' ' + cls : '') + '" ' + attr + '>' + esc(t) + '</button>'; };
+  h += chip(R57.sec === 'trl', 'data-ysec="trl"', '🎬 TRAILERS') + chip(!R57.sec && !YH.q59, 'data-yall58="1"', 'ALL');
+  YT59G.forEach(function (g) { var c = cats.filter(function (x) { return new RegExp('^' + g[0]).test(String(x.t).toLowerCase()) || new RegExp('^' + g[0]).test(String(x.id).toLowerCase()); })[0];
+    if (c) { used[c.id] = 1; h += chip(R57.sec === 'gen' && YH.cat === c.id, 'data-ygen="' + esc(c.id) + '"', g[1], 'g59'); } else h += chip(YH.q59 === g[1], 'data-yq59="' + g[1] + '"', g[1], 'g59'); });
+  ytTopics59().forEach(function (t) { h += chip(YH.q59 === t, 'data-yq59="' + esc(t) + '"', '✨ ' + t, 'p59'); });
+  cats.forEach(function (c) { if (!used[c.id]) h += chip(R57.sec === 'gen' && YH.cat === c.id, 'data-ygen="' + esc(c.id) + '"', String(c.t).toUpperCase()); });
+  return '<div class="xif ytrib">' + h + '</div>'; };
+document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-yq59]'); if (b) { e.stopImmediatePropagation(); e.preventDefault(); var q = b.dataset.yq59, f = $('ytHomeQ'); YH.q59 = q; if (f && f.q) { f.q.value = q.toLowerCase(); f.requestSubmit ? f.requestSubmit() : f.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true })); } return; }
+  if (e.target.closest && e.target.closest('[data-yall58],[data-ygen],[data-ysec]')) YH.q59 = ''; }, true);
 document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-yall58]'); if (!b) return; e.stopImmediatePropagation(); e.preventDefault(); R57.sec = ''; YH.cat = ''; ytLoad(); }, true);
 
 /* ===== r58: EXPLORE + CAMP arcs (same style as LOG) and a real per-person SETTINGS page (auto-saved server-side) ===== */
@@ -5538,5 +5560,164 @@ window.addEventListener('click', function (e) { var c = e.target.closest && e.ta
 var _trlQ58y = trlQ; trlQ = function () { var q = _trlQ58y.apply(this, arguments); if (!sv('ytNext')) q = q.replace(/&next=[^&]*/g, ''); if (sv('ytCC') && !/[?&]cc=/.test(q)) q += '&cc=1'; return q; };
 var _intSet58h = intSet; intSet = function () { if (sv('hrtAsk')) return _intSet58h.apply(this, arguments); var o = R56.noHeart; R56.noHeart = 1; try { return _intSet58h.apply(this, arguments); } finally { R56.noHeart = o; } };
 document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-ytset58]'); if (!b) return; e.stopImmediatePropagation(); e.preventDefault(); try { ytDrawerClose(1); } catch (x) {} ytSetOpen58(); }, true);
+
+/* ===== R59: WARDROBE OVERHAUL — 37 iconic, detailed outfits (short names) + detailed full-width scenes =====
+   Drawn on the 64px avatar canvas: torso via wrBody (2px cells, follows each avatar's silhouette) + 1px detail (buttons, stitching, props).
+   Accessories use each person's eye/nose/mouth anchors (WRA) so glasses & masks sit on the eyes. Same unlock rule: finish the title (per person). */
+(function () {
+var R = function (c, col, x, y, w, h) { c.fillStyle = col; c.fillRect(Math.round(x * 2), Math.round(y * 2), Math.round(w * 2), Math.round(h * 2)); };
+var F = function (c, col, x, y, w, h) { c.fillStyle = col; c.fillRect(x, y, w || 1, h || 1); };
+var P = function (c, rows, ox, oy, pal) { rows.forEach(function (r, j) { for (var i = 0; i < r.length; i++) { var k = r[i]; if (k !== '.' && pal[k]) F(c, pal[k], ox + i, oy + j); } }); };
+var B = wrBody, ad = Math.abs;
+/* shared bits */
+function shades(c, A, col, lens) { col = col || '#0c0c10'; F(c, col, A.el * 2 - 3, A.eye * 2 - 1, 7, 4); F(c, col, A.er * 2 - 3, A.eye * 2 - 1, 7, 4); F(c, col, A.el * 2 + 4, A.eye * 2 - 1, (A.er - A.el) * 2 - 7, 1); if (lens) { F(c, lens, A.el * 2 - 2, A.eye * 2, 2, 1); F(c, lens, A.er * 2 - 2, A.eye * 2, 2, 1); } }
+function mask(c, A, col) { F(c, col, A.el * 2 - 5, A.eye * 2 - 2, (A.er - A.el) * 2 + 11, 5); F(c, '#fff', A.el * 2 - 1, A.eye * 2, 2, 1); F(c, '#fff', A.er * 2 - 1, A.eye * 2, 2, 1); }
+function hatTop(A) { return A.hat * 2; }
+function lapels(dx, yy, w) { return ad(dx) === w - Math.min(yy, w) || ad(dx) === w - Math.min(yy, w) + 1; }
+function tex(dx, yy, a, b, n) { return ((dx * 7 + yy * 13 + 99) % (n || 5)) === 0 ? a : b; }
+function cowboyHat(c, A, col, dk, band) { var t = hatTop(A); F(c, col, 22, t - 6, 20, 7); F(c, dk, 24, t - 7, 16, 1); F(c, dk, 31, t - 6, 2, 3); F(c, band || dk, 22, t - 1, 20, 2); F(c, col, 12, t + 1, 40, 3); F(c, dk, 12, t + 3, 40, 1); F(c, col, 10, t, 4, 2); F(c, col, 50, t, 4, 2); }
+function fedora(c, A, col, dk, band) { var t = hatTop(A); F(c, col, 20, t - 5, 24, 6); F(c, dk, 30, t - 6, 4, 2); F(c, band, 20, t - 1, 24, 2); F(c, col, 14, t + 1, 36, 2); F(c, dk, 14, t + 3, 36, 1); }
+function cap(c, A, col, dk) { var t = hatTop(A); F(c, col, 18, t - 3, 28, 5); F(c, dk, 18, t + 1, 28, 1); F(c, col, 16, t + 2, 34, 2); F(c, dk, 22, t - 3, 1, 4); F(c, dk, 30, t - 3, 1, 4); F(c, dk, 38, t - 3, 1, 4); }
+function saber(c, col, hi, x) { x = x || 56; F(c, col, x, 18, 3, 28); F(c, hi, x + 1, 19, 1, 26); F(c, '#b9bcc4', x - 1, 46, 5, 8); F(c, '#4a4d55', x - 1, 49, 5, 2); F(c, '#2a2a30', x, 53, 3, 2); }
+/* ===== outfits: [key, short name, title regex, existing id or null (keeps what's equipped), hat?] ===== */
+var O = {};
+O.heis = [/^breaking bad/i, 'HEISENBERG', 'heis2', 1, function (c, p, A) { B(c, p, function (dx, yy, e) { if (ad(dx) <= 2 && yy < 5) return yy < 1 ? '#d8c9a6' : '#cbb994'; if (lapels(dx, yy, 5)) return '#1a1a1e'; return e ? '#0c0c10' : tex(dx, yy, '#2c3226', '#24291f'); });
+  var t = hatTop(A); F(c, '#141418', 20, t - 4, 24, 5); F(c, '#2a2a30', 22, t - 5, 20, 1); F(c, '#3a3036', 20, t - 1, 24, 2); F(c, '#141418', 14, t + 1, 36, 2); F(c, '#0a0a0c', 14, t + 2, 36, 1);
+  shades(c, A, '#0c0c10', '#4a5160'); F(c, '#4a3a2a', A.el * 2 + 3, A.mouth * 2 + 2, (A.er - A.el) * 2 - 5, 3); }];
+O.saul = [/^better call saul/i, 'SAUL GOODMAN', null, 0, function (c, p) { B(c, p, function (dx, yy, e) { if (ad(dx) <= 1 && yy < 7) return yy % 2 ? '#f6c945' : '#d8323f'; if (ad(dx) <= 3 && yy < 6) return '#f3c9d9'; if (lapels(dx, yy, 6)) return '#5c74a0'; return e ? '#4d6187' : tex(dx, yy, '#a3b6d8', '#7f97c2', 4); }); }];
+O.nwatch = [/^game of thrones|knight of the seven/i, "NIGHT'S WATCH", 'nwatch', 0, function (c, p) { B(c, p, function (dx, yy, e) { if (yy < 3) return tex(dx, yy, '#6b5a48', (dx + yy) % 2 ? '#3b3128' : '#4a3d30', 3); if (ad(dx) === 4 && yy > 2) return '#5a4028'; if (ad(dx) < 2 && yy === 5) return '#9a8a70'; return e ? '#060607' : tex(dx, yy, '#1e1e24', '#121216', 6); }); }];
+O.targ = [/^house of the dragon/i, 'TARGARYEN', 'drgn', 1, function (c, p, A) { B(c, p, function (dx, yy, e) { if (yy < 2 && ad(dx) < 4) return '#2a2530'; if (ad(dx) <= 2 && yy >= 2 && yy <= 5) return ((dx + yy) % 2) ? '#c0242f' : '#8a121c'; return e ? '#08070a' : tex(dx, yy, '#24202a', '#17151b', 5); });
+  var t = hatTop(A); F(c, '#e9e6ef', 16, t - 2, 32, 6); F(c, '#cfcbd8', 18, t - 3, 28, 1); F(c, '#e9e6ef', 13, t + 2, 6, 30); F(c, '#e9e6ef', 45, t + 2, 6, 30); F(c, '#b9b4c6', 14, t + 6, 2, 24); F(c, '#b9b4c6', 48, t + 6, 2, 24); F(c, '#fff', 22, t - 1, 6, 1); }];
+O.jedi = [/star wars|^andor|^obi-wan|^the mandalorian/i, 'JEDI', 'saber', 0, function (c, p) { B(c, p, function (dx, yy, e) { if (yy === 5 || yy === 6 && ad(dx) < 9) return yy === 5 ? '#4a2e1a' : null; if (ad(dx) <= 8 - Math.min(yy, 3) && ad(dx) >= 6 - Math.min(yy, 3)) return '#d8c9a0'; if (ad(dx) < 6) return (dx < 0) === (yy % 2 === 0) && ad(dx) === Math.max(0, 5 - yy) ? '#b8a780' : '#e9dcb8'; return e ? '#3b2412' : tex(dx, yy, '#6b4426', '#5a381e', 4); }); saber(c, '#5fc8ff', '#e6faff'); }];
+O.peaky = [/^peaky blinders/i, 'PEAKY BLINDER', 'peaky', 1, function (c, p, A) { B(c, p, function (dx, yy, e) { if (ad(dx) <= 1 && yy < 2) return '#f4f4f0'; if (ad(dx) <= 3 && yy >= 1) return yy === 4 && dx === 2 ? '#d9b44a' : ad(dx) === 0 && yy % 2 ? '#2a2a30' : tex(dx, yy, '#3e3e46', '#33333a', 3); if (lapels(dx, yy, 6)) return '#1a1a1f'; return e ? '#101014' : tex(dx, yy, '#2a2a30', '#202026', 4); });
+  F(c, '#d9b44a', 36, 54, 6, 1); cap(c, A, '#4a4a52', '#2e2e34'); F(c, '#dfe3e8', 44, hatTop(A) + 2, 4, 1); }];
+O.shrek = [/^shrek/i, 'SHREK', 'ogre', 0, function (c, p, A) { wrSkinTo(c, p, ['#a7d36a', '#8bbd4c', '#6c9a35']); B(c, p, function (dx, yy, e) { if (yy === 6) return '#5a3a1c'; if (ad(dx) < 4) return tex(dx, yy, '#d9cfa8', '#efe6c4', 4); return e ? '#3f2a14' : tex(dx, yy, '#6b4a26', '#7d5a30', 5); });
+  P(c, ['.gg', 'ggd', 'gdd', '.dd'], 9, A.eye * 2 - 7, { g: '#9ccb5c', d: '#6c9a35' }); P(c, ['gg.', 'dgg', 'ddg', 'dd.'], 52, A.eye * 2 - 7, { g: '#9ccb5c', d: '#6c9a35' }); }];
+O.space = [/^interstellar/i, 'ENDURANCE SUIT', 'space', 0, function (c, p, A) { B(c, p, function (dx, yy, e) { if (yy < 2) return ad(dx) < 9 ? '#9aa3ae' : '#cfd5dc'; if (yy === 3 && dx >= -6 && dx <= -3) return ['#3b6bd8', '#f4f4f0', '#d8323f', '#f4f4f0'][dx + 6]; if (yy === 4 && dx >= 2 && dx <= 6) return '#3a3f48'; return e ? '#b9c0c8' : tex(dx, yy, '#e6e9ed', '#f6f7f9', 4); });
+  c.fillStyle = 'rgba(170,225,255,.22)'; c.fillRect(16, 4, 32, A.body * 2 - 4); F(c, '#eef6ff', 16, 4, 32, 1); F(c, '#eef6ff', 16, 4, 1, A.body * 2 - 4); F(c, '#eef6ff', 47, 4, 1, A.body * 2 - 4); F(c, '#fff', 20, 8, 3, 2); F(c, '#c8d2dc', 14, A.body * 2 - 2, 36, 3); }];
+O.lumon = [/^severance/i, 'MACRODATA', 'lumon', 0, function (c, p, A) { B(c, p, function (dx, yy, e) { if (ad(dx) <= 1 && yy < 7) return yy < 1 ? '#f4f6f8' : '#2e3e5c'; if (ad(dx) <= 3) return '#f4f6f8'; if (lapels(dx, yy, 5)) return '#1b2333'; return e ? '#141a26' : tex(dx, yy, '#253046', '#202a3e', 6); });
+  F(c, '#2f6b4a', 30, A.neck * 2, 1, 8); F(c, '#f2f4f5', 26, A.neck * 2 + 8, 8, 10); F(c, '#2f8f6a', 26, A.neck * 2 + 10, 8, 2); F(c, '#141418', 27, A.neck * 2 + 14, 6, 1); }];
+O.cobb = [/^inception/i, 'DREAM HEIST', 'top', 0, function (c, p) { B(c, p, function (dx, yy, e) { if (ad(dx) <= 2) return yy % 3 === 2 && dx === 0 ? '#c9ccd2' : '#eef0f3'; if (lapels(dx, yy, 5)) return '#1e2026'; return e ? '#15161a' : tex(dx, yy, '#3a3d44', '#33363c', 5); }); P(c, ['..k..', '.ggg.', 'gssgg', '.ggg.', '..g..', '..g..'], 50, 50, { k: '#7b808c', g: '#c0c4cc', s: '#8a8f99' }); }];
+O.fletch = [/^whiplash/i, 'FLETCHER', 'fletch', 0, function (c, p) { B(c, p, function (dx, yy, e) { if (yy === 0 && ad(dx) < 4) return '#222228'; return e ? '#000' : tex(dx, yy, '#141418', '#0d0d10', 7); });
+  for (var i = 0; i < 16; i++) { F(c, '#e2c08d', 44 + i, 36 + i, 2, 1); F(c, '#e2c08d', 60 - i, 36 + i, 2, 1); } F(c, '#fff3d6', 44, 36, 2, 1); F(c, '#fff3d6', 60, 36, 2, 1); }];
+O.django = [/^django/i, 'DJANGO', 'django', 0, function (c, p) { B(c, p, function (dx, yy, e) { if (ad(dx) <= 2 && yy < 4) return (dx + yy) % 2 ? '#ffffff' : '#e3e6ea'; if (ad(dx) === 3 && yy % 2) return '#e6c35a'; return e ? '#14286a' : tex(dx, yy, '#2f4fc2', '#2644aa', 3); }); }];
+O.optimus = [/^transformers|^bumblebee/i, 'OPTIMUS', 'bot', 0, function (c, p, A) { B(c, p, function (dx, yy, e) { if (yy >= 1 && yy <= 3 && ad(dx) >= 2 && ad(dx) <= 7) return yy === 1 ? '#e6f4ff' : '#7fc3ff'; if (ad(dx) <= 1 && yy < 5) return '#b9bec6'; if (yy > 5) return ad(dx) < 8 ? '#2a4fc2' : '#203c94'; return e ? '#8a1220' : tex(dx, yy, '#d8323f', '#c42a36', 6); });
+  F(c, '#b9bec6', A.el * 2 - 4, A.nose * 2 + 1, (A.er - A.el) * 2 + 9, 9); for (var i = 0; i < 4; i++) F(c, '#7b808c', A.el * 2 - 1 + i * 4, A.nose * 2 + 3, 2, 6); F(c, '#5fd0ff', A.el * 2 - 2, A.eye * 2, 3, 2); F(c, '#5fd0ff', A.er * 2 - 1, A.eye * 2, 3, 2); var t = hatTop(A); F(c, '#2a4fc2', 18, t - 2, 28, 5); F(c, '#b9bec6', 15, t - 6, 2, 8); F(c, '#b9bec6', 47, t - 6, 2, 8); }];
+O.dynamo = [/^mamma mia/i, 'DYNAMO', 'dancing', 0, function (c, p) { B(c, p, function (dx, yy, e) { if (V(dx, yy, 4)) return null; var s = (dx * 5 + yy * 3) % 4; return e ? '#c9c2d8' : s === 0 ? '#ffd23f' : s === 1 ? '#ffffff' : '#e8e3f2'; }); }];
+O.chainsaw = [/^chainsaw man/i, 'CHAINSAW', 'saw', 1, function (c, p, A) { B(c, p, function (dx, yy, e) { if (ad(dx) <= 1 && yy < 7) return '#141418'; if (ad(dx) <= 3) return '#f4f6f8'; if (lapels(dx, yy, 5)) return '#141418'; return e ? '#0a0a0c' : '#1e1e24'; });
+  var t = hatTop(A); F(c, '#ff8a1f', 28, t - 12, 8, 14); F(c, '#c9621a', 28, t - 12, 1, 14); for (var i = 0; i < 6; i++) { F(c, '#e6e9ed', 26, t - 11 + i * 2, 2, 1); F(c, '#e6e9ed', 36, t - 10 + i * 2, 2, 1); } F(c, '#9aa3ae', 30, t - 13, 4, 1); }];
+O.cliff = [/^once upon a time in hollywood/i, 'CLIFF BOOTH', null, 0, function (c, p, A) { B(c, p, function (dx, yy, e) { if (V(dx, yy, 3)) return '#f4f4f0'; var f = (dx * 3 + yy * 5 + 40) % 9; return e ? '#c99a12' : f === 0 ? '#d8323f' : f === 4 ? '#1b1b22' : '#f5c629'; }); shades(c, A, '#8a6a1a', '#d9a514'); }];
+O.woody = [/^toy story( 4)?$/i, 'WOODY', null, 1, function (c, p, A) { B(c, p, function (dx, yy, e) { if (ad(dx) <= 2 && yy < 2) return yy ? '#c0242f' : '#d8323f'; if (ad(dx) >= 6 && ad(dx) <= 9) return (dx * 3 + yy * 2) % 5 < 2 ? '#141418' : '#f4f4f0'; if (dx === 6 + 1 && yy === 3) return '#ffd23f'; return e ? '#c9a227' : ((dx + 16) >> 1) % 2 === (yy >> 1) % 2 ? '#f5d73a' : '#fff7d0'; });
+  P(c, ['..y..', 'yyyyy', '.yyy.', 'y...y'], 15, 50, { y: '#ffd23f' }); cowboyHat(c, A, '#8a5a2a', '#5a3a1a', '#3a2412'); }];
+O.buzz = [/^toy story [23]/i, 'BUZZ', null, 1, function (c, p, A) { B(c, p, function (dx, yy, e) { if (yy < 2) return '#7cc242'; if (yy >= 3 && yy <= 5 && dx >= -5 && dx <= -1) return yy === 4 ? ['#d8323f', '#7cc242', '#3b6bd8', '#f4f4f0', '#d8323f'][dx + 5] : '#8a8f99'; if (ad(dx) >= 8) return e ? '#5e2a8a' : '#7d3cb0'; return e ? '#c9ccd2' : tex(dx, yy, '#e6e9ed', '#f6f7f9', 4); });
+  var t = hatTop(A); F(c, '#7d3cb0', 16, t - 2, 32, 5); F(c, '#7d3cb0', 14, t + 2, 5, 30); F(c, '#7d3cb0', 45, t + 2, 5, 30); F(c, '#9a5ad0', 20, t - 1, 24, 1); F(c, '#7cc242', 14, t + 32, 36, 3); }];
+O.mrinc = [/^the incredibles$/i, 'MR. INCREDIBLE', null, 0, function (c, p, A) { B(c, p, function (dx, yy, e) { if (yy >= 2 && yy <= 5 && ad(dx) <= 3) { var r = ad(dx) <= 3 - (yy === 2 || yy === 5 ? 1 : 0); return r ? (ad(dx) <= 1 && yy >= 3 && yy <= 4 ? (dx === 0 ? '#141418' : '#ff8a1f') : '#ff8a1f') : null; } return e ? '#8a1220' : tex(dx, yy, '#e0313f', '#d02734', 6); }); mask(c, A, '#141418'); }];
+O.elasti = [/^incredibles 2/i, 'ELASTIGIRL', null, 0, function (c, p, A) { B(c, p, function (dx, yy, e) { if (yy === 6) return '#141418'; if (yy >= 1 && yy <= 4 && ad(dx) <= 2) return '#ff8a1f'; return e ? '#8a1220' : tex(dx, yy, '#e0313f', '#d02734', 6); }); F(c, '#141418', 31, 36, 2, 4); mask(c, A, '#141418'); }];
+O.conductor = [/^the polar express/i, 'CONDUCTOR', null, 1, function (c, p, A) { B(c, p, function (dx, yy, e) { if (ad(dx) === 2 && yy % 2 === 1) return '#e6c35a'; if (yy === 0 && ad(dx) < 3) return '#f4f4f0'; return e ? '#0d1530' : tex(dx, yy, '#1b2a4a', '#16223e', 5); });
+  var t = hatTop(A); F(c, '#1b2a4a', 18, t - 4, 28, 6); F(c, '#e6c35a', 18, t + 0, 28, 2); F(c, '#0d1530', 16, t + 2, 32, 2); F(c, '#e6c35a', 29, t - 3, 6, 3); }];
+O.grinch = [/grinch/i, 'GRINCH', null, 1, function (c, p, A) { wrSkinTo(c, p, ['#a6c84a', '#86a836', '#5e7a22']); B(c, p, function (dx, yy, e) { if (yy < 2 || ad(dx) <= 1) return tex(dx, yy, '#e6e9ed', '#ffffff', 3); if (yy === 6) return '#141418'; return e ? '#8a1220' : tex(dx, yy, '#d8323f', '#c42a36', 6); });
+  var t = hatTop(A); F(c, '#d8323f', 18, t - 4, 26, 6); F(c, '#d8323f', 40, t - 2, 8, 6); F(c, '#ffffff', 48, t + 2, 5, 5); F(c, '#f4f4f0', 16, t + 1, 32, 3); }];
+O.nemo = [/^finding nemo/i, 'NEMO', null, 0, function (c, p) { B(c, p, function (dx, yy, e) { var b = ad(dx); if (b === 4 || b === 10) return '#141418'; if (b === 5 || b === 6 || b === 11) return '#ffffff'; return e ? '#c9621a' : '#ff8a1f'; }); }];
+O.chef = [/^ratatouille/i, 'LITTLE CHEF', null, 1, function (c, p, A) { B(c, p, function (dx, yy, e) { if ((dx === -3 || dx === 3) && yy % 2 === 1) return '#c9ccd2'; if (yy === 0 && ad(dx) < 3) return '#d8323f'; return e ? '#cfd3da' : tex(dx, yy, '#eef0f3', '#ffffff', 5); });
+  var t = hatTop(A); F(c, '#ffffff', 20, t - 12, 24, 13); F(c, '#e6e9ed', 18, t - 14, 28, 4); F(c, '#dfe3e8', 20, t, 24, 3); P(c, ['..gg....', '.gggg.pp', 'gggkgg..', 'ggggggg.', '.g..g..t', '......tt'], 26, t - 20, { g: '#8a8f99', k: '#141418', p: '#f3a7b8', t: '#c9a0a8' }); }];
+O.sulley = [/^monsters,? inc/i, 'SULLEY', null, 1, function (c, p, A) { B(c, p, function (dx, yy, e) { return (dx * 7 + yy * 5 + 60) % 11 < 2 ? '#7a3ca0' : e ? '#1d8a9a' : tex(dx, yy, '#3cc0d0', '#2fb0c2', 3); });
+  var t = hatTop(A); P(c, ['.hh', 'hhh', 'hh.', 'h..'], 16, t - 2, { h: '#e9dcb8' }); P(c, ['hh.', 'hhh', '.hh', '..h'], 45, t - 2, { h: '#e9dcb8' }); }];
+O.po = [/^kung fu panda/i, 'DRAGON WARRIOR', null, 1, function (c, p, A) { B(c, p, function (dx, yy, e) { if (yy >= 6) return '#c9621a'; if (ad(dx) >= 7) return '#141418'; if (yy < 2) return '#141418'; return e ? '#cfd3da' : '#f4f4f0'; });
+  var t = hatTop(A); F(c, '#141418', 16, t - 2, 8, 7); F(c, '#141418', 40, t - 2, 8, 7); F(c, '#2a2a30', 18, t, 4, 3); F(c, '#2a2a30', 42, t, 4, 3); }];
+O.garfield = [/^garfield/i, 'GARFIELD', null, 1, function (c, p, A) { B(c, p, function (dx, yy, e) { if (ad(dx) < 3 && yy > 2) return '#ffd9a0'; return ((dx + 16) * 3 + yy) % 7 === 0 ? '#2a1a10' : e ? '#c9621a' : '#ff8a1f'; });
+  var t = hatTop(A); P(c, ['..o', '.oo', 'okk', 'ooo'], 15, t - 2, { o: '#ff8a1f', k: '#ffb070' }); P(c, ['o..', 'oo.', 'kko', 'ooo'], 46, t - 2, { o: '#ff8a1f', k: '#ffb070' }); P(c, ['yyyyyyy', 'rrrrrrr', 'yyyyyyy', 'rrrrrrr'], 50, 52, { y: '#ffd23f', r: '#d8323f' }); }];
+O.poppins = [/^mary poppins/i, 'MARY POPPINS', null, 1, function (c, p, A) { B(c, p, function (dx, yy, e) { if (yy === 0 && ad(dx) <= 2) return '#d8323f'; if (ad(dx) <= 2 && yy < 4) return '#f4f4f0'; if (ad(dx) === 3 && yy % 2) return '#141418'; return e ? '#0d1530' : tex(dx, yy, '#1b2a4a', '#16223e', 6); });
+  var t = hatTop(A); F(c, '#141418', 20, t - 4, 24, 5); F(c, '#141418', 14, t + 1, 36, 2); F(c, '#d8323f', 36, t - 4, 3, 3); F(c, '#f4f4f0', 40, t - 3, 3, 3); F(c, '#7cc242', 34, t - 2, 2, 2);
+  F(c, '#141418', 58, 26, 1, 30); P(c, ['.kkkkk.', 'kkkkkkk', 'k.k.k.k'], 55, 24, { k: '#141418' }); P(c, ['gg', 'gy', '.g'], 56, 54, { g: '#3f8a4a', y: '#ffd23f' }); }];
+O.tron = [/^tron/i, 'GRID RUNNER', null, 0, function (c, p, A) { B(c, p, function (dx, yy, e) { if (e || ad(dx) === 5 || yy === 3 && ad(dx) < 8 || ad(dx) === 0 && yy > 3) return '#ff2e3b'; return tex(dx, yy, '#1b1b22', '#101014', 4); }); F(c, '#ff2e3b', A.el * 2 - 4, A.eye * 2 + 4, (A.er - A.el) * 2 + 9, 1); }];
+O.elliot = [/^mr\.? robot/i, 'MR. ROBOT', null, 1, function (c, p, A) { B(c, p, function (dx, yy, e) { if (ad(dx) === 2 && yy > 0 && yy < 5) return '#d6d6dc'; return e ? '#050507' : tex(dx, yy, '#1a1a1f', '#131317', 6); });
+  var t = hatTop(A); F(c, '#141418', 16, t - 4, 32, 6); F(c, '#141418', 12, t + 2, 6, 34); F(c, '#141418', 46, t + 2, 6, 34); F(c, '#26262c', 18, t - 2, 28, 2); F(c, '#26262c', 16, t + 4, 2, 30); F(c, '#26262c', 46, t + 4, 2, 30); }];
+O.liquid = [/^chernobyl/i, 'LIQUIDATOR', null, 1, function (c, p, A) { B(c, p, function (dx, yy, e) { if (ad(dx) < 7 && yy > 1) return yy % 3 === 0 ? '#2e3236' : '#3d4248'; return e ? '#3b4232' : tex(dx, yy, '#5c6b4a', '#526140', 4); });
+  F(c, '#3d4248', A.el * 2 - 4, A.eye * 2 - 4, (A.er - A.el) * 2 + 9, 20); F(c, '#b9e6d0', A.el * 2 - 3, A.eye * 2 - 2, 6, 5); F(c, '#b9e6d0', A.er * 2 - 2, A.eye * 2 - 2, 6, 5); F(c, '#141418', A.el * 2 - 3, A.eye * 2 - 2, 6, 1); F(c, '#141418', A.er * 2 - 2, A.eye * 2 - 2, 6, 1); F(c, '#2a2e32', 28, A.mouth * 2 - 2, 8, 8); F(c, '#5a6068', 30, A.mouth * 2, 4, 4); var t = hatTop(A); F(c, '#526140', 18, t - 2, 28, 6); }];
+O.marshal = [/^shutter island/i, 'MARSHAL', null, 1, function (c, p, A) { B(c, p, function (dx, yy, e) { if (ad(dx) <= 1 && yy < 7) return '#6b3a2a'; if (ad(dx) <= 3) return '#e8e3d6'; if (lapels(dx, yy, 7)) return '#8a7044'; if (yy === 6) return '#7a6038'; return e ? '#7a6038' : tex(dx, yy, '#b89a62', '#a88a54', 5); }); fedora(c, A, '#5a4a3a', '#3a2e24', '#1b1b22'); }];
+O.guts = [/^berserk/i, 'BLACK SWORDSMAN', null, 0, function (c, p) { B(c, p, function (dx, yy, e) { if (yy < 2 && ad(dx) > 4) return '#4a4d55'; if (yy === 4 && ad(dx) < 8) return '#5a2a1a'; return e ? '#050507' : tex(dx, yy, '#1e1c22', '#141216', 5); });
+  F(c, '#8a8f99', 50, 4, 7, 46); F(c, '#b9bec6', 51, 5, 2, 44); F(c, '#5a3a1c', 51, 50, 5, 8); F(c, '#2a2a30', 47, 49, 13, 2); F(c, '#c0242f', 22, 40, 3, 4); }];
+O.mick = [/^wolf creek/i, 'MICK TAYLOR', null, 1, function (c, p, A) { B(c, p, function (dx, yy, e) { if (V(dx, yy, 3)) return null; if (ad(dx) === 5 && yy === 2) return '#5a4a2a'; return e ? '#6a5a3a' : tex(dx, yy, '#a89466', '#9a8658', 5); });
+  var t = hatTop(A); F(c, '#6b4a26', 20, t - 5, 24, 6); F(c, '#3a2412', 20, t - 1, 24, 2); F(c, '#6b4a26', 8, t + 1, 48, 3); F(c, '#4a3218', 8, t + 3, 48, 1); F(c, '#dfe3e8', 54, 40, 2, 12); F(c, '#3a2412', 53, 52, 4, 5); }];
+O.marty = [/^madagascar/i, 'MARTY', null, 1, function (c, p, A) { B(c, p, function (dx, yy, e) { return ((dx + 16) + (yy >> 1)) % 3 === 0 ? '#141418' : e ? '#cfd3da' : '#f4f4f0'; });
+  var t = hatTop(A); for (var i = 0; i < 7; i++) F(c, '#141418', 25 + i * 2, t - 6 + (i % 2), 2, 8); }];
+O.mcqueen = [/^cars$/i, 'KA-CHOW', null, 0, function (c, p) { B(c, p, function (dx, yy, e) { if (yy >= 2 && yy <= 4 && ((dx + 8) - yy * 2) >= 0 && ((dx + 8) - yy * 2) <= 3) return '#ffd23f'; if (yy === 0 && ad(dx) < 3) return '#141418'; return e ? '#8a1220' : tex(dx, yy, '#e0313f', '#d02734', 6); });
+  P(c, ['kkk.kkk', 'k...k..', 'kkk.kkk', '..k...k', 'kkk.kkk'], 34, 50, { k: '#ffffff' }); }];
+O.m3gan = [/^m3gan/i, 'M3GAN', null, 0, function (c, p) { B(c, p, function (dx, yy, e) { if (yy < 2 && ad(dx) < 5) return '#f4f4f0'; if (yy === 1 && ad(dx) < 2) return '#141418'; if (yy > 5) return (dx % 2) ? '#9aa3ae' : '#b9c0c8'; return e ? '#8a929e' : '#c8ced6'; }); P(c, ['kk.kk', 'kkkkk', 'kk.kk'], 30, 44, { k: '#141418' }); }];
+O.aldo = [/^inglou?rious basterds/i, 'ALDO RAINE', null, 0, function (c, p, A) { B(c, p, function (dx, yy, e) { if (V(dx, yy, 3)) return '#7a6a48'; if ((ad(dx) === 6 || ad(dx) === 7) && yy === 3) return '#3a4228'; return e ? '#2e3420' : tex(dx, yy, '#5a6a3a', '#4e5e32', 4); }); F(c, '#b0412e', 24, A.neck * 2 - 3, 16, 1); F(c, '#8a2e20', 24, A.neck * 2 - 2, 16, 1); }];
+O.nwatch[4] = function (c, p) { B(c, p, function (dx, yy, e) { if (yy < 3) return tex(dx, yy, '#6b5a48', (dx + yy) % 2 ? '#3b3128' : '#4a3d30', 3); if (ad(dx) === 4 && yy > 2) return '#5a4028'; if (ad(dx) < 2 && yy === 5) return '#9a8a70'; return e ? '#060607' : tex(dx, yy, '#1e1e24', '#121216', 6); }); };
+window.WR59 = O;
+/* rebuild the wardrobe: keep ids of outfits that existed (equipped stays), others get a stable title-hash id; removed ones simply aren't in WARD → wrOf() falls back to none */
+WARD.length = 0; Object.keys(O).forEach(function (k) { var o = O[k], key = 'w59_' + k; WRO[key] = o[4]; if (o[3]) WRHO[key] = 1; WARD.push([o[2] || ('w59' + k), o[1], 'clown', o[0], undefined, undefined, key]); });
+wrSync = function () {};
+/* names: the unlock state already carries the real source title (o.src) — the tile shows 🎞/📺 + that title */
+})();
+/* ===== R59 scenes: detailed, recognisable pixel scenes drawn at any width (avatar = 32 wide, profile banner = full width) ===== */
+(function () {
+var Rc = function (x, c, a, b, w, h) { x.fillStyle = c; x.fillRect(a, b, w, h); };
+var BAY = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];
+function grad(x, W, y0, y1, cols) { for (var y = y0; y < y1; y++) for (var i = 0; i < W; i++) { var t = (y - y0) / Math.max(1, y1 - y0 - 1) * (cols.length - 1), k = Math.floor(t), f = t - k, d = BAY[(y & 3) * 4 + (i & 3)] / 16; x.fillStyle = cols[Math.min(cols.length - 1, k + (f > d ? 1 : 0))]; x.fillRect(i, y, 1, 1); } }
+function stars(x, W, H, n, s, col) { for (var i = 0; i < n; i++) Rc(x, col || '#fff', (i * 37 + s * 11) % W, (i * 23 + s * 7) % H, 1, 1); }
+function cx0(W) { return Math.floor(W / 2); }
+function side(W) { return W > 40; } /* wide banner: scatter extra props left/right */
+var S = {};
+S.plain_purple = { n: 'Purple', fw: function (x, W) { grad(x, W, 0, 32, ['#3a2d66', '#2c2250', '#1f1838']); stars(x, W, 20, W / 4, 3, '#4a3d80'); } };
+S.plain_teal = { n: 'Teal', fw: function (x, W) { grad(x, W, 0, 32, ['#2a8a94', '#1f6f78', '#14505a']); } };
+S.plain_red = { n: 'Red', fw: function (x, W) { grad(x, W, 0, 32, ['#c03048', '#a3243b', '#7a1a2c']); } };
+S.plain_gold = { n: 'Gold', fw: function (x, W) { grad(x, W, 0, 32, ['#f2c040', '#d9a21b', '#a87a10']); } };
+S.desert = { n: 'Breaking Bad RV', k: /breaking bad|el camino|better call saul/i, fw: function (x, W) { grad(x, W, 0, 20, ['#ffd27a', '#f6a04a', '#e8763a', '#c4523a']); Rc(x, '#fff1b0', W - 9, 3, 5, 5); Rc(x, '#ffe08a', W - 10, 4, 7, 3);
+  for (var i = 0; i < W; i++) { var h = 14 + Math.round(2 * Math.sin(i / 5) + (i % 13 < 6 ? -3 : 0)); Rc(x, '#a8563a', i, h, 1, 20 - h + 1); } Rc(x, '#7a3e2a', 0, 19, W, 1); grad(x, W, 20, 32, ['#e0b070', '#d39e5c', '#c08a4a']);
+  Rc(x, '#6b5a48', 0, 27, W, 2); for (var j = 0; j < W; j += 6) Rc(x, '#f2d16a', j, 28, 3, 1);
+  var rx = side(W) ? cx0(W) + 12 : 2; Rc(x, '#efe8d6', rx, 14, 14, 9); Rc(x, '#efe8d6', rx + 14, 17, 3, 6); Rc(x, '#8a5a32', rx, 19, 17, 1); Rc(x, '#5a8ab8', rx + 2, 16, 3, 2); Rc(x, '#5a8ab8', rx + 7, 16, 3, 2); Rc(x, '#5a8ab8', rx + 14, 18, 2, 1); Rc(x, '#c9bfa8', rx + 11, 16, 2, 6); Rc(x, '#222', rx + 2, 23, 3, 2); Rc(x, '#222', rx + 12, 23, 3, 2); Rc(x, '#ddd', rx + 4, 13, 3, 1);
+  [side(W) ? 6 : 26, side(W) ? W - 6 : 29].forEach(function (c) { Rc(x, '#3d7a3d', c, 15, 2, 10); Rc(x, '#3d7a3d', c - 2, 17, 1, 4); Rc(x, '#3d7a3d', c - 2, 20, 2, 1); Rc(x, '#3d7a3d', c + 3, 16, 1, 4); Rc(x, '#3d7a3d', c + 2, 19, 2, 1); Rc(x, '#5aa65a', c, 15, 1, 9); }); } };
+S.westeros = { n: 'Winterfell', k: /game of thrones|house of the dragon|knight of the seven/i, fw: function (x, W) { grad(x, W, 0, 24, ['#0a1430', '#13224a', '#24365e']); stars(x, W, 14, W / 3, 5); Rc(x, '#e8e8f0', W - 8, 3, 4, 4); Rc(x, '#c8c8d8', W - 7, 4, 1, 1);
+  var c = cx0(W); Rc(x, '#3a4560', c - 14, 12, 28, 14); for (var i = c - 14; i < c + 14; i += 3) Rc(x, '#3a4560', i, 11, 2, 1); [[c - 15, 6, 6], [c + 9, 6, 6], [c - 3, 3, 6]].forEach(function (t) { Rc(x, '#46526e', t[0], t[1], t[2], 20); for (var k = 0; k < t[2]; k += 2) Rc(x, '#46526e', t[0] + k, t[1] - 1, 1, 1); Rc(x, '#ffcc55', t[0] + 2, t[1] + 4, 2, 2); });
+  Rc(x, '#8a8f99', c - 1, -1 + 3, 1, 1); Rc(x, '#9aa3ae', c - 2, 1, 1, 3); Rc(x, '#e6e9ed', c - 1, 1, 4, 2); Rc(x, '#141418', c, 18, 4, 8); Rc(x, '#2b3550', c - 14, 18, 28, 1);
+  grad(x, W, 24, 32, ['#cfd8ea', '#e8eef8', '#ffffff']); for (var s = 0; s < W * 1.2; s++) Rc(x, '#fff', (s * 29 + 3) % W, (s * 17) % 24, 1, 1); } };
+S.space = { n: 'Gargantua', k: /interstellar|project hail mary|star wars|andor|gravity|apollo/i, fw: function (x, W) { Rc(x, '#04040c', 0, 0, W, 32); stars(x, W, 32, W, 1); stars(x, W, 32, W / 4, 9, '#9ad0ff');
+  var c = cx0(W) + (side(W) ? 10 : 3), y = 13; for (var yy = 0; yy < 32; yy++) for (var xx = Math.max(0, c - 18); xx < Math.min(W, c + 18); xx++) { var dx = xx - c + .5, dy = yy - y + .5, r = Math.sqrt(dx * dx + dy * dy), e = Math.sqrt(dx * dx / 49 + dy * dy / 36), col = null;
+    if (r < 5) col = '#000'; else if (r < 6.2) col = '#ffe6a8'; else if (Math.abs(e - 1) < .12 && dy < 0) col = '#ffcf70'; else if (Math.abs(e - 1) < .12) col = '#c9621a'; else if (r < 8 && Math.random() < 0) col = null;
+    if (Math.abs(dy) < 1.3 && Math.abs(dx) < 16 && !(r < 5 && dy < -0.2)) col = Math.abs(dx) < 9 ? '#fff1c8' : Math.abs(dx) < 13 ? '#ffb04a' : '#a8501a';
+    if (!col && r < 9) col = r < 7.4 ? '#3a1a08' : null; if (col) Rc(x, col, xx, yy, 1, 1); }
+  var e = side(W) ? 10 : 3; Rc(x, '#c8ced6', e, 24, 7, 1); Rc(x, '#c8ced6', e + 3, 21, 1, 7); for (var k = 0; k < 6; k++) Rc(x, '#9aa3ae', e + [0, 6, 6, 0, 3, 3][k], 24 + [-2, -2, 2, 2, -3, 3][k], 1, 1); } };
+S.farm = { n: 'Diddly Squat', k: /clarkson/i, fw: function (x, W) { grad(x, W, 0, 16, ['#6fbcf0', '#9ad4ff', '#c8eaff']); Rc(x, '#fff', 4, 4, 9, 2); Rc(x, '#fff', 6, 3, 5, 1); Rc(x, '#fff', W - 14, 6, 8, 2); Rc(x, '#fff', W - 12, 5, 4, 1);
+  for (var i = 0; i < W; i++) { var h = 15 + Math.round(1.5 * Math.sin(i / 6)); Rc(x, '#5aa63c', i, h, 1, 32 - h); } for (var y = 20; y < 32; y += 3) for (var j = (y % 2) * 2; j < W; j += 4) Rc(x, '#e3c04a', j, y, 2, 1);
+  var b = side(W) ? W - 22 : 20; Rc(x, '#c0392b', b, 10, 10, 8); Rc(x, '#7a2a1e', b - 1, 9, 12, 1); Rc(x, '#7a2a1e', b + 1, 8, 8, 1); Rc(x, '#fff', b + 3, 13, 4, 5); Rc(x, '#c0392b', b + 4, 14, 2, 4); Rc(x, '#fff', b + 3, 13, 4, 1);
+  var t = side(W) ? 10 : 2; Rc(x, '#3a6ab8', t, 21, 9, 4); Rc(x, '#3a6ab8', t + 5, 17, 4, 4); Rc(x, '#dfe9f5', t + 6, 18, 2, 2); Rc(x, '#141418', t, 24, 4, 4); Rc(x, '#ffd23f', t + 1, 25, 2, 2); Rc(x, '#141418', t + 7, 25, 3, 3);
+  if (side(W)) [[cx0(W) - 4, 24], [cx0(W) + 4, 26]].forEach(function (s) { Rc(x, '#f4f4f0', s[0], s[1], 4, 2); Rc(x, '#141418', s[0] + 4, s[1], 1, 1); Rc(x, '#141418', s[0], s[1] + 2, 1, 1); Rc(x, '#141418', s[0] + 3, s[1] + 2, 1, 1); }); } };
+S.swamp = { n: 'Shrek Swamp', k: /shrek/i, fw: function (x, W) { grad(x, W, 0, 22, ['#c8e08a', '#a6c86a', '#7aa04a']); for (var i = 0; i < W; i += 7) { Rc(x, '#3d5a22', i, 6 + (i % 3), 4, 16); Rc(x, '#2e4a1a', i - 2, 4 + (i % 3), 8, 4); }
+  Rc(x, '#4e6b2a', 0, 22, W, 10); Rc(x, '#3d5c87', 2, 26, Math.min(W - 4, 16), 3); Rc(x, '#5a7aa8', 4, 26, 6, 1);
+  var h = side(W) ? cx0(W) + 10 : 18; Rc(x, '#6b4a2a', h, 10, 12, 13); Rc(x, '#8a6a3a', h + 1, 10, 2, 13); Rc(x, '#c9a25a', h - 1, 8, 14, 3); Rc(x, '#7aa04a', h + 1, 7, 10, 1); Rc(x, '#2d1b10', h + 5, 16, 3, 7); Rc(x, '#ffd27a', h + 2, 12, 2, 2); Rc(x, '#ffd27a', h + 9, 12, 2, 2);
+  var o = side(W) ? 8 : 2; Rc(x, '#7a5a32', o, 14, 6, 10); Rc(x, '#5a3e20', o - 1, 13, 8, 1); Rc(x, '#3a2412', o + 2, 15, 1, 2); Rc(x, '#c9a25a', o + 7, 18, 6, 3); Rc(x, '#3a2412', o + 9, 21, 1, 3); Rc(x, '#8a1a1a', o + 8, 19, 4, 1);
+  for (var f = 0; f < W / 6; f++) Rc(x, '#fff59a', (f * 19 + 4) % W, 12 + (f * 7) % 10, 1, 1); } };
+S.office = { n: 'Lumon Severed Floor', k: /severance|succession|the office/i, fw: function (x, W) { Rc(x, '#f2f2ee', 0, 0, W, 20); for (var i = 0; i < W; i += 8) Rc(x, '#dcdcd6', i, 0, 1, 20); Rc(x, '#e6e6e0', 0, 0, W, 2); for (var l = 4; l < W; l += 10) Rc(x, '#ffffff', l, 1, 6, 1);
+  grad(x, W, 20, 32, ['#3a9a62', '#2e7d4f', '#226040']); var c = cx0(W); Rc(x, '#dcdcd6', c - 4, 8, 8, 12); Rc(x, '#b8b8b2', c - 3, 9, 6, 11);
+  [[c - 12, 1], [c + 4, 1]].forEach(function (d) { Rc(x, '#f8f8f4', d[0], 17, 9, 3); Rc(x, '#2e7d4f', d[0], 20, 9, 1); Rc(x, '#c8c4b0', d[0] + 2, 12, 5, 5); Rc(x, '#1f3a2a', d[0] + 3, 13, 3, 3); Rc(x, '#7fe3a8', d[0] + 3, 14, 1, 1); Rc(x, '#a8a490', d[0] + 3, 17, 3, 1); });
+  if (side(W)) { Rc(x, '#141418', 6, 6, 8, 5); Rc(x, '#f2f2ee', 7, 7, 6, 3); Rc(x, '#2e7d4f', 8, 8, 4, 1); Rc(x, '#d8d8d2', W - 14, 4, 9, 14); Rc(x, '#c8c8c2', W - 13, 5, 7, 12); Rc(x, '#a0a09a', W - 8, 11, 1, 2); } } };
+S.hellhouse = { n: 'Hill House', k: /hill house|house of usher|heretic|ritual|bring her back|obsession/i, fw: function (x, W) { grad(x, W, 0, 26, ['#0c0614', '#1a0f26', '#2a1838']); Rc(x, '#e6e0ff', 4, 4, 5, 5); Rc(x, '#e6e0ff', 5, 3, 3, 7); Rc(x, '#e6e0ff', 3, 5, 7, 3); Rc(x, '#c8c0f0', 5, 5, 1, 1); Rc(x, '#c8c0f0', 7, 7, 1, 1);
+  var c = cx0(W); for (var i = 0; i < W; i++) { var h = 24 - Math.round(4 * Math.exp(-Math.pow((i - c) / 10, 2))); Rc(x, '#120a1a', i, h, 1, 32 - h); }
+  Rc(x, '#2a2235', c - 8, 9, 16, 12); Rc(x, '#2a2235', c - 5, 4, 10, 5); Rc(x, '#2a2235', c + 4, 2, 3, 7); Rc(x, '#1a1424', c - 9, 8, 18, 1); Rc(x, '#1a1424', c - 6, 3, 12, 1);
+  [[c - 6, 11], [c + 3, 11], [c - 6, 16], [c + 3, 16], [c - 2, 5]].forEach(function (w, k) { Rc(x, k === 2 ? '#3a3046' : '#ffcc55', w[0], w[1], 3, 3); Rc(x, '#2a2235', w[0] + 1, w[1], 1, 3); }); Rc(x, '#0a0610', c - 1, 17, 3, 4);
+  for (var t = 0; t < 2; t++) { var tx = t ? W - 6 : 3; Rc(x, '#0a0610', tx, 12, 1, 14); Rc(x, '#0a0610', tx - 2, 14, 2, 1); Rc(x, '#0a0610', tx + 1, 16, 3, 1); Rc(x, '#0a0610', tx - 3, 13, 1, 1); }
+  for (var f = 0; f < W; f += 2) Rc(x, 'rgba(200,190,230,.18)', f, 26 + (f % 4 ? 0 : 1), 2, 2); [[W / 3, 6], [W / 3 + 4, 8]].forEach(function (b) { Rc(x, '#000', Math.round(b[0]), b[1], 3, 1); Rc(x, '#000', Math.round(b[0]) + 1, b[1] + 1, 1, 1); }); } };
+S.toyroom = { n: "Andy's Room", k: /toy story/i, fw: function (x, W) { Rc(x, '#7ec8f8', 0, 0, W, 24); for (var i = -4; i < W; i += 11) for (var j = 2; j < 22; j += 9) { var o = (j % 2) * 5; Rc(x, '#fff', i + o, j, 7, 3); Rc(x, '#fff', i + o + 2, j - 1, 3, 1); Rc(x, '#fff', i + o - 1, j + 1, 9, 1); }
+  Rc(x, '#b07a4a', 0, 24, W, 8); for (var k = 0; k < W; k += 5) Rc(x, '#9a6a3c', k, 24, 1, 8); Rc(x, '#3b6bd8', side(W) ? W - 20 : 18, 17, 14, 8); Rc(x, '#d8323f', side(W) ? W - 20 : 18, 16, 14, 2); Rc(x, '#fff', side(W) ? W - 19 : 19, 18, 4, 2);
+  if (side(W)) { Rc(x, '#d8323f', 8, 21, 6, 4); Rc(x, '#ffd23f', 9, 18, 4, 3); Rc(x, '#3b6bd8', 9, 22, 4, 1); Rc(x, '#ffd23f', 18, 22, 4, 3); Rc(x, '#3b6bd8', 19, 21, 2, 1); } } };
+S.grid = { n: 'The Grid', k: /tron/i, fw: function (x, W) { grad(x, W, 0, 14, ['#000', '#0a0408', '#1a060c']); Rc(x, '#ff2e3b', 0, 14, W, 1); Rc(x, '#050003', 0, 15, W, 17); var c = cx0(W);
+  for (var y = 15, s = 1; y < 32; y += s, s++) Rc(x, '#a01020', 0, y, W, 1); for (var k = -12; k <= 12; k++) for (var y2 = 15; y2 < 32; y2++) { var xx = Math.round(c + k * (y2 - 13) * 0.9); if (xx >= 0 && xx < W) Rc(x, '#a01020', xx, y2, 1, 1); }
+  Rc(x, '#ff6070', 2, 24, Math.max(4, c - 6), 1); Rc(x, '#ffd0d6', c - 6, 22, 5, 3); Rc(x, '#ff2e3b', c - 7, 23, 7, 2); for (var b = 0; b < 3; b++) Rc(x, '#3a0a12', 4 + b * 9, 4 + b * 2, 6, 10 - b * 2); } };
+S.reef = { n: 'The Reef', k: /finding (nemo|dory)|shark tale/i, fw: function (x, W) { grad(x, W, 0, 32, ['#4ab8e8', '#2a8ac8', '#1a5a98', '#103a70']); for (var r = 0; r < W; r += 3) Rc(x, 'rgba(255,255,255,.25)', r + (r % 2), 1 + (r % 5), 1, 1);
+  Rc(x, '#e8d49a', 0, 28, W, 4); for (var a = 0; a < W; a += 9) { Rc(x, '#d8509a', a, 20, 2, 8); Rc(x, '#d8509a', a - 2, 22, 2, 1); Rc(x, '#d8509a', a + 2, 21, 2, 1); Rc(x, '#ff8a6a', a + 4, 24, 3, 4); }
+  var f = side(W) ? cx0(W) + 14 : 22; Rc(x, '#ff8a1f', f, 10, 6, 4); Rc(x, '#fff', f + 2, 10, 1, 4); Rc(x, '#ff8a1f', f + 6, 11, 2, 2); Rc(x, '#141418', f + 1, 11, 1, 1);
+  var d = side(W) ? 10 : 4; Rc(x, '#3b6bd8', d, 14, 7, 4); Rc(x, '#141418', d + 2, 15, 3, 1); Rc(x, '#ffd23f', d + 7, 15, 2, 2); Rc(x, '#fff', d + 1, 15, 1, 1); } };
+Object.keys(S).forEach(function (id) { var s = S[id], old = SCENES[id]; s.f = function (x) { s.fw(x, 32); }; if (old && old.k && !s.k) s.k = old.k; SCENES[id] = s; });
+/* full-width profile banner: the chosen scene drawn edge-to-edge behind the Camp profile header */
+function banner59() { [].forEach.call(document.querySelectorAll('#v-stats .lkh2'), function (h) { var b = h.querySelector('[data-bgpick]'), p = b && b.dataset.bgpick; if (!p) return; var cv = h.querySelector('canvas.bn59'); if (!cv) { cv = document.createElement('canvas'); cv.className = 'bn59'; h.insertBefore(cv, h.firstChild); }
+  var sc = bgOf(p), r = h.getBoundingClientRect(), W = Math.max(32, Math.round(32 * r.width / Math.max(1, r.height))); if (cv.dataset.k === sc + W) return; cv.dataset.k = sc + W; cv.width = W; cv.height = 32; var x = cv.getContext('2d'); x.imageSmoothingEnabled = false;
+  if (SCENES[sc] && SCENES[sc].fw) SCENES[sc].fw(x, W); else { var t = document.createElement('canvas'); t.width = t.height = 32; var tx = t.getContext('2d'); try { (SCENES[sc] ? SCENES[sc].f(tx) : (function () { var im = sceneImg(posters[sc.slice(2)] || ''); if (im) tx.drawImage(im, 0, 0, 32, 32); })()); } catch (e) {} x.drawImage(t, 0, 0, W, 32); } h.classList.add('bn59on'); }); }
+window.banner59 = banner59;
+var _paintAv59 = paintAvatars; paintAvatars = function () { var r = _paintAv59.apply(this, arguments); try { banner59(); } catch (e) {} return r; };
+window.addEventListener('resize', function () { try { banner59(); } catch (e) {} });
+})();
 
 </script></body></html>
