@@ -936,6 +936,24 @@ body.ytp-on{overflow:hidden}
 #adb .adhm{margin-top:8px;font-size:7px;color:#7cdcff;text-align:center}
 #adb.muted{box-shadow:inset 0 0 0 2px #ff4f8b,4px 4px 0 #000}#adb.muted .adhm{color:#ff8fb3}
 body.navsw *,body.navsw *::before,body.navsw *::after{transition:none!important;animation-duration:0s!important}
+#lgg{margin:18px 0 90px}.lggh h3{font:10px var(--pix);color:var(--gold);margin:0 0 10px;letter-spacing:1px}.lggh small{color:var(--dim);font-size:8px}
+.lggc{margin-bottom:8px}.lggc button{font-size:7px;padding:8px 2px}
+.lggr{display:grid;grid-template-columns:repeat(auto-fill,minmax(60px,1fr));gap:12px 8px;margin-top:12px}
+.lgc{background:none;border:0;padding:0;text-align:left;color:var(--txt);display:flex;flex-direction:column;gap:4px;transition:transform .12s steps(3);min-width:0}
+.lgc:hover,.lgc:active{transform:translateY(-4px)}.lgc:hover .lgp,.lgc:active .lgp{box-shadow:0 0 0 2px var(--gold),3px 6px 0 #000}
+.lgp{position:relative;aspect-ratio:2/3;background:#1c1c33;box-shadow:0 0 0 2px #000,3px 3px 0 #000;overflow:hidden}
+.lgp img{width:100%;height:100%;object-fit:cover;display:block}.lgp i{position:absolute;inset:0;display:grid;place-items:center;font:16px var(--pix);font-style:normal;color:var(--dim)}
+.lgw{position:absolute;right:2px;top:2px;font:5px var(--pix);padding:2px 3px;color:#000;box-shadow:1px 1px 0 #000}.lgw.sam{background:#ffcc00}.lgw.lewy{background:#ff8fb3}.lgw.both{background:#7dff9b}
+.lgp em{position:absolute;left:2px;top:2px;font:5px var(--pix);font-style:normal;padding:2px 3px;background:#000;color:#fff}
+.lgp u{position:absolute;left:0;right:0;bottom:0;height:3px;background:repeating-linear-gradient(90deg,var(--gold) 0 4px,transparent 4px 6px)}
+.lgt{font:6px/1.5 var(--pix);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:18px}
+.lgs{font-size:8px;color:var(--gold);letter-spacing:-1px;line-height:1}.lgs s{text-decoration:none;opacity:.25}
+.lgs{font-size:12px;letter-spacing:0;line-height:1.1;text-shadow:1px 1px 0 #000}
+.lgp{contain:layout paint;transform:translateZ(0)}.lgp img{opacity:0;transition:opacity .2s}.lgp img.ld{opacity:1}
+.lgc{touch-action:manipulation;-webkit-tap-highlight-color:transparent}.lgt{min-height:18px}
+.rib{overscroll-behavior-x:contain;touch-action:pan-x pan-y}
+#lggup{position:fixed;right:12px;bottom:calc(92px + var(--sab,0px));z-index:40;border:0;padding:8px 10px;font:7px var(--pix);background:#ffcc00;color:#000;box-shadow:inset 0 0 0 2px #000,3px 3px 0 #000;opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .15s,transform .15s steps(3)}
+#lggup.on{opacity:1;pointer-events:auto;transform:none}
 </style></head><body>
 <div id="splash" aria-label="Logged"></div>
 <header><div class="hin">
@@ -4123,5 +4141,26 @@ $('nav').addEventListener('click', function (e) { var b = e.target.closest('butt
   setTimeout(navOnly, 0); }, true);
 /* also guard any programmatic show() */
 var _show47 = show; show = function () { var r = _show47.apply(this, arguments); navOnly(); return r; };
+
+/* ===== R48 (HELD): LOGGED poster grid under the ribbon ===== */
+var LGG = { s: 'recent', f: 'all' };
+function lggWho(r) { var s = isY(r.samWatched), l = isY(r.lewyWatched); return s && l ? 'both' : s ? 'sam' : l ? 'lewy' : ''; }
+function lggList() { var L = rows.filter(function (r) { return (isWatched(r) || prog(r)) && !isYT(r); });
+  if (LGG.f === 'movie') L = L.filter(function (r) { return r.type === 'Movie'; }); else if (LGG.f === 'tv') L = L.filter(function (r) { return r.type !== 'Movie'; }); else if (LGG.f !== 'all') L = L.filter(function (r) { return lggWho(r) === LGG.f; });
+  var k = LGG.s; return L.slice().sort(k === 'az' ? function (a, b) { return a.title.localeCompare(b.title); } : k === 'top' ? function (a, b) { return score(b) - score(a); } : k === 'year' ? function (a, b) { return (+b.year || 0) - (+a.year || 0); } : function (a, b) { return b.row - a.row; }); }
+function lggCard(r) { var p = posters[r.title], sc = score(r), w = lggWho(r), st = sc > 0 ? Math.max(1, Math.round(sc / 2)) : 0;
+  return '<button class="lgc" data-open="' + r.row + '"><div class="lgp">' + (p && /^http|^data:/.test(p) ? '<img loading="lazy" decoding="async" onload="this.classList.add(\'ld\')" onerror="this.remove()" src="' + esc(p) + '" alt="">' : '<i>' + esc(r.title.slice(0, 1)) + '</i>') +
+    (w ? '<b class="lgw ' + w + '">' + (w === 'both' ? 'S+L' : w === 'sam' ? 'S' : 'L') + '</b>' : '') + (r.type !== 'Movie' ? '<em>TV</em>' : '') + (prog(r) && !isWatched(r) ? '<u></u>' : '') + '</div>' +
+    '<span class="lgt">' + esc(r.title.replace(/\s*\((S\d+|[IVX]+)\)\s*$/i, '')) + '</span>' + (st ? '<span class="lgs">' + '★★★★★'.slice(0, st) + '<s>' + '★★★★★'.slice(st) + '</s></span>' : '') + '</button>'; }
+function renderLgg() { var host = $('lgd'); if (!host) return; var g = $('lgg'); if (!g) { g = document.createElement('div'); g.id = 'lgg'; } host.appendChild(g); var L = lggList(), ch = function (a, k, lab) { return '<button data-lgg' + a + '="' + k + '" class="' + (LGG[a] === k ? 'on' : '') + '">' + lab + '</button>'; };
+  g.innerHTML = '<div class="lggh"><h3>ALL LOGGED <small>' + L.length + '</small></h3></div><div class="sg lggc">' + ch('f', 'all', 'ALL') + ch('f', 'movie', 'FILMS') + ch('f', 'tv', 'TV') + ch('f', 'both', 'S+L') + ch('f', 'sam', 'S') + ch('f', 'lewy', 'L') + '</div><div class="sg lggc">' + ch('s', 'recent', '🕘 NEW') + ch('s', 'top', '★ TOP') + ch('s', 'az', 'A–Z') + ch('s', 'year', 'YEAR') + '</div>' +
+    '<div class="lggr">' + (L.length ? L.map(lggCard).join('') : '<div class="empty">Nothing here yet 🍿</div>') + '</div>'; }
+var _renderLogged48 = renderLogged; renderLogged = function () { var r = _renderLogged48.apply(this, arguments); renderLgg(); return r; };
+document.addEventListener('click', function (e) { var b = e.target.closest('[data-lggf],[data-lggs]'); if (!b) return; if (b.dataset.lggf) LGG.f = b.dataset.lggf; else LGG.s = b.dataset.lggs; renderLgg(); });
+/* smooth scroll + ▲ RIBBON jump */
+(function () { var j = document.createElement('button'); j.id = 'lggup'; j.textContent = '▲ RIBBON'; document.body.appendChild(j);
+  j.onclick = function () { var r = $('lgd'); if (r) window.scrollTo({ top: Math.max(0, r.getBoundingClientRect().top + scrollY - 70), behavior: 'smooth' }); };
+  var tick = 0; addEventListener('scroll', function () { if (tick) return; tick = requestAnimationFrame(function () { tick = 0; var g = $('lgg'), on = view === 'all' && g && $('v-all').classList.contains('on') && g.getBoundingClientRect().top < 80; j.classList.toggle('on', !!on); }); }, { passive: true }); })();
+var _show48 = show; show = function () { var r = _show48.apply(this, arguments); var j = $('lggup'); if (j) j.classList.remove('on'); return r; };
 
 </script></body></html>
