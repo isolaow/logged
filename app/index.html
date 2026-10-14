@@ -801,6 +801,11 @@ body.ytp-on{overflow:hidden}
 .wrc.on{background:#ffd23f;color:#000;border-color:#ffd23f;box-shadow:2px 2px 0 #000}
 .wre{grid-column:1/-1;text-align:center;color:#8f89b8;font-size:10px;padding:20px}
 .wri.lk{background:#131122;border-style:dashed}.wri.lk canvas{opacity:.6;filter:grayscale(1) brightness(.55) contrast(.9)}.wri.lk b{color:#5f5a80}
+#ytp .yv .yvb iframe{pointer-events:none}
+#ytp .yv.ytneed .yvb iframe{pointer-events:auto}
+#ytp .yv.ytneed .ypo{pointer-events:none;opacity:0}
+#ytp .yv .ypo{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:manipulation}
+#thm.alb span{opacity:.85}
 </style></head><body>
 <div id="splash" aria-label="Logged"></div>
 <header><div class="hin">
@@ -3530,5 +3535,45 @@ wrSync = function () { if (!window.rows || rows.length === WRGN) return; WRGN = 
     if (bespoke.some(function (w) { return w[3].test(b); })) return;
     WARD.push([wrHash(b.toLowerCase()), 'PLACEHOLDER · BESPOKE OUTFIT COMING', 'clown', re, undefined, undefined, 'wrPlaceholder', 1, 1]); }); };
 var _wrStateP = wrState; wrState = function (p) { return _wrStateP(p).map(function (s) { var w = WARD.filter(function (x) { return x[0] === s.id; })[0]; s.ph = !!(w && w[8]); return s; }); };
+
+
+/* ===== R34: audio hardening (iOS) + album-preview fallback for entry soundtracks + clean YouTube player layer ===== */
+var IOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+function silentWav() { var n = 800, b = new Uint8Array(44 + n), v = new DataView(b.buffer), w = function (o, s) { for (var i = 0; i < s.length; i++) b[o + i] = s.charCodeAt(i); };
+  w(0, 'RIFF'); v.setUint32(4, 36 + n, true); w(8, 'WAVEfmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true); v.setUint32(24, 8000, true); v.setUint32(28, 8000, true); v.setUint16(32, 1, true); v.setUint16(34, 8, true); w(36, 'data'); v.setUint32(40, n, true); for (var i = 0; i < n; i++) b[44 + i] = 128;
+  var s = ''; for (i = 0; i < b.length; i++) s += String.fromCharCode(b[i]); return 'data:audio/wav;base64,' + btoa(s); }
+var SILENT = silentWav();
+// 1) Web Audio (game SFX, trivia right/wrong/timer): resume on EVERY gesture (iOS suspends/"interrupts" after backgrounding or calls), unlock with a 1-frame buffer
+var AC_UNL = false;
+function acWake() { var c = ac(); if (!c) return; if (c.state !== 'running') try { c.resume(); } catch (e) {}
+  if (!AC_UNL) try { var b = c.createBuffer(1, 1, 22050), s = c.createBufferSource(); s.buffer = b; s.connect(c.destination); s.start(0); AC_UNL = true; } catch (e) {} }
+['pointerdown', 'touchend', 'keydown', 'click'].forEach(function (ev) { document.addEventListener(ev, acWake, { capture: true, passive: true }); });
+document.addEventListener('visibilitychange', function () { if (!document.hidden && AC && AC.state !== 'running') try { AC.resume(); } catch (e) {} });
+var _toneA = tone; tone = function () { if (!AC && !muted) ac(); if (AC && AC.state !== 'running') try { AC.resume(); } catch (e) {} return _toneA.apply(this, arguments); };
+var _noiseA = noise; noise = function () { if (AC && AC.state !== 'running') try { AC.resume(); } catch (e) {} return _noiseA.apply(this, arguments); };
+// 2) one shared, gesture-unlocked <audio> for every clip (themes, recorded Drive clips, Spotify previews, album previews) → later autoplay works on iOS
+var THA = (function () { var a = document.createElement('audio'); a.id = 'thA'; a.preload = 'auto'; a.setAttribute('playsinline', ''); a.setAttribute('webkit-playsinline', ''); document.body.appendChild(a); return a; })(), THA_OK = false;
+function thaUnlock() { if (THA_OK) return; try { THA.src = SILENT; var p = THA.play(); if (p && p.then) p.then(function () { THA_OK = true; THA.pause(); }, function () {}); else THA_OK = true; } catch (e) {} if (typeof trvUnlock === 'function') try { trvUnlock(); } catch (e) {} }
+['touchend', 'click', 'keydown'].forEach(function (ev) { document.addEventListener(ev, thaUnlock, { capture: true, passive: true }); });
+var _AudioN = window.Audio; window.Audio = function (src) { try { THA.pause(); } catch (e) {} THA.onloadedmetadata = THA.ontimeupdate = THA.onended = THA.onerror = null; THA.loop = false; if (src) THA.src = src; return THA; };
+// 3) album / song previews from iTunes (m4a): used when a title has no theme, and as the iOS path for Spotify/SoundCloud/YouTube themes that can't autoplay in an embed
+var OPV = {};
+function ostPv(title, c, cb) { var k = title + '|' + (c ? c.n : ''); if (OPV[k] !== undefined) return cb(OPV[k]); run('ostPreview', [title, c && c.n || '', c && c.a || ''], function (o) { OPV[k] = o || null; cb(OPV[k]); }, function () { cb(null); }); }
+function thPlayPv(r, o, label) { if (THEME_NOW !== r.row) return; var t = $('thm'); if (!t) return; var host = t.querySelector('.thh');
+  t.querySelector('span').textContent = '♪ ' + (label || '') + o.n; clipMount(host, { src: 'sp', pv: o.url, st: 0, n: o.n }, { vol: 30, loop: 1 }); }
+var _themeAutoB = themeAuto; themeAuto = function (r) { var th = r.theme || {}, c = th[WHO] || th.sam || th.lewy, off = muted || localStorage.getItem('lg_themeauto') === '0';
+  if (!c) { themeStop(); if (off || localStorage.getItem('lg_albumauto') === '0' || r.type === 'YouTube') return; THEME_NOW = r.row;
+    document.body.insertAdjacentHTML('beforeend', '<div id="thm" class="alb"><div class="thh"></div><span>♪ …</span><button data-thoff="1" aria-label="Stop soundtrack">✕</button></div>');
+    ostPv(r.title, null, function (o) { if (!o) { if (THEME_NOW === r.row) themeStop(); return; } thPlayPv(r, o, 'OST · '); if (!localStorage.lg_albhint) { localStorage.lg_albhint = 1; toast('🎵 Playing the soundtrack · ✕ turns auto-play off'); } }); return; }
+  var embedOnly = c.src === 'sc' || (c.src === 'sp' && !c.pv) || (c.src === 'yt' || !c.src) && IOS;
+  if (embedOnly && !off) { themeStop(); THEME_NOW = r.row; document.body.insertAdjacentHTML('beforeend', '<div id="thm"><div class="thh"></div><span>♪ ' + esc(c.n) + '</span><button data-thoff="1" aria-label="Stop theme">✕</button></div>');
+    ostPv(r.title, c, function (o) { if (THEME_NOW !== r.row) return; if (o) return thPlayPv(r, o, ''); if (c.src === 'yt' || !c.src) { themeStop(); _themeAutoB(r); } else { var t = $('thm'); t.classList.add('need'); t.querySelector('span').textContent = '♪ ' + c.n + ' · OPEN 🎵 TO PLAY'; } }); return; }
+  return _themeAutoB(r); };
+// trivia clip errors → clear "unavailable" state instead of silent failure
+(function () { var a = $('trvA2'); if (a) a.addEventListener('error', function () { var b = document.querySelector('#trvB [data-trvsnd]'); if (b && a.src && !/^data:/.test(a.src)) { b.classList.add('need'); b.innerHTML = '✗<small>CLIP UNAVAILABLE · SKIP</small>'; } }); })();
+// 4) YouTube: only OUR control layer. Player loads with controls=0 from the start (no reload), taps never reach YouTube's UI; if iOS blocks playback the in-frame ▶ is exposed until it plays
+var _ytnOpenR34 = ytnOpen; ytnOpen = function (id, t) { var _tq = trlQ; trlQ = function () { var s = _tq(); trlQ = _tq; return s + '&ctl=0&tap=1&disablekb=1&fs=0&iv_load_policy=3'; }; try { _ytnOpenR34(id, t); } finally { trlQ = _tq; } var v = $('ytp').querySelector('.yv'); v.classList.remove('ytneed'); };
+window.addEventListener('message', function (m) { var d = m.data; if (!d || d.logged !== 'yt') return; var P = $('ytp'), v = P && P.querySelector('.yv'); if (!v) return; var f = v.querySelector('iframe'); if (!f || f.contentWindow !== m.source) return;
+  if (d.blocked) v.classList.add('ytneed'); if (d.unblocked || d.st === 1 || d.s === 1) v.classList.remove('ytneed'); });
 
 </script></body></html>
