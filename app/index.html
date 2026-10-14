@@ -1199,6 +1199,9 @@ body.gwon #dlg{z-index:1400}
 #gwp #adrow{display:flex;gap:6px;padding:6px 8px;flex:0 0 auto}#gwp #adb{flex:0 0 auto;max-height:42vh;overflow-y:auto;margin:0 8px 6px}
 #arch.archh{z-index:1500}#hbk58{position:fixed;inset:0;z-index:1499;background:rgba(0,0,0,.45)}
 #avPin{padding:3px;overflow:hidden;box-sizing:border-box}#avPin canvas{width:100%;height:100%;display:block;image-rendering:pixelated;box-shadow:inset 0 0 0 2px #4da3ff;outline:2px solid #4da3ff;outline-offset:-2px}#avPin.lewy canvas{outline-color:#4dd17a}
+img.poster,img[data-px]{image-rendering:pixelated;image-rendering:crisp-edges;object-fit:cover}
+img.poster.loading{background:repeating-linear-gradient(90deg,#1a1830 0 6px,#24213f 6px 12px);animation:pxsh58 1s steps(4) infinite}
+@keyframes pxsh58{to{background-position:24px 0}}
 #set58{position:fixed;inset:0;z-index:950;background:#0b0b14;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;display:none;padding:calc(10px + env(safe-area-inset-top)) 14px calc(30px + env(safe-area-inset-bottom))}#set58.open{display:block;animation:v58in .18s ease-out}
 .sth58{display:flex;align-items:center;gap:10px;margin-bottom:12px}.sth58 h2{margin:0;font-size:13px}.sth58 h2 small{display:block;font-size:9px;opacity:.7;margin-top:4px}
 .sg58{background:#16162a;border:3px solid #000;box-shadow:4px 4px 0 #000;margin:0 0 14px;padding:10px 12px}.sg58 h4{font:10px var(--pix);color:#ffcc33;margin:2px 0 8px}
@@ -5384,6 +5387,39 @@ document.addEventListener('click', function (e) { var b = e.target.closest && e.
   if (a === 'edit') { OT58.edit = !OT58.edit; return ourTopPaint58(); } if (a === 'auto') return confirm8('↺', 'RESET OUR TOP 5?', 'Back to auto from your ratings', 'RESET', function () { OT58.o = null; run('setOurTop', [[]], function () { OT58.o = null; ourTopPaint58(); }); ourTopPaint58(); });
   var q = a.split(':'), i = +q[1]; if (q[0] === 'up' && i > 0) { var t = L[i]; L[i] = L[i - 1]; L[i - 1] = t; } else if (q[0] === 'dn' && i < L.length - 1) { var t2 = L[i]; L[i] = L[i + 1]; L[i + 1] = t2; } else if (q[0] === 'rm') L.splice(i, 1); else return; ourTopSave58(L); }, true);
 document.addEventListener('change', function (e) { var s = e.target; if (!s.dataset || !s.dataset.otadd || !s.value) return; var L = ourTopList58(), r = rows.filter(function (x) { return x.title === s.value; })[0]; if (r && L.length < 5) { L.push(r); ourTopSave58(L); } }, true);
+/* ---------- r58g: ONE pixel-poster pipeline. Every poster <img> anywhere (grid, ribbon, Logging, Interested, search, deck, Mood Pick, cabinet, trailers, details, GW…) is routed through pxPoster:
+   pixelated canvas output only — never a raw photo. Failed/slow loads retry twice (cache-busted), then a pixel placeholder. ---------- */
+var PXR = {}, PXT = {};
+function pxIsPoster58(u) { return /^https?:\/\/(image\.tmdb\.org|[^/]*tmdb[^/]*)\//i.test(u || '') || (u && PXALL58()[u]); }
+var _pxAll = null, _pxAllN = -1; function PXALL58() { var n = Object.keys(posters).length; if (n !== _pxAllN) { _pxAll = {}; for (var k in posters) if (posters[k]) _pxAll[posters[k]] = 1; _pxAllN = n; } return _pxAll; }
+function pxPh58(url) { var cv = document.createElement('canvas'), w = 20, h = 30; cv.width = w; cv.height = h; var c = cv.getContext('2d'), s = 0; for (var i = 0; i < url.length; i++) s = (s * 31 + url.charCodeAt(i)) >>> 0;
+  var hues = [[42, 34, 74], [24, 58, 66], [70, 30, 40], [30, 50, 36]], b = hues[s % 4]; for (var y = 0; y < h; y++) for (var x = 0; x < w; x++) { var t = ((x * 7 + y * 13 + s) % 9) < 2 ? 14 : 0, f = 1 - y / h * .45; c.fillStyle = 'rgb(' + ((b[0] + t) * f | 0) + ',' + ((b[1] + t) * f | 0) + ',' + ((b[2] + t) * f | 0) + ')'; c.fillRect(x, y, 1, 1); }
+  c.fillStyle = '#ffcc33'; [[8, 11], [11, 11], [7, 12], [12, 12], [7, 13], [12, 13], [8, 14], [11, 14], [9, 15], [10, 15], [9, 17], [10, 17]].forEach(function (p) { c.fillRect(p[0], p[1], 1, 1); }); c.fillStyle = '#000'; c.fillRect(0, 0, w, 1); c.fillRect(0, h - 1, w, 1); c.fillRect(0, 0, 1, h); c.fillRect(w - 1, 0, 1, h);
+  return 'ph:' + cv.toDataURL('image/png'); }
+pxGet = (function (g) { return function (u) { var v = g(u); return v && v.indexOf('raw:') === 0 ? null : v; }; })(pxGet);
+pxMake = function (url) { if (pxBusy[url]) return; pxBusy[url] = 1; var n = PXR[url] || 0, img = new Image(), done = 0; img.crossOrigin = 'anonymous'; img.decoding = 'async';
+  var fail = function () { if (done) return; done = 1; clearTimeout(PXT[url]); pxBusy[url] = 0; PXR[url] = n + 1; if (n < 2) setTimeout(function () { pxMake(url); }, n ? 4000 : 1500); else { pxMem[url] = pxPh58(url); pxPaint(url); } };
+  img.onload = function () { if (done) return; done = 1; clearTimeout(PXT[url]); var out; try { out = pixelate(img); try { localStorage.setItem(PXV + url, out); } catch (e) {} } catch (e) { done = 0; return fail(); } pxMem[url] = out; pxBusy[url] = 0; pxPaint(url); };
+  img.onerror = fail; PXT[url] = setTimeout(fail, 12000); img.src = n ? url + (url.indexOf('?') < 0 ? '?' : '&') + 'r' + n : url; };
+pxSrc = function (url) { var v = pxMem[url]; return !v || v.indexOf('raw:') === 0 ? '' : v.indexOf('ph:') === 0 ? v.slice(3) : v; };
+pxPaint = function (url) { var s = pxSrc(url); if (!s) return; var ph = pxMem[url].indexOf('ph:') === 0;
+  [].forEach.call(document.querySelectorAll('img.poster[data-src]'), function (el) { if (el.dataset.src !== url) return; el.src = s; el.classList.remove('loading', 'lowres'); el.classList.toggle('pxph', ph); el.dataset.px = '1'; });
+  [].forEach.call(document.querySelectorAll('[data-bg]'), function (el) { if (el.dataset.bg === url) el.style.backgroundImage = 'url("' + s + '")'; }); };
+var PXBLANK = 'data:image/gif;base64,R0lGODlhAQABAAAAACw=';
+function pxPoster(url, cls) { var s = (pxGet(url) && (pxMem[url] = pxMem[url] || pxGet(url)), pxSrc(url)); if (!s) setTimeout(function () { pxMake(url); }, 0);
+  return '<img class="poster' + (cls ? ' ' + cls : '') + (s ? '' : ' loading') + '" data-src="' + esc(url) + '"' + (s ? ' data-px="1"' : '') + ' src="' + esc(s || PXBLANK) + '" alt="">'; }
+posterHtml = function (url) { return pxPoster(url); };
+/* adopt any poster <img> rendered by older code paths with a raw src */
+function pxAdopt58(el) { if (el.tagName !== 'IMG' || el.dataset.px) return; var u = el.dataset.src || el.getAttribute('src') || ''; if (/^data:/.test(u) || !pxIsPoster58(u)) return;
+  el.dataset.src = u; el.classList.add('poster'); el.removeAttribute('onerror'); el.onerror = null; el.removeAttribute('srcset'); var s = (pxMem[u] = pxMem[u] || pxGet(u), pxSrc(u));
+  if (s) { el.dataset.px = '1'; el.src = s; el.classList.remove('loading'); el.classList.toggle('pxph', pxMem[u].indexOf('ph:') === 0); } else { el.src = PXBLANK; el.classList.add('loading'); pxMake(u); } }
+function pxScan58(root) { if (root.tagName === 'IMG') pxAdopt58(root); if (root.querySelectorAll) [].forEach.call(root.querySelectorAll('img'), pxAdopt58); }
+new MutationObserver(function (ms) { ms.forEach(function (m) { if (m.type === 'attributes') { if (m.target.tagName === 'IMG' && !/^data:/.test(m.target.getAttribute('src') || '')) { delete m.target.dataset.px; pxAdopt58(m.target); } } else [].forEach.call(m.addedNodes, function (n) { n.nodeType === 1 && pxScan58(n); }); }); })
+  .observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['src'] });
+pxScan58(document.body);
+/* r58g: html.lock (scroll/touch lock while splash/trailer up) could stick if the splash node was removed instead of hidden → release it */
+(function () { var fix = function () { var sp = document.getElementById('splash'), up = (sp && sp.style.display !== 'none' && !sp.dataset.done) || $('trl').classList.contains('open'); if (!up) document.documentElement.classList.remove('lock'); };
+  new MutationObserver(fix).observe(document.body, { childList: true }); setInterval(fix, 1500); fix(); })();
 
 /* ===== r58: EXPLORE + CAMP arcs (same style as LOG) and a real per-person SETTINGS page (auto-saved server-side) ===== */
 function mainTo58(el) { var Mn = document.querySelector('body>main'); if (el && Mn) Mn.scrollTop = Math.max(0, el.getBoundingClientRect().top - Mn.getBoundingClientRect().top + Mn.scrollTop - 8); }
