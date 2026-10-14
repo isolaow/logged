@@ -806,6 +806,7 @@ body.ytp-on{overflow:hidden}
 #ytp .yv.ytneed .ypo{pointer-events:none;opacity:0}
 #ytp .yv .ypo{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:manipulation}
 #thm.alb span{opacity:.85}
+.cnr.ex .cnt small{color:#ff8fa3}.cnb.re{background:#ff8fa3;color:#000}
 </style></head><body>
 <div id="splash" aria-label="Logged"></div>
 <header><div class="hin">
@@ -2401,7 +2402,7 @@ function b64u(buf) { return btoa(String.fromCharCode.apply(null, new Uint8Array(
 function spotifyConnect(p) { if (!window.__PAGES) { toast('Open Logged from isolaow.github.io/logged/app to connect Spotify'); return; } if (!CFG.spotifyClientId) { toast('Spotify isn\u2019t set up yet (Sam: add SPOTIFY_CLIENT_ID)'); return; }
   var v = b64u(crypto.getRandomValues(new Uint8Array(48))); localStorage.setItem('sp_v', v);
   crypto.subtle.digest('SHA-256', new TextEncoder().encode(v)).then(function (h) { location.href = 'https://accounts.spotify.com/authorize?' + new URLSearchParams({ client_id: CFG.spotifyClientId, response_type: 'code', redirect_uri: APP_URL, code_challenge_method: 'S256', code_challenge: b64u(h), scope: 'user-read-recently-played user-top-read', state: 'sp_' + p }).toString(); }); }
-(function spotifyReturn() { var q = new URLSearchParams(location.search), code = q.get('code'), st = q.get('state') || ''; if (!code || st.indexOf('sp_') !== 0) return; history.replaceState(null, '', location.pathname);
+(function spotifyReturn() { var q = new URLSearchParams(location.search), code = q.get('code'), st = q.get('state') || ''; if (!code || st.indexOf('sp_') !== 0 || /^sp_(sam|lewy)_\w{20}$/.test(st)) return; history.replaceState(null, '', location.pathname);
   var tries = 0, go = function () { if (!CFG.spotifyClientId) { if (++tries < 40) setTimeout(go, 500); return; }
     fetch('https://accounts.spotify.com/api/token', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams({ grant_type: 'authorization_code', code: code, redirect_uri: APP_URL, client_id: CFG.spotifyClientId, code_verifier: localStorage.getItem('sp_v') || '' }) })
       .then(function (r) { return r.json(); }).then(function (j) { localStorage.removeItem('sp_v'); if (!j.refresh_token) throw new Error(j.error_description || 'no token'); run('spotifySaveToken', [st.slice(3), j.refresh_token], function () { toast('🎧 Spotify connected'); SPOT = null; loadSpot(); }); }).catch(function (e) { toast('⚠ Spotify: ' + e.message); }); };
@@ -3575,5 +3576,42 @@ var _themeAutoB = themeAuto; themeAuto = function (r) { var th = r.theme || {}, 
 var _ytnOpenR34 = ytnOpen; ytnOpen = function (id, t) { var _tq = trlQ; trlQ = function () { var s = _tq(); trlQ = _tq; return s + '&ctl=0&tap=1&disablekb=1&fs=0&iv_load_policy=3'; }; try { _ytnOpenR34(id, t); } finally { trlQ = _tq; } var v = $('ytp').querySelector('.yv'); v.classList.remove('ytneed'); };
 window.addEventListener('message', function (m) { var d = m.data; if (!d || d.logged !== 'yt') return; var P = $('ytp'), v = P && P.querySelector('.yv'); if (!v) return; var f = v.querySelector('iframe'); if (!f || f.contentWindow !== m.source) return;
   if (d.blocked) v.classList.add('ytneed'); if (d.unblocked || d.st === 1 || d.s === 1) v.classList.remove('ytneed'); });
+
+
+/* ===== R35: persistent connections — status + tokens live on the server, per person ===== */
+var CONN = null;
+function connLoad(cb) { run('connStatus', [], function (o) { CONN = o || {}; connRefresh(); cb && cb(); }, function () { cb && cb(); }); }
+setTimeout(connLoad, 1200); document.addEventListener('visibilitychange', function () { if (!document.hidden) connLoad(); });
+function connRow(k, ic, name, st, sub, err) { var on = !!st, ex = !on && err === 'expired';
+  return '<div class="cnr ' + (on ? 'on' : ex ? 'ex' : '') + '"><span class="cni ' + k + '">' + ic + '</span><span class="cnt"><b>' + name + '</b><small>' + sub + '</small></span>' +
+    (on ? '<span class="cnok">CONNECTED <i>✓</i></span><button class="cnx" data-cnx="' + k + '" aria-label="Disconnect ' + name + '">✕</button>' : '<button class="cnb' + (ex ? ' re' : '') + '" data-cnc="' + k + '">' + (ex ? '↻ RECONNECT' : 'CONNECT') + '</button>') + '</div>'; }
+connCard = function (p) { if (p !== me()) return ''; if (!CONN) return '<div class="conn"><h4>CONNECTIONS</h4><div class="cnr"><span class="cnt"><small>CHECKING…</small></span></div></div>';
+  var c = CONN[p] || {}, day = function (d) { return d ? new Date(d).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }).toUpperCase() : ''; };
+  return '<div class="conn"><h4>CONNECTIONS</h4>' +
+    connRow('yt', ytI(14), 'YOUTUBE', c.yt, c.yt ? 'SUBS + LIKES → SUGGESTIONS' + (c.ytImp ? ' · SYNCED ' + day(c.ytImp) : '') : c.ytErr === 'expired' ? 'GOOGLE ACCESS EXPIRED (TEST MODE · ~7 DAYS)' : 'SUBS + LIKES → SUGGESTIONS', c.ytErr) +
+    connRow('sp', '<span class="spdot"></span>', 'SPOTIFY', c.sp, c.sp ? 'SOUNDTRACK STATS ON' : c.spErr === 'expired' ? 'SPOTIFY ACCESS EXPIRED' : 'SEE WHAT YOU REALLY PLAY', c.spErr) +
+    (c.yt ? '<button class="cnre" data-cnc="yt" data-reimp="1">↻ RE-IMPORT FROM YOUTUBE</button>' : '') + '</div>'; };
+function b64u(buf) { return btoa(String.fromCharCode.apply(null, new Uint8Array(buf))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+function connGo(svc, p) { var v = ''; if (svc === 'sp') { var a = new Uint8Array(48); crypto.getRandomValues(a); v = b64u(a.buffer).slice(0, 64); }
+  run('connBegin', [svc, v], function (o) { if (o && o.url) location.href = o.url; }, function (e) { toast('⚠ ' + (e && e.message || 'Could not start')); }); }
+spotifyConnect = function (p) { if (CONN && !CONN.spotifyReady) { toast('Spotify isn\u2019t set up yet'); return; } connGo('sp', p); };
+ytConnect = function (p) { if (CONN && !CONN.youtubeReady) { toast('YouTube connect needs one setup step (Sam: GOOGLE_CLIENT_SECRET)'); return; } connGo('yt', p); };
+// subs/likes import now runs on the server with the stored token; reuse the existing suggestion UI by serving its 3 API calls from that data
+function ytImportSrv(p) { run('ytImportData', [], function (R) { var F = window.fetch; window.fetch = function (u, o) { var s = String(u); if (s.indexOf('googleapis.com/youtube/v3/') < 0) return F.apply(this, arguments);
+    var d = /subscriptions/.test(s) ? R[0] : /myRating/.test(s) ? R[1] : R[2]; return Promise.resolve(new Response(JSON.stringify(d || {}), { headers: { 'Content-Type': 'application/json' } })); };
+  try { _ytImportC('server'); } finally { setTimeout(function () { window.fetch = F; }, 0); } connLoad(); },
+  function (e) { var m = String(e && e.message || e); if (/YT_EXPIRED/.test(m)) { toast('↻ YouTube access expired · tap RECONNECT'); connLoad(); } else if (/YT_NOT_CONNECTED/.test(m)) { toast('Connect YouTube first'); connLoad(); } else toast('⚠ YouTube import failed'); }); }
+ytImport = function () { ytImportSrv(me()); };
+window.addEventListener('click', function (e) { var b = e.target.closest('[data-cnc],[data-cnx]'); if (!b) return; e.stopImmediatePropagation(); e.preventDefault(); var p = me(), k = b.dataset.cnc || b.dataset.cnx;
+  if (b.dataset.cnc) { if (k === 'yt' && b.dataset.reimp) return ytImportSrv(p); return k === 'yt' ? ytConnect(p) : spotifyConnect(p); }
+  confirm8(k === 'yt' ? '▶' : '🎧', 'DISCONNECT?', k === 'yt' ? 'YouTube' : 'Spotify', 'DISCONNECT', function () { run('connDisconnect', [k], function (o) { CONN = o; SPOT = null; loadSpot(); savedTick('DISCONNECTED'); connRefresh(); }); }); }, true);
+// OAuth return (works whether the redirect lands in the home-screen app or Safari — the exchange happens server-side)
+(function connReturn() { var q = new URLSearchParams(location.search), code = q.get('code'), st = q.get('state') || '', err = q.get('error'); if (!/^(sp|yt)_(sam|lewy)_\w{20}$/.test(st)) return; history.replaceState(null, '', location.pathname);
+  if (err || !code) { setTimeout(function () { toast('Connection cancelled'); }, 800); return; }
+  var go = function (n) { if (typeof run !== 'function' && n < 30) return setTimeout(function () { go(n + 1); }, 300);
+    run('connFinish', [code, st], function (o) { CONN = o; var yt = st.indexOf('yt_') === 0; toast(yt ? '▶ YouTube connected · stays connected' : '🎧 Spotify connected · stays connected'); SPOT = null; loadSpot(); connRefresh(); if (yt) setTimeout(function () { ytImportSrv(st.split('_')[1]); }, 600); },
+      function (e) { toast('⚠ ' + (e && e.message || 'Connection failed')); connLoad(); }); }; go(0); })();
+// Camp stats still read SPOT.status — keep it in step with the server status
+var _loadSpotR35 = loadSpot; loadSpot = function () { _loadSpotR35(); connLoad(); };
 
 </script></body></html>
