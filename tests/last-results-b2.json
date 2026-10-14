@@ -1,0 +1,306 @@
+{
+ "1a hotbar shows only EXPLORE · + · LOG": {
+  "pass": true
+ },
+ "1b LOG opens arch: LOGGED | INTERESTED | LOGGING": {
+  "pass": true,
+  "d": "LOGGED|INTERESTED|LOGGING"
+ },
+ "1c arch is semi-transparent": {
+  "pass": true
+ },
+ "1d LOGGED item → Logged view": {
+  "pass": true
+ },
+ "1e INTERESTED item → Interested view": {
+  "pass": true
+ },
+ "1f LOGGING item → Logging page": {
+  "pass": true
+ },
+ "1g + opens arch: NEW ENTRY | YOUTUBE | CAMP": {
+  "pass": true,
+  "d": "NEW ENTRY|YOUTUBE|CAMP"
+ },
+ "1h CAMP item → Camp view": {
+  "pass": true
+ },
+ "1i tapping outside closes the arch": {
+  "pass": true
+ },
+ "2a Logging tabs match Interested chips (font/size/weight/padding/border)": {
+  "pass": true,
+  "d": {
+   "ref": "VT323 18px 400 4px 9px 3px",
+   "lg": "VT323 18px 400 4px 9px 3px"
+  }
+ },
+ "2b Logged chips match Interested chips": {
+  "pass": true,
+  "d": {
+   "ref": "VT323 18px 400 4px 9px 3px",
+   "ld": "VT323 18px 400 4px 9px 3px"
+  }
+ },
+ "3a marking Interested pops the hearts arch": {
+  "pass": true
+ },
+ "3b chosen hearts (2) saved server-side for this person": {
+  "pass": true,
+  "d": {
+   "t": "Mock Fresh",
+   "y": "2026",
+   "p": "",
+   "k": "movie",
+   "v": "y",
+   "at": 1791968879689,
+   "h": 2
+  }
+ },
+ "3c hearts shown on posters": {
+  "pass": true
+ },
+ "3d hearts changeable later (Past Lives → 3)": {
+  "pass": true
+ },
+ "3e changed again to 1 (no duplicates, v stays y)": {
+  "pass": true
+ },
+ "3f sort by hearts: Dune (3) first": {
+  "pass": true
+ },
+ "3g filter ♥♥♥ shows only 3-heart titles": {
+  "pass": true,
+  "d": [
+   "9"
+  ]
+ },
+ "3h Lewy’s hearts untouched": {
+  "pass": true
+ },
+ "4a \"FILTER\" label beside the cog": {
+  "pass": true
+ },
+ "4b Filter control height = Interested button height (±4px)": {
+  "pass": true,
+  "d": [
+   38,
+   32
+  ]
+ },
+ "4c NOT FOR ME on the centred title": {
+  "pass": true
+ },
+ "4d hidden from MY Logged only (Sam), saved server-side": {
+  "pass": true,
+  "d": {
+   "sam": [],
+   "lewy": []
+  }
+ },
+ "4e undo toast offered": {
+  "pass": true
+ },
+ "4f undo restores it": {
+  "pass": true,
+  "d": [
+   "Whiplash",
+   [
+    true,
+    "{\"sam\":[],\"lewy\":[]}",
+    "🙈 Whiplash hidden from YOUR LoggedUNDO"
+   ],
+   {
+    "sam": [],
+    "lewy": []
+   }
+  ]
+ },
+ "4g still findable by search": {
+  "pass": true
+ },
+ "4h logging it again brings it back": {
+  "pass": true
+ },
+ "5a Camp opens with trophy cabinet": {
+  "pass": true
+ },
+ "5b cabinet has stats, soundtracks, top movies, top shows": {
+  "pass": true
+ },
+ "5c P1 blue / P2 green vars + recoloured rules": {
+  "pass": true,
+  "d": 28
+ },
+ "6a more badges, tiered families + spesh set": {
+  "pass": true,
+  "d": {
+   "n": 45,
+   "fam": 14,
+   "sp": 7,
+   "old": 40
+  }
+ },
+ "6b sort chips rendered": {
+  "pass": true
+ },
+ "6c A–Z sorted; TIER sorted high→low": {
+  "pass": true,
+  "d": {
+   "az": "7-DAY STREAK|CO-OP MODE|COMEBACK KID|CRITIC",
+   "tier": "7-DAY STREAK|CO-OP MODE|COMEBACK KID|CRITIC",
+   "tiers": [
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1
+   ]
+  }
+ },
+ "7a two results saved, dated, not overwritten": {
+  "pass": true,
+  "d": 2
+ },
+ "7b clear asks to confirm": {
+  "pass": true
+ },
+ "7c cleared server + UI": {
+  "pass": true
+ },
+ "8a tapping the card opens details (synopsis/date/genres/trailer)": {
+  "pass": true,
+  "d": [
+   "ipdm open",
+   "◀ BACK TO DECKMock FreshMOVIE · 1 Sept 2026Drama · MysteryTMDB ★ 7.4 · 118 MIN“Tagline”A full synopsis that is much longer than the card blurb.▶ TRAILER✕ NOT INTERESTED♥ INTERESTED"
+  ]
+ },
+ "8b tap did not swipe or rate": {
+  "pass": true
+ },
+ "8c back returns to the deck": {
+  "pass": true
+ },
+ "9a Spotify disconnect asks to confirm": {
+  "pass": true
+ },
+ "9b KEEP cancels": {
+  "pass": true
+ },
+ "10 NEARLY FINISHED tab stays selected and lists its title": {
+  "pass": true,
+  "d": {
+   "on": "🏁 NEARLY FINISHED 1",
+   "tab": 4
+  }
+ },
+ "10 JUST STARTED tab stays selected and lists its title": {
+  "pass": true,
+  "d": {
+   "on": "🌱 JUST STARTED 1",
+   "tab": 5
+  }
+ },
+ "11.0 \"loading tracks\" shown before the timer started": {
+  "pass": false
+ },
+ "11.0b broken clip swapped for its stand-in question before play": {
+  "pass": true
+ },
+ "11.1 Q1 plays its own clip (All Star), time advancing, SFX did not replace it": {
+  "pass": true,
+  "d": {
+   "src": "710220894021381.plus.aac.p.m4a",
+   "t": 4.635689,
+   "t2": 5.840569
+  }
+ },
+ "11.s skip button on question": {
+  "pass": true
+ },
+ "11.2 Q2 plays its own clip (Time), time advancing, SFX did not replace it": {
+  "pass": true,
+  "d": {
+   "src": "078769097048384.plus.aac.p.m4a",
+   "t": 1.905452,
+   "t2": 3.110494
+  }
+ },
+ "11.3 Q3 plays its own clip (Bohemian Rhapsody), time advancing, SFX did not replace it": {
+  "pass": true,
+  "d": {
+   "src": "639854395137008.plus.aac.p.m4a",
+   "t": 1.879072,
+   "t2": 3.082371
+  }
+ },
+ "11.k solo skip = one vote; sent as -1; swapped answer sent as +100": {
+  "pass": true,
+  "d": [
+   0,
+   0,
+   -1,
+   100
+  ]
+ },
+ "12a shows = sum of episodes actually watched (BB S2 3 eps = 140m; Severance 8 eps with 1 gap filled by avg = 57+53+49+55+50+40+45+50)": {
+  "pass": true,
+  "d": [
+   140,
+   399,
+   0
+  ]
+ },
+ "12b panel has separate LONGEST and SHORTEST lists": {
+  "pass": true,
+  "d": "📏 LONGEST / SHORTEST LOGGED⬆ LONGESTInception2h 28mWhiplash1h 47mShrek1h 30m⬇ SHORTESTShrek1h 30mWhiplash1h 47mInception2h 28mShows: sum of the episodes actual"
+ },
+ "13a FILTER button in Logging (ui-btn, same height as Interested buttons)": {
+  "pass": true
+ },
+ "13b sheet has type/who/progress/last watched/genre + sort with counts": {
+  "pass": true,
+  "d": "FILTER LOGGING✕SORTNEWESTRECENTLY WATCHED% PROGRESSEPISODES LEFTA–ZTYPE🎞 MOVIES 0📺 SHOWS 2▶ YOUTUBE 0WHO’S WATCHINGSAM 1LEWY 1BOTH 0PROGRESS🌱 JUST STARTED 1◐ MIDWAY 0🏁 NEARLY FINISHED 1LAST WATCHE"
+ },
+ "13c combinable: LEWY + NEARLY FINISHED → 1 title (Severance)": {
+  "pass": true,
+  "d": "SHOW 1 TITLE"
+ },
+ "13d list filtered + active chips + clear all shown": {
+  "pass": true,
+  "d": 2
+ },
+ "13e state persisted": {
+  "pass": true
+ },
+ "13f removing one chip keeps the other": {
+  "pass": true
+ },
+ "13g sort A–Z": {
+  "pass": true,
+  "d": "SL👁Breaking|📺SL👁Severa"
+ },
+ "13h clear all (with undo)": {
+  "pass": true
+ },
+ "14a no top-left back on YouTube home; bottom nav visible": {
+  "pass": true
+ },
+ "14b leaving via Log arch closes YouTube": {
+  "pass": true
+ },
+ "15 gradient anchored to full track (25% fill → background 400% = track width, so no red)": {
+  "pass": true,
+  "d": [
+   "400% 100%",
+   0
+  ]
+ },
+ "Z no page errors": {
+  "pass": true,
+  "d": []
+ }
+}

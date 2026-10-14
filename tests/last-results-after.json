@@ -58,7 +58,7 @@
  },
  "2b leaderboard + 9pm countdown shown after playing": {
   "pass": true,
-  "d": "1h 54m 51s"
+  "d": "51m 44s"
  },
  "3 six rapid +1 taps → exactly +6, server agrees": {
   "pass": true,
@@ -70,7 +70,7 @@
    "server": {
     "sam": {
      "e": 9,
-     "q": 17919651109896
+     "q": 17919688971016
     }
    }
   }
@@ -167,8 +167,8 @@
    "poster:tainted-but-drawn",
    "quote",
    "poster:tainted-but-drawn",
-   "poster:tainted-but-drawn",
-   "quote"
+   "quote",
+   "poster:tainted-but-drawn"
   ]
  },
  "no page errors": {
