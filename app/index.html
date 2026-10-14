@@ -738,6 +738,8 @@ body.ytp-on{overflow:hidden}
 .cnok{font:6px var(--pix);color:#39d353;letter-spacing:1px}.cnok i{font-style:normal}
 .cnx{border:0;background:none;color:#6f6890;font:8px var(--pix);padding:6px}
 .cnre{width:100%;margin:4px 0 6px;border:0;background:#141022;color:#cfc9e6;font:6px var(--pix);padding:8px;letter-spacing:1px;box-shadow:0 0 0 2px #000}
+#thm.need{color:#000;background:#ffcc00;padding-left:4px}#thm.need iframe{position:relative;width:34px;height:26px;opacity:1;pointer-events:auto;flex:none;box-shadow:0 0 0 2px #000}#thm.need span{animation:none}
+#thm.need .thh{position:relative;width:auto;height:auto;opacity:1;overflow:visible}#thm.need .thh .apl{padding:4px 6px;font:7px var(--pix)}
 </style></head><body>
 <div id="splash" aria-label="Logged"></div>
 <header><div class="hin">
@@ -2404,7 +2406,7 @@ function ytSeeds() { var Y = rows.filter(isYT), sc = function (r) { return (num(
   return s; }
 function ytSubs() { return rows.filter(function (r) { return isYT(r) && r.ytm && r.ytm.k === 'channel'; }); }
 function openYTHome() { $('ytpage').classList.add('open'); navHi('navYT'); ytDraw(); ytLoad(); }
-function ytLoad() { YH.feed = null; ytDraw(); run('ytFeed', [{ cat: YH.cat, seeds: ytSeeds() }], function (f) { YH.feed = f || {}; ytDraw(); }, function () { YH.feed = {}; ytDraw(); });
+function ytLoad() { YH.feed = null; ytDraw(); run('ytFeed', [{ cat: YH.cat, seeds: ytSeeds(), recent: (function () { var h = ytLS('lg_ythist'); return Object.keys(h).sort(function (a, b) { return h[b].at - h[a].at; }).slice(0, 3); })() }], function (f) { YH.feed = f || {}; ytDraw(); }, function () { YH.feed = {}; ytDraw(); });
   if (!YH.subs) { var S = ytSubs().slice(0, 6), acc = [], n = S.length; if (!n) YH.subs = []; S.forEach(function (r) { run('ytUploads', [r.ytm.id], function (L) { (L || []).slice(0, 4).forEach(function (v) { acc.push({ id: v.id, t: v.t, ch: r.ytm.ch || r.title, chId: r.ytm.id }); }); if (!--n) { YH.subs = acc; ytDraw(); } }, function () { if (!--n) { YH.subs = acc; ytDraw(); } }); }); } }
 function ytDraw() { var B = $('ytBody'); if (!B) return; YG = {};
   var head = '<div class="ythd"><button class="btn" data-ytx="1" aria-label="Back">◀</button><span class="ytlg">' + ytI(20) + '<b>YOUTUBE</b></span><button class="btn ytns' + (YH.nosh ? ' on' : '') + '" data-ytnosh="1" aria-label="Shorts-free">' + (YH.nosh ? '🚫' : '⚡') + '<small>SHORTS</small></button></div>' +
@@ -2742,7 +2744,7 @@ function recUrl(id, cb) { var k = 'lg_rec_' + id, l = localStorage.getItem(k); i
 function clipMount(host, c, o) { o = o || {}; if (CLIPSTOP) try { CLIPSTOP(); } catch (e) {} CLIPSTOP = null; var st = c.st || 0, vol = o.vol || 100, stopped = false;
   if (!c.src || c.src === 'yt') { host.innerHTML = '<iframe src="' + clipSrc(c.yt, st, vol, o.loop) + '" allow="autoplay; encrypted-media" referrerpolicy="strict-origin-when-cross-origin"></iframe>'; return (CLIPSTOP = function () { host.innerHTML = ''; }); }
   if (c.src === 'rec' || (c.src === 'sp' && c.pv)) { var A = new Audio(); A.volume = vol / 100; A.playsInline = true; host.innerHTML = '<button class="btn big apl">▶ PLAY</button>'; var bt = host.firstChild;
-    var go = function (u) { if (!u || stopped) { bt.textContent = 'NOT AVAILABLE YET'; return; } A.src = u; A.onloadedmetadata = function () { try { A.currentTime = c.src === 'rec' ? 0 : st; } catch (e) {} }; A.play().then(function () { bt.textContent = '■ STOP'; }, function () { bt.textContent = '▶ PLAY'; }); };
+    var go = function (u) { if (!u || stopped) { bt.textContent = 'NOT AVAILABLE YET'; return; } A.src = u; A.onloadedmetadata = function () { try { A.currentTime = c.src === 'rec' ? 0 : st; } catch (e) {} }; A.play().then(function () { bt.textContent = '■ STOP'; }, function () { bt.textContent = '▶ PLAY'; if (host.classList.contains('thh') && $('thm')) $('thm').classList.add('need'); }); };
     A.ontimeupdate = function () { if (A.currentTime >= (c.src === 'rec' ? 31 : st + 30)) { if (o.loop) A.currentTime = c.src === 'rec' ? 0 : st; else { A.pause(); bt.textContent = '▶ PLAY'; } } };
     A.onended = function () { if (o.loop) { A.currentTime = 0; A.play(); } else bt.textContent = '▶ PLAY'; };
     bt.onclick = function (e) { e.stopPropagation(); if (!A.paused) { A.pause(); bt.textContent = '▶ PLAY'; } else if (A.src) A.play(); else (c.src === 'rec' ? recUrl(c.rec, go) : go(c.pv)); };
@@ -2961,4 +2963,17 @@ document.addEventListener('click', function (e) { var b = e.target.closest('[dat
   confirm8(k === 'yt' ? '▶' : '🎧', 'DISCONNECT?', k === 'yt' ? 'YouTube' : 'Spotify', 'DISCONNECT', function () {
     if (k === 'yt') { try { if (window.__ytTok && google.accounts.oauth2.revoke) google.accounts.oauth2.revoke(window.__ytTok); } catch (x) {} localStorage.removeItem('lg_ytconn_' + p); savedTick('DISCONNECTED'); connRefresh(); }
     else run('spotifyDisconnect', [p], function () { SPOT = null; loadSpot(); savedTick('DISCONNECTED'); }); }); }, true);
+/* ---------- R28: iPhone soundtrack fix ---------- */
+/* 1) iOS 17+: treat the app as media playback so the ring/silent switch doesn't mute Web Audio / clips */
+try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) {}
+/* 2) unlock the shared <audio> + AudioContext on the very first tap anywhere (not only in trivia) */
+document.addEventListener('pointerdown', function () { try { trvUnlock(); } catch (e) {} try { ac(); } catch (e) {} }, { capture: true, once: true });
+document.addEventListener('touchend', function () { try { trvUnlock(); } catch (e) {} }, { capture: true, once: true });
+/* 3) entry themes: YouTube can't autoplay with sound on iOS from a hidden frame — the theme pill becomes a real tap-to-play button inside the player frame */
+var _clipSrcR = clipSrc; clipSrc = function (yt, st, vol, loop) { return _clipSrcR(yt, st, vol, loop) + (loop ? '&tap=1' : ''); };
+window.addEventListener('message', function (e) { var d = e.data, t = $('thm'); if (!d || d.logged !== 'yt' || !t) return; var f = t.querySelector('iframe'); if (!f || e.source !== f.contentWindow) return;
+  if (d.blocked) { t.classList.add('need'); var s = t.querySelector('span'); if (s && !s.dataset.o) { s.dataset.o = s.textContent; s.textContent = '◀ TAP ▶ FOR THEME'; } }
+  if (d.unblocked) { t.classList.remove('need'); var s2 = t.querySelector('span'); if (s2 && s2.dataset.o) s2.textContent = s2.dataset.o; } });
+/* 4) app sound toggle off: say so instead of silently skipping themes */
+var _themeAutoR = themeAuto; themeAuto = function (r) { _themeAutoR(r); var th = r.theme || {}, c = th[WHO] || th.sam || th.lewy; if (c && muted && !$('thm') && !sessionStorage.lg_mutehint) { sessionStorage.lg_mutehint = 1; toast('🔇 App sound is off · tap 🔊 up top to hear themes'); } };
 </script></body></html>
