@@ -774,6 +774,33 @@ body.ytp-on{overflow:hidden}
 .bdreq small{display:block;font-size:8px;letter-spacing:2px;color:#8f89b8;margin-bottom:4px}
 .bdst{position:relative;display:inline-block;font-size:11px;letter-spacing:1px;padding:6px 10px;background:var(--tc);color:#000;box-shadow:3px 3px 0 #000}
 .bdp.lk .bdst{background:#2d2850;color:#8f89b8}
+.mew{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px}
+.wrbtn{font:inherit;font-size:9px;letter-spacing:1px;padding:5px 7px;background:#1a1730;color:#ffd23f;border:2px solid #ffd23f;box-shadow:2px 2px 0 #000;cursor:pointer;white-space:nowrap}
+.wr h2{display:flex;justify-content:space-between;align-items:center;color:#ffd23f;font-size:14px;margin:0 0 12px}
+.wrhero{display:flex;gap:14px;align-items:center;padding:12px;border:2px solid #2d2850;background:linear-gradient(135deg,#1c1838,#141127);margin-bottom:14px}
+.wrhero canvas{width:84px;height:84px;image-rendering:pixelated;border:2px solid #ffd23f;box-shadow:3px 3px 0 #000}
+.wrhero b{display:block;color:#fff;font-size:13px;letter-spacing:1px}.wrhero small{display:block;color:#8f89b8;font-size:10px;margin:4px 0 8px}
+.wrl{font-size:10px;letter-spacing:2px;color:#8f89b8;margin:10px 2px 8px}
+.wrg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.wri{position:relative;font:inherit;background:#17142b;border:2px solid #2d2850;padding:8px 4px 7px;color:#fff;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;box-shadow:2px 2px 0 #000;transition:transform .12s}
+.wri:active{transform:translate(1px,1px)}
+.wri canvas{width:60px;height:60px;image-rendering:pixelated}
+.wri b{font-size:9px;letter-spacing:.5px;text-align:center;line-height:1.2}
+.wri small{font-size:8px;color:#8f89b8;text-align:center;line-height:1.3}
+.wri.on{border-color:#ffd23f;background:#221d3f}.wri em{position:absolute;top:-7px;right:-4px;font-style:normal;font-size:8px;background:#ffd23f;color:#000;padding:2px 4px;box-shadow:1px 1px 0 #000}
+.wri.lk canvas{opacity:.55;filter:grayscale(1) brightness(.6)}.wri.lk b{color:#5f5a80}.wri.lk small{color:#ff8fa3}
+.wrsrc{font-size:8px;color:#ffd23f;letter-spacing:.5px;text-align:center;line-height:1.3;max-width:100%;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.wrsrc.big{display:block;font-size:10px;margin:3px 0 0;-webkit-line-clamp:unset}
+.wrhero .k{display:block;font-size:8px;letter-spacing:2px;color:#8f89b8;margin:0 0 3px}
+.wri small{color:#7cdc9a}.wri small.need{color:#ff8fa3}.wri.lk .wrsrc{color:#8f89b8}
+.wri .acc{position:absolute;top:4px;left:4px;font-style:normal;font-size:7px;color:#8f89b8;border:1px solid #3a3466;padding:1px 3px}
+.wrf{display:flex;flex-direction:column;gap:6px;margin:0 0 6px}
+.wrr{display:flex;gap:6px;align-items:center;overflow-x:auto;scrollbar-width:none}.wrr::-webkit-scrollbar{display:none}
+.wrr span{font-size:8px;letter-spacing:2px;color:#8f89b8;min-width:50px}
+.wrc{font:inherit;font-size:9px;padding:5px 8px;white-space:nowrap;background:#17142b;color:#cfcbe8;border:2px solid #2d2850;cursor:pointer}
+.wrc.on{background:#ffd23f;color:#000;border-color:#ffd23f;box-shadow:2px 2px 0 #000}
+.wre{grid-column:1/-1;text-align:center;color:#8f89b8;font-size:10px;padding:20px}
+.wri.lk{background:#131122;border-style:dashed}.wri.lk canvas{opacity:.6;filter:grayscale(1) brightness(.55) contrast(.9)}.wri.lk b{color:#5f5a80}
 </style></head><body>
 <div id="splash" aria-label="Logged"></div>
 <header><div class="hin">
@@ -3118,5 +3145,208 @@ var _checkAchB = checkAch; checkAch = function () { _checkAchB(); if (!rows || !
   var first = !localStorage.getItem('lg_ach_c_' + me()), today = new Date().toISOString().slice(0, 10), ch = 0;
   achievements().forEach(function (a) { if (a[3] && !got['c_' + a[0]]) { got['c_' + a[0]] = first ? 'early' : today; ch = 1; } });
   localStorage.setItem('lg_ach_c_' + me(), '1'); if (ch) { localStorage.setItem(k, JSON.stringify(got)); achSync(); } };
+
+
+/* ===== R29: WARDROBE (pixel costumes) + BADGE DETAIL POPUP ===== */
+var WRA = { sam: { hat: 7, eye: 12, el: 12, er: 19, nose: 14, mouth: 17, neck: 23 }, lewy: { hat: 8, eye: 12, el: 13, er: 19, nose: 14, mouth: 16, neck: 23 } };
+function wrSpr(x, rows, ox, oy, pal) { rows.forEach(function (r, j) { for (var i = 0; i < r.length; i++) { var c = r[i]; if (c === '.' || !pal[c]) continue; x.fillStyle = pal[c]; x.fillRect((ox + i) * 2, (oy + j) * 2, 2, 2); } }); }
+function wrRect(x, c, a, b, w, h) { x.fillStyle = c; x.fillRect(a * 2, b * 2, w * 2, h * 2); }
+var WRD = {
+  porkpie: function (x, A) { wrSpr(x, ['....######....', '...########...', '...kkkkkkkk...', '##############'], 9, A.hat - 3, { '#': '#1b1b22', k: '#45404f' }); },
+  crown: function (x, A) { wrSpr(x, ['y...y..y...y', 'yy.yyyyyy.yy', 'yyyyryyryyyy', 'yyyyyyyyyyyy'], 10, A.hat - 3, { y: '#f6c945', r: '#e0424f' }); },
+  flatcap: function (x, A) { wrSpr(x, ['...#########..', '..###########.', '.#############', '###############'], 8, A.hat - 3, { '#': '#5b5048' }); },
+  cowboy: function (x, A) { wrSpr(x, ['....######....', '....######....', '...kkkkkkkk...', '##############', '.############.'], 9, A.hat - 4, { '#': '#7a4a24', k: '#3c2412' }); },
+  straw: function (x, A) { wrSpr(x, ['....######....', '...kkkkkkkk...', '##############', '.############.'], 9, A.hat - 3, { '#': '#e8c56a', k: '#b0412e' }); },
+  ogre: function (x, A) { var p = { g: '#8bc34a', d: '#5d8a2a' }; wrSpr(x, ['gg.', 'dgg', '.gg'], 4, A.eye - 3, p); wrSpr(x, ['.gg', 'ggd', 'gg.'], 25, A.eye - 3, p); },
+  helmet: function (x, A) { x.fillStyle = 'rgba(160,225,255,.28)'; x.fillRect(10, 2, 46, 42); wrRect(x, '#e9f6ff', 5, 1, 23, 1); wrRect(x, '#e9f6ff', 5, 1, 1, 22); wrRect(x, '#e9f6ff', 27, 1, 1, 22); wrRect(x, '#c8d2dc', 4, 23, 25, 2); wrRect(x, '#fff', 7, 3, 2, 1); },
+  saber: function (x) { wrRect(x, '#7fe3ff', 28, 9, 1, 14); wrRect(x, '#d9f8ff', 28, 10, 1, 12); wrRect(x, '#b9bcc4', 27, 23, 3, 4); wrRect(x, '#4a4d55', 27, 25, 3, 1); },
+  dragon: function (x) { wrSpr(x, ['..r.r.', '.rrrr.', 'rryrrr', '.rrrr.', 'r.rr.r'], 23, 19, { r: '#d8323f', y: '#ffd23f' }); },
+  keycard: function (x, A) { wrRect(x, '#2f3c48', 16, A.neck, 1, 3); wrRect(x, '#f2f4f5', 15, A.neck + 3, 4, 5); wrRect(x, '#41b6a8', 15, A.neck + 4, 4, 1); },
+  spintop: function (x) { wrSpr(x, ['.gg.', 'gggg', 'gssg', '.gg.', '..g.'], 26, 22, { g: '#b8bcc6', s: '#7b808c' }); },
+  drums: function (x) { for (var i = 0; i < 7; i++) { wrRect(x, '#e2c08d', 23 + i, 20 + i, 1, 1); wrRect(x, '#e2c08d', 29 - i, 20 + i, 1, 1); } },
+  chain: function (x, A) { for (var i = 0; i < 13; i++) wrRect(x, i % 2 ? '#f6c945' : '#c9952b', 10 + i, A.neck + (i < 2 || i > 10 ? 0 : 1), 1, 1); wrRect(x, '#f6c945', 16, A.neck + 2, 1, 4); wrRect(x, '#f6c945', 15, A.neck + 3, 3, 1); },
+  lei: function (x, A) { for (var i = 0; i < 15; i++) wrRect(x, ['#ff6fa8', '#ffd23f', '#ff9a3c'][i % 3], 9 + i, A.neck + (i < 2 || i > 12 ? 0 : 1), 1, 1); },
+  visor: function (x, A) { wrRect(x, '#2a2f3a', 9, A.eye - 1, 15, 3); wrRect(x, '#ff3b4a', 10, A.eye, 13, 1); wrRect(x, '#ffc2c7', 11, A.eye, 2, 1); },
+  disco: function (x, A) { var p = { m: '#ff4fd8', w: '#ffe0f8' }; wrSpr(x, ['.m.', 'mwm', '.m.'], A.el - 1, A.eye - 1, p); wrSpr(x, ['.m.', 'mwm', '.m.'], A.er - 1, A.eye - 1, p); wrRect(x, '#ff4fd8', A.el + 2, A.eye, A.er - A.el - 3, 1); },
+  chainsaw: function (x) { wrRect(x, '#ff8a1f', 22, 23, 4, 4); wrRect(x, '#9aa0aa', 26, 24, 5, 2); wrRect(x, '#2a2f3a', 27, 25, 4, 1); },
+  pineapple: function (x) { wrSpr(x, ['g.g.', '.gg.', 'yyyy', 'ybyy', 'yyby', '.yy.'], 26, 21, { g: '#4caf50', y: '#ffc93c', b: '#c58a1b' }); },
+  tie: function (x, A) { wrRect(x, '#1f2f5c', 16, A.neck, 2, 1); wrRect(x, '#24386e', 16, A.neck + 1, 2, 9); },
+  box: function (x) { wrRect(x, '#c49a5c', 23, 23, 7, 6); wrRect(x, '#9c7640', 23, 25, 7, 1); },
+  hockey: function (x, A) { wrRect(x, '#f1efe6', 10, A.eye - 3, 13, 10); wrRect(x, '#1b1b22', A.el - 1, A.eye, 2, 1); wrRect(x, '#1b1b22', A.er - 1, A.eye, 2, 1); [[12, A.eye + 3], [15, A.eye + 4], [18, A.eye + 3], [20, A.eye + 5], [13, A.eye + 5]].forEach(function (q) { wrRect(x, '#c8433a', q[0], q[1], 1, 1); }); },
+  clown: function (x, A) { wrRect(x, '#ff2e3b', 15, A.nose, 2, 2); wrRect(x, '#ff9aa1', 15, A.nose, 1, 1); },
+  antenna: function (x, A) { wrRect(x, '#9b5cff', 9, A.hat - 1, 15, 1); wrRect(x, '#cfd3da', 11, A.hat - 5, 1, 4); wrRect(x, '#cfd3da', 21, A.hat - 5, 1, 4); wrRect(x, '#7cff6b', 10, A.hat - 7, 3, 2); wrRect(x, '#7cff6b', 20, A.hat - 7, 3, 2); },
+  fedora: function (x, A) { wrSpr(x, ['....###.###...', '...#########..', '...kkkkkkkkk..', '###############'], 8, A.hat - 3, { '#': '#4b3a2e', k: '#1b1b22' }); },
+  wizard: function (x, A) { wrSpr(x, ['......#.......', '.....###......', '.....#y#......', '....#####.....', '....#####.....', '...###y###....', '..#########...', '##############'], 9, A.hat - 7, { '#': '#4b3bb0', y: '#ffd23f' }); },
+  catears: function (x, A) { var p = { k: '#2a2633', p: '#ff9ac8' }; wrSpr(x, ['k...', 'kk..', 'kpk.', 'kkkk'], 9, A.hat - 3, p); wrSpr(x, ['...k', '..kk', '.kpk', 'kkkk'], 20, A.hat - 3, p); },
+  specs: function (x, A) { var c = '#15151c'; [A.el, A.er].forEach(function (e) { wrRect(x, c, e - 2, A.eye - 1, 4, 1); wrRect(x, c, e - 2, A.eye + 2, 4, 1); wrRect(x, c, e - 2, A.eye, 1, 2); wrRect(x, c, e + 1, A.eye, 1, 2); }); wrRect(x, c, A.el + 2, A.eye, A.er - A.el - 4, 1); },
+  bandana: function (x, A) { wrRect(x, '#e0313f', 8, A.hat + 1, 17, 2); wrRect(x, '#fff', 11, A.hat + 1, 1, 1); wrRect(x, '#fff', 19, A.hat + 2, 1, 1); wrSpr(x, ['rr', '.rr', '..r'], 25, A.hat + 2, { r: '#e0313f' }); },
+  beret: function (x, A) { wrSpr(x, ['....######...', '.##########..', '############.', '.###########.'], 8, A.hat - 3, { '#': '#1f1d26' }); wrRect(x, '#1f1d26', 13, A.hat - 4, 1, 1); },
+  hearts: function (x, A) { var p = { h: '#ff4f8b' }; [A.el, A.er].forEach(function (e) { wrSpr(x, ['h.h', 'hhh', '.h.'], e - 1, A.eye - 1, p); }); wrRect(x, '#ff4f8b', A.el + 2, A.eye, A.er - A.el - 3, 1); }
+};
+// [id, name, draw, unlock-regex on title (null = genre), genre regex, source label]
+var WARD = [
+  ['heis', 'PORK-PIE HAT', 'porkpie', /^breaking bad/i], ['iron', 'IRON CROWN', 'crown', /^game of thrones/i], ['drgn', 'BABY DRAGON', 'dragon', /^house of the dragon/i],
+  ['saber', 'LIGHTSABER', 'saber', /star wars|^andor/i], ['peaky', 'PEAKY CAP', 'flatcap', /^peaky blinders/i], ['ogre', 'OGRE EARS', 'ogre', /^shrek/i],
+  ['space', 'SPACE HELMET', 'helmet', /^(interstellar|gravity|apollo 1[13]|project hail mary)/i], ['lumon', 'LUMON KEYCARD', 'keycard', /^severance/i], ['top', 'SPINNING TOP', 'spintop', /^inception/i],
+  ['drum', 'DRUMSTICKS', 'drums', /^whiplash/i], ['gems', 'GEMSTONE CHAIN', 'chain', /^the righteous gemstones/i], ['lotus', 'RESORT LEI', 'lei', /^white lotus/i],
+  ['django', 'BOUNTY HAT', 'cowboy', /^django/i], ['farm', 'FARMER STRAW HAT', 'straw', /^clarkson/i], ['bot', 'AUTOBOT VISOR', 'visor', /^transformers/i],
+  ['dancing', 'DISCO SHADES', 'disco', /^mamma mia/i], ['saw', 'CHAINSAW', 'chainsaw', /^chainsaw man/i], ['pine', 'PINEAPPLE', 'pineapple', /^pineapple express/i],
+  ['roy', 'ROY TIE', 'tie', /^succession/i], ['box', "WHAT'S IN THE BOX", 'box', /^se7en/i],
+  ['g_hor', 'HOCKEY MASK', 'hockey', null, /horror/i, 'HORROR'], ['g_com', 'CLOWN NOSE', 'clown', null, /comedy/i, 'COMEDY'], ['g_sci', 'ANTENNA BAND', 'antenna', null, /sci-?fi|science fiction/i, 'SCI-FI'],
+  ['g_cri', 'DETECTIVE FEDORA', 'fedora', null, /crime|mystery/i, 'CRIME'], ['g_fan', 'WIZARD HAT', 'wizard', null, /fantasy/i, 'FANTASY'], ['g_ani', 'CAT EARS', 'catears', null, /anim|anime/i, 'ANIMATION'],
+  ['g_doc', 'DOC SPECS', 'specs', null, /documentar/i, 'DOCUMENTARY'], ['g_act', 'ACTION BANDANA', 'bandana', null, /action|adventure/i, 'ACTION'], ['g_dra', 'ARTHOUSE BERET', 'beret', null, /drama/i, 'DRAMA'], ['g_rom', 'HEART SHADES', 'hearts', null, /romance/i, 'ROMANCE']];
+function wrBase(t) { return String(t).replace(/^\d+\s+/, '').replace(/\s*\((S|Season )?\d+\)\s*$/i, '').trim(); }
+function wrState(p) { var done = function (r) { return isY(r[p + 'Watched']); };
+  return WARD.map(function (w) { var o = { id: w[0], n: w[1], d: w[2] };
+    if (w[3]) { var M = rows.filter(function (r) { return w[3].test(wrBase(r.title)); }); if (!M.length) return null; var got = M.filter(done);
+      o.ok = !!got.length; o.src = wrBase((got[0] || M[0]).title); o.need = o.ok ? '' : 'Finish ' + wrBase(M[0].title) + ' to unlock'; o.kind = 't'; }
+    else { var n = rows.filter(function (r) { return done(r) && w[4].test(genresOf(r).join(',')); }).length; o.ok = n >= 3; o.src = w[5] + ' FAN'; o.need = o.ok ? '' : 'Finish 3 ' + w[5].toLowerCase() + ' titles (' + n + '/3)'; o.kind = 'g'; }
+    return o; }).filter(Boolean); }
+function wrOf(p) { var v = (profiles[p] || {}).wr; if (v == null) v = localStorage.getItem('lg_wr_' + p) || ''; var w = WARD.filter(function (x) { return x[0] === v; })[0]; return w && (wrState(p).filter(function (s) { return s.id === v && s.ok; })[0]) ? v : ''; }
+function wrPaint(cv, p, id, sil) { var w = WARD.filter(function (x) { return x[0] === id; })[0]; if (!w) return; var x = cv.getContext('2d'); x.imageSmoothingEnabled = false;
+  if (!sil) { WRD[w[2]](x, WRA[p] || WRA.sam); return; } var T = document.createElement('canvas'); T.width = T.height = 64; var tx = T.getContext('2d'); WRD[w[2]](tx, WRA[p] || WRA.sam); tx.globalCompositeOperation = 'source-in'; tx.fillStyle = '#0b0a14'; tx.fillRect(0, 0, 64, 64); x.drawImage(T, 0, 0); }
+var _drawAvatarW = drawAvatar; drawAvatar = function (cv, p, scene) { _drawAvatarW(cv, p, scene); var id = cv.dataset.wr != null ? cv.dataset.wr : wrOf(p); if (id) wrPaint(cv, p, id, cv.dataset.sil === '1'); };
+function wrOpen(p) { WRP = p; wrDraw(); }
+var WRP = 'sam';
+function wrDraw() { var p = WRP, S = wrState(p), cur = wrOf(p), ok = S.filter(function (s) { return s.ok; }).length;
+  var tile = function (s) { return '<button class="wri' + (s.ok ? '' : ' lk') + (cur === s.id ? ' on' : '') + '" data-wri="' + s.id + '"' + (s.ok ? '' : ' aria-disabled="true"') + '><canvas data-av="' + p + '" data-wr="' + s.id + '"' + (s.ok ? '' : ' data-sil="1"') + '></canvas><b>' + (s.ok ? esc(s.n) : '???') + '</b><small>' + esc(s.ok ? s.src : s.need) + '</small>' + (cur === s.id ? '<em>WORN</em>' : '') + '</button>'; };
+  var T = S.filter(function (s) { return s.kind === 't'; }), G = S.filter(function (s) { return s.kind === 'g'; });
+  m19('wrm', '<div class="wr"><h2><span>👕 ' + (p === 'sam' ? '1P SAM' : '2P LEWY') + '\u2019S WARDROBE</span><button class="btn" data-m19x="1">✕</button></h2>' +
+    '<div class="wrhero"><canvas data-av="' + p + '"></canvas><div><b>' + (cur ? esc(WARD.filter(function (x) { return x[0] === cur; })[0][1]) : 'NO COSTUME') + '</b><small>' + ok + '/' + S.length + ' UNLOCKED · shows on your avatar everywhere</small>' + (cur ? '<button class="btn" data-wri="">✕ TAKE OFF</button>' : '') + '</div></div>' +
+    '<div class="wrl">FROM SHOWS & MOVIES YOU FINISHED</div><div class="wrg">' + T.map(tile).join('') + '</div>' +
+    '<div class="wrl">GENRE FITS</div><div class="wrg">' + G.map(tile).join('') + '</div></div>'); paintAvatars(); }
+document.addEventListener('click', function (e) {
+  var o = e.target.closest('[data-wardrobe]'); if (o) { e.preventDefault(); wrOpen(o.dataset.wardrobe); return; }
+  var t = e.target.closest('[data-wri]'); if (t) { if (t.classList.contains('lk')) { toast && toast('🔒 ' + t.querySelector('small').textContent); return; }
+    var p = WRP, id = t.dataset.wri; if (id && wrOf(p) === id) id = ''; try { localStorage.setItem('lg_wr_' + p, id); } catch (er) {} profiles[p] = profiles[p] || {}; profiles[p].wr = id;
+    saveProfileField(p, 'wr', id); tone && tone(id ? 880 : 440, .05); wrDraw(); paintAvatars(); }
+});
+var _lockerShellW = lockerShell; lockerShell = function (p, t) { return _lockerShellW(p, t).replace(/(<button class="me" data-bgpick="(\w+)"[\s\S]*?<\/button>)/, '<div class="mew">$1<button class="wrbtn" data-wardrobe="$2" aria-label="Wardrobe">👕 WARDROBE</button></div>'); };
+
+
+/* ===== R30: WARDROBE v2 — full pixel outfits replace the avatar's clothes ===== */
+WRA.sam.body = 22; WRA.lewy.body = 24;
+var WRM = {};
+function wrMask(p) { if (WRM[p]) return WRM[p]; var im = AVIMG[p]; if (!im) return null; var c = document.createElement('canvas'); c.width = c.height = 32; var x = c.getContext('2d'); x.drawImage(im, 0, 0, 32, 32); try { return WRM[p] = x.getImageData(0, 0, 32, 32).data; } catch (e) { return null; } }
+function wrA(m, x, y) { return x >= 0 && x < 32 && y >= 0 && y < 32 && m[(y * 32 + x) * 4 + 3] > 0; }
+function wrSkin(m, x, y) { var i = (y * 32 + x) * 4, r = m[i], g = m[i + 1], b = m[i + 2]; return m[i + 3] > 0 && r > 140 && r > g && g > b && r - b > 35 && g > 90; }
+// body painter: f(dx, yy, edge, h) -> colour | null   (dx = x-16, yy = rows below collar line, h = torso height)
+function wrBody(cx, p, f) { var m = wrMask(p), A = WRA[p]; if (!m) return; var h = 32 - A.body;
+  for (var y = A.body; y < 32; y++) for (var x = 0; x < 32; x++) { if (!wrA(m, x, y)) continue; var e = !wrA(m, x - 1, y) || !wrA(m, x + 1, y) || !wrA(m, x, y - 1), c = f(x - 16, y - A.body, e, h); if (c) { cx.fillStyle = c; cx.fillRect(x * 2, y * 2, 2, 2); } } }
+function wrSkinTo(cx, p, pal) { var m = wrMask(p), A = WRA[p]; if (!m) return; for (var y = 0; y < A.body + 1; y++) for (var x = 0; x < 32; x++) if (wrSkin(m, x, y)) { var i = (y * 32 + x) * 4, l = (m[i] + m[i + 1] + m[i + 2]) / 3; cx.fillStyle = l > 200 ? pal[0] : l > 165 ? pal[1] : pal[2]; cx.fillRect(x * 2, y * 2, 2, 2); } }
+var V = function (dx, yy, w) { return Math.abs(dx) <= w - yy; }; // V-neck helper
+var WRO = {
+  hazmat: function (cx, p, A) { wrBody(cx, p, function (dx, yy, e) { if (dx === 0 && yy > 1) return '#7a5a08'; if (yy === 0) return '#d9a514'; if (e) return '#c48d0c'; return (yy + dx) % 7 === 0 ? '#e7b21c' : '#f5c629'; });
+    wrRect(cx, '#2b2e33', 11, A.nose - 1, 11, 5); wrRect(cx, '#3d4148', 12, A.nose, 9, 3); wrRect(cx, '#14161a', 9, A.nose + 1, 3, 3); wrRect(cx, '#14161a', 21, A.nose + 1, 3, 3); wrRect(cx, '#596069', 10, A.nose + 2, 1, 1); wrRect(cx, '#596069', 22, A.nose + 2, 1, 1); wrRect(cx, '#7fd4ff', A.el - 1, A.eye - 1, 3, 2); wrRect(cx, '#7fd4ff', A.er - 1, A.eye - 1, 3, 2); wrRect(cx, '#2b2e33', A.el + 2, A.eye - 1, A.er - A.el - 3, 1); },
+  northarm: function (cx, p) { wrBody(cx, p, function (dx, yy, e) { if (yy < 3) return (dx * 7 + yy * 3) % 5 < 2 ? '#4a3524' : (dx + yy) % 3 ? '#6b4a2e' : '#8a6a48'; if (Math.abs(dx) < 7) return yy % 3 === 0 ? '#5d636c' : (Math.abs(dx) === 3 && yy % 3 === 1 ? '#c7ccd3' : '#8d939c'); return e ? '#2c2a30' : '#3b3940'; }); },
+  targ: function (cx, p) { wrBody(cx, p, function (dx, yy, e) { if (yy < 2 && Math.abs(dx) < 4) return '#b3202c'; if (Math.abs(dx) === 4 - Math.min(yy, 3) + 3) return '#b3202c'; if (yy === 4 && Math.abs(dx) < 6) return '#7c121c'; return e ? '#0c0b10' : (dx + yy) % 6 === 0 ? '#25222c' : '#18161d'; }); WRD.dragon(cx, WRA[p]); },
+  jedi: function (cx, p) { wrBody(cx, p, function (dx, yy, e) { var ad = Math.abs(dx); if (yy === 5 && ad < 9) return '#3a2716'; if (ad <= 1 + (yy < 4 ? yy : 3) && ad >= (yy < 4 ? yy : 3) - 1 && ad < 6) return '#d9c9a3'; if (ad < 8) return '#e8dcc0'; return e ? '#4a321d' : '#6b4a2e'; }); WRD.saber(cx); },
+  peaky: function (cx, p, A) { wrBody(cx, p, function (dx, yy, e) { var ad = Math.abs(dx); if (ad <= 1 && yy < 2) return '#f2f2ef'; if (ad <= 3 && yy < 7 && ad >= 2) return yy % 2 ? '#5a4a3a' : '#6b5a48'; if (ad <= 1) return '#f2f2ef'; if (ad === 2 && yy === 4) return '#c9a227'; return e ? '#1b1b20' : ((dx + yy) & 1 ? '#2e2e35' : '#36363e'); }); WRD.flatcap(cx, A); },
+  ogre: function (cx, p, A) { wrSkinTo(cx, p, ['#b6d96a', '#93c047', '#6f9a30']); wrBody(cx, p, function (dx, yy, e) { var ad = Math.abs(dx); if (ad < 5) return yy % 4 === 3 ? '#d5cba8' : '#ece3c4'; if (ad === 5) return '#4a3218'; return e ? '#4a3218' : (dx + yy) % 5 === 0 ? '#6b4a26' : '#7d5830'; }); WRD.ogre(cx, A); },
+  astro: function (cx, p) { wrBody(cx, p, function (dx, yy, e) { var ad = Math.abs(dx); if (yy === 3 && ad < 4) return dx < -1 ? '#e0313f' : dx < 1 ? '#3b6bd8' : '#ffd23f'; if (yy >= 2 && yy <= 4 && ad < 5) return '#9aa3ae'; if (ad === 9) return '#ff7a1a'; return e ? '#aeb6c0' : yy % 4 === 0 ? '#dfe5ea' : '#f4f7f9'; }); WRD.helmet(cx, WRA[p]); },
+  lumon: function (cx, p, A) { wrBody(cx, p, function (dx, yy, e) { var ad = Math.abs(dx); if (ad === 0 && yy > 0) return '#23324f'; if (V(dx, yy, 4)) return '#f6f7f9'; if (ad < 9) return e ? '#1d2a3f' : '#2b3c5a'; return e ? '#1d2a3f' : '#24344f'; }); wrRect(cx, '#f2f4f5', 20, A.body + 3, 3, 4); wrRect(cx, '#41b6a8', 20, A.body + 4, 3, 1); },
+  band: function (cx, p) { wrBody(cx, p, function (dx, yy, e) { var ad = Math.abs(dx); if (yy === 1 && ad <= 2) return ad === 0 ? '#2a0f10' : '#7c121c'; if (V(dx, yy, 3)) return '#f6f7f9'; return e ? '#060608' : (yy + dx) % 8 === 0 ? '#1c1c22' : '#111116'; }); WRD.drums(cx); },
+  gems: function (cx, p, A) { wrBody(cx, p, function (dx, yy, e) { var ad = Math.abs(dx); if (V(dx, yy, 3)) return ad === 0 ? '#e9c04a' : '#3a3a42'; if (ad === 4 - Math.min(yy, 2) + 2 && yy < 6) return '#e9c04a'; return e ? '#d8d3c6' : '#fbf8ef'; }); WRD.chain(cx, A); },
+  hawaii: function (cx, p, A) { wrBody(cx, p, function (dx, yy, e) { var ad = Math.abs(dx); if (ad === 0) return '#0f8a8a'; var k = (dx * 5 + yy * 3 + 64) % 9; if (k === 0) return '#ff6fa8'; if (k === 4) return '#fff3b0'; if (k === 7 && yy % 2) return '#4cc38a'; return e ? '#0f7d80' : '#18a7a8'; }); WRD.lei(cx, A); },
+  valet: function (cx, p, A) { wrBody(cx, p, function (dx, yy, e) { var ad = Math.abs(dx); if (yy < 2 && ad < 4) return '#f6f7f9'; if (ad <= 1 && yy < 4) return '#e1d6b0'; return e ? '#1b2c7a' : (dx + yy) % 4 === 0 ? '#2945b8' : '#3254d4'; }); WRD.cowboy(cx, A); },
+  farm: function (cx, p, A) { wrBody(cx, p, function (dx, yy, e) { var ad = Math.abs(dx); if (ad < 4) return yy % 3 === 0 ? '#4d6fa3' : '#5f83bb'; if (ad === 4) return '#2f3a24'; return e ? '#2f3a24' : (dx * 3 + yy) % 7 === 0 ? '#556b3a' : '#45592e'; }); WRD.straw(cx, A); },
+  prime: function (cx, p, A) { wrBody(cx, p, function (dx, yy, e) { var ad = Math.abs(dx); if (yy >= 1 && yy <= 3 && ad >= 2 && ad <= 7) return yy === 1 ? '#bfe6ff' : '#5fb3e8'; if (ad <= 1 && yy < 5) return '#9aa3ae'; if (yy >= 5) return e ? '#1a3a8a' : '#2557c9'; return e ? '#8a1520' : (ad === 8 ? '#b11d2c' : '#d8323f'); }); WRD.visor(cx, A); },
+  abba: function (cx, p, A) { wrBody(cx, p, function (dx, yy, e) { if (V(dx, yy, 3)) return null; var k = (dx * 7 + yy * 5 + 64) % 11; if (k === 0) return '#fff'; if (k === 5) return '#b9c7ff'; return e ? '#c9c3dc' : '#ebe7f5'; }); WRD.disco(cx, A); },
+  hunter: function (cx, p) { wrBody(cx, p, function (dx, yy, e) { var ad = Math.abs(dx); if (ad === 0 && yy > 0) return '#141418'; if (ad === 1 && yy === 1) return '#141418'; if (ad < 8) return e ? '#cfd3da' : '#f2f3f5'; return e ? '#0e0e12' : '#1e1e25'; }); WRD.chainsaw(cx); },
+  roy: function (cx, p) { wrBody(cx, p, function (dx, yy, e) { var ad = Math.abs(dx); if (ad <= 1 && yy > 0 && yy < 8) return '#24386e'; if (V(dx, yy, 3)) return '#dfe9f5'; return e ? '#22242b' : (yy % 3 === 0 && ad % 4 === 1 ? '#3a3d47' : '#30333c'); }); },
+  trench: function (cx, p) { wrBody(cx, p, function (dx, yy, e) { var ad = Math.abs(dx); if (V(dx, yy, 3)) return ad === 0 ? '#7b2230' : '#e9e6dc'; if (ad === 4 && yy > 2) return '#7a6340'; if (ad === 6 && yy % 3 === 1) return '#3a2d1a'; return e ? '#8e744a' : '#b89a64'; }); WRD.box(cx); }
+};
+// which outfit each title costume now uses (full outfit) — accessories stay for top/pine + genre fits
+var WRF = { heis: ['HAZMAT SUIT', 'hazmat'], iron: ['NORTHERN ARMOUR', 'northarm'], drgn: ['TARGARYEN ROBES', 'targ'], saber: ['JEDI ROBES', 'jedi'], peaky: ['SHELBY SUIT', 'peaky'], ogre: ['OGRE MODE', 'ogre'], space: ['SPACE SUIT', 'astro'],
+  lumon: ['LUMON ATTIRE', 'lumon'], drum: ['STUDIO BAND BLACKS', 'band'], gems: ['GEMSTONE WHITE SUIT', 'gems'], lotus: ['RESORT SHIRT', 'hawaii'], django: ['BLUE VALET SUIT', 'valet'], farm: ['DIDDLY SQUAT GEAR', 'farm'],
+  bot: ['AUTOBOT ARMOUR', 'prime'], dancing: ['DANCING QUEEN', 'abba'], saw: ['DEVIL HUNTER', 'hunter'], roy: ['WAYSTAR SUIT', 'roy'], box: ['DETECTIVE TRENCH', 'trench'] };
+WARD.forEach(function (w) { var f = WRF[w[0]]; if (f) { w[1] = f[0]; w[6] = f[1]; } });
+wrPaint = function (cv, p, id, sil) { var w = WARD.filter(function (x) { return x[0] === id; })[0]; if (!w) return; var x = cv.getContext('2d'), A = WRA[p] || WRA.sam; x.imageSmoothingEnabled = false;
+  var go = function (cx) { if (w[6]) WRO[w[6]](cx, p, A); else WRD[w[2]](cx, A); };
+  if (!sil) { go(x); return; } var T = document.createElement('canvas'); T.width = T.height = 64; var tx = T.getContext('2d'); go(tx); tx.globalCompositeOperation = 'source-in'; tx.fillStyle = '#0b0a14'; tx.fillRect(0, 0, 64, 64); x.drawImage(T, 0, 0); };
+var _wrStateF = wrState; wrState = function (p) { return _wrStateF(p).map(function (s) { var w = WARD.filter(function (x) { return x[0] === s.id; })[0]; s.full = !!(w && w[6]); return s; }); };
+/* Lewy wears his own hat: hat costumes swap it out (erase his hat back to the scene, then draw the new one) */
+var WRHAT = { flatcap: 1, cowboy: 1, straw: 1, porkpie: 1, crown: 1, fedora: 1, wizard: 1, beret: 1, antenna: 1, catears: 1 }, WRHO = { peaky: 'flatcap', valet: 'cowboy', farm: 'straw' };
+var _wrPaintH = wrPaint; wrPaint = function (cv, p, id, sil) { var w = WARD.filter(function (x) { return x[0] === id; })[0];
+  if (w && p === 'lewy' && !sil && (WRHAT[w[2]] && !w[6] || WRHO[w[6]])) { var x = cv.getContext('2d'); x.imageSmoothingEnabled = false; x.drawImage(SCN, 0, 0, 32, 9, 0, 0, 64, 18); }
+  _wrPaintH(cv, p, id, sil); };
+
+/* ===== R31: more outfits per title + wardrobe sort/filter + clear source titles ===== */
+Object.assign(WRO, {
+  heisen: function (cx, p, A) { wrBody(cx, p, function (dx, yy, e) { var ad = Math.abs(dx); if (V(dx, yy, 3)) return ad === 0 ? '#3c4a3a' : '#556b52'; if (ad === 4 && yy < 5) return '#0c0c10'; return e ? '#0c0c10' : (dx + yy) % 6 === 0 ? '#22222a' : '#18181e'; }); WRD.porkpie(cx, A); wrRect(cx, '#0c0c10', A.el - 2, A.eye - 1, 4, 2); wrRect(cx, '#0c0c10', A.er - 2, A.eye - 1, 4, 2); wrRect(cx, '#0c0c10', A.el + 2, A.eye - 1, A.er - A.el - 4, 1); wrRect(cx, '#5a6070', A.el - 1, A.eye - 1, 1, 1); wrRect(cx, '#5a6070', A.er - 1, A.eye - 1, 1, 1); },
+  watch: function (cx, p) { wrBody(cx, p, function (dx, yy, e) { if (yy < 3) return (dx * 5 + yy * 7 + 64) % 4 === 0 ? '#4b4b55' : (dx + yy) % 2 ? '#2a2a31' : '#34343c'; if (yy === 5 && Math.abs(dx) < 10) return '#4a3524'; return e ? '#050507' : (dx * 3 + yy) % 7 === 0 ? '#16161b' : '#0d0d11'; }); },
+  sith: function (cx, p) { wrBody(cx, p, function (dx, yy, e) { var ad = Math.abs(dx); if (yy === 5 && ad < 9) return '#5c0c14'; if (ad === 3 - Math.min(yy, 2) + 1 && yy < 4) return '#8a1220'; return e ? '#000' : ad < 8 ? '#141218' : '#0b0a0e'; }); wrRect(cx, '#ff3048', 28, 9, 1, 14); wrRect(cx, '#ffc2c8', 28, 10, 1, 12); wrRect(cx, '#2a2a30', 27, 23, 3, 4); },
+  pilot: function (cx, p) { wrBody(cx, p, function (dx, yy, e) { var ad = Math.abs(dx); if (ad === 5 || ad === 6 && yy % 2) return '#f4f6f8'; if (yy === 3 && ad < 3) return dx < 0 ? '#e0313f' : '#9aa3ae'; if (yy === 4 && ad < 3) return '#3b6bd8'; return e ? '#b8501a' : (yy + dx) % 7 === 0 ? '#e0742c' : '#f08a3a'; }); },
+  outie: function (cx, p) { wrBody(cx, p, function (dx, yy, e) { var ad = Math.abs(dx); if (yy < 2 && ad < 4) return '#c9b48a'; if (yy % 2 === 0 && (dx + yy) % 4 === 0) return '#3f5a46'; return e ? '#25362a' : '#31473a'; }); },
+  ctrl: function (cx, p, A) { wrBody(cx, p, function (dx, yy, e) { var ad = Math.abs(dx); if (ad === 0 && yy > 0) return '#141418'; if (yy === 3 && dx >= 4 && dx <= 6) return '#3b6bd8'; return e ? '#cfd3da' : '#f6f7f9'; }); wrRect(cx, '#141418', 7, A.eye - 4, 1, 7); wrRect(cx, '#141418', 6, A.eye + 2, 2, 2); wrRect(cx, '#141418', 8, A.mouth, 4, 1); },
+  staff: function (cx, p) { wrBody(cx, p, function (dx, yy, e) { var ad = Math.abs(dx); if (yy < 2 && ad < 4) return '#2f8f7a'; if (yy === 3 && dx >= 4 && dx <= 7) return '#f6c945'; return e ? '#dfe4e2' : (dx + yy) % 9 === 0 ? '#eef1f0' : '#ffffff'; }); },
+  bee: function (cx, p, A) { wrBody(cx, p, function (dx, yy, e) { var ad = Math.abs(dx); if (yy >= 1 && yy <= 3 && ad >= 2 && ad <= 6) return yy === 1 ? '#fff6c2' : '#2b2e33'; if (ad <= 1 && yy < 5) return '#2b2e33'; return e ? '#b88a00' : ad === 8 ? '#d9a514' : '#ffc61a'; }); wrRect(cx, '#2b2e33', 9, A.eye - 1, 15, 3); wrRect(cx, '#5fd0ff', 10, A.eye, 13, 1); },
+  fletch: function (cx, p) { wrBody(cx, p, function (dx, yy, e) { return e ? '#000' : (yy === 0 && Math.abs(dx) < 4) ? '#2a2a30' : '#0e0e12'; }); }
+});
+// [id, name, accessory-draw, title regex, , , outfit] — inserted beside their title siblings
+[['heis2', 'HEISENBERG', 'porkpie', /^breaking bad/i, 'heisen', 'heis'], ['nwatch', "NIGHT'S WATCH", 'crown', /^game of thrones/i, 'watch', 'iron'], ['sith', 'SITH ROBES', 'saber', /star wars|^andor/i, 'sith', 'saber'],
+ ['xwing', 'REBEL PILOT', 'saber', /star wars|^andor/i, 'pilot', 'sith'], ['outie', 'OUTIE KNITWEAR', 'keycard', /^severance/i, 'outie', 'lumon'], ['ctrl', 'MISSION CONTROL', 'helmet', /^(interstellar|gravity|apollo 1[13]|project hail mary)/i, 'ctrl', 'space'],
+ ['staff', 'RESORT STAFF', 'lei', /^white lotus/i, 'staff', 'lotus'], ['bee', 'BUMBLEBEE ARMOUR', 'visor', /^transformers|^bumblebee/i, 'bee', 'bot'], ['fletch', 'FLETCHER BLACKS', 'drums', /^whiplash/i, 'fletch', 'drum']
+].forEach(function (n) { var at = -1; WARD.forEach(function (w, i) { if (w[0] === n[5]) at = i; }); WARD.splice(at + 1, 0, [n[0], n[1], n[2], n[3], undefined, undefined, n[4]]); });
+WARD.forEach(function (w) { if (w[0] === 'bot') w[3] = /^transformers|^bumblebee/i; });
+// richer state: type, completion date, source title
+wrState = function (p) { var done = function (r) { return isY(r[p + 'Watched']); }, dd = function (r) { return ((r.dates || {})[p + 'Done']) || ''; };
+  return WARD.map(function (w) { var o = { id: w[0], n: w[1], d: w[2], full: !!w[6] };
+    if (w[3]) { var M = rows.filter(function (r) { return w[3].test(wrBase(r.title)); }); if (!M.length) return null; var got = M.filter(done).sort(function (a, b) { return dd(b) < dd(a) ? -1 : 1; });
+      o.ok = !!got.length; o.src = wrBase((got[0] || M[0]).title); o.type = (got[0] || M[0]).type === 'Movie' ? 'movie' : 'show'; o.date = got.length ? dd(got[0]) : ''; o.need = o.ok ? '' : 'Finish ' + o.src + ' to unlock'; o.kind = 't'; }
+    else { var G = rows.filter(function (r) { return done(r) && w[4].test(genresOf(r).join(',')); }), n = G.length; o.ok = n >= 3; o.src = w[5] + ' FAN'; o.type = 'genre'; o.kind = 'g';
+      o.date = o.ok ? G.map(dd).filter(Boolean).sort().slice(-3)[0] || '' : ''; o.need = o.ok ? '' : 'Finish 3 ' + w[5].toLowerCase() + ' titles (' + n + '/3)'; }
+    return o; }).filter(Boolean); };
+var WRS = (function () { try { return Object.assign({ sort: 'recent', type: 'all', lock: 'all' }, JSON.parse(localStorage.lg_wrs || '{}')); } catch (e) { return { sort: 'recent', type: 'all', lock: 'all' }; } })();
+function wrIco(t) { return t === 'movie' ? '🎞' : t === 'show' ? '📺' : '🧭'; }
+function wrDay(d) { if (!d) return ''; var x = new Date(d + 'T12:00:00'); return isNaN(x) ? '' : x.toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }).toUpperCase(); }
+wrDraw = function () { var p = WRP, all = wrState(p), cur = wrOf(p), ok = all.filter(function (s) { return s.ok; }).length, cs = all.filter(function (s) { return s.id === cur; })[0];
+  var S = all.filter(function (s) { return (WRS.type === 'all' || s.type === WRS.type) && (WRS.lock === 'all' || (WRS.lock === 'ok') === s.ok); });
+  S.sort(function (a, b) { if (WRS.sort === 'az') return a.n < b.n ? -1 : a.n > b.n ? 1 : 0; if (WRS.sort === 'src') return a.src.localeCompare(b.src) || (a.n < b.n ? -1 : 1);
+    return (b.ok - a.ok) || (b.date || '').localeCompare(a.date || '') || a.src.localeCompare(b.src); });
+  var chip = function (k, v, l) { return '<button class="wrc' + (WRS[k] === v ? ' on' : '') + '" data-wrs="' + k + '" data-v="' + v + '">' + l + '</button>'; };
+  var tile = function (s) { return '<button class="wri' + (s.ok ? '' : ' lk') + (cur === s.id ? ' on' : '') + '" data-wri="' + s.id + '"><canvas data-av="' + p + '" data-wr="' + s.id + '"' + (s.ok ? '' : ' data-sil="1"') + '></canvas><b>' + esc(s.n) + '</b>' +
+    '<span class="wrsrc">' + wrIco(s.type) + ' ' + esc(s.src) + '</span>' + (s.ok ? (s.date ? '<small>✓ ' + wrDay(s.date) + '</small>' : '<small>✓ UNLOCKED</small>') : '<small class="need">' + esc(s.need) + '</small>') + (cur === s.id ? '<em>WORN</em>' : '') + (s.full ? '' : '<i class="acc">ACC</i>') + '</button>'; };
+  m19('wrm', '<div class="wr"><h2><span>👕 ' + (p === 'sam' ? '1P SAM' : '2P LEWY') + '\u2019S WARDROBE</span><button class="btn" data-m19x="1">✕</button></h2>' +
+    '<div class="wrhero"><canvas data-av="' + p + '"></canvas><div><small class="k">NOW WEARING</small><b>' + (cs ? esc(cs.n) : 'NO COSTUME') + '</b>' + (cs ? '<span class="wrsrc big">' + wrIco(cs.type) + ' FROM ' + esc(cs.src.toUpperCase()) + '</span>' : '') + '<small>' + ok + '/' + all.length + ' UNLOCKED · shows on your avatar everywhere</small>' + (cur ? '<button class="btn" data-wri="">✕ TAKE OFF</button>' : '') + '</div></div>' +
+    '<div class="wrf"><div class="wrr"><span>SORT</span>' + chip('sort', 'recent', '⏱ RECENT') + chip('sort', 'az', 'A–Z') + chip('sort', 'src', '🎬 BY TITLE') + '</div>' +
+    '<div class="wrr"><span>SHOW</span>' + chip('type', 'all', 'ALL') + chip('type', 'movie', '🎞 MOVIES') + chip('type', 'show', '📺 SHOWS') + chip('type', 'genre', '🧭 GENRE') + '</div>' +
+    '<div class="wrr"><span>STATUS</span>' + chip('lock', 'all', 'ALL') + chip('lock', 'ok', '✓ UNLOCKED') + chip('lock', 'lk', '🔒 LOCKED') + '</div></div>' +
+    '<div class="wrl">' + S.length + ' OUTFIT' + (S.length === 1 ? '' : 'S') + '</div><div class="wrg">' + (S.length ? S.map(tile).join('') : '<div class="wre">Nothing here yet</div>') + '</div></div>'); paintAvatars(); };
+document.addEventListener('click', function (e) { var c = e.target.closest('[data-wrs]'); if (!c) return; WRS[c.dataset.wrs] = c.dataset.v; try { localStorage.lg_wrs = JSON.stringify(WRS); } catch (er) {} tone && tone(720, .03); var sh = document.querySelector('#wrm .sh'), st = sh && sh.scrollTop; wrDraw(); if (sh) sh.scrollTop = st; });
+WRHO.heisen = 'porkpie';
+var WRFR = { saber: 'Star Wars', sith: 'Star Wars', xwing: 'Star Wars', bot: 'Transformers', bee: 'Transformers', ogre: 'Shrek' };
+var _wrStateFR = wrState; wrState = function (p) { return _wrStateFR(p).map(function (s) { if (WRFR[s.id]) s.src = WRFR[s.id]; return s; }); };
+
+/* ===== R32: every list title gets an outfit (bespoke or genre-themed); strictly per-person unlocks; greyed locked look ===== */
+var WRGS = [ // [genre regex, style key, name suffix, palette]
+  [/horror/i, 'g_cardi', 'CREEPY CARDIGAN', ['#3b2f2a', '#2a211d', '#8a1c1c']], [/sci-?fi|science fiction/i, 'g_jump', 'SILVER JUMPSUIT', ['#b9c2cc', '#8d97a3', '#5fd0ff']],
+  [/crime|mystery|thriller/i, 'g_leather', 'LEATHER JACKET', ['#2b2220', '#1a1412', '#e8e4dc']], [/documentar/i, 'g_vest', 'FIELD VEST', ['#7a7350', '#5c5638', '#e9e3cf']],
+  [/anim|anime/i, 'g_toon', 'TOON HOODIE', ['#ff6fa8', '#d94b86', '#fff3b0']], [/action|adventure|war/i, 'g_tact', 'TACTICAL VEST', ['#4b5634', '#353d24', '#2a2a2a']],
+  [/romance/i, 'g_date', 'DATE-NIGHT SHIRT', ['#b3202c', '#8a1520', '#f6f7f9']], [/comedy/i, 'g_goofy', 'GOOFY TEE', ['#ffd23f', '#d9a514', '#e0313f']],
+  [/drama|.*/i, 'g_turtle', 'TURTLENECK', ['#3a3a48', '#2a2a35', '#d9c9a3']]];
+function wrGenStyle(key, pal) { return function (cx, p) { wrBody(cx, p, function (dx, yy, e, h) { var ad = Math.abs(dx);
+  if (key === 'g_turtle') return yy < 2 && ad < 4 ? pal[1] : e ? pal[1] : yy % 2 && ad % 3 === 0 ? pal[1] : pal[0];
+  if (key === 'g_cardi') return ad === 0 ? pal[2] : ad < 3 ? '#e8e2d4' : e ? pal[1] : (yy + ad) % 3 === 0 ? pal[1] : pal[0];
+  if (key === 'g_jump') return ad === 0 && yy > 0 ? pal[1] : yy === 4 && ad > 3 && ad < 7 ? pal[2] : e ? pal[1] : (dx + yy) % 5 === 0 ? '#d4dbe2' : pal[0];
+  if (key === 'g_leather') return V(dx, yy, 3) ? pal[2] : ad === 4 && yy < 6 ? '#3d322e' : e ? pal[1] : yy === 4 && ad > 5 && ad < 8 ? '#9aa0aa' : pal[0];
+  if (key === 'g_vest') return ad < 3 ? pal[2] : (yy === 3 || yy === 6) && ad > 3 && ad < 8 ? pal[1] : e ? pal[1] : pal[0];
+  if (key === 'g_toon') return yy < 2 && ad < 5 ? pal[1] : ad === 2 && yy > 1 && yy < 6 ? pal[2] : e ? pal[1] : yy >= 5 && ad < 6 ? '#ff8fbd' : pal[0];
+  if (key === 'g_tact') return ad < 2 ? '#2f2f2f' : yy >= 2 && yy <= 6 && ad > 2 && ad < 9 ? ((yy + dx) % 2 ? pal[1] : pal[0]) : e ? '#202216' : '#5f6b44';
+  if (key === 'g_date') return V(dx, yy, 2) ? pal[2] : e ? pal[1] : (dx + yy) % 6 === 0 ? '#c9303c' : pal[0];
+  return yy >= 2 && yy <= 4 && ad <= 2 ? (ad + yy) % 2 ? pal[2] : '#fff' : e ? pal[1] : pal[0]; }); }; }
+WRGS.forEach(function (g) { WRO[g[1]] = wrGenStyle(g[1], g[3]); });
+function wrHash(s) { var h = 5381; for (var i = 0; i < s.length; i++) h = ((h * 33) ^ s.charCodeAt(i)) >>> 0; return 'x' + h.toString(36); }
+var WRGN = -1;
+function wrSync() { if (!window.rows || rows.length === WRGN) return; WRGN = rows.length; for (var i = WARD.length - 1; i >= 0; i--) if (WARD[i][7]) WARD.splice(i, 1);
+  var seen = {}, bespoke = WARD.filter(function (w) { return w[3]; });
+  rows.forEach(function (r) { var b = wrBase(r.title); if (!b || seen[b.toLowerCase()]) return; seen[b.toLowerCase()] = 1; if (bespoke.some(function (w) { return w[3].test(b); })) return;
+    var gs = genresOf(r).join(','), st = WRGS.filter(function (g) { return g[0].test(gs); })[0] || WRGS[WRGS.length - 1];
+    WARD.push([wrHash(b.toLowerCase()), st[2], 'clown', new RegExp('^' + b.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '$', 'i'), undefined, undefined, st[1], 1]); }); }
+var _wrOfG = wrOf; wrOf = function (p) { wrSync(); return _wrOfG(p); };
+// strict per-person state: unlocked only if THIS person finished a matching title; locked = on the list, not finished by this person
+var _wrStateG = wrState; wrState = function (p) { wrSync(); return _wrStateG(p).map(function (s) { var w = WARD.filter(function (x) { return x[0] === s.id; })[0]; s.gen = !!(w && w[7]); return s; }); };
+// locked tiles: greyed outfit (badge-style), not a black silhouette
+var _wrDrawG = wrDraw; wrDraw = function () { _wrDrawG(); [].forEach.call(document.querySelectorAll('#wrm canvas[data-sil]'), function (c) { c.removeAttribute('data-sil'); }); paintAvatars(); };
 
 </script></body></html>
