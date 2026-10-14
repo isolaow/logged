@@ -4265,6 +4265,7 @@ function oxPick(i) { var t = oxTrack(i), r = byId(OSX.r), p = me(); if (!t || !r
 /* "pick manually" reveals the old picker */
 document.addEventListener('click', function (e) { if (e.target.closest && e.target.closest('[data-oxman]')) { var o = $('ost'); if (o) { o.classList.add('manual'); o.classList.remove('oxhide'); } } }, true);
 var _closeDetail50 = closeDetail; closeDetail = function () { var o = $('ost'); if (o) o.classList.remove('manual'); return _closeDetail50.apply(this, arguments); };
+var _run50 = run; run = function (fn, args, ok, fail) { if (fn === 'ostAlbum' && typeof fail === 'function') { var n = 0, a = arguments, me2 = this, f2 = function () { if (n++ < 1) return setTimeout(function () { _run50.call(me2, fn, args, ok, f2); }, 1200); fail.apply(this, arguments); }; return _run50.call(this, fn, args, ok, f2); } return _run50.apply(this, arguments); };
 
 /* ===== R51: Mood Pick cards open the full detail (list titles + TMDB-backed preview for new ones), ◀ BACK TO PICKS + swipe-back ===== */
 var MPD = { back: 0, tmp: null }, TMPROW = -7777777;
