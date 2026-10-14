@@ -42,12 +42,14 @@ function mock(fn, args, who) { if (global.MOCKX) { const x = global.MOCKX(fn, ar
     default: return null; } }
 (async () => {
   const b = await webkit.launch();
-  const c = await b.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1' });
+  const c = await b.newContext({ serviceWorkers: 'block', viewport: { width: 393, height: 852 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1' });
   await c.route(/script\.google\.com\/macros\/s\/.*\/exec/, async rt => { const j = JSON.parse(rt.request().postData() || '{}');
     if (j.fn === 'updateEntry' && S.updFail > 0) { S.updFail--; return rt.abort('failed'); }
     const delay = j.fn === 'setEpisode' ? 100 + Math.random() * 900 : 30; await new Promise(r => setTimeout(r, delay));
     rt.fulfill({ status: 200, contentType: 'application/json', headers: { 'access-control-allow-origin': '*' }, body: (() => { const m = mock(j.fn, j.args || [], j.who); return JSON.stringify(m && m.__err ? { ok: false, error: m.__err } : { ok: true, r: m && typeof m === 'object' && '__ok' in m ? m.__ok : m }); })() }); });
-  await c.addInitScript(() => { localStorage.setItem('lg_who', 'sam'); localStorage.setItem('lg_token', 'test'); });
+  if (process.env.SAFE34) await c.route(/\/app\/index\.html/, async rt => { const r = await rt.fetch(); let b = await r.text(); b = b.replace(/env\(safe-area-inset-bottom\)/g, '34px').replace(/env\(safe-area-inset-top\)/g, '59px'); rt.fulfill({ response: r, body: b }); });
+  await c.route(/isolaow\.github\.io\/logged\/player\.html/, rt => rt.fulfill({ status: 200, contentType: 'text/html', body: fs.readFileSync(path.join(__dirname, '../player.html'), 'utf8') }));
+  await c.addInitScript(w => { localStorage.setItem('lg_who', w); localStorage.setItem('lg_token', 'test'); }, process.env.WHO || 'sam');
   const p = await c.newPage(); p.setDefaultTimeout(12000); const tap = async q => { try { await p.tap(q); } catch (e) { console.log('  (could not tap ' + q + ')'); } }, fill = async (q, v) => { try { await p.fill(q, v); } catch (e) { console.log('  (could not fill ' + q + ')'); } }; const T = async (n, f) => { try { await f(); } catch (e) { console.log('FAIL ' + n + ' (threw) — ' + String(e.message).split('\n')[0]); res[n + ' (threw)'] = { pass: false }; } }; const errs = [], res = {}, ok = (k, v, d) => { res[k] = { pass: !!v, d }; console.log((v ? 'PASS ' : 'FAIL ') + k + (d !== undefined ? ' — ' + JSON.stringify(d) : '')); };
   p.on('pageerror', e => errs.push(e.message)); const shot = async n => { if (SHOTS) await p.screenshot({ path: path.join(SHOTS, 'r48_' + TAG + '_' + n + '.png') }); };
   await p.goto(process.env.URL || ('file://' + APP)); await p.waitForFunction(() => typeof rows !== 'undefined' && rows.length >= 7, null, { timeout: 30000 }); await p.waitForTimeout(1500);

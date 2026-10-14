@@ -1,0 +1,16 @@
+(async () => { const out = {}; await p.evaluate(() => { const s = document.getElementById('splash'); s && s.remove(); });
+const G = GW_SRV; const g0 = G.gwCreate({ id: 'aqz-KE-bpKQ', t: 'Big Buck Bunny' }, 'sam'); G.gwJoin(g0.id, 'lewy'); G.gwReady(g0.id, 'sam', true); G.gwReady(g0.id, 'lewy', true);
+const enter = async () => { await p.evaluate(id => { navTap('navYT'); setTimeout(() => gwEnter({ id }), 300); }, g0.id); await p.waitForSelector('#gwp.open [data-gwleave]', { timeout: 15000 }); await p.waitForTimeout(12500); };
+const confirmTap = async () => { await p.waitForSelector('#dlg.open [data-dlg="1"]'); const hit = await p.evaluate(() => { const b = document.querySelector('#dlg [data-dlg="1"]'), r = b.getBoundingClientRect(), e = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2); return e === b || b.contains(e); }); await p.tap('#dlg [data-dlg="1"]'); return hit; };
+await enter(); out.state1 = await p.evaluate(() => GW.g && GW.g.state);
+// ad game inside GW
+await p.waitForSelector('#gwp #adrow [data-adgo]', { timeout: 5000 }).catch(() => {}); out.adrow = await p.evaluate(() => { const r = document.getElementById('adrow'); return !!(r && r.closest('#gwp')); });
+if (out.adrow) { await p.tap('#gwp [data-adgo]'); await p.waitForTimeout(500); out.adPanel = await p.evaluate(() => { const a = document.getElementById('adb'), v = document.querySelector('#gwp .gwvid'); if (!a) return null; const ar = a.getBoundingClientRect(), vr = v.getBoundingClientRect(), chat = document.querySelector('#gwp .gwchat,#gwp [class*=chat]'); return { inGw: !!a.closest('#gwp'), belowVideo: ar.top >= vr.bottom - 1, chatVisible: !chat || chat.getBoundingClientRect().height > 0, game: a.querySelector('.adn').innerText.slice(0, 20) }; });
+  await p.screenshot({ path: '/workspace/logged-site/shots/r49_gw_adgame.png' }); const g1 = out.adPanel && out.adPanel.game; await p.tap('#adb [data-adnext]').catch(() => {}); await p.waitForTimeout(400); out.nextGame = await p.evaluate(() => document.querySelector('#adb .adn') && document.querySelector('#adb .adn').innerText.slice(0, 20)); out.nextChanged = out.nextGame !== g1;
+  await p.tap('#adb [data-adx]').catch(() => {}); await p.waitForTimeout(400); out.adClosed = await p.evaluate(() => !document.getElementById('adb') || document.getElementById('adb').classList.contains('out')); }
+// FINISH → review for both
+const fin = await p.$('#gwp [data-gwop="ended"]'); out.finishBtn = !!fin; if (fin) { await fin.tap(); out.finishConfirmVisible = await confirmTap(); await p.waitForTimeout(2500); out.afterFinish = await p.evaluate(() => GW.g && GW.g.state); out.serverState = G.gwPoll(g0.id, 'lewy', 0).state; await p.screenshot({ path: '/workspace/logged-site/shots/r49_gw_review.png' }); }
+// LEAVE (server failing) → still exits
+await p.evaluate(() => { window.__gwfail = 1; const c = GWT.call; GWT.call = function (fn, a, ok, fail) { if (fn === 'gwLeave') return fail && fail(new Error('net')); return c.apply(this, arguments); }; });
+await p.tap('#gwp [data-gwleave]'); out.leaveConfirmVisible = await confirmTap(); await p.waitForTimeout(600); out.afterLeave = await p.evaluate(() => ({ open: document.getElementById('gwp').classList.contains('open'), id: GW.id }));
+console.log(JSON.stringify(out, null, 1)); console.log('errors', JSON.stringify(errs)); })()

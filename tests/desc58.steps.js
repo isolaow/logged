@@ -1,0 +1,7 @@
+(async () => { const out = {}; await p.evaluate(() => { const s = document.getElementById('splash'); s && s.remove(); navTap('navYT'); });
+await p.waitForSelector('#ytBody [data-ytv][data-ytid]'); await p.evaluate(() => { document.querySelector('#ytBody [data-ytv][data-ytid]').id = 'tapA'; }); await p.tap('#tapA'); await p.waitForTimeout(1200);
+const src0 = await p.evaluate(() => (document.querySelector('#ytp .yvb iframe') || {}).src); await p.evaluate(() => { try { adRow(); } catch (e) {} });
+await p.waitForSelector('[data-ytdescp]', { timeout: 5000 }); await p.tap('[data-ytdescp]'); await p.waitForSelector('#ytdp.open [data-ytdx]'); await p.waitForTimeout(800); await p.screenshot({ path: '/workspace/logged-site/shots/r49_desc.png' });
+await p.tap('#ytdp [data-ytdch]'); await p.waitForSelector('#ytdp [data-ytdback]'); await p.waitForTimeout(500); await p.tap('#ytdp [data-ytdback]'); await p.waitForTimeout(400); out.chanBack = await p.evaluate(() => !!document.querySelector('#ytdp.open [data-ytdx]'));
+await p.tap('#ytdp [data-ytdx]'); await p.waitForTimeout(500); out.descBack = await p.evaluate(s => ({ closed: !document.getElementById('ytdp').classList.contains('open'), playerOpen: document.getElementById('ytp').classList.contains('open'), sameVideo: (document.querySelector('#ytp .yvb iframe') || {}).src === s }), src0);
+console.log(JSON.stringify(out)); console.log('errors', JSON.stringify(errs)); })()

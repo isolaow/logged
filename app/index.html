@@ -1146,13 +1146,11 @@ body.addopen #nav,body.addopen #fab,body.addopen #lggup{visibility:hidden!import
 #ytdrw .ytdrwh{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
 #ytdrw .ytmenu{display:flex;flex-direction:column;gap:6px;grid-template-columns:none}
 #ytdrw .ytsec57{width:100%;margin-bottom:6px}#ytdrw .ytsec57.on{outline:2px solid #ffcc33}
-#avPin{width:34px;height:34px;padding:0;border-radius:50%;overflow:hidden;border:3px solid #4da3ff;background:#000}#avPin.lewy{border-color:#4dd17a}#avPin canvas{width:100%;height:100%;image-rendering:pixelated;display:block}
 #v-stats{overflow-x:hidden;max-width:100%}#v-stats>*{max-width:100%;box-sizing:border-box}
 #ytdrw{z-index:400}
 #ytdrw .ytsec57{display:grid;grid-template-columns:28px 1fr auto;grid-template-rows:auto auto;align-items:center;text-align:left;padding:8px 10px;min-height:0;gap:0 8px;position:relative}
 #ytdrw .ytsec57 i{grid-row:1/3;font-size:20px;font-style:normal}#ytdrw .ytsec57 b{grid-column:2}#ytdrw .ytsec57 small{grid-column:2;font-size:10px;opacity:.75}
 #ytdrw .ytsec57 em{position:static;grid-column:3;grid-row:1/3}
-#avPin{flex:0 0 34px;min-width:34px;max-width:34px;aspect-ratio:1}
 
 body nav#nav.nav58{padding:4px 10px calc(4px + min(env(safe-area-inset-bottom),18px));align-items:flex-end}
 nav#nav.nav58>button{font-size:8px;gap:3px;padding:4px 0 2px}nav#nav.nav58>button>span:first-child{font-size:22px;line-height:24px}
@@ -1185,6 +1183,22 @@ html,body,body>main,header,.view{max-width:100vw;overflow-x:hidden}
 #v-stats b,#v-stats small,#v-stats div,#v-stats span{overflow-wrap:anywhere}
 #v-stats table{display:block;overflow-x:auto}
 .lgh{max-width:100%;box-sizing:border-box;overflow-x:hidden}#bpage,#gpage,#detail{max-width:100vw;overflow-x:hidden;overscroll-behavior:contain}
+.dic58{display:inline-flex;width:24px;height:24px;align-items:center;justify-content:center}.dic58 img,.dic58 svg,.dic58 canvas{width:24px!important;height:24px!important;object-fit:contain;image-rendering:pixelated}
+/* r58b: hotbar flush to the bottom edge (no band) — body not position:fixed; bar owns the safe-area */
+html{height:100%;overflow:hidden}
+body.app58{position:relative;inset:auto;height:100%;height:100dvh;overflow:hidden;padding-bottom:0!important;margin:0}
+body.app58 nav#nav.nav58{position:fixed;left:0;right:0;bottom:0!important;margin:0!important;transform:none;padding:6px 8px calc(4px + env(safe-area-inset-bottom))!important;align-items:center}
+body nav#nav.nav58::after{height:0}
+nav#nav.nav58>button:not(.nhide){flex:1 1 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font:8px var(--pix);color:#9a9ac0;opacity:1;min-height:46px;padding:0}
+nav#nav.nav58>button>span:first-child{width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:22px;line-height:1}
+nav#nav.nav58>button>span:first-child img,nav#nav.nav58>button>span:first-child svg,nav#nav.nav58>button>span:first-child canvas{max-width:28px;max-height:28px}
+nav#nav.nav58>button.on{color:#ffcc33}
+nav#nav.nav58 #navLogM.gold58{flex:0 0 92px;margin:-14px 6px 0;min-height:56px;color:#000}
+#arch .archi.main58{background:#ffcc33;color:#000;border:3px solid #000;box-shadow:inset -3px -3px 0 #c99a00,3px 3px 0 #000;transform:translate(-50%,-50%) scale(1.12)}#arch .archi.main58 .aplus{color:#000;font-size:22px}
+body.gwon #dlg{z-index:1400}
+#gwp #adrow{display:flex;gap:6px;padding:6px 8px;flex:0 0 auto}#gwp #adb{flex:0 0 auto;max-height:42vh;overflow-y:auto;margin:0 8px 6px}
+#arch.archh{z-index:1500}#hbk58{position:fixed;inset:0;z-index:1499;background:rgba(0,0,0,.45)}
+#avPin{padding:3px;overflow:hidden;box-sizing:border-box}#avPin canvas{width:100%;height:100%;display:block;image-rendering:pixelated;box-shadow:inset 0 0 0 2px #4da3ff;outline:2px solid #4da3ff;outline-offset:-2px}#avPin.lewy canvas{outline-color:#4dd17a}
 </style></head><body>
 <div id="splash" aria-label="Logged"></div>
 <header><div class="hin">
@@ -2709,7 +2723,7 @@ function isYT(r) { return r && r.type === 'YouTube'; }
 var YTP = null;
 function ytPlay(r, vid) { var m = r.ytm || {}; YTP = { row: r.row, vid: vid || m.id, done: false };
   if (m.k === 'playlist' && !vid) { window.TRL_LIST = m.id; trlPlay('', r.title, 'https://www.youtube.com/playlist?list=' + m.id); return; }
-  if (m.k === 'channel' && !vid) { trlPlay('', r.title, 'https://www.youtube.com/channel/' + m.id); run('ytUploads', [m.id], function (L) { if (L && L[0]) { YTP.vid = L[0].id; trlPlay(L[0].id, r.title + ' · ' + L[0].t); } }); return; }
+  if (m.k === 'channel' && !vid) { trlPlay('', r.title, 'https://www.youtube.com/channel/' + m.id); var tk58 = window.YTOK = (window.YTOK || 0) + 1; run('ytUploads', [m.id], function (L) { if (tk58 !== window.YTOK) return; if (L && L[0]) { YTP.vid = L[0].id; trlPlay(L[0].id, r.title + ' · ' + L[0].t); } }); return; }
   trlPlay(vid || m.id, r.title, 'https://www.youtube.com/watch?v=' + (vid || m.id)); }
 var _trlQ = trlQ; trlQ = function () { var q = _trlQ(); if (window.TRL_LIST) { q += '&list=' + encodeURIComponent(window.TRL_LIST); window.TRL_LIST = null; } return q; };
 var _trlPlayY = trlPlay; trlPlay = function (id, title, fb) { if (!id && window.TRL_LIST) { _trlPlayY('x', title, fb); var f = $('trlV').querySelector('iframe'); if (f) f.src = f.src.replace('?v=x', '?v='); return; } _trlPlayY(id, title, fb); };
@@ -5232,10 +5246,10 @@ document.addEventListener('touchend', function (e) { if (e.target.closest && e.t
 /* ---------- r58: YouTube drawer (☰ top-left → slide-out with the sections) ---------- */
 function ytMenuHtml() { return '<div class="ytmenu">' + YSECS.map(function (x) { var n = x[0] === 'gen' || x[0] === 'gw' ? '' : x[0] === 'rs' ? YRS.length : ytSecCount(x[0]); return '<button class="ytsec57' + (R57.sec === x[0] ? ' on' : '') + '" data-ysec="' + x[0] + '"><i>' + x[1] + '</i><b>' + x[2] + '</b><small>' + x[3] + '</small>' + (n !== '' && n != null ? '<em>' + n + '</em>' : '') + '</button>'; }).join('') + '</div>'; }
 function ytBurger() { var B = $('ytBody'), hd = B && B.querySelector('.ythd'); if (!hd || hd.querySelector('#ytBurg')) return; hd.insertAdjacentHTML('afterbegin', '<button id="ytBurg" class="ui-btn" aria-label="YouTube menu" aria-haspopup="menu"><svg viewBox="0 0 8 7" shape-rendering="crispEdges" width="20" height="18"><path fill="currentColor" d="M0 0h8v1H0zM0 3h8v1H0zM0 6h8v1H0z"/></svg></button>'); }
-function ytDrawerOpen() { ytDrawerClose(true); var yp = $('ytpage') || document.body; yp.insertAdjacentHTML('beforeend', '<div id="ytdrw" role="dialog" aria-label="YouTube menu"><div class="ytdrwbg" data-ytdx="1"></div><aside><div class="ytdrwh"><b>▶ YOUTUBE</b><button class="ui-btn" data-ytdx="1" aria-label="Close">✕</button></div><button class="ytsec57' + (!R57.sec ? ' on' : '') + '" data-ysec=""><i>🏠</i><b>HOME</b><small>For you · from your history & lists</small></button>' + ytMenuHtml() + '</aside></div>');
+function ytDrawerOpen() { ytDrawerClose(true); var yp = $('ytpage') || document.body; yp.insertAdjacentHTML('beforeend', '<div id="ytdrw" role="dialog" aria-label="YouTube menu"><div class="ytdrwbg" data-ytdrwx="1"></div><aside><div class="ytdrwh"><b>▶ YOUTUBE</b><button class="ui-btn" data-ytdrwx="1" aria-label="Close">✕</button></div><button class="ytsec57' + (!R57.sec ? ' on' : '') + '" data-ysec=""><i>🏠</i><b>HOME</b><small>For you · from your history & lists</small></button>' + ytMenuHtml() + '</aside></div>');
   requestAnimationFrame(function () { var d = $('ytdrw'); d && d.classList.add('open'); }); }
 function ytDrawerClose(now) { var d = $('ytdrw'); if (!d) return; if (now) return d.remove(); d.classList.remove('open'); setTimeout(function () { d.remove(); }, 200); }
-window.addEventListener('click', function (e) { var t = e.target.closest && e.target.closest('#ytBurg,[data-ytdx]'); if (t) { e.stopImmediatePropagation(); e.preventDefault(); SFX.tap && SFX.tap(); return t.id === 'ytBurg' ? ytDrawerOpen() : ytDrawerClose(); }
+window.addEventListener('click', function (e) { var t = e.target.closest && e.target.closest('#ytBurg,[data-ytdrwx]'); if (t) { e.stopImmediatePropagation(); e.preventDefault(); SFX.tap && SFX.tap(); return t.id === 'ytBurg' ? ytDrawerOpen() : ytDrawerClose(); }
   if (e.target.closest && e.target.closest('#ytdrw [data-ysec]')) setTimeout(function () { ytDrawerClose(); }, 0); }, true);
 /* ---------- r58: YouTube recommendations from THEIR signals (no random trending in the main feed) ---------- */
 ytSeeds = function () { var p = me(), s = [], add = function (x) { x = String(x || '').trim(); if (x && s.indexOf(x) < 0) s.push(x); };
@@ -5252,7 +5266,10 @@ var _ytDraw58 = ytDraw; ytDraw = function () { var F = YH.feed; if (F && F.rec &
 (function () { var N = $('nav'); if (!N || N.dataset.r58) return; N.dataset.r58 = 1; var cp = N.querySelector('[data-v=stats]'), lg = $('navLogM'), ex = N.querySelector('[data-v=home]');
   [].forEach.call(N.children, function (b) { if (b !== ex && b !== lg && b !== cp) b.classList.add('nhide'); }); if (cp) cp.classList.remove('nhide');
   [ex, lg, cp].forEach(function (b) { if (b) N.appendChild(b); }); if (lg) { lg.classList.add('gold58'); var ic = lg.querySelector('.nlogm'); if (ic) ic.innerHTML = typeof logoSvg === 'function' ? logoSvg() : LOG_ICON; } N.classList.add('nav58'); })();
-var _logItems58 = logItems; logItems = function () { return _logItems58.apply(this, arguments).concat([{ ic: '<span class="aplus">+</span>', t: 'NEW ENTRY', go: function () { $('fab').onclick(); } }]); };
+var _logItems58 = logItems; logItems = function () { var L = _logItems58.apply(this, arguments), by = function (t) { return L.filter(function (x) { return x.t === t; })[0]; };
+  return [by('INTERESTED'), by('LOGGING'), { ic: '<span class="aplus">+</span>', t: 'LOG IT', main: 1, go: function () { $('fab').onclick(); } }, by('LOGGED')].filter(Boolean); };
+/* arc layout: Interested (far left) · Logging · LOG IT (top centre, highlighted) · Logged (right) */
+var _archOpen58 = archOpen; archOpen = function (key, items) { var r = _archOpen58.apply(this, arguments); if (key === 'log') { var P = [[12, 66], [31, 30], [50, 14], [80, 52]]; [].forEach.call(document.querySelectorAll('#arch [data-archi]'), function (b, i) { var p = P[i]; if (p && items.length === 4) { b.style.left = p[0] + '%'; b.style.top = p[1] + '%'; } if (items[i] && items[i].main) b.classList.add('main58'); }); } return r; };
 var _navHi58 = r56NavHi; r56NavHi = function () { _navHi58.apply(this, arguments); setTimeout(function () { var yt = $('ytpage') && $('ytpage').classList.contains('open'), C = document.querySelector('#nav [data-v=stats]'), E = document.querySelector('#nav [data-v=home]'); C && C.classList.toggle('on', !yt && view === 'stats'); if (yt && E) E.classList.add('on'); avPin(); }, 40); };
 var _renderHome58 = renderHome; renderHome = function () { var r = _renderHome58.apply(this, arguments); try { var V = $('v-home'); if (V && !$('q').value.trim() && !V.querySelector('#ytTile')) V.insertAdjacentHTML('afterbegin', '<button id="ytTile" class="ui-btn" aria-label="Open YouTube"><span class="yti58">' + (typeof ytI === 'function' ? ytI(34) : '▶') + '</span><span><b>YOUTUBE</b><small>For you · history · trailers · group watch</small></span><i>▶</i></button>'); } catch (e) {} return r; };
 document.addEventListener('click', function (e) { if (e.target.closest && e.target.closest('#ytTile')) { e.stopImmediatePropagation(); e.preventDefault(); SFX.tap && SFX.tap(); navTap('navYT'); r56NavHi(); } }, true);
@@ -5276,5 +5293,47 @@ var _renderStats58 = renderStats; renderStats = function () { var r = _renderSta
 /* skeletons instead of blank/jumping loaders */
 function skel58(n) { var h = ''; for (var i = 0; i < (n || 3); i++) h += '<div class="skel58"></div>'; return h; }
 if (typeof uiState === 'function') { var _uiState58 = uiState; uiState = function (k) { if (k === 'load') return '<div aria-busy="true" aria-label="Loading">' + skel58(3) + '</div>'; return _uiState58.apply(this, arguments); }; }
+/* ---------- r58b: ONE door for opening a video — openVideo(id, token): only the latest user-initiated open wins; every player load is logged with a stack ---------- */
+window.YTOK = window.YTOK || 0; var YTO = { tap: 0, id: '', at: 0, log: [] };
+['pointerdown', 'touchstart', 'keydown'].forEach(function (ev) { document.addEventListener(ev, function () { YTO.tap = Date.now(); }, { capture: true, passive: true }); });
+function ytLoadLog(kind, id, ok) { var st = ''; try { st = String(new Error().stack || '').split('\n').slice(2, 7).join(' | '); } catch (e) {} var o = { k: kind, id: id, ok: ok, t: Date.now(), tok: window.YTOK, st: st }; YTO.log.push(o); if (YTO.log.length > 40) YTO.log.shift(); try { r55log && r55log('yt-load ' + kind + ' ' + id + (ok ? '' : ' BLOCKED') + ' ' + st.slice(0, 160)); } catch (e) {} return o; }
+function ytGateOk(id) { var now = Date.now(), user = now - YTO.tap < 1500; if (!user && YTO.id && YTO.id !== id && now - YTO.at < 20000) return false; if (user || !YTO.id || YTO.id === id) { if (YTO.id !== id || user) window.YTOK++; YTO.id = id; YTO.at = now; } return true; }
+function openVideo(id, title, token) { if (token != null && token !== window.YTOK) { ytLoadLog('stale-token', id, false); return; } return ytnOpen(id, title); }
+var _ytnOpen58 = ytnOpen; ytnOpen = function (id, t) { if (window.__ytGate58) return _ytnOpen58.apply(this, arguments); if (!ytGateOk(id)) { ytLoadLog('ytnOpen', id, false); return; } ytLoadLog('ytnOpen', id, true); window.__ytGate58 = 1; try { return _ytnOpen58.apply(this, arguments); } finally { window.__ytGate58 = 0; } };
+var _trlPlay58 = trlPlay; trlPlay = function (id, title, fb) { if (window.__ytGate58 || !id) return _trlPlay58.apply(this, arguments); if (!ytGateOk(id)) { ytLoadLog('trlPlay', id, false); return; } ytLoadLog('trlPlay', id, true); window.__ytGate58 = 1; try { return _trlPlay58.apply(this, arguments); } finally { window.__ytGate58 = 0; } };
+window.addEventListener('message', function (e) { var d = e.data; if (d && d.logged === 'yt' && d.wrongVid) ytLoadLog('player-corrected ' + d.wrongVid + '→', d.want, true); });
+/* ---------- r58b: drawer icons = the app's own Logging / Logged icons ---------- */
+var _ytMenuHtml58 = ytMenuHtml; ytMenuHtml = function () { var h = _ytMenuHtml58.apply(this, arguments), lg = document.querySelector('#nav #navLog .nlgg'), ld = typeof logoSvg === 'function' ? logoSvg() : '';
+  h = h.replace(/(data-ysec="lgg"><i>)[^<]*(<\/i>)/, '$1<span class="dic58">' + (lg ? lg.innerHTML : '⏯') + '</span>$2').replace(/(data-ysec="lgd"><i>)[^<]*(<\/i>)/, '$1<span class="dic58">' + ld + '</span>$2'); return h; };
+/* ---------- r58c: GROUP WATCH — LEAVE/FINISH did nothing on iPhone: the confirm dialog (#dlg z 250) opened UNDER the Group Watch page (z 1150), invisible.
+   Dialog now sits above it; LEAVE always exits locally even if the server call fails; FINISH (ended) falls back to local review if the server is unreachable. ---------- */
+var _gwOp58 = gwOp; gwOp = function (op, pos) { GWT.call('gwControl', [GW.id, me(), op, pos], function (g) { gwApply(g); }, function (er) { if (op === 'ended' && GW.g) { GW.g = Object.assign({}, GW.g, { state: 'review' }); try { gwPaint(); } catch (e) {} } toast('⚠ ' + (er && er.message || 'Couldn\u2019t reach the server — try again')); }); };
+document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('#gwp [data-gwend]'); if (!b) return; e.stopImmediatePropagation(); e.preventDefault();
+  confirm8('👥', 'END SESSION?', 'Ends it for both of you', 'END', function () { var id = GW.id; GWT.call('gwControl', [id, me(), 'end', gwPos()], function () {}, function () {}); gwClose(); }); }, true);
+/* Group Watch ad-break minigame: same 🎮 row + panel, placed under the video (not over video or chat) */
+var _adV58 = adV; adV = function () { var P = $('gwp'); if (P && P.classList.contains('open')) return P.querySelector('.gwvid'); return _adV58.apply(this, arguments); };
+var _adSetMute58 = adSetMute; adSetMute = function (on) { var P = $('gwp'); if (!(P && P.classList.contains('open'))) return _adSetMute58.apply(this, arguments); if (on === AD2.m) return; AD2.m = on; try { GW.player && (on ? GW.player.mute() : GW.player.unMute()); } catch (e) {} adMuteUI(); };
+var _gwPaint58 = gwPaint; gwPaint = function () { var r = _gwPaint58.apply(this, arguments); try { if ($('gwp') && $('gwp').classList.contains('open') && GW.g && GW.g.state !== 'ended') adRow(); } catch (e) {} return r; };
+var _gwClose58 = gwClose; gwClose = function () { try { if (ADB.on) adEnd(); var r = $('adrow'); if (r && r.closest('#gwp')) r.remove(); } catch (e) {} return _gwClose58.apply(this, arguments); };
+var _gwPI58 = gwPlayerInit; gwPlayerInit = function (vid) { if (!vid || !/^[\w-]{11}$/.test(String(vid))) return; return _gwPI58.apply(this, arguments); };
+/* ---------- r58d: 3-heart picker was opening UNDER the player / trailer / deck overlays (arc z 40 vs overlays z 900) — now above everything, with a backdrop ---------- */
+var _heartPick58 = heartPick; heartPick = function (k, title) { var r = _heartPick58.apply(this, arguments), A = $('arch'); if (A) { var over = ['ytp', 'trl', 'gwp', 'ytdp', 'detail', 'mpm', 'swp', 'deck'].some(function (id) { var x = $(id); return x && x.classList.contains('open'); }) || document.querySelector('.modal.open');
+    if (over || getComputedStyle($('nav')).display === 'none') A.style.bottom = 'calc(24px + env(safe-area-inset-bottom))'; if (!$('hbk58')) document.body.insertAdjacentHTML('beforeend', '<div id="hbk58"></div>'); } return r; };
+var _archClose58 = archClose; archClose = function () { var b = $('hbk58'); if (b) b.remove(); return _archClose58.apply(this, arguments); };
+/* ---------- r58e: CAMP — cabinet was hard-wired to Sam (statWho defaulted to 'sam') and used the COMBINED score; now the profile being viewed (defaults to the logged-in person), their own ratings/songs.
+   Order: TOP 5 (films + shows) → TOP 5 SOUNDTRACKS → stats (LOGGED/HOURS dropped: already in the profile header) ---------- */
+try { statWho = me(); } catch (e) {}
+cabinetHtml = function () { var p = (typeof statWho !== 'undefined' && statWho) || me(), P2 = p === 'sam' ? 'SAM' : 'LEWY', rt = function (r) { return num(r[p + 'Rating']) || 0; };
+  var W = rows.filter(function (r) { return !isYT(r) && isY(r[p + 'Watched']); }), mv = W.filter(function (r) { return r.type === 'Movie'; }), tv = W.filter(function (r) { return r.type === 'TV Show'; });
+  var rated = W.filter(function (r) { return rt(r) > 0; }), avg = rated.length ? rated.reduce(function (t, r) { return t + rt(r); }, 0) / rated.length : 0, both = W.filter(function (r) { return isY(r.samWatched) && isY(r.lewyWatched); }).length;
+  var top5 = rated.slice().sort(function (a, b) { return rt(b) - rt(a) || b.row - a.row; }).slice(0, 5);
+  var S = {}; rows.forEach(function (r) { var L = ((r.themeL || {})[p] || []).slice(), o = (r.theme || {})[p]; if (o && o.n) L.push(o); L.forEach(function (c, i) { var k = (c.n + '|' + (c.a || '')).toLowerCase(); if (!S[k]) S[k] = { n: c.n, a: c.a || '', pv: c.pv || '', c: 1, t: r.title, sc: rt(r), i: i }; }); });
+  var snd = Object.keys(S).map(function (k) { return S[k]; }).sort(function (a, b) { return b.sc - a.sc || a.i - b.i || a.n.localeCompare(b.n); }).slice(0, 5); R56.snd = snd;
+  var tile = function (r, i) { var ps = posters[r.title]; return '<button class="cbt" data-open="' + r.row + '"><span class="cbr">' + (i + 1) + '</span>' + (ps && /^http|^data:/.test(ps) ? '<img loading="lazy" src="' + esc(ps) + '" alt="">' : '<i>' + esc(r.title[0]) + '</i>') + '<b>' + esc(baseTitle(r.title)) + '</b><small>' + (r.type === 'TV Show' ? '📺 ' : '🎞 ') + '★' + rt(r) + '</small></button>'; };
+  return '<section class="cab ' + p + '" id="cab" data-who="' + p + '"><h3 class="ui-h">🏆 ' + P2 + '\u2019S TROPHY CABINET</h3>' +
+    '<div class="cbs"><h4>★ TOP 5 <small>FILMS + SHOWS</small></h4>' + (top5.length ? '<div class="cbrow">' + top5.map(tile).join('') + '</div>' : uiState('empty', 'RATE SOME TITLES TO FILL THIS SHELF')) + '</div>' +
+    '<div class="cbs"><h4>♪ TOP 5 SOUNDTRACKS</h4>' + (snd.length ? '<ol class="cbsnd">' + snd.map(function (s, i) { return '<li><button class="oxmp" data-cbsnd="' + i + '" aria-label="Play ' + esc(s.n) + '">▶</button><span><b>' + esc(s.n) + '</b> <small>' + esc(s.a) + ' · ' + esc(baseTitle(s.t)) + '</small></span></li>'; }).join('') + '</ol>' : uiState('empty', 'NO SOUNDTRACKS PICKED YET', 'Open a title → ♪ add a song')) + '</div>' +
+    '<div class="cbst">' + [[mv.length, 'FILMS'], [tv.length, 'SEASONS'], [both, 'WATCHED TOGETHER']].map(function (x) { return '<div><b>' + x[0] + '</b><small>' + x[1] + '</small></div>'; }).join('') + '</div></section>'; };
+(function () { var fit = function () { var a = $('avPin'), b = $('inboxB'); if (a && b && b.offsetWidth) { a.style.width = a.style.minWidth = a.style.maxWidth = b.offsetWidth + 'px'; a.style.height = b.offsetHeight + 'px'; a.style.flex = '0 0 ' + b.offsetWidth + 'px'; } }; setTimeout(fit, 900); setInterval(fit, 3000); window.addEventListener('resize', fit); })();
 
 </script></body></html>
