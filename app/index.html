@@ -926,6 +926,15 @@ body.ytp-on{overflow:hidden}
 #thm.gp button{position:relative;width:26px!important;height:26px!important;font-size:8px!important;padding:0}
 #thm.gp button::after{content:"";position:absolute;inset:-9px -4px}
 #thm.gp.spm>span{font:7px var(--pix)!important;text-align:left}#thm.gp>span{text-align:left}
+#adrow{display:flex;gap:6px;justify-content:flex-end;padding:6px 10px 0;position:relative;z-index:1}
+#adrow button{border:0;min-height:30px;padding:0 10px;font:7px var(--pix);letter-spacing:1px;background:#1c1c33;color:#f1ecff;box-shadow:inset 0 0 0 2px #2c2c4a,2px 2px 0 #000}
+#adrow .adgo.on{background:#ffcc00;color:#000;box-shadow:inset 0 0 0 2px #000,2px 2px 0 #000}
+#adrow .admu.on{background:#3a1020;color:#ff8fb3;box-shadow:inset 0 0 0 2px #ff4f8b,2px 2px 0 #000}
+#adb{position:static!important;z-index:1;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+#adb .adt span:last-child{margin-left:auto}
+#adb .adx{border:0;width:30px;height:30px;font:11px var(--pix);background:#3a1020;color:#fff;box-shadow:inset 0 0 0 2px #ff4f8b;flex:none}
+#adb .adhm{margin-top:8px;font-size:7px;color:#7cdcff;text-align:center}
+#adb.muted{box-shadow:inset 0 0 0 2px #ff4f8b,4px 4px 0 #000}#adb.muted .adhm{color:#ff8fb3}
 </style></head><body>
 <div id="splash" aria-label="Logged"></div>
 <header><div class="hin">
@@ -4063,5 +4072,37 @@ function gpMarq() { var t = $('thm'); if (!t) return; var s = t.querySelector(':
   var over = m.scrollWidth - s.clientWidth; s.classList.toggle('run', over > 4); if (over > 4) { s.style.setProperty('--mqx', -(over + 12) + 'px'); s.style.setProperty('--mqd', Math.max(6, over / 18) + 's'); } }
 new MutationObserver(function () { clearTimeout(gpMarq.h); gpMarq.h = setTimeout(gpMarq, 60); }).observe(document.body, { childList: true, subtree: false, characterData: false });
 setInterval(function () { var t = $('thm'), s = t && t.querySelector(':scope > span'); if (s && !s.querySelector('.mq')) gpMarq(); }, 700);
+
+/* ===== R46: ad game — iOS-tolerant detection, manual 🎮 button, panel below player, double-tap mute ===== */
+var AD2 = { D: 0, vid: '', m: false, we: false, auto: false, tap0: 0 };
+function adV() { return $('ytp').querySelector('.yv'); }
+function adRow() { var P = $('ytp'), v = adV(); if (!v) return null; var r = $('adrow'); if (!r) { r = document.createElement('div'); r.id = 'adrow'; r.innerHTML = '<button class="adgo" data-adgo>🎮 GAME</button><button class="admu" data-admu>🔊 MUTE YT</button>'; } if (r.previousSibling !== v) v.after(r); return r; }
+function adMuteUI() { var r = $('adrow'), b = r && r.querySelector('.admu'), el = $('adb'); if (b) { b.textContent = AD2.m ? '🔇 MUTED' : '🔊 MUTE YT'; b.classList.toggle('on', AD2.m); } if (el) el.classList.toggle('muted', AD2.m); var h = el && el.querySelector('.adhm'); if (h) h.textContent = AD2.m ? '🔇 YOUTUBE MUTED · DOUBLE-TAP TO UNMUTE' : 'DOUBLE-TAP TO MUTE YOUTUBE'; }
+function adSetMute(on) { if (on === AD2.m) return; AD2.m = on; AD2.we = on; try { ypCmd({ op: on ? 'mute' : 'unmute', ad: 1 }); } catch (e) {} adMuteUI(); }
+/* player only knows a mute *toggle*; send toggle only when actual state differs */
+var _ypCmd46 = ypCmd; ypCmd = function (o) { if (o && (o.op === 'mute' || o.op === 'unmute') && o.ad) return _ypCmd46({ op: 'mset', v: o.op === 'mute' ? 1 : 0 }); return _ypCmd46.apply(this, arguments); };
+var _ytnOpen46 = ytnOpen; ytnOpen = function () { AD2.D = 0; AD2.vid = ''; var r = _ytnOpen46.apply(this, arguments); setTimeout(adRow, 50); return r; };
+var _ytnClose46 = ytnClose; ytnClose = function () { adClose(); return _ytnClose46.apply(this, arguments); };
+function adClose() { if (AD2.we) adSetMute(false); AD2.auto = false; adEnd(); }
+/* replace detection: ytneed no longer blocks once we've asked to play; ad also = duration jump vs content, or time stuck */
+var adTick2 = function (s, t, d, id, m) { var P = $('ytp'), now = Date.now(); if (!P.classList.contains('open')) { ADB.still = 0; return; }
+  if (typeof m === 'boolean') { AD2.pm = m; if (!AD2.we) AD2.m = m; }
+  if (s === 2 || s === 0) { ADB.want = false; if (ADB.on && AD2.auto) adClose(); return; }
+  var adDur = s === 1 && AD2.D > 0 && d > 0 && Math.abs(d - AD2.D) > 1.5 && id === AD2.vid;
+  var moving = s === 1 && ADB.lastT >= 0 && Math.abs(t - ADB.lastT) > 0.05 && !adDur; ADB.lastT = t;
+  if (moving) { if (d > 0 && (!AD2.D || id !== AD2.vid) && t > 1) { AD2.D = d; AD2.vid = id; } ADB.still = 0; if (ADB.on && AD2.auto) adClose(); return; }
+  if ((!ADB.want || P.querySelector('.yv.ytneed')) && !adDur) { ADB.still = 0; return; } if (!ADB.still) ADB.still = now; if (!ADB.on && (adDur || now - ADB.still > 2500)) { AD2.auto = true; adStart(); } };
+adTick = function () {}; /* r37 listener neutralised; full-data listener below */
+addEventListener('message', function (e) { var d = e.data; if (!d || d.logged !== 'yt' || !d.tick) return; adTick2(d.s, d.t, d.d, d.id, d.m); });
+var _adStart46 = adStart; adStart = function () { _adStart46.apply(this, arguments); var el = $('adb'), r = adRow(); if (!el) return; (r || adV()).after(el);
+  el.querySelector('.adt').insertAdjacentHTML('beforeend', '<button class="adx" data-adx aria-label="Close game">✕</button>'); el.querySelector('.adf').insertAdjacentHTML('beforebegin', '<div class="adhm"></div>');
+  el.querySelector('.adf').textContent = Math.round(ADS.total) + 's OF ADS DODGED' + (AD2.auto ? ' · AUTO-CLOSES WHEN THE VIDEO STARTS' : ''); var g = $('adrow') && $('adrow').querySelector('.adgo'); if (g) g.classList.add('on');
+  el.addEventListener('dblclick', function (e) { e.preventDefault(); adSetMute(!AD2.m); });
+  el.addEventListener('touchend', function (e) { var n = Date.now(); if (n - AD2.tap0 < 300) { e.preventDefault(); adSetMute(!AD2.m); AD2.tap0 = 0; } else AD2.tap0 = n; }, { passive: false });
+  adMuteUI(); };
+var _adEnd46 = adEnd; adEnd = function () { _adEnd46.apply(this, arguments); var g = $('adrow') && $('adrow').querySelector('.adgo'); if (g) g.classList.remove('on'); };
+document.addEventListener('click', function (e) { var t = e.target.closest && e.target.closest('[data-adgo],[data-adx],[data-admu]'); if (!t) return; e.stopPropagation();
+  if (t.dataset.admu != null) return adSetMute(!AD2.m);
+  if (t.dataset.adx != null || ADB.on) return adClose(); AD2.auto = false; adStart(); }, true);
 
 </script></body></html>
