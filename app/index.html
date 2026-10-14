@@ -22,11 +22,11 @@
   var kv = { get: function (k) { return dbp.then(function (db) { return db ? new Promise(function (r) { var t = db.transaction('kv').objectStore('kv').get(k); t.onsuccess = function () { r(t.result); }; t.onerror = function () { r(undefined); }; }) : undefined; }); },
     set: function (k, v) { return dbp.then(function (db) { if (db) db.transaction('kv', 'readwrite').objectStore('kv').put(v, k); }); } };
   function rpc(fn, args, ms) {
-    var ctl = window.AbortController ? new AbortController() : null, t = ctl && setTimeout(function () { ctl.abort(); }, ms || 25000);
+    var ctl = window.AbortController ? new AbortController() : null, t = ctl && setTimeout(function () { ctl.abort(); }, ms || (IDEM[fn] || QUEUEABLE[fn] ? 45000 : 30000));
     return fetch(EXEC, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, redirect: 'follow', signal: ctl && ctl.signal,
       body: JSON.stringify({ rpc: 1, cpush: 1, token: tok(), who: LS.getItem('lg_who') || '', fn: fn, args: args || [] }) })
-      .then(function (r) { return r.json(); }).then(function (j) { clearTimeout(t); if (!j.ok) { var e = new Error(j.error || 'error'); e.server = true; throw e; } if (j.push) sendPush(j.push); return j.r; })
-      .catch(function (e) { clearTimeout(t); if (!e.server) e.offline = true; throw e; });
+      .then(function (r) { return r.text().then(function (tx) { try { return JSON.parse(tx); } catch (e) { var er = new Error('Server busy (HTTP ' + r.status + ')'); er.transient = true; throw er; } }); }).then(function (j) { clearTimeout(t); if (!j.ok) { var e = new Error(j.error || 'error'); e.server = true; throw e; } if (j.push) sendPush(j.push); return j.r; })
+      .catch(function (e) { clearTimeout(t); if (!e.server) { e.offline = true; e.raw = String(e.message || e); } else if (/Service invoked too many times|timed out|Lock|Exception: Address unavailable|backend error|try again/i.test(e.message)) e.transient = true; throw e; });
   }
   window.__rpc = rpc;
   /* pings are posted from this phone straight to ntfy.sh (Google's shared IPs get rate-limited); retried a few times */
@@ -38,6 +38,7 @@
   if (LS.getItem('lg_cachev') !== '3') { LS.setItem('lg_cachev', '3'); dbp.then(function (db) { if (db) db.transaction('kv', 'readwrite').objectStore('kv').clear(); }); }
   /* offline edit queue */
   var QK = 'lg_queue', Q = function () { try { return JSON.parse(LS.getItem(QK) || '[]'); } catch (e) { return []; } }, QS = function (q) { LS.setItem(QK, JSON.stringify(q)); qBadge(); };
+  var IDEM = { updateEntry: 1, setEpRating: 1, setDates: 1, setTheme: 1, setThemes: 1, saveProfile: 1, setInterest: 1, setEpisode: 1, ytHistPut: 1, saveAch: 1 };
   var QUEUEABLE = { updateEntry: function (a) { return Object.assign({ row: a[0] }, a[1]); }, setDates: function (a) { return a[1]; }, setEpisode: function (a) { var o = {}; if (a[2]) o[a[1]] = { e: a[2] }; return o; }, saveProfile: function (a) { return a[1]; } };
   function qBadge() { var n = Q().length, s = document.getElementById('sync'); if (s && n) s.textContent = 'OFFLINE · ' + n; }
   var flushing = false;
@@ -58,13 +59,16 @@
         else net.then(ok, fail);
       }); return;
     }
-    rpc(fn, args).then(function (r) { if (CACHED[fn]) kv.set(CK + fn, r); ok(r); }, function (e) {
+    var tries = 0; (function attempt() { rpc(fn, args).then(function (r) { if (CACHED[fn]) kv.set(CK + fn, r); ok(r); }, function (e) {
+      /* r55: writes that are safe to repeat (absolute values) are retried automatically on network/timeouts ("Fetch is aborted", "Load failed", HTML error pages) */
+      if ((e.offline || e.transient) && (IDEM[fn] || QUEUEABLE[fn]) && tries < 3 && navigator.onLine !== false) { tries++; var s = document.getElementById('sync'); if (s) s.textContent = 'RETRYING ' + tries + '/3'; return setTimeout(attempt, 1200 * tries * tries); }
       if (e.offline && QUEUEABLE[fn]) { var q = Q(); q.push({ fn: fn, args: args, at: Date.now() }); QS(q); ok(QUEUEABLE[fn](args)); setTimeout(qBadge, 50); return; }
       if (e.offline && CACHED[fn]) { kv.get(CK + fn).then(function (c) { c ? ok(c) : fail(e); }); return; }
-      if (e.offline) e.message = 'Offline — try again when connected';
+      if (e.offline) e.message = navigator.onLine === false ? 'Offline — try again when connected' : 'Couldn\u2019t reach the server — please try again';
+      var sy = document.getElementById('sync'); if (sy && /RETRYING/.test(sy.textContent)) sy.textContent = 'NOT SAVED';
       if (String(e.message) === 'bad token') { LS.removeItem('lg_token'); setTimeout(function () { location.reload(); }, 800); }
       fail(e);
-    });
+    }); })();
   }
   window.google = { script: { get run() { var ok = function () {}, fail = function () {}; return new Proxy({}, { get: function (o, k) {
     if (k === 'withSuccessHandler') return function (f) { ok = f; return this; }; if (k === 'withFailureHandler') return function (f) { fail = f; return this; };
@@ -997,6 +1001,31 @@ body.navsw *,body.navsw *::before,body.navsw *::after{transition:none!important;
 #ostx .oxme{display:flex;align-items:center;gap:8px;flex-wrap:wrap}#ostx .oxme span{flex:1;min-width:140px}#ostx .oxme small{color:var(--dim)}
 #ostx .oxmp{width:36px;height:36px;border:0;font:12px var(--pix);background:var(--gold);color:#000;box-shadow:inset 0 0 0 2px #000,2px 2px 0 #000}
 #ostx .oxme .btn{font-size:7px}
+.modal{z-index:60}
+body:has(.modal.open) #nav,body:has(.modal.open) #fab,body:has(.modal.open) #lggup{visibility:hidden;pointer-events:none}
+/* R55 */
+.pgr{background:linear-gradient(90deg,#3ddc84 0%,#ffcc33 55%,#ff4d6d 100%)!important;background-repeat:no-repeat!important}
+.pkr .pky,.tll .pky{font:7px var(--pix);padding:6px 5px;background:#c4302b;color:#fff;border:2px solid #000;box-shadow:2px 2px 0 #000}
+.pkus{display:flex;flex-direction:column;gap:4px}.pkus .pku{font:7px var(--pix);padding:5px 6px;white-space:nowrap}.pku.ok{background:var(--grn)!important}
+.oxme{display:block!important}.tlh{display:flex;justify-content:space-between;align-items:center;font:8px var(--pix);color:var(--gold);margin:8px 0 6px}.tlh.o{color:var(--blu)}.tlh .btn{font:7px var(--pix);padding:6px 8px}
+.tll{list-style:none;margin:0;padding:0;display:grid;gap:5px}.tll li{display:flex;align-items:center;gap:6px;background:#141428;border:2px solid #000;padding:5px 6px}.tll li.play{outline:2px solid var(--grn)}
+.tll span{flex:1;min-width:0;font:18px var(--body);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tll small{color:var(--dim)}
+.tsc{font:6px var(--pix);font-style:normal;padding:3px 4px;background:#2c2c4a;color:#cfc8ff;white-space:nowrap}.tsc.s{background:#4b2680;color:#ffcc33}
+.tlx{background:none;border:0;color:#ff8899;font:14px monospace;padding:4px}.tle{font:18px var(--body);color:var(--dim);padding:4px 0}
+.oxmp{min-width:34px}
+.trvcd{margin:12px 0;padding:10px;border:3px solid #000;background:#1d1640;font:8px/1.6 var(--pix);text-align:center;color:#cfc8ff}.trvcd b{color:var(--gold)}
+#trvLB .lbt{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:6px 0}#trvLB .lbt div{background:#141428;border:3px solid #000;padding:8px;text-align:center}#trvLB .lbt b{display:block;font:8px var(--pix)}#trvLB .sam b{color:var(--gold)}#trvLB .lewy b{color:var(--blu)}
+#trvLB .lbt span{display:block;font:12px var(--pix);margin:6px 0}#trvLB small{color:var(--dim);font:16px var(--body)}
+.lbr{width:100%;border-collapse:collapse;font:18px var(--body)}.lbr th{font:6px var(--pix);color:var(--dim);text-align:left;padding:4px}.lbr td{padding:3px 4px;border-top:1px solid #2c2c4a}.lbr tr.sam td:nth-child(2){color:var(--gold)}.lbr tr.lewy td:nth-child(2){color:var(--blu)}
+small.via{display:block;font:15px var(--body);color:#b86bff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#rsq .rsh{display:flex;justify-content:space-between;font:7px var(--pix);color:var(--dim);margin:6px 2px}#rsq .rsh button{background:none;border:0;color:#ff8899;font:7px var(--pix)}
+#rsq .rsi{display:flex;gap:4px;margin:3px 0}#rsq .rsg{flex:1;text-align:left;background:#141428;border:2px solid #000;padding:8px;font:19px var(--body);color:var(--txt)}#rsq .rsx{background:#141428;border:2px solid #000;color:#ff8899;padding:0 12px}
+.lggs{display:flex;gap:6px;margin:6px 0}.lggs input{flex:1;padding:10px;font:19px var(--body);background:#0b0b14;color:#fff;border:3px solid #000;outline:2px solid #2c2c4a}.lggs input:focus{outline-color:var(--gold)}.lggs button{background:#141428;border:3px solid #000;color:#ff8899;padding:0 12px}
+body.addopen #nav,body.addopen #fab,body.addopen #lggup{visibility:hidden!important;pointer-events:none!important}
+#add.open{z-index:300}#add .sheet{padding-bottom:calc(24px + env(safe-area-inset-bottom))!important;max-height:calc(100dvh - env(safe-area-inset-top) - 10px);overflow-y:auto}
+.ywg{display:grid;grid-template-columns:1fr 1fr;gap:8px}.ywc{background:#141428;border:3px solid #000;padding:6px}.ywc h4{font:8px var(--pix);margin:2px 0 6px}.ywc.sam h4{color:var(--gold)}.ywc.lewy h4{color:var(--blu)}
+.ywc button{display:block;width:100%;text-align:left;background:none;border:0;border-top:1px solid #2c2c4a;padding:5px 2px;font:17px var(--body);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ywc i{font:6px var(--pix);font-style:normal;color:var(--grn)}
+.adq blockquote{margin:0;flex:1;font:18px/1.1 var(--body);color:#f1ecff;background:#141428;border:3px solid #000;padding:6px 8px;max-height:110px;overflow:auto}.adq blockquote small{display:block;color:var(--dim);margin-top:4px}
 </style></head><body>
 <div id="splash" aria-label="Logged"></div>
 <header><div class="hin">
@@ -2070,7 +2099,7 @@ function loggedList() {
     if (LF.dec && Math.floor(yearOf(r) / 10) * 10 !== Number(LF.dec)) return false;
     return true;
   });
-  var byRecent = function (a, b) { var x = lastD(a), y = lastD(b); return x !== y ? (x < y ? 1 : -1) : b.row - a.row; };
+  var byRecent = function (a, b) { var x = typeof logKey === 'function' ? logKey(a) : lastD(a), y = typeof logKey === 'function' ? logKey(b) : lastD(b); return x !== y ? (x < y ? 1 : -1) : b.row - a.row; };
   var unr = function (f) { return function (a, b) { var x = score(a), y = score(b); if (x < 0 && y < 0) return 0; if (x < 0) return 1; if (y < 0) return -1; return f(x, y); }; };
   var gap = function (r) { var a = num(r.samRating), b = num(r.lewyRating); return a == null || b == null ? -1 : Math.abs(a - b); };
   var S = { recent: byRecent, oldest: function (a, b) { return -byRecent(a, b); }, high: unr(function (x, y) { return y - x; }), low: unr(function (x, y) { return x - y; }),
@@ -3858,8 +3887,8 @@ var _clipMountS = clipMount; clipMount = function (host, c, o) { o = o || {};
   new MutationObserver(function () { if (gOpen()) push('g'); }).observe(G, { attributes: true, attributeFilter: ['class'] });
   window.addEventListener('popstate', function () { if (HB.skip) { HB.skip = 0; return; } closeTop(true); });
   // swipe down (from the video, or from the top of the section) and swipe right from the left edge
-  function swipe(el, isTop) { var x0, y0, ok; el.addEventListener('touchstart', function (e) { var t = e.touches[0]; x0 = t.clientX; y0 = t.clientY; ok = isTop(e); }, { passive: true });
-    el.addEventListener('touchend', function (e) { if (x0 == null) return; var t = e.changedTouches[0], dx = t.clientX - x0, dy = t.clientY - y0; if ((ok && dy > 90 && Math.abs(dx) < 70) || (x0 < 28 && dx > 90 && Math.abs(dy) < 60)) closeTop(false); x0 = null; }, { passive: true }); }
+  function swipe(el, isTop) { var x0, y0, ok, t0, multi; el.addEventListener('touchstart', function (e) { var t = e.touches[0]; multi = e.touches.length > 1; x0 = t.clientX; y0 = t.clientY; t0 = Date.now(); ok = isTop(e) && !e.target.closest('.ytrow,.scroller,.ytsc,input,textarea,[data-ytv]'); }, { passive: true });
+    el.addEventListener('touchend', function (e) { if (x0 == null) return; var t = e.changedTouches[0], dx = t.clientX - x0, dy = t.clientY - y0, fast = Date.now() - t0 < 600; /* r55: quick deliberate flicks only (slow drags/scroll-bounce at the top no longer jump back a page) */ if (!multi && fast && ((ok && dy > 110 && Math.abs(dx) < 50 && isTop(e)) || (x0 < 24 && dx > 100 && Math.abs(dy) < 50))) closeTop(false); x0 = null; }, { passive: true }); }
   swipe(P, function (e) { return !!e.target.closest('.yv') && !e.target.closest('.ybar,.yseek,input'); });
   swipe(G, function () { var b = $('ytBody'); return !b || b.scrollTop <= 0; });
 })();
@@ -3880,13 +3909,26 @@ function adTick(s, t) { var P = $('ytp'), now = Date.now(); if (!P.classList.con
 var ADG = [
   { k: 'reflex', n: 'TAP REFLEX', hint: 'TAP WHEN IT GOES GREEN', lowBest: true, mount: function (el, done) { var st = 0, go = 0, tm; el.innerHTML = '<button class="adrx">WAIT…</button>'; var b = el.firstChild; var arm = function () { b.className = 'adrx'; b.textContent = 'WAIT…'; go = 0; tm = setTimeout(function () { b.className = 'adrx go'; b.textContent = 'TAP!'; go = Date.now(); }, 900 + Math.random() * 2200); };
       b.onclick = function () { if (!go) { clearTimeout(tm); b.textContent = 'TOO SOON'; setTimeout(arm, 700); return; } var ms = Date.now() - go; b.className = 'adrx done'; b.textContent = ms + ' MS'; done(ms); setTimeout(arm, 1100); }; arm(); return function () { clearTimeout(tm); }; } },
-  { k: 'guess', n: 'PIXEL GUESS', hint: 'NAME THE POSTER', mount: function (el, done) { var P = Object.keys(posters || {}).filter(function (t) { return /^http|^data:/.test(posters[t]); }), sc = 0, tm;
-      var round = function () { if (P.length < 3) { el.innerHTML = '<div class="adh">NOT ENOUGH POSTERS</div>'; return; } var o = P.slice().sort(function () { return Math.random() - .5; }).slice(0, 3), a = o[0], px = 6;
-        el.innerHTML = '<div class="adg"><canvas width="36" height="54"></canvas><div class="ado">' + o.slice().sort(function () { return Math.random() - .5; }).map(function (t) { return '<button data-t="' + esc(t) + '">' + esc(t.replace(/\s*\((S\d+|[IVX]+)\)\s*$/i, '').slice(0, 26)) + '</button>'; }).join('') + '</div></div>';
-        var cv = el.querySelector('canvas'), x = cv.getContext('2d'), im = new Image(); im.crossOrigin = 'anonymous'; var draw = function () { var w = Math.max(3, Math.round(36 / px)), h = Math.round(w * 1.5); x.imageSmoothingEnabled = false; x.clearRect(0, 0, 36, 54); x.drawImage(im, 0, 0, w, h); x.drawImage(cv, 0, 0, w, h, 0, 0, 36, 54); };
-        im.onload = function () { draw(); tm = setInterval(function () { px = Math.max(1, px - 1); draw(); }, 1500); }; im.src = posters[a];
-        el.querySelectorAll('[data-t]').forEach(function (b) { b.onclick = function () { clearInterval(tm); var ok = b.dataset.t === a; b.className = ok ? 'ok' : 'no'; sc = ok ? sc + 1 : 0; done(sc); setTimeout(round, 800); }; }); };
-      round(); return function () { clearInterval(tm); }; } },
+  { k: 'guess', n: 'PIXEL GUESS', hint: 'NAME THE POSTER · OR THE QUOTE', mount: function (el, done) {
+      /* r55: only titles in the log with a real poster URL; images preloaded WITHOUT crossOrigin (hosts lacking CORS headers used to fail → blank poster);
+         a failed image is dropped and another question shown. Every 3rd round is a verified quote (Wikiquote, speaker-checked server-side). */
+      var BAD = window.ADBAD = window.ADBAD || {}, inLog = {}; (rows || []).forEach(function (r) { inLog[String(r.title).trim()] = 1; });
+      var P = function () { return Object.keys(posters || {}).filter(function (t) { return inLog[t] && !BAD[t] && /^https?:\/\//.test(posters[t]); }); }, sc = 0, tm, dead = 0, n = 0;
+      var opts = function (a, pool) { var o = [a]; pool.slice().sort(function () { return Math.random() - .5; }).forEach(function (t) { if (o.length < 3 && o.indexOf(t) < 0) o.push(t); }); return o.sort(function () { return Math.random() - .5; }); };
+      var lab = function (t) { return esc(String(t).replace(/\s*\((S\d+|[IVX]+)\)\s*$/i, '').slice(0, 26)); };
+      var answer = function (a) { el.querySelectorAll('[data-t]').forEach(function (b) { b.onclick = function () { clearInterval(tm); var ok = b.dataset.t === a; b.className = ok ? 'ok' : 'no'; sc = ok ? sc + 1 : 0; done(sc); setTimeout(round, 800); }; }); };
+      var quote = function () { var Q = (window.ADQ || []).filter(function (q) { return inLog[q.t]; }), q = Q[Math.floor(Math.random() * Q.length)]; if (!q) return false; var pool = Object.keys(inLog).filter(function (t) { return t !== q.t && !/YouTube/.test(t); });
+        el.innerHTML = '<div class="adg adq"><blockquote>“' + esc(q.q) + '”' + (q.who ? '<small>— ' + esc(q.who) + '</small>' : '') + '</blockquote><div class="ado">' + opts(q.t, pool).map(function (t) { return '<button data-t="' + esc(t) + '">' + lab(t) + '</button>'; }).join('') + '</div></div>'; answer(q.t); return true; };
+      var round = function (tries) { if (dead) return; clearInterval(tm); tries = tries || 0; n++; if (n % 3 === 0 && quote()) return; var L = P(); if (L.length < 3) { if (!quote()) el.innerHTML = '<div class="adh">NOT ENOUGH POSTERS</div>'; return; }
+        var a = L[Math.floor(Math.random() * L.length)], px = 6, im = new Image(), to = setTimeout(function () { im.onerror(); }, 6000);
+        im.onerror = function () { clearTimeout(to); im.onload = im.onerror = null; BAD[a] = 1; if (!dead && tries < 5) round(tries + 1); };
+        im.onload = function () { clearTimeout(to); if (dead || !im.naturalWidth) return im.onerror && im.onerror();
+          el.innerHTML = '<div class="adg"><canvas width="36" height="54"></canvas><div class="ado">' + opts(a, L).map(function (t) { return '<button data-t="' + esc(t) + '">' + lab(t) + '</button>'; }).join('') + '</div></div>';
+          var cv = el.querySelector('canvas'), x = cv.getContext('2d'), draw = function () { var w = Math.max(3, Math.round(36 / px)), h = Math.round(w * 1.5); x.imageSmoothingEnabled = false; x.clearRect(0, 0, 36, 54); x.drawImage(im, 0, 0, w, h); x.drawImage(cv, 0, 0, w, h, 0, 0, 36, 54); };
+          draw(); tm = setInterval(function () { px = Math.max(1, px - 1); draw(); }, 1500); answer(a); };
+        im.src = posters[a]; };
+      if (!window.ADQ && typeof run === 'function') { window.ADQ = []; run('adQuotes', [], function (L) { window.ADQ = L || []; }, function () {}); }
+      round(); return function () { dead = 1; clearInterval(tm); }; } },
   { k: 'run', n: 'PIXEL RUNNER', hint: 'TAP TO JUMP', mount: function (el, done) { el.innerHTML = '<canvas class="adrn" width="160" height="48"></canvas>'; var cv = el.firstChild, x = cv.getContext('2d'), y = 0, vy = 0, ob = [], f = 0, sc = 0, dead = 0, raf;
       cv.onpointerdown = function () { if (dead) { ob = []; sc = 0; dead = 0; f = 0; } else if (y === 0) vy = 4.2; };
       var loop = function () { raf = requestAnimationFrame(loop); if (dead) return; f++; vy -= .32; y = Math.max(0, y + vy); if (y === 0) vy = 0; if (f % Math.max(38, 70 - (sc >> 3)) === 0) ob.push(160); ob = ob.map(function (o) { return o - 2.2; }).filter(function (o) { return o > -8; }); sc++;
@@ -4254,7 +4296,7 @@ function oxClip(i) { var t = oxTrack(i), r = byId(OSX.r); if (!t) return; OXS.i 
   oxItunes(t.n + ' ' + String(t.a || '').split(',')[0], function (u) { if (u) fin(u); else ostPv(r ? r.title : t.n, { n: t.n, a: String(t.a || '').split(',')[0] }, function (o) { if (o && o.url) fin(o.url); else if (!done) { done = 1; go(''); } }); }); }
 function oxItunes(q, cb) { var n = 'oxit' + Date.now() + Math.floor(Math.random() * 1e4), s = document.createElement('script'), to = setTimeout(function () { cl(); cb(''); }, 6000), cl = function () { delete window[n]; s.remove(); clearTimeout(to); };
   window[n] = function (j) { cl(); var R = (j && j.results || []).filter(function (x) { return x.previewUrl; }); cb(R[0] ? R[0].previewUrl : ''); };
-  s.src = 'https://itunes.apple.com/search?media=music&entity=song&limit=5&country=AU&term=' + encodeURIComponent(q) + '&callback=' + n; s.onerror = function () { cl(); cb(''); }; document.head.appendChild(s); }
+  s.src = 'https://itunes.apple.com/search?entity=song&limit=5&country=AU&term=' + encodeURIComponent(q) + '&callback=' + n; s.onerror = function () { cl(); cb(''); }; document.head.appendChild(s); }
 /* replace oxPlay: Spotify Connect when it's really available, else inline clip; same tap pauses */
 oxPlay = function (i) { var t = oxTrack(i); if (!t) return; oxBless();
   if (OXS.i === i && OXS.mode === 'clip') { if (OXA.paused) OXA.play(); else OXA.pause(); spBar('♪ ' + oxLabel() + ' · 30s', !OXA.paused); return; }
@@ -4353,7 +4395,7 @@ var PK = { q: '', res: [], sp: [], spErr: '', paste: null, pErr: '', t: 0, cur: 
 function itJ(path, cb) { var n = 'itj' + Date.now() + Math.floor(Math.random() * 1e5), s = document.createElement('script'), done = 0, to = setTimeout(function () { fin(null); }, 7000), fin = function (j) { if (done) return; done = 1; clearTimeout(to); delete window[n]; s.remove(); cb(j); };
   window[n] = fin; s.src = 'https://itunes.apple.com/' + path + (path.indexOf('?') >= 0 ? '&' : '?') + 'callback=' + n; s.onerror = function () { fin(null); }; document.head.appendChild(s); }
 function itMap(x) { return { n: x.trackName, a: x.artistName, al: x.collectionName, art: (x.artworkUrl100 || '').replace('100x100', '200x200'), pv: x.previewUrl, s: Math.round((x.trackTimeMillis || 0) / 1000), via: 'itunes' }; }
-function itSearch(q, cb) { itJ('search?media=music&entity=song&limit=12&country=AU&term=' + encodeURIComponent(q), function (j) { cb(((j && j.results) || []).filter(function (x) { return x.previewUrl; }).map(itMap)); }); }
+function itSearch(q, cb) { itJ('search?entity=song&limit=12&country=AU&term=' + encodeURIComponent(q), function (j) { cb(((j && j.results) || []).filter(function (x) { return x.previewUrl; }).map(itMap)); }); }
 function pkRow(t, k, i) { var on = PK.cur === k + i && OXA && !OXA.paused; return '<div class="pkr' + (on ? ' play' : '') + '"><span class="pka">' + (t.art ? '<img src="' + esc(t.art) + '" alt="">' : '♪') + '</span><div><b>' + esc(t.n || '') + '</b><small>' + esc(t.a || '') + (t.via ? ' · ' + t.via.toUpperCase() : '') + '</small></div><button class="pkp" data-pkp="' + k + i + '">' + (on ? '❚❚' : (t.pv ? '▶' : '…')) + '</button><button class="btn y pku" data-pku="' + k + i + '">USE</button></div>'; }
 function pkItem(id) { var k = id[0], i = +id.slice(1); return k === 'i' ? PK.res[i] : k === 's' ? PK.sp[i] : k === 'p' ? PK.paste : null; }
 function pkDraw() { var x = $('pkb'); if (!x) return; var r = byId(OSX.r);
@@ -4399,5 +4441,209 @@ window.addEventListener('click', function (e) { var t = e.target; if (!t.closest
 var _oxPaint53 = oxPaint; oxPaint = function () { _oxPaint53.apply(this, arguments); var x = $('ostx'), y = x && x.querySelector('.oxme'), c = oxMine(); if (!y) return; y.innerHTML = c ? '<button class="oxmp" data-oxmine="1">' + (OXS.mode === 'mine' && OXA && !OXA.paused ? '❚❚' : '▶') + '</button><span>★ YOUR SOUNDTRACK: <b>' + esc(c.n || '') + '</b> <small>' + esc(c.a || '') + '</small></span><button class="btn" data-oxman="1">CHANGE</button>' : '<span>☆ NO SONG CHOSEN YET</span><button class="btn y" data-oxman="1">🔎 SEARCH / PASTE A SONG</button>'; };
 /* keep the inline audio state honest */
 setInterval(function () { if (OXA && $('oxpk') && $('oxpk').classList.contains('open')) { var n = !OXA.paused; if (n !== PK.lastOn) { PK.lastOn = n; pkDraw(); } } }, 700);
+
+/* ===== R54: "newest" = when it was logged (local tap time → server activity feed → logged date → added order); re-sort instantly after logging ===== */
+var LGT = (function () { try { return JSON.parse(localStorage.lg_lgt || '{}'); } catch (e) { return {}; } })();
+function logTs(r) { var t = LGT[r.row] || 0; (recent || []).some(function (x) { if (x.t === String(r.title).trim()) { t = Math.max(t, x.at || 0); return true; } }); var d = lastD(r); if (d) t = Math.max(t, Date.parse(d + 'T12:00:00') || 0); return t; }
+function logKey(r) { return String(logTs(r)).padStart(15, '0') + String(r.row).padStart(6, '0'); }
+var _saveFields54 = saveFields; saveFields = function (orig, fields) { try { if (orig && fields && ['samWatched', 'lewyWatched', 'samRating', 'lewyRating'].some(function (k) { return k in fields && fields[k]; })) { LGT[orig.row] = Date.now(); localStorage.lg_lgt = JSON.stringify(LGT); } } catch (e) {}
+  var r = _saveFields54.apply(this, arguments); try { if (view === 'all') { LG.row = null; renderLogged(); } } catch (e) {} return r; };
+if (typeof lggList === 'function') { var _lggList54 = lggList; lggList = function () { var L = _lggList54.apply(this, arguments); if (LGG.s === 'recent') L.sort(function (a, b) { return logTs(b) - logTs(a) || b.row - a.row; }); return L; }; }
+
+/* ===== R55 — BATCH 1 reliability fixes (audio, soundtracks, trivia, episodes, sorting, YouTube logging, retries, progress, searches) ===== */
+var R55 = { log: [] };
+function r55log(x) { R55.log.push([Date.now(), x]); if (R55.log.length > 80) R55.log.shift(); }
+
+/* ---------- 1) ONE audio at a time. Any real (non-silent) <audio>/<video> starting pauses every other one, so clips never overlap ---------- */
+document.addEventListener('play', function (e) { var t = e.target; if (!t || !/^(AUDIO|VIDEO)$/.test(t.tagName)) return; var s = String(t.currentSrc || t.src || ''); if (!s || /^data:/.test(s)) return;
+  [].forEach.call(document.querySelectorAll('audio,video'), function (a) { if (a !== t && !a.paused) { r55log('pause-other ' + (a.id || a.tagName)); try { a.pause(); } catch (x) {} } });
+  if (t !== OXA && typeof OXA !== 'undefined' && OXA && !OXA.paused) { try { OXA.pause(); } catch (x) {} } }, true);
+
+/* the soundtrack element: created once, never removed, never re-created by re-renders; why it stopped is recorded (R55.log) */
+function oxEnsure() { oxBless(); if (OXA.__r55) return OXA; OXA.__r55 = 1; OXA.id = 'oxA';
+  OXA.addEventListener('pause', function () { r55log('ox-pause t=' + OXA.currentTime.toFixed(1) + (OXA.ended ? ' ended' : '')); });
+  /* dead preview (e.g. retired Spotify p.scdn.co clips / expired iTunes URL): re-resolve on iTunes once and carry on */
+  OXA.addEventListener('error', function () { var cur = OXS.cur; r55log('ox-error ' + String(OXA.src).slice(0, 50)); if (!cur || cur.retried) { if (cur) toast('NO PLAYABLE CLIP FOR “' + cur.n + '”'); return; } cur.retried = 1;
+    itSearch(cur.n + ' ' + String(cur.a || '').split(',')[0], function (R) { var u = R[0] && R[0].pv; if (!u || OXS.cur !== cur) return toast('NO PLAYABLE CLIP FOR “' + cur.n + '”'); cur.pv = u; OXA.src = u; OXA.play().catch(function () {}); }); });
+  return OXA; }
+/* start a clip from inside the tap: element is blessed + play() is called synchronously when the URL is known; if it must be looked up the blessed element plays as soon as it arrives */
+function oxStart(t, mode, label) { oxEnsure(); OXS.mode = mode; OXS.cur = t; var go = function (u) { if (OXS.cur !== t) return; if (!u) { toast('NO PLAYABLE CLIP FOR THIS SONG'); OXS.playing = false; oxPaint(); return; }
+    if (OXA.src !== u) OXA.src = u; try { OXA.currentTime = 0; } catch (e) {} var p = OXA.play(); p && p.catch(function (er) { r55log('play-reject ' + er.name); if (er.name === 'NotAllowedError') spBar('TAP ▶ TO PLAY · ' + (label || t.n), false); });
+    spBar('♪ ' + (label || (t.n + ' — ' + t.a)) + ' · 30s', true); };
+  if (t.pv && /^https:\/\/audio-ssl\.itunes\.apple\.com\//.test(t.pv)) return go(t.pv);
+  itSearch(t.n + ' ' + String(t.a || '').split(',')[0], function (R) { var u = R[0] && R[0].pv; if (u) t.pv = u; go(u || (t.pv && !/p\.scdn\.co/.test(t.pv) ? t.pv : '')); }); }
+/* album list ▶: always the inline clip (no silent hand-off to a remote Spotify device that made it look like nothing played) */
+oxPlay = function (i) { var t = oxTrack(i); if (!t) return; oxEnsure();
+  if (OXS.i === i && OXS.mode === 'clip' && OXA.src && !/^data:/.test(OXA.src)) { if (OXA.paused) OXA.play().catch(function () {}); else OXA.pause(); return; }
+  OXS.i = i; oxStart(t, 'clip', t.n + ' — ' + t.a); oxPaint(); };
+oxClip = function (i) { var t = oxTrack(i); if (!t) return; OXS.i = i; oxStart(t, 'clip'); oxPaint(); };
+
+/* ---------- 1b) soundtrack PICKER: iTunes only (client JSONP, debounced, stale-result-safe), link paste → iTunes preview, ▶ YouTube fallback ---------- */
+PK.seq = 0;
+pkSearch = function (q) { PK.q = q; PK.sp = []; PK.spErr = ''; PK.spBusy = 0; if (!q) { PK.res = []; return pkDraw(); } PK.busy = 1; pkDraw(); var my = ++PK.seq;
+  itSearch(q, function (L) { if (my !== PK.seq) return; PK.busy = 0; PK.res = L; pkDraw(); }); };
+function r55scopes(r) { var m = String(r.title).match(/\((S\d+)\)\s*$/i); return r.type === 'TV Show' && m ? [['show', 'WHOLE SHOW'], [m[1].toUpperCase(), 'THIS SEASON · ' + m[1].toUpperCase()]] : [['show', r.type === 'TV Show' ? 'WHOLE SHOW' : 'THIS TITLE']]; }
+pkRow = function (t, k, i) { var id = k + i, on = PK.cur === id && OXA && !OXA.paused, r = byId(OSX.r), sc = r ? r55scopes(r) : [['show', 'USE']];
+  return '<div class="pkr' + (on ? ' play' : '') + '"><span class="pka">' + (t.art ? '<img src="' + esc(t.art) + '" alt="">' : '♪') + '</span><div><b>' + esc(t.n || '') + '</b><small>' + esc(t.a || '') + (t.via ? ' · ' + t.via.toUpperCase() : '') + '</small></div>' +
+    '<button class="pkp" data-pkp="' + id + '" aria-label="Play preview">' + (on ? '❚❚' : '▶') + '</button><button class="pky" data-pky="' + id + '" aria-label="Listen on YouTube">YT</button>' +
+    '<span class="pkus">' + sc.map(function (s) { return '<button class="btn y pku" data-pku="' + id + '" data-sc="' + s[0] + '">' + (sc.length > 1 ? (s[0] === 'show' ? '+ SHOW' : '+ ' + s[0]) : '+ ADD') + '</button>'; }).join('') + '</span></div>'; };
+var _pkDraw55 = pkDraw; pkDraw = function () { _pkDraw55.apply(this, arguments); var x = $('pkb'); if (!x) return; [].forEach.call(x.querySelectorAll('h5'), function (h) { if (/^SPOTIFY/.test(h.textContent)) { var n = h.nextSibling; h.remove(); while (n && n.classList && n.classList.contains('pke')) { var m = n.nextSibling; n.remove(); n = m; } } }); };
+pkPlay = function (id) { var t = pkItem(id); if (!t) return; oxEnsure(); if (PK.cur === id && !OXA.paused) { OXA.pause(); return pkDraw(); } OXS.i = -1; PK.cur = id; oxStart(t, 'pk'); oxPaint(); pkDraw(); };
+/* YouTube: a specific verified video per song (server: YouTube Data API + title check), cached locally; window opened inside the tap so iOS doesn't block it */
+var SV = (function () { try { return JSON.parse(localStorage.lg_songv || '{}'); } catch (e) { return {}; } })();
+function songVid(t, cb) { var k = (t.n + '|' + t.a).toLowerCase(); if (t.yt) return cb({ id: t.yt }); if (SV[k] !== undefined) return cb(SV[k]); run('songVideo', [t.n, t.a], function (v) { SV[k] = v || null; try { localStorage.lg_songv = JSON.stringify(SV); } catch (e) {} cb(v); }, function () { cb(null); }); }
+function songYT(t) { var w = null; try { w = window.open('', '_blank'); } catch (e) {} if (w) try { w.document.write('<body style="background:#0b0b14;color:#ffcc33;font:16px monospace;padding:30px">Finding “' + esc(t.n) + '” on YouTube…</body>'); } catch (e) {}
+  songVid(t, function (v) { var u = v && v.id ? 'https://www.youtube.com/watch?v=' + v.id : 'https://www.youtube.com/results?search_query=' + encodeURIComponent(t.n + ' ' + t.a); if (v && v.id) t.yt = v.id; if (!v) toast('NO EXACT VIDEO — OPENING A YOUTUBE SEARCH'); if (w && !w.closed) w.location = u; else location.href = u; }); }
+/* SAVE: per person, a LIST of soundtracks; whole-show picks show on every season, season picks only on that season */
+function themeList(r, p) { var L = ((r && r.themeL) || {})[p] || [], m = String(r && r.title || '').match(/\((S\d+)\)\s*$/i), s = m ? m[1].toUpperCase() : ''; return L.filter(function (c) { return c.sc === 'show' || c.sc === s; }); }
+function themeAll(r, p) { return ((r && r.themeL) || {})[p] || []; }
+function themeSave(r, p, list, done) { var tries = 0, sibs = rows.filter(function (x) { return baseTitle(x.title) === baseTitle(r.title); }), prev = Object.assign({}, r.themeL || {});
+  sibs.forEach(function (x) { x.themeL = Object.assign({}, x.themeL || {}); x.themeL[p] = list; }); oxPaint();
+  var go = function () { run('setThemes', [r.title, p, list], function (o) { sibs.forEach(function (x) { x.themeL = o || {}; }); oxPaint(); done && done(true); }, function () { if (tries++ < 2) return setTimeout(go, 1500 * tries); sibs.forEach(function (x) { x.themeL = prev; }); oxPaint(); toast('COULDN\u2019T SAVE — CHECK CONNECTION'); done && done(false); }); }; go(); }
+['pointerdown', 'touchstart', 'mousedown'].forEach(function (ev) { document.addEventListener(ev, function (e) { var b = e.target.closest && e.target.closest('[data-pku]'); if (b) R55.sc = b.dataset.sc || 'show'; }, { capture: true, passive: true }); });
+pkUse = function (id, sc) { var t = pkItem(id), r = byId(OSX.r), p = me(); if (!t || !r) return; sc = sc || R55.sc || 'show'; R55.sc = '';
+  var L = themeAll(r, p).slice(), k = (t.n + '|' + t.a + '|' + sc).toLowerCase(); if (L.some(function (c) { return (c.n + '|' + c.a + '|' + c.sc).toLowerCase() === k; })) return toast('ALREADY IN YOUR SOUNDTRACKS');
+  L.push({ n: t.n2 && t.via === 'youtube' ? t.n2 : t.n, a: t.a, pv: /^https:\/\/audio-ssl/.test(t.pv || '') ? t.pv : '', art: t.art || '', via: t.via || 'itunes', yt: t.yt || '', sc: sc });
+  var b = document.querySelector('[data-pku="' + id + '"][data-sc="' + sc + '"]'); if (b) { b.disabled = true; b.textContent = '…'; }
+  themeSave(r, p, L, function (ok) { if (b) { b.disabled = false; b.textContent = ok ? '✓ ADDED' : 'RETRY'; b.classList.toggle('ok', ok); } if (ok) { SFX.coin && SFX.coin(); toast('★ ADDED TO YOUR ' + r.title.toUpperCase() + ' SOUNDTRACKS' + (sc !== 'show' ? ' (' + sc + ')' : '')); } }); };
+oxMine = function () { var r = byId(OSX.r); if (!r) return null; return themeList(r, me())[0] || (r.theme && r.theme[me()]) || null; };
+var _oxPaint55 = oxPaint; oxPaint = function () { _oxPaint55.apply(this, arguments); var x = $('ostx'), y = x && x.querySelector('.oxme'), r = byId(OSX.r); if (!y || !r) return;
+  var row = function (c, p, i) { var on = OXS.mode === 'tl' && OXS.cur && OXS.cur.n === c.n && OXA && !OXA.paused; return '<li class="tl' + (on ? ' play' : '') + '"><button class="oxmp" data-tlp="' + p + ':' + i + '">' + (on ? '❚❚' : '▶') + '</button><span><b>' + esc(c.n) + '</b> <small>' + esc(c.a || '') + '</small></span><em class="tsc' + (c.sc === 'show' ? '' : ' s') + '">' + (c.sc === 'show' ? (r.type === 'TV Show' ? 'WHOLE SHOW' : 'TITLE') : 'SEASON ' + c.sc.slice(1)) + '</em><button class="pky" data-tly="' + p + ':' + i + '" aria-label="Listen on YouTube">YT</button>' + (p === me() ? '<button class="tlx" data-tlx="' + i + '" aria-label="Remove">✕</button>' : '') + '</li>'; };
+  var mine = themeList(r, me()), o = me() === 'sam' ? 'lewy' : 'sam', theirs = themeList(r, o), old = r.theme && r.theme[me()];
+  if (!mine.length && old && old.n) mine = [Object.assign({ sc: 'show', legacy: 1 }, old)];
+  R55.tl = { }; R55.tl[me()] = mine; R55.tl[o] = theirs;
+  y.innerHTML = '<div class="tlh">★ YOUR SOUNDTRACKS <button class="btn y" data-oxman="1">+ ADD SONG</button></div>' + (mine.length ? '<ul class="tll">' + mine.map(function (c, i) { return row(c, me(), i); }).join('') + '</ul>' : '<div class="tle">NO SONGS YET — SEARCH OR PASTE ONE</div>') +
+    (theirs.length ? '<div class="tlh o">' + (o === 'sam' ? 'SAM' : 'LEWY') + '\u2019S PICKS</div><ul class="tll">' + theirs.map(function (c, i) { return row(c, o, i); }).join('') + '</ul>' : ''); };
+window.addEventListener('click', function (e) { var t = e.target; if (!t.closest) return; var b, r = byId(OSX.r);
+  if ((b = t.closest('[data-pku]'))) { e.stopImmediatePropagation(); return pkUse(b.dataset.pku, b.dataset.sc); }
+  if ((b = t.closest('[data-pky]'))) { e.stopImmediatePropagation(); var it = pkItem(b.dataset.pky); return it && songYT(it); }
+  if ((b = t.closest('[data-tlp]'))) { e.stopImmediatePropagation(); var s = b.dataset.tlp.split(':'), c = (R55.tl[s[0]] || [])[+s[1]]; if (!c) return; oxEnsure(); if (OXS.mode === 'tl' && OXS.cur === c && !OXA.paused) { OXA.pause(); return; } OXS.i = -1; oxStart(c, 'tl'); oxPaint(); return; }
+  if ((b = t.closest('[data-tly]'))) { e.stopImmediatePropagation(); var s2 = b.dataset.tly.split(':'), c2 = (R55.tl[s2[0]] || [])[+s2[1]]; return c2 && songYT(c2); }
+  if ((b = t.closest('[data-tlx]'))) { e.stopImmediatePropagation(); var c3 = (R55.tl[me()] || [])[+b.dataset.tlx]; if (!c3 || !r) return; if (c3.legacy) { run('setTheme', [r.title, me(), null], function (o) { r.theme = o || {}; oxPaint(); }); return; }
+    var L = themeAll(r, me()).filter(function (x) { return !(x.n === c3.n && x.a === c3.a && x.sc === c3.sc); }); themeSave(r, me(), L, function (ok) { if (ok) toast('Removed “' + c3.n + '”', function () { themeSave(r, me(), L.concat([c3])); }); }); return; }
+  if ((b = t.closest('[data-oxmine]'))) { e.stopImmediatePropagation(); var m = oxMine(); if (!m) return; oxEnsure(); if (OXS.mode === 'mine' && !OXA.paused) { OXA.pause(); return; } oxStart(m, 'mine'); return; }
+}, true);
+setInterval(function () { if (OXA && $('ostx') && OXS.mode === 'tl') { var n = !OXA.paused; if (n !== R55.tlOn) { R55.tlOn = n; oxPaint(); } } }, 700);
+
+/* ---------- 2) TRIVIA: clip element blessed on the PLAY tap (any trivia button), one element, results/leaderboard, 9pm unlock countdown ---------- */
+document.addEventListener('click', function (e) { if (e.target.closest && e.target.closest('#trv button,[data-trv],[data-trvday]')) { try { TRA_OK = false; trvUnlock(); } catch (x) {} } }, true);
+var _trvAudio55 = trvAudio; trvAudio = function (src) { r55log('trv-audio ' + String(src || '').slice(0, 60)); if (src && /p\.scdn\.co/.test(src)) src = ''; return _trvAudio55.apply(this, src === undefined ? [] : [src]); };
+function trvNext9() { var now = new Date(), syd = new Date(now.toLocaleString('en-US', { timeZone: 'Australia/Sydney' })), off = syd.getTime() - now.getTime() + now.getMilliseconds(), n = new Date(syd); n.setHours(21, 0, 0, 0); if (n <= syd) n.setDate(n.getDate() + 1); return n.getTime() - off; }
+function trvCD() { var ms = Math.max(0, trvNext9() - Date.now()), h = Math.floor(ms / 36e5), m = Math.floor(ms % 36e5 / 6e4), s = Math.floor(ms % 6e4 / 1e3); return (h ? h + 'h ' : '') + ('0' + m).slice(-2) + 'm ' + ('0' + s).slice(-2) + 's'; }
+setInterval(function () { var c = $('trvCD'); if (c) c.textContent = trvCD(); }, 1000);
+function trvLB() { var el = $('trvLB'); if (!el) return; el.innerHTML = '<div class="lbl">🏆 LEADERBOARD · ALL RESULTS</div><p class="blink">LOADING…</p>';
+  run('triviaResults', [], function (L) { el = $('trvLB'); if (!el) return; L = L || []; var tot = { Sam: { w: 0, pts: 0, g: 0 }, Lewy: { w: 0, pts: 0, g: 0 } }; L.forEach(function (x) { var T = tot[x.p]; if (!T) return; T.g++; T.pts += x.sc; if (x.res === 'Win') T.w++; });
+    el.innerHTML = '<div class="lbl">🏆 LEADERBOARD · ALL RESULTS</div><div class="lbt">' + ['Sam', 'Lewy'].map(function (p) { var T = tot[p]; return '<div class="' + p.toLowerCase() + '"><b>' + p.toUpperCase() + '</b><span>' + T.w + ' WINS</span><small>' + T.g + ' PLAYED · ' + T.pts + ' PTS</small></div>'; }).join('') + '</div>' +
+      (L.length ? '<table class="lbr"><tr><th>DATE</th><th>WHO</th><th>MODE</th><th>SCORE</th></tr>' + L.slice(0, 40).map(function (x) { return '<tr class="' + x.p.toLowerCase() + '"><td>' + esc(x.d.slice(5)) + '</td><td>' + esc(x.p) + '</td><td>' + esc(x.m.replace('Daily (catch-up)', 'CATCH-UP')) + '</td><td>' + x.sc + (x.ok != null ? ' <small>' + x.ok + '/' + x.n + '</small>' : '') + (x.res === 'Win' ? ' 🏆' : '') + '</td></tr>'; }).join('') + '</table>' : '<p>NO RESULTS YET</p>'); }, function () { el.innerHTML = ''; }); }
+var _trvDailyRes55 = trvDailyRes; trvDailyRes = function () { var r = _trvDailyRes55.apply(this, arguments); try { var b = $('trvB'), d = TRV.daily; if (b && d && !b.querySelector('#trvLB')) b.insertAdjacentHTML('beforeend', (d.today !== false ? '<div class="trvcd">✓ PLAYED TODAY · NEXT SET UNLOCKS 9PM IN <b id="trvCD">' + trvCD() + '</b></div>' : '') + '<div id="trvDays"></div><div id="trvLB"></div>'); trvDaysLoad(); trvLB(); } catch (e) {} return r; };
+var _trvDailyIntro55 = trvDailyIntro; trvDailyIntro = function () { var r = _trvDailyIntro55.apply(this, arguments); try { var b = $('trvB'); if (b && !b.querySelector('#trvLB')) b.insertAdjacentHTML('beforeend', '<div class="trvcd">NEW SET EVERY NIGHT AT 9PM · NEXT IN <b id="trvCD">' + trvCD() + '</b></div><div id="trvLB"></div>'); trvLB(); } catch (e) {} return r; };
+var _trvDaysLoad55 = trvDaysLoad; trvDaysLoad = function () { var r = _trvDaysLoad55.apply(this, arguments); setTimeout(function () { var el = $('trvDays'); if (el) { var l = el.querySelector('.lbl'); if (l) l.innerHTML = '⏪ CATCH UP · MISSED DAYS (ONE PLAY EACH)'; } }, 1500); return r; };
+
+/* ---------- 3) EPISODE +1: optimistic, serialized, newest-wins (seq), retried; server ignores stale seq ---------- */
+var EPQ = {};
+var _epOf55 = epOf; epOf = function (r, p) { var q = EPQ[String(r.title).trim() + '|' + p]; return q ? q.want : _epOf55(r, p); };
+function epSend(r, p) { var k = String(r.title).trim() + '|' + p, q = EPQ[k]; if (!q || q.inflight) return; q.inflight = 1; var want = q.want, seq = q.seq;
+  run('setEpisode', [r.title, p, want, seq], function (o) { q.inflight = 0; q.fails = 0; if (q.seq !== seq) return epSend(r, p); /* newer taps arrived: send the latest absolute value */
+      if (o && !o.stale) { var mg = Object.assign({}, r.ep || {}, o); delete mg.stale; if (!o[p]) delete mg[p]; r.ep = mg; } delete EPQ[k]; try { var x = $('epx'); if (x && $('detailBody').querySelector('[data-dedit="' + r.row + '"]')) x.outerHTML = epHtml(r); } catch (e) {} },
+    function () { q.inflight = 0; q.fails = (q.fails || 0) + 1; r55log('ep-retry ' + q.fails); setTimeout(function () { epSend(r, p); }, Math.min(15000, 1200 * q.fails)); }); }
+window.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-ep]'); if (!b) return; e.stopImmediatePropagation(); e.preventDefault();
+  var t = $('detailBody').querySelector('[data-dedit]'), r = t && byId(t.dataset.dedit); if (!r) return; var p = b.dataset.ep, k = String(r.title).trim() + '|' + p, tot = epTot(r), n = Math.max(0, epOf(r, p) + Number(b.dataset.d)); if (tot) n = Math.min(n, tot);
+  var q = EPQ[k] = EPQ[k] || {}; q.want = n; q.seq = Date.now() * 10 + ((q.c = ((q.c || 0) + 1) % 10)); $('epx').outerHTML = epHtml(r); SFX.coin && SFX.coin(); epSend(r, p);
+  if (tot && n === tot && r[p + 'Watched'] !== 'Yes') toast('🏁 Last episode! Mark as watched?', function () { var f = {}; f[p + 'Watched'] = 'Yes'; saveFields(r, f); }); }, true);
+
+/* ---------- 4) NEWEST = when logged (tap time, keyed by title so row shifts don't lose it), new entries count immediately ---------- */
+var LGT2 = (function () { try { return JSON.parse(localStorage.lg_lgt2 || '{}'); } catch (e) { return {}; } })();
+function lgtMark(title) { LGT2[String(title).trim()] = Date.now(); try { localStorage.lg_lgt2 = JSON.stringify(LGT2); } catch (e) {} }
+logTs = function (r) { var tt = String(r.title).trim(), t = LGT2[tt] || LGT[r.row] || 0; (recent || []).some(function (x) { if (x.t === tt) { t = Math.max(t, x.at || 0); return true; } }); var d = lastD(r); if (d) t = Math.max(t, Date.parse(d + 'T12:00:00') || 0); return t; };
+var _saveFields55 = saveFields; saveFields = function (orig, fields) { try { if (orig && fields && ['samWatched', 'lewyWatched', 'samRating', 'lewyRating'].some(function (k) { return k in fields && fields[k]; })) lgtMark(orig.title); } catch (e) {} return _saveFields55.apply(this, arguments); };
+var _run55a = run; run = function (fn, args, ok, fail) { if (fn === 'addEntry' || fn === 'addFromTmdb') { var ok2 = ok; ok = function (r) { try { var t = (r && r.title) || (args[0] && args[0].title) || (args[1] && args[1].title); if (t) { lgtMark(t); touchRecent(t); } if (r && r.row && !byId(r.row)) { rows.push(r); } render(); } catch (e) {} ok2 && ok2.apply(this, arguments); }; } return _run55a.call(this, fn, args, ok, fail); };
+
+/* ---------- 6) YOUTUBE: counted ONLY when really finished (ENDED or ≥90%, with ≥50% actually played — seeks don't count); never on open/channel add ---------- */
+var YACC = (function () { try { return JSON.parse(localStorage.lg_ytacc || '{}'); } catch (e) { return {}; } })();
+var YLAST = {};
+ytAutoCheck = function (d) { var p = me(), k = p + ':' + d.vid; if (YAL[k] || !d.vid) return; var A = YACC[d.vid] = YACC[d.vid] || { s: 0 }, L = YLAST[d.vid], now = Date.now();
+  if (L && d.st === 1 && L.st === 1) { var dt = d.t - L.t, wall = (now - L.at) / 1000; if (dt > 0 && dt <= Math.max(3, wall * 2.2 + 1)) A.s += dt; }
+  YLAST[d.vid] = { t: d.t, st: d.st, at: now }; if (d.d) A.d = d.d; if (Math.random() < .2) try { localStorage.lg_ytacc = JSON.stringify(YACC); } catch (e) {}
+  var dur = d.d || A.d || 0; if (!dur) return; var need = dur < 60 ? dur * 0.8 : dur * 0.5, end = d.st === 0 || d.t / dur >= 0.9; if (!(end && A.s >= need)) return;
+  var m = (window.YTN_META || []).filter(function (x) { return x.id === d.vid; })[0], r = YTP && YTP.row ? byId(YTP.row) : null;
+  if (!m && r && r.ytm && r.ytm.k === 'video' && r.ytm.id === d.vid) m = { id: d.vid, t: r.title, ch: r.ytm.ch, chId: r.ytm.chId };
+  YAL[k] = now; localStorage.lg_yal = JSON.stringify(YAL); if (YTP) YTP.done = true; delete YACC[d.vid]; try { localStorage.lg_ytacc = JSON.stringify(YACC); } catch (e) {}
+  var send = function (m) { m = Object.assign({}, m, { full: true }); run('ytAutoLog', [m, p], function (o) { if (!o || o.dup) return; if (o.logged) { toast('✓ Watched: ' + o.title + ' (' + (p === 'sam' ? 'SAM' : 'LEWY') + ')'); SFX.coin && SFX.coin(); }
+      load(true); setTimeout(function () { var rr = byTitle(o.title); if (rr && o.logged && num(rr[p + 'Rating']) == null) openQR(rr, [p]); }, 2500); }, function () { delete YAL[k]; localStorage.lg_yal = JSON.stringify(YAL); }); };
+  if (m) return send(m);
+  fetch('https://www.youtube.com/oembed?format=json&url=' + encodeURIComponent('https://www.youtube.com/watch?v=' + d.vid)).then(function (x) { return x.json(); }).then(function (j) { send({ id: d.vid, t: j.title, ch: j.author_name, th: j.thumbnail_url }); }, function () { delete YAL[k]; localStorage.lg_yal = JSON.stringify(YAL); }); };
+
+/* ---------- 7) YouTube taps resolve by VIDEO ID (lists re-render async, so grp:index could point at another video) ---------- */
+var _ytCard55 = ytCard; ytCard = function (v, i, grp) { return _ytCard55.apply(this, arguments).replace(/data-ytv="([^"]*)"/g, 'data-ytv="$1" data-ytid="' + esc(v.id) + '"'); };
+window.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-ytv][data-ytid]'); if (!b) return; var s = b.dataset.ytv.split(':'), id = b.dataset.ytid, L = YG[s[0]] || [], i = L.findIndex(function (v) { return v && v.id === id; });
+  if (i < 0) for (var g in YG) { var j = (YG[g] || []).findIndex(function (v) { return v && v.id === id; }); if (j >= 0) { s[0] = g; i = j; break; } }
+  e.stopImmediatePropagation(); e.preventDefault(); if (i < 0) { r55log('ytv-miss ' + id); return; } r55log('ytv ' + id + ' ' + s[0] + ':' + i); ytVid(s[0], i); }, true);
+/* no flicker: keep showing the last feed while a fresh one loads, redraw once if it actually changed */
+var YFC = (function () { try { return JSON.parse(localStorage.lg_ytfeed || 'null'); } catch (e) { return null; } })();
+ytLoad = function () { var my = R55.yfs = (R55.yfs || 0) + 1, key = String(YH.cat || ''); if (YFC && YFC.k === key) YH.feed = YFC.f; else YH.feed = null; ytDraw();
+  run('ytFeed', [{ cat: YH.cat, seeds: ytSeeds(), recent: (function () { var h = ytLS('lg_ythist'); return Object.keys(h).sort(function (a, b) { return h[b].at - h[a].at; }).slice(0, 3); })() }], function (f) { if (my !== R55.yfs) return; f = f || {}; var same = YH.feed && JSON.stringify(YH.feed) === JSON.stringify(f); YH.feed = f; try { YFC = { k: key, f: f }; localStorage.lg_ytfeed = JSON.stringify(YFC); } catch (e) {} if (!same) { var B = $('ytBody'), st = B ? B.scrollTop : 0; ytDraw(); if (B) B.scrollTop = st; } }, function () { if (my !== R55.yfs) return; if (!YH.feed) { YH.feed = {}; ytDraw(); } }); };
+
+/* ---------- 9) progress bars: green → amber → red as the end nears; Logging filters NEARLY FINISHED / JUST STARTED ---------- */
+function pfOf(r) { if (r.type === 'TV Show') { var t = epTot(r), e = Math.max(epOf(r, 'sam'), epOf(r, 'lewy')); return t && e ? Math.min(1, e / t) : null; } if (isYT(r) && r.ytm && r.ytm.k === 'video') { var P = ytLS('lg_ytpos')[r.ytm.id]; return P && P.d ? Math.min(1, P.p / P.d) : null; } return null; }
+function gradBar(h) { return String(h).replace(/<i style="width:([\d.]+)%"><\/i>/g, function (_, w) { var x = Math.max(1, +w); return '<i class="pgr" style="width:' + w + '%;background-size:' + (10000 / x).toFixed(1) + '% 100%"></i>'; }); }
+var _epBar55 = epBar; epBar = function (r) { return gradBar(_epBar55(r)); };
+var _epHtml55 = epHtml; epHtml = function (r) { return gradBar(_epHtml55(r)); };
+var _browseSpec55 = browseSpec; browseSpec = function (key) { var S = _browseSpec55(key); if (key !== 'watchlist' || !S.tabs || !S.tabs[0]) return S; var all = S.tabs[0][1] || [];
+  S.tabs.push(['🏁 NEARLY FINISHED', all.filter(function (r) { var f = pfOf(r); return f != null && f >= 0.75; })], ['🌱 JUST STARTED', all.filter(function (r) { var f = pfOf(r); return f != null && f <= 0.25; })]); if (LGV.tab >= S.tabs.length) LGV.tab = 0; return S; };
+
+/* ---------- 10a) person (cast/director) matching for local lists, with "via" labels ---------- */
+function personHit(r, q) { q = String(q || '').trim().toLowerCase(); if (q.length < 3) return ''; if (String(r.title).toLowerCase().indexOf(q) >= 0) return ''; var m = M(r), L = [];
+  String(m.director || '').split(',').forEach(function (n) { if (n.trim()) L.push([n.trim(), 'dir.']); }); String(m.creator || '').split(',').forEach(function (n) { if (n.trim()) L.push([n.trim(), 'creator']); });
+  (Array.isArray(m.cast) ? m.cast : []).forEach(function (c) { if (c && c[0]) L.push([c[0], c[1] ? 'as ' + String(c[1]).split('/')[0].trim() : 'cast']); });
+  var h = L.filter(function (x) { return x[0].toLowerCase().indexOf(q) >= 0; })[0]; return h ? h[0] + ' (' + h[1] + ')' : ''; }
+var R55META = {};
+function metaFill() { var need = rows.filter(function (r) { var m = meta[String(r.title).trim()]; return !isYT(r) && !R55META[r.title] && (!m || (!m.cast && !m.director)); }).slice(0, 30); if (!need.length) return; need.forEach(function (r) { R55META[r.title] = 1; });
+  run('getMeta', [need.map(function (r) { return { title: r.title, type: r.type }; })], function (mm) { for (var k in mm) if (mm[k]) meta[k] = Object.assign({}, meta[k] || {}, mm[k]); render(); }, function () {}); }
+var _pcard55 = pcard; pcard = function (r) { var h = _pcard55.apply(this, arguments), q = $('q') && $('q').value, v = q ? personHit(r, q) : ''; return v ? h.replace('</div></button>', '<small class="via">via ' + esc(v) + '</small></div></button>') : h; };
+var _renderTm55 = renderTm; renderTm = function (el, r, n, box) { _renderTm55.apply(this, arguments); [].forEach.call(el.querySelectorAll('[data-tm]'), function (b) { var x = TM.res[b.dataset.tm]; if (x && x.via && !b.querySelector('.via')) { var s = b.querySelector('.ti'); s && s.insertAdjacentHTML('beforeend', '<small class="via">via ' + esc(x.via) + '</small>'); } }); };
+var _renderTmN = renderTm; renderTm = function (el, r, n, box) { if (r && r.results) { var t = r.results.filter(function (x) { return !x.via; }), v = r.results.filter(function (x) { return x.via; }); r = Object.assign({}, r, { results: t.slice(0, Math.max(2, n - Math.min(v.length, Math.ceil(n / 2)))).concat(v).slice(0, n + 2) }); } return _renderTmN.call(this, el, r, n + 2, box); };
+
+/* ---------- 10b) Explore search: recent searches (persist, tap to repeat, ✕ one, clear all, no blanks/dupes) ---------- */
+var RS = (function () { try { return JSON.parse(localStorage.lg_recentq || '[]'); } catch (e) { return []; } })();
+function rsSave(q) { q = String(q || '').trim(); if (q.length < 2) return; RS = [q].concat(RS.filter(function (x) { return x.toLowerCase() !== q.toLowerCase(); })).slice(0, 10); localStorage.lg_recentq = JSON.stringify(RS); }
+function rsPaint() { var q = $('q'), box = $('rsq'); if (!q) return; if (!box) { $('qTm').insertAdjacentHTML('beforebegin', '<div id="rsq"></div>'); box = $('rsq'); }
+  var show = (document.activeElement === q || (typeof KB !== 'undefined' && KB.target === q)) && !q.value.trim() && RS.length && view === 'home'; box.innerHTML = show ? '<div class="rsh">RECENT SEARCHES <button data-rsc="1">CLEAR ALL</button></div>' + RS.map(function (x, i) { return '<div class="rsi"><button class="rsg" data-rsg="' + i + '">🕘 ' + esc(x) + '</button><button class="rsx" data-rsx="' + i + '" aria-label="Remove">✕</button></div>'; }).join('') : ''; }
+(function () { var q = $('q'); if (!q) return; var t = 0; q.addEventListener('input', function () { clearTimeout(t); var v = q.value; t = setTimeout(function () { rsSave(v); }, 1800); rsPaint(); if (v.trim().length >= 3) metaFill(); });
+  q.addEventListener('keydown', function (e) { if (e.key === 'Enter') { rsSave(q.value); } }); q.addEventListener('focus', rsPaint); q.addEventListener('blur', function () { rsSave(q.value); setTimeout(rsPaint, 250); }); })();
+document.addEventListener('pointerdown', function (e) { var b = e.target.closest && e.target.closest('#rsq button'); if (b) { e.preventDefault(); R55.rsTap = Date.now(); } }, true);
+var _kbOpen55 = kbOpen; kbOpen = function (el) { var r = _kbOpen55.apply(this, arguments); if (el === $('q')) setTimeout(rsPaint, 0); return r; };
+var _kbClose55 = kbClose; kbClose = function () { var q = $('q'), was = KB.target === q; if (was) rsSave(q.value); var r = _kbClose55.apply(this, arguments); if (was) setTimeout(function () { if (Date.now() - (R55.rsTap || 0) > 400) rsPaint(); }, 250); return r; }; /* keep focus on the field */
+document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('#rsq button'); if (!b) return; e.stopImmediatePropagation(); var q = $('q');
+  if (b.dataset.rsc) { RS = []; localStorage.lg_recentq = '[]'; }
+  else if (b.dataset.rsx != null) { RS.splice(+b.dataset.rsx, 1); localStorage.lg_recentq = JSON.stringify(RS); }
+  else if (b.dataset.rsg != null) { q.value = RS[+b.dataset.rsg]; rsSave(q.value); q.oninput && q.oninput.call(q); }
+  rsPaint(); }, true);
+
+/* ---------- 10c) search box in Logged (works with the filter + sort chips; title, notes, cast & director) ---------- */
+LGG.q = '';
+var _lggList55 = lggList; lggList = function () { var L = _lggList55.apply(this, arguments), q = String(LGG.q || '').trim().toLowerCase(); if (!q) return L;
+  return L.filter(function (r) { var m = M(r), hay = [r.title, r.genres, r.samComment, r.lewyComment, m.director, m.creator, (Array.isArray(m.cast) ? m.cast : []).map(function (c) { return (c || []).join(' '); }).join(' ')].join(' ').toLowerCase(); return hay.indexOf(q) >= 0; }); };
+var _lggCard55 = lggCard; lggCard = function (r) { var h = _lggCard55.apply(this, arguments), v = LGG.q ? personHit(r, LGG.q) : ''; return v ? h.replace(/<\/button>$/, '<small class="via">via ' + esc(v) + '</small></button>') : h; };
+var _renderLgg55 = renderLgg; renderLgg = function () { var a = document.activeElement, had = a && a.id === 'lggq', pos = had ? a.selectionStart : 0; _renderLgg55.apply(this, arguments); var g = $('lgg'); if (!g) return;
+  var h = g.querySelector('.lggh'); if (h && !g.querySelector('#lggq')) h.insertAdjacentHTML('afterend', '<div class="lggs"><input id="lggq" type="search" placeholder="🔍 SEARCH LOGGED — TITLE, CAST, DIRECTOR…" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="search" value="' + esc(LGG.q || '') + '">' + (LGG.q ? '<button data-lggqx="1" aria-label="Clear">✕</button>' : '') + '</div>');
+  if (had) { var n = $('lggq'); n.focus(); try { n.setSelectionRange(pos, pos); } catch (e) {} } };
+document.addEventListener('input', function (e) { if (e.target.id !== 'lggq') return; LGG.q = e.target.value; if (LGG.q.trim().length >= 3) metaFill(); renderLgg(); });
+document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-lggqx]'); if (!b) return; e.stopImmediatePropagation(); LGG.q = ''; renderLgg(); }, true);
+
+/* ---------- 5) + New entry sheet: hide the hotbar while the sheet is up (no buttons glitching through) ---------- */
+(function () { var a = $('add'); if (!a) return; var sync = function () { document.body.classList.toggle('addopen', a.classList.contains('open')); }; new MutationObserver(sync).observe(a, { attributes: true, attributeFilter: ['class'] }); sync(); })();
+
+/* ---------- 6b) stats: who watched which YouTube video ---------- */
+function ytWhoHtml() { var V = rows.filter(function (r) { return isYT(r) && (isY(r.samWatched) || isY(r.lewyWatched)); }); if (!V.length) return '';
+  var col = function (p) { var L = V.filter(function (r) { return isY(r[p + 'Watched']); }); return '<div class="ywc ' + p + '"><h4>' + (p === 'sam' ? 'SAM' : 'LEWY') + ' <small>' + L.length + '</small></h4>' + L.slice(0, 30).map(function (r) { var both = isY(r.samWatched) && isY(r.lewyWatched); return '<button data-open="' + r.row + '">' + esc(r.title) + (both ? ' <i>BOTH</i>' : '') + '</button>'; }).join('') + '</div>'; };
+  return '<div class="sec ywho"><h3>▶ YOUTUBE · WHO WATCHED WHAT</h3><div class="ywg">' + col('sam') + col('lewy') + '</div></div>'; }
+var _renderStats55 = renderStats; renderStats = function () { var r = _renderStats55.apply(this, arguments); try { var S = $('v-stats'); if (S && !S.querySelector('.ywho')) S.insertAdjacentHTML('beforeend', ytWhoHtml()); } catch (e) {} return r; };
+/* root cause of "random stops": the mini-bar's 6 s Spotify poll overwrote the inline clip's state (SPOTIFY IDLE / paused) and its ▶/❚❚ then drove Spotify, not the clip. Local clips own the bar now. */
+var _spPoll55 = spPoll; spPoll = function () { if (/^(clip|pk|tl|mine)$/.test(OXS.mode || '') && OXA) { var x = $('thm'); if (x && x.classList.contains('spm')) { x.classList.toggle('paused', OXA.paused); var b = x.querySelector('.spt'); if (b) b.textContent = OXA.paused ? '▶' : '❚❚'; } return; } return _spPoll55.apply(this, arguments); };
+window.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-spc]'); if (!b || !/^(pk|tl|mine)$/.test(OXS.mode || '')) return; e.stopImmediatePropagation(); var k = b.dataset.spc; oxEnsure();
+  if (k === 'toggle') { if (OXA.paused) OXA.play().catch(function () {}); else OXA.pause(); spPoll(); } else if (k === 'stop') { OXA.pause(); OXS.mode = ''; OXS.cur = null; oxPaint(); var x = $('thm'); x && x.remove(); GP.pin = false; } }, true);
+/* closing trivia mid-question left the per-question timer running → "Cannot read 'qs' of null" */
+var _trvDQ55 = trvDQ; trvDQ = function () { if (!TRV.daily || !TRV.daily.qs) return; return _trvDQ55.apply(this, arguments); };
+var _trvClose55 = trvClose; trvClose = function () { clearTimeout(TRV.dt); return _trvClose55.apply(this, arguments); };
 
 </script></body></html>

@@ -1,0 +1,178 @@
+{
+ "1a itunes search returns results": {
+  "pass": true,
+  "d": 12
+ },
+ "1a no Spotify section": {
+  "pass": true
+ },
+ "1b tap ▶ plays a clip": {
+  "pass": true,
+  "d": [
+   "oxA:mzaf_15408639854395137008.plus.aac.p.m4a"
+  ]
+ },
+ "1b second ▶ switches, no duplicate playback": {
+  "pass": true,
+  "d": [
+   "oxA:mzaf_14389586962439152911.plus.aac.p.m4a"
+  ]
+ },
+ "1c survives tab change + 7s (no poll stop)": {
+  "pass": true,
+  "d": [
+   "oxA:mzaf_14389586962439152911.plus.aac.p.m4a"
+  ]
+ },
+ "1d Spotify link → playable iTunes preview": {
+  "pass": true,
+  "d": "Bohemian Rhapsody - Remastered 2011 — "
+ },
+ "1d YouTube link → playable iTunes preview": {
+  "pass": true,
+  "d": "Bohemian Rhapsody (Official Video Remastered) — Queen"
+ },
+ "1d Apple Music link → preview": {
+  "pass": true
+ },
+ "1e multiple soundtracks saved, labelled WHOLE SHOW / SEASON": {
+  "pass": true,
+  "d": [
+   "▶ Bohemian Rhapsody Queen WHOLE SHOW YT ✕",
+   "▶ Crystal Blue Persuasion Tommy James & The Shondells SEASON 2 YT ✕"
+  ]
+ },
+ "1f YouTube fallback gives a specific video id": {
+  "pass": true,
+  "d": {
+   "id": "fJ9rUzIMcZQ",
+   "t": "Queen – Bohemian Rhapsody (Official Video)",
+   "ch": "Queen Official"
+  }
+ },
+ "2a trivia sound question plays its clip": {
+  "pass": true,
+  "d": [
+   "trvA2:5/mzaf_925930393702436738.plus.aac.p.m4a"
+  ]
+ },
+ "2b leaderboard + 9pm countdown shown after playing": {
+  "pass": true,
+  "d": "1h 54m 51s"
+ },
+ "3 six rapid +1 taps → exactly +6, server agrees": {
+  "pass": true,
+  "d": {
+   "ep": {
+    "local": 9,
+    "ui": "EP 9/13"
+   },
+   "server": {
+    "sam": {
+     "e": 9,
+     "q": 17919651109896
+    }
+   }
+  }
+ },
+ "4 just-logged title is first under NEWEST": {
+  "pass": true,
+  "d": "Garfield"
+ },
+ "5 new-entry buttons on top of hotbar and tappable": {
+  "pass": true,
+  "d": {
+   "navHidden": true,
+   "btns": [
+    {
+     "t": "CANCEL",
+     "bottom": 820,
+     "hit": true,
+     "top": "cancel"
+    },
+    {
+     "t": "LOG IT",
+     "bottom": 820,
+     "hit": true,
+     "top": "aSave"
+    }
+   ],
+   "vh": 844
+  }
+ },
+ "6a opening + seeking to the end does NOT log": {
+  "pass": true,
+  "d": 0
+ },
+ "6b watching to ≥90% logs exactly once (as Sam, full flag)": {
+  "pass": true,
+  "d": 1
+ },
+ "6c no duplicate on ENDED after logging": {
+  "pass": true
+ },
+ "7 stale list index still opens the tapped video": {
+  "pass": true,
+  "d": [
+   "BBBBBBBBBBB"
+  ]
+ },
+ "8 rating survives 2 network failures (auto-retry, saved once)": {
+  "pass": true,
+  "d": {
+   "saves": 1,
+   "sync": "SYNCED"
+  }
+ },
+ "9a Logging has NEARLY FINISHED + JUST STARTED": {
+  "pass": true,
+  "d": [
+   "ALL 2",
+   "🎞 MOVIES 0",
+   "📺 TV 2",
+   "▶ YOUTUBE 0",
+   "🏁 NEARLY FINISHED 1",
+   "🌱 JUST STARTED 1"
+  ]
+ },
+ "9b progress bars use 3-colour gradient": {
+  "pass": true
+ },
+ "10a recent searches saved (no blanks, newest first)": {
+  "pass": true,
+  "d": [
+   "🕘 whiplash",
+   "🕘 nolan"
+  ]
+ },
+ "10b remove one": {
+  "pass": true
+ },
+ "10c tap repeats search": {
+  "pass": true
+ },
+ "10d person search: local \"via\" + database via label": {
+  "pass": true
+ },
+ "10e Logged search (cast) + sort/filter": {
+  "pass": true,
+  "d": [
+   "Inception"
+  ]
+ },
+ "11 ad game: posters never blank, broken URL skipped, quote rounds appear": {
+  "pass": true,
+  "d": [
+   "poster:tainted-but-drawn",
+   "poster:tainted-but-drawn",
+   "quote",
+   "poster:tainted-but-drawn",
+   "poster:tainted-but-drawn",
+   "quote"
+  ]
+ },
+ "no page errors": {
+  "pass": true,
+  "d": []
+ }
+}
