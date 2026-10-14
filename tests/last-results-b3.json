@@ -1,0 +1,170 @@
+{
+ "1a menu has the 8 sections (+ Group Watch)": {
+  "pass": true,
+  "d": [
+   "HOME",
+   "HISTORY",
+   "TRENDING",
+   "INTERESTED",
+   "TRAILERS",
+   "GENRES",
+   "RECENT SEARCHES",
+   "LOGGING",
+   "LOGGED",
+   "GROUP WATCH"
+  ]
+ },
+ "1b genre ribbon at top with TRAILERS first": {
+  "pass": true
+ },
+ "1c HISTORY lists opened videos (newest first) + full-history link": {
+  "pass": true
+ },
+ "1d TRENDING = discovery (unseen only)": {
+  "pass": true
+ },
+ "1d2 trending hides already-seen videos": {
+  "pass": true
+ },
+ "1e INTERESTED shows saved YT videos with hearts": {
+  "pass": true
+ },
+ "1f TRAILERS section renders (list titles with trailers, or empty state)": {
+  "pass": true
+ },
+ "1g GENRES: category chip loads that category": {
+  "pass": true
+ },
+ "1h RECENT SEARCHES persisted list": {
+  "pass": true
+ },
+ "1i LOGGING = started, not finished (Big Buck Bunny 33%), excludes finished": {
+  "pass": true
+ },
+ "1j LOGGED = fully watched (Tears of Steel, Lofi)": {
+  "pass": true
+ },
+ "1k sections are distinct (Logging vs Logged share no video)": {
+  "pass": true
+ },
+ "1l Logged entries reopen the video": {
+  "pass": true,
+  "d": "jfKfPfyJRdk"
+ },
+ "2a description page: title, channel, upload date, views, likes, full description": {
+  "pass": true,
+  "d": "◀ BACKℹ DESCRIPTIONBig Buck Bunny 60fps 4K👤 Blender ›👁12,345,678VIEWS👍98,765LIKES📅11 Nov 2014UPLOADEDLine one of the"
+ },
+ "2b no dislikes shown (not available from the API)": {
+  "pass": true
+ },
+ "2c description scrolls": {
+  "pass": true
+ },
+ "2d channel name opens the channel video list": {
+  "pass": true
+ },
+ "2e DESCRIPTION button beside GAME in the player": {
+  "pass": true,
+  "d": 1
+ },
+ "3a NEXT GAME button + 2 new games (scramble, higher/lower)": {
+  "pass": true,
+  "d": [
+   5,
+   "reflex",
+   true
+  ]
+ },
+ "3b NEXT GAME cycles through all games": {
+  "pass": true,
+  "d": [
+   "reflex",
+   "guess",
+   "run",
+   "scram",
+   "hilo"
+  ]
+ },
+ "3c scramble: correct answer scores": {
+  "pass": true,
+  "d": "ok"
+ },
+ "3d higher/lower renders two rated titles": {
+  "pass": true
+ },
+ "4a lobby: no live session, video picker": {
+  "pass": true
+ },
+ "4b create session → room open": {
+  "pass": true,
+  "d": "Z4JJCX"
+ },
+ "4c presence: Lewy shows online": {
+  "pass": true
+ },
+ "4d predictions: mine visible, Lewy’s hidden until start": {
+  "pass": true
+ },
+ "4e one ready → still lobby": {
+  "pass": true
+ },
+ "4f both ready → 10-second countdown": {
+  "pass": true,
+  "d": [
+   "countdown",
+   "9",
+   8235
+  ]
+ },
+ "4g predictions pinned in chat once started": {
+  "pass": true
+ },
+ "4h chat + emoji reactions both ways": {
+  "pass": true
+ },
+ "4i synced start: state playing at startAt and YT player started": {
+  "pass": true,
+  "d": [
+   "playing",
+   true,
+   "",
+   1,
+   2.372876047683716
+  ]
+ },
+ "4j remote pause applies (state paused at Lewy’s position)": {
+  "pass": true
+ },
+ "4k local resume sent → playing for both": {
+  "pass": true
+ },
+ "4l seek synced to server": {
+  "pass": true
+ },
+ "4m reconnect: offline shows RECONNECTING": {
+  "pass": true
+ },
+ "4n back online → resumes polling": {
+  "pass": true
+ },
+ "4o after the video: mark predictions": {
+  "pass": true
+ },
+ "4p marking saved": {
+  "pass": true
+ },
+ "4q END asks to confirm": {
+  "pass": true
+ },
+ "4r session ended + closed": {
+  "pass": true
+ },
+ "5a embed-disabled explains + offers Open in YouTube": {
+  "pass": true
+ },
+ "Z no page errors": {
+  "pass": true,
+  "d": []
+ }
+}

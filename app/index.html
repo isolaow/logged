@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="theme-color" content="#0b0b14">
 <link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="apple-touch-icon.png"><link rel="icon" href="icon-192.png">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Logged"><meta name="mobile-web-app-capable" content="yes">
@@ -1095,6 +1095,96 @@ body.addopen #nav,body.addopen #fab,body.addopen #lggup{visibility:hidden!import
 .ipdm{position:fixed;inset:0;z-index:30;background:rgba(5,5,12,.72);display:none;align-items:flex-end;justify-content:center}.ipdm.open{display:flex}
 .ipdm .sheet{width:100%;max-width:520px;background:#14142a;border-top:3px solid #000;box-shadow:0 -3px 0 #ff4f8b;padding:14px 14px calc(18px + env(safe-area-inset-bottom))}
 .trvsk{display:flex;margin:10px auto 0;min-width:160px}.trvsk.on{background:#ffcc33;color:#000}.trvskd{font:9px 'Press Start 2P';color:#ffcc33;text-align:center;padding:8px;border:3px solid #000;background:#24243c;margin-bottom:8px}
+/* R57 — YouTube menu, description, group watch, ad games (Interested design system) */
+.ytrib{overflow-x:auto;flex-wrap:nowrap;margin:8px 0 12px!important;scrollbar-width:none}.ytrib::-webkit-scrollbar{display:none}
+.ytmenu{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.ytsec57{position:relative;display:flex;flex-direction:column;align-items:center;gap:5px;min-height:96px;padding:10px 4px 8px;border:3px solid #000;box-shadow:3px 3px 0 #000;background:#1b1b30;color:#fff;text-align:center}
+.ytsec57:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #000}.ytsec57 i{font-style:normal;font-size:22px;line-height:26px}.ytsec57 b{font:7px/1.4 'Press Start 2P',monospace}
+.ytsec57 small{font:14px/1 'VT323',monospace;color:#9a9ab8}.ytsec57 em{position:absolute;top:4px;right:4px;font:7px 'Press Start 2P';font-style:normal;background:#ffcc33;color:#000;padding:2px 4px;border:2px solid #000}
+.ytsec57[data-ysec=gw]{background:linear-gradient(#26203f,#1b1b30);box-shadow:3px 3px 0 #000,inset 0 0 0 2px #ff4f8b}
+.ytsh{display:flex;align-items:center;gap:10px;margin:6px 0 12px}.ytsh h2{margin:0;color:#ff4f8b;font-size:12px!important}
+.ytg57{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.ytg57 .ytc{width:auto!important;max-width:none!important}.ytgw{position:relative}
+.ytdb{position:absolute;top:4px;right:4px;z-index:2;width:30px;height:30px;border:3px solid #000;background:rgba(11,11,20,.85);color:#ffcc33;font:12px 'Press Start 2P';box-shadow:2px 2px 0 #000}
+.ythrt{position:absolute;left:4px;top:4px;z-index:2;color:#ff4f8b;background:rgba(0,0,0,.7);padding:2px 4px;font-size:12px;border:2px solid #000}
+.ytfull{width:100%;margin-bottom:12px}.ytrs57{display:flex;flex-direction:column;gap:8px}.ytrs57 .ui-btn{justify-content:space-between;width:100%;font-family:'VT323',monospace;font-size:18px;text-transform:none}.ytrs57 small{font-size:15px;color:#9a9ab8}.ytrsx{justify-content:center!important;font:8px 'Press Start 2P'!important}
+/* description */
+.ytdp{position:fixed;inset:0;z-index:1200;background:rgba(5,5,12,.94);display:none;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(10px + env(safe-area-inset-top)) 14px calc(30px + env(safe-area-inset-bottom))}.ytdp.open{display:block}
+.ytds{max-width:560px;margin:0 auto}.ytdth{width:100%;aspect-ratio:16/9;object-fit:cover;border:3px solid #000}.ytdt{font:20px/1.15 'VT323',monospace;color:#fff;margin:10px 0 8px}
+.ytdch{margin:0 0 10px}.ytdst{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px}.ytdst div{border:3px solid #000;background:#1b1b30;text-align:center;padding:6px 2px}
+.ytdst i{font-style:normal;display:block}.ytdst b{display:block;font:9px 'Press Start 2P';color:#ffcc33;margin:4px 0}.ytdst small{font:13px 'VT323';color:#9a9ab8}
+.ytdd{font:17px/1.25 'VT323',monospace;color:#e6e6f2;background:#14142a;border:3px solid #000;padding:10px;white-space:normal;word-break:break-word}.ytdd a{color:#4dc3ff}.ytda{margin-top:12px}
+.addesc{margin-left:6px}
+/* group watch */
+.gwh{font:8px 'Press Start 2P';color:#9a9ab8;margin:14px 0 8px}.gwh small{font:14px 'VT323';text-transform:none;margin-left:4px}
+.gwurl{display:flex;gap:8px;margin-bottom:10px}.gwurl input{flex:1;min-width:0}
+.gwlive{display:flex;flex-wrap:wrap;align-items:center;gap:8px;border:3px solid #000;background:#2a1530;padding:10px;box-shadow:inset 0 0 0 2px #ff4d6d}.gwlive b{font:8px 'Press Start 2P';color:#ff4d6d;width:100%}.gwlive span{flex:1;font:17px 'VT323';color:#fff}
+.gwp{position:fixed;inset:0;z-index:1150;background:#0b0b14;display:none;flex-direction:column;padding-top:env(safe-area-inset-top)}.gwp.open{display:flex}body.gwon #nav{display:none}
+.gwtop{display:flex;align-items:center;gap:8px;padding:8px 10px;border-bottom:3px solid #000;background:#14142a}.gwti{flex:1;min-width:0}.gwti b{display:block;font:17px/1 'VT323';color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.gwti small{font:7px 'Press Start 2P';color:#9a9ab8}
+.gwpr{display:flex;gap:4px}.gwdot{min-width:26px;height:26px;display:flex;align-items:center;justify-content:center;border:3px solid #000;font:8px 'Press Start 2P';background:#2c2c4a;color:#777;opacity:.6}
+.gwdot.on{opacity:1;color:#000}.gwdot.sam.on{background:var(--p1)}.gwdot.lewy.on{background:var(--p2)}.gwnet{font:7px 'Press Start 2P';color:#ff4d6d;animation:uispin 1s steps(2) infinite}
+.gwvid{position:relative;width:100%;aspect-ratio:16/9;background:#000;flex:0 0 auto}.gwvid iframe,#gwPl{position:absolute;inset:0;width:100%;height:100%}
+.gwcd{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.65);font:56px 'Press Start 2P';color:#ffcc33;text-shadow:4px 4px 0 #000;z-index:3}
+.gwmsg{position:absolute;inset:0;z-index:4;background:rgba(11,11,20,.94);display:none;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:14px;text-align:center}.gwmsg p{font:17px 'VT323';color:#fff;margin:0}.gwmsg:not([style*="none"]){display:flex}
+.gwfl{position:absolute;bottom:10%;font-size:30px;z-index:5;animation:gwfl 2.2s ease-out forwards;pointer-events:none}@keyframes gwfl{to{transform:translateY(-160px) scale(1.4);opacity:0}}
+.gwmid{padding:10px;border-bottom:3px solid #000;max-height:42vh;overflow-y:auto}.gwready{width:100%;margin-top:6px}.gwctl{display:flex;gap:6px;flex-wrap:wrap}.gwctl .ui-btn{flex:1}
+.gwpc{display:flex;flex-wrap:wrap;align-items:center;gap:6px;border:3px solid #000;background:#1b1b30;padding:6px 8px;margin-bottom:6px;font:17px 'VT323';color:#fff}.gwpc button{margin-left:auto}.gwpc span{display:flex;gap:6px;margin-left:auto}.gwpc em{font:7px 'Press Start 2P';font-style:normal;color:#9a9ab8}
+.gwpc.y{box-shadow:inset 0 0 0 2px #3ddc84}.gwpc.n{box-shadow:inset 0 0 0 2px #ff4d6d;opacity:.75}
+.gwchat{flex:1;overflow-y:auto;padding:8px 10px}.gwpins{position:sticky;top:-8px;z-index:2;background:#0b0b14;padding:4px 0 6px}.gwpin{font:16px 'VT323';color:#ffcc33;border:2px solid #3a2a10;background:#1b1b30;padding:3px 6px;margin-bottom:3px}.gwpin em{font:7px 'Press Start 2P';font-style:normal}
+.gwsys{text-align:center;font:7px/1.6 'Press Start 2P';color:#7b7b99;margin:6px 0}.gwm{display:flex;flex-direction:column;max-width:80%;margin:4px 0}.gwm.me{margin-left:auto;align-items:flex-end}
+.gwm em{font:6px 'Press Start 2P';font-style:normal;color:#9a9ab8}.gwm span{font:18px/1.1 'VT323';color:#000;padding:4px 8px;border:3px solid #000;background:var(--p1)}.gwm.lewy span{background:var(--p2)}.gwm.emo span{background:none;border:0;font-size:28px}
+.gwin{display:flex;flex-wrap:wrap;gap:6px;padding:8px 10px calc(8px + env(safe-area-inset-bottom));border-top:3px solid #000;background:#14142a}.gwin input{flex:1;min-width:0}.gwemo{display:flex;gap:4px;width:100%;overflow-x:auto}.gwemo button{font-size:20px;background:#1b1b30;border:3px solid #000;padding:2px 6px}
+/* ad games */
+.adnx{margin-left:auto;font:7px 'Press Start 2P';background:#24243c;color:#ffcc33;border:2px solid #000;padding:4px 6px;box-shadow:2px 2px 0 #000}
+.adsc{text-align:center}.adsc>b{display:block;font:14px 'Press Start 2P';color:#ffcc33;letter-spacing:3px;margin:8px 0 10px;word-break:break-word}.adop{display:grid;grid-template-columns:1fr 1fr;gap:6px}.adop .ui-btn{font-family:'VT323',monospace;font-size:17px;min-height:36px}
+.adop .ui-btn.y,.adhl.y{background:#3ddc84;color:#000}.adop .ui-btn.n,.adhl.n{background:#ff4d6d;color:#fff}.adsc small,.adst{display:block;font:7px 'Press Start 2P';color:#9a9ab8;margin-top:8px;text-align:center}
+.adhlw{display:flex;align-items:center;gap:6px}.adhlw i{font:9px 'Press Start 2P';font-style:normal;color:#ff4f8b}.adhl{flex:1;border:3px solid #000;background:#1b1b30;padding:4px;color:#fff;box-shadow:3px 3px 0 #000}.adhl img{width:100%;aspect-ratio:2/3;object-fit:cover;display:block}.adhl b{display:block;font:15px/1 'VT323';margin-top:4px}
+#ytBurg{min-width:40px;height:36px;padding:0 8px;margin-right:6px;display:inline-flex;align-items:center;justify-content:center}
+#ytdrw{position:fixed;inset:0;z-index:120;pointer-events:none}
+#ytdrw .ytdrwbg{position:absolute;inset:0;background:rgba(0,0,0,.6);opacity:0;transition:opacity .18s}
+#ytdrw aside{position:absolute;top:0;bottom:0;left:0;width:min(82vw,320px);background:var(--bg,#111);border-right:3px solid #000;box-shadow:4px 0 0 rgba(0,0,0,.4);transform:translateX(-102%);transition:transform .2s steps(6);overflow-y:auto;padding:calc(env(safe-area-inset-top) + 10px) 10px 24px}
+#ytdrw.open{pointer-events:auto}#ytdrw.open .ytdrwbg{opacity:1}#ytdrw.open aside{transform:none}
+#ytdrw .ytdrwh{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+#ytdrw .ytmenu{display:flex;flex-direction:column;gap:6px;grid-template-columns:none}
+#ytdrw .ytsec57{width:100%;margin-bottom:6px}#ytdrw .ytsec57.on{outline:2px solid #ffcc33}
+#avPin{width:34px;height:34px;padding:0;border-radius:50%;overflow:hidden;border:3px solid #4da3ff;background:#000}#avPin.lewy{border-color:#4dd17a}#avPin canvas{width:100%;height:100%;image-rendering:pixelated;display:block}
+#v-stats{overflow-x:hidden;max-width:100%}#v-stats>*{max-width:100%;box-sizing:border-box}
+#ytdrw{z-index:400}
+#ytdrw .ytsec57{display:grid;grid-template-columns:28px 1fr auto;grid-template-rows:auto auto;align-items:center;text-align:left;padding:8px 10px;min-height:0;gap:0 8px;position:relative}
+#ytdrw .ytsec57 i{grid-row:1/3;font-size:20px;font-style:normal}#ytdrw .ytsec57 b{grid-column:2}#ytdrw .ytsec57 small{grid-column:2;font-size:10px;opacity:.75}
+#ytdrw .ytsec57 em{position:static;grid-column:3;grid-row:1/3}
+#avPin{flex:0 0 34px;min-width:34px;max-width:34px;aspect-ratio:1}
+
+body nav#nav.nav58{padding:4px 10px calc(4px + min(env(safe-area-inset-bottom),18px));align-items:flex-end}
+nav#nav.nav58>button{font-size:8px;gap:3px;padding:4px 0 2px}nav#nav.nav58>button>span:first-child{font-size:22px;line-height:24px}
+nav#nav.nav58 #navLogM.gold58{flex:0 0 96px;margin-top:-18px;background:#ffcc33;color:#000;border:3px solid #000;box-shadow:inset -3px -3px 0 #c99a00,0 3px 0 #000;padding:6px 0 4px;font-weight:bold}
+nav#nav.nav58 #navLogM.gold58 .nlogm{width:40px;height:34px;display:flex;align-items:center;justify-content:center}nav#nav.nav58 #navLogM.gold58 .nlogm svg{width:100%;height:100%}
+nav#nav.nav58 #navLogM.gold58.on{box-shadow:inset -3px -3px 0 #c99a00,0 3px 0 #000,0 0 0 2px #fff}
+#ytTile{display:flex;align-items:center;gap:12px;width:100%;margin:4px 0 12px;padding:12px 14px;background:linear-gradient(90deg,#c4161c,#ff3b3b);color:#fff;border:3px solid #000;box-shadow:4px 4px 0 #000;text-align:left}
+#ytTile b{display:block;font-size:14px;letter-spacing:1px}#ytTile small{display:block;font-size:10px;opacity:.9;margin-top:3px}#ytTile>span:nth-child(2){flex:1}#ytTile i{font-style:normal}
+/* ---------- r58: native app feel ---------- */
+html,body{height:100%;overscroll-behavior:none;-webkit-text-size-adjust:100%}
+body.app58{position:fixed;inset:0;overflow:hidden;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+body.app58 header{position:fixed;top:0;left:0;right:0;z-index:7}
+body.app58>main{position:fixed;left:0;right:0;top:var(--hdr58,120px);bottom:var(--nav58,64px);overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding-bottom:16px}
+body.app58 .view.on{animation:v58in .18s ease-out}
+@keyframes v58in{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:none}}
+body.app58 button,body.app58 nav,body.app58 header,body.app58 .chip,body.app58 img,body.app58 canvas,body.app58 svg{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+body.app58 input,body.app58 textarea,body.app58 [contenteditable]{-webkit-user-select:text;user-select:text}
+body.app58 button,body.app58 [role=button],body.app58 a{touch-action:manipulation}
+body.app58 button:active:not(:disabled){transform:scale(.96);filter:brightness(1.15);transition:transform .05s}
+.skel58{background:linear-gradient(90deg,#1a1a2c 25%,#26263e 50%,#1a1a2c 75%);background-size:200% 100%;animation:sk58 1.1s linear infinite;border:3px solid #000;min-height:90px;margin:8px 0}
+@keyframes sk58{to{background-position:-200% 0}}
+#ytBody,.modal .box,#bpage .bbody,#gpage,#detail{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+#arch .archic img,#arch .archic svg,#arch .archic canvas{max-width:28px!important;max-height:28px!important;width:28px;height:auto}
+nav#nav.nav58 #navLogM.gold58{font:9px var(--pix);color:#000;flex-direction:column;gap:2px}nav#nav.nav58 #navLogM.gold58 .nlogm{width:34px;height:28px;overflow:hidden}nav#nav.nav58 #navLogM.gold58 .nlogm img{width:100%;height:100%;object-fit:contain;image-rendering:pixelated}
+#arch .archi .archic .nlg,#arch .archi .archic .nlg img{width:26px!important;height:24px!important;max-width:26px!important;object-fit:contain;display:inline-block}
+/* r58: no horizontal overflow anywhere (iOS shrinks-to-fit when content is wider than the viewport) */
+html,body,body>main,header,.view{max-width:100vw;overflow-x:hidden}
+#v-stats,#v-stats *{box-sizing:border-box}#v-stats *{max-width:100%;min-width:0}
+#v-stats .sec,#v-stats .panel,#v-stats .lk,#v-stats .cab,#v-stats .sg,#v-stats [class*=grid]{width:auto;max-width:100%;overflow-x:hidden}
+#v-stats b,#v-stats small,#v-stats div,#v-stats span{overflow-wrap:anywhere}
+#v-stats table{display:block;overflow-x:auto}
+.lgh{max-width:100%;box-sizing:border-box;overflow-x:hidden}#bpage,#gpage,#detail{max-width:100vw;overflow-x:hidden;overscroll-behavior:contain}
 </style></head><body>
 <div id="splash" aria-label="Logged"></div>
 <header><div class="hin">
@@ -4744,7 +4834,7 @@ function logItems() { var v = view, bo = $('bpage') && $('bpage').classList.cont
 function plusItems() { return [{ ic: '<span class="aplus">+</span>', t: 'NEW ENTRY', go: function () { $('fab').onclick(); } }, { ic: '<span class="nyti">' + (typeof ytI === 'function' ? ytI(20) : '▶') + '</span>', t: 'YOUTUBE', go: function () { navTap('navYT'); r56NavHi(); } }, { ic: '<span class="ncamp"></span>', t: 'CAMP', on: view === 'stats', go: function () { navTap('stats'); r56NavHi(); } }]; }
 /* copy the existing pixel icons into the arch items */
 function r56Icons() { var A = $('arch'); if (!A) return; [['.nlg', '[data-v=all] .nlg'], ['.nlgg', '#navLog .nlgg'], ['.ncamp', '[data-v=stats] .ncamp']].forEach(function (p) { var src = document.querySelector('#nav ' + p[1]), dst = A.querySelector(p[0]); if (src && dst && !dst.innerHTML) dst.innerHTML = src.innerHTML; }); }
-window.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('#navLogM,#navAdd'); if (!b || !b.closest('#nav')) return; e.stopImmediatePropagation(); e.preventDefault(); SFX.tap && SFX.tap();
+window.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('#navLogM'); if (!b || !b.closest('#nav')) return; e.stopImmediatePropagation(); e.preventDefault(); SFX.tap && SFX.tap();
   var k = b.id === 'navAdd' ? 'plus' : 'log'; if (R56.arch && R56.arch.key === k) return archClose(); archOpen(k, k === 'plus' ? plusItems() : logItems(), { label: k === 'plus' ? 'Create menu' : 'Log menu', cls: k === 'plus' ? 'archp' : 'archl' }); r56Icons(); }, true);
 function r56NavHi() { setTimeout(function () { var bo = $('bpage') && $('bpage').classList.contains('open') && BR.fn === 'watchlist', yt = $('ytpage') && $('ytpage').classList.contains('open'), N = $('nav');
   var lg = !yt && (view === 'all' || view === 'int' || view === 'logging' || bo), ex = !yt && !lg && view === 'home'; N.querySelector('[data-v=home]').classList.toggle('on', ex); $('navLogM').classList.toggle('on', lg); }, 30); }
@@ -4956,5 +5046,235 @@ var _trvGot56 = trvGot; trvGot = function (st) { var p = TRV.st || {}, r = _trvG
 document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('#trvSkip'); if (!b) return; e.stopImmediatePropagation(); e.preventDefault(); if (b.disabled) return; SFX.back && SFX.back();
   if (TRV.code && TRV.st) { b.disabled = true; b.classList.add('on'); run('triviaVoteSkip', [TRV.code, me(), TRV.st.i], function (st) { trvGot(st); }, function () { b.disabled = false; toast('COULDN\u2019T VOTE — TRY AGAIN'); }); return; }
   if (TRV.daily && TRV.daily.qs) { toast('⏭ Skipped — no points'); trvDPick(-1); } }, true);
+
+/* ===== R57 — BATCH 3: YouTube menu (8 sections), Description + channel page, Group Watch, ad-break games ===== */
+var R57 = { sec: '' };
+function ytStore(k, v) { try { localStorage[k] = JSON.stringify(v); } catch (e) {} }
+function ytArr(k) { try { var a = JSON.parse(localStorage[k] || '[]'); return Array.isArray(a) ? a : []; } catch (e) { return []; } }
+/* ---------- section data ---------- */
+function ytSecHist() { var h = ytLS('lg_ythist'); return Object.keys(h).map(function (k) { return h[k]; }).sort(function (a, b) { return b.at - a.at; }); }
+function ytSeenMap() { var s = {}; Object.keys(ytLS('lg_ythist')).forEach(function (k) { s[k] = 1; }); rows.forEach(function (r) { if (r.ytm) s[r.ytm.id] = 1; ['sam', 'lewy'].forEach(function (p) { Object.keys(((r.ytw || {})[p]) || {}).forEach(function (k) { s[k] = 1; }); }); }); return s; }
+function ytSecTrending() { var F = YH.feed || {}, seen = ytSeenMap(), out = [], ids = {}; (F.rec || []).concat(F.trending || []).forEach(function (v) { if (v && v.id && (!v.k || v.k === 'video') && !seen[v.id] && !ids[v.id]) { ids[v.id] = 1; out.push(v); } }); return out; }
+function ytSecInt() { var o = INT[me()] || {}; return Object.keys(o).filter(function (k) { return k.indexOf('yt:') === 0 && o[k].v === 'y'; }).sort(function (a, b) { return o[b].at - o[a].at; }).map(function (k) { var x = o[k], id = k.slice(3); return { id: id, t: x.t || 'YouTube video', ch: x.ch || '', th: x.p || ('https://i.ytimg.com/vi/' + id + '/hqdefault.jpg'), h: x.h || 0 }; }); }
+function ytSecTrailers() { var out = [], ids = {}; rows.filter(function (r) { return !isYT(r) && !isWatched(r) && M(r).yt; }).sort(function (a, b) { var ia = intGet(rKey(a)) ? 1 : 0, ib = intGet(rKey(b)) ? 1 : 0; return ib - ia || b.row - a.row; }).forEach(function (r) { var id = M(r).yt; if (ids[id]) return; ids[id] = 1; out.push({ id: id, t: baseTitle(r.title) + ' · TRAILER', ch: r.type === 'TV Show' ? 'SHOW' : 'MOVIE', th: 'https://i.ytimg.com/vi/' + id + '/hqdefault.jpg', trl: 1 }); }); return out; }
+function ytDoneFor(id, p) { var pos = ytLS('lg_ytpos')[id]; if (pos && pos.d && pos.p / pos.d >= 0.95) return true; return rows.some(function (r) { return ((((r.ytw || {})[p]) || {})[id]) || (isYT(r) && r.ytm && r.ytm.id === id && isY(r[p + 'Watched'])); }); }
+function ytSecLogging() { var pos = ytLS('lg_ytpos'), p = me(); return Object.keys(pos).map(function (k) { return pos[k]; }).filter(function (x) { return x && x.id && x.d && x.p > 5 && x.p / x.d < 0.95 && !ytDoneFor(x.id, p); }).sort(function (a, b) { return (b.at || 0) - (a.at || 0); }); }
+function ytSecLogged() { var p = me(), out = [], ids = {}, add = function (v) { if (v.id && !ids[v.id]) { ids[v.id] = 1; out.push(v); } };
+  rows.forEach(function (r) { if (isYT(r) && r.ytm && r.ytm.k === 'video' && isY(r[p + 'Watched'])) add({ id: r.ytm.id, t: r.title, ch: r.ytm.ch, chId: r.ytm.chId, th: r.poster || ('https://i.ytimg.com/vi/' + r.ytm.id + '/hqdefault.jpg') }); Object.keys(((r.ytw || {})[p]) || {}).forEach(function (k) { var w = r.ytw[p][k] || {}; add({ id: k, t: w.t || r.title, ch: w.ch || (r.ytm || {}).ch || '', th: 'https://i.ytimg.com/vi/' + k + '/hqdefault.jpg' }); }); });
+  var pos = ytLS('lg_ytpos'); Object.keys(pos).forEach(function (k) { var x = pos[k]; if (x && x.d && x.p / x.d >= 0.95) add(x); }); return out; }
+var YRS = ytArr('lg_ytrs');
+document.addEventListener('submit', function (e) { if (!e.target || e.target.id !== 'ytHomeQ') return; var q = String(e.target.q.value || '').trim(); if (!q) return; YRS = [{ q: q, at: Date.now() }].concat(YRS.filter(function (x) { return x.q.toLowerCase() !== q.toLowerCase(); })).slice(0, 25); ytStore('lg_ytrs', YRS); R57.sec = ''; }, true);
+/* ---------- rendering ---------- */
+var YSECS = [['hist', '🕑', 'HISTORY', 'Everything you opened'], ['trend', '🔥', 'TRENDING', 'New to you · outside your bubble'], ['int', '♥', 'INTERESTED', 'Videos you saved'], ['trl', '🎬', 'TRAILERS', 'For titles on your list'], ['gen', '🧭', 'GENRES', 'Browse by category'], ['rs', '🔍', 'RECENT SEARCHES', 'Pick up a search again'], ['lgg', '⏯', 'LOGGING', 'Started · resume where you left'], ['lgd', '✓', 'LOGGED', 'Fully watched'], ['gw', '👥', 'GROUP WATCH', 'Watch together, in sync']];
+function ytSecCount(k) { try { return { hist: ytSecHist, trend: ytSecTrending, int: ytSecInt, trl: ytSecTrailers, lgg: ytSecLogging, lgd: ytSecLogged }[k]().length; } catch (e) { return ''; } }
+function ytGrid(L, grp, opt) { opt = opt || {}; L = (L || []).filter(function (v) { return v && v.id && !(YH.nosh && ytShort(v)); }); YG[grp] = L; if (!L.length) return uiState('empty', opt.empty || 'NOTHING HERE YET', opt.sub || '');
+  return '<div class="ytg57">' + L.map(function (v, i) { var c = ytCard(v, i, grp); if (opt.desc) c = '<div class="ytgw">' + c + '<button class="ytdb" data-ytdesc="' + esc(v.id) + '" aria-label="Description">ℹ</button></div>'; if (v.h) c = c.replace('<img', '<b class="ythrt">' + heartStr(v.h) + '</b><img'); return c; }).join('') + '</div>'; }
+function ytRibbon(F) { var cats = (F && F.cats) || []; return '<div class="xif ytrib">' + '<button class="chip' + (R57.sec === 'trl' ? ' on' : '') + '" data-ysec="trl">🎬 TRAILERS</button>' + cats.filter(function (c) { return c.id; }).map(function (c) { return '<button class="chip' + (R57.sec === 'gen' && YH.cat === c.id ? ' on' : '') + '" data-ygen="' + esc(c.id) + '">' + esc(c.t) + '</button>'; }).join('') + '</div>'; }
+var _ytDraw57 = ytDraw; ytDraw = function () { if (YH.ch || YH.res) { R57.sec = ''; return _ytDraw57.apply(this, arguments); } var B = $('ytBody'); if (!B) return; _ytDraw57.apply(this, arguments);
+  var hd = B.querySelector('.ythd'), sf = B.querySelector('#ytHomeQ'), head = (hd ? hd.outerHTML : '') + (sf ? sf.outerHTML : ''), F = YH.feed || {}, s = R57.sec, h; YG = YG || {};
+  if (!s) { var orig = B.innerHTML.replace(head, ''); h = ytRibbon(F) + orig; R57.menuHtml = '<div class="ytmenu">' + YSECS.map(function (x) { var n = x[0] === 'gen' || x[0] === 'gw' ? '' : x[0] === 'rs' ? YRS.length : ytSecCount(x[0]); return '<button class="ytsec57" data-ysec="' + x[0] + '"><i>' + x[1] + '</i><b>' + x[2] + '</b><small>' + x[3] + '</small>' + (n !== '' && n != null ? '<em>' + n + '</em>' : '') + '</button>'; }).join('') + '</div>'; h = h; }
+  else { var S = YSECS.filter(function (x) { return x[0] === s; })[0] || YSECS[0], top = '<div class="ytsh"><button class="ui-btn" data-ysec="">◀ HOME</button><h2 class="ui-h">' + S[1] + ' ' + S[2] + '</h2></div>';
+    if (s === 'hist') h = top + '<button class="ui-btn ytfull" data-ytfullh="1">🕑 FULL HISTORY · SAM & LEWY</button>' + ytGrid(ytSecHist(), 'y57h', { desc: 1, empty: 'NO HISTORY YET', sub: 'Videos you open land here' });
+    else if (s === 'trend') h = top + (F.trending || F.rec ? ytGrid(ytSecTrending(), 'y57t', { empty: 'YOU\u2019VE SEEN IT ALL', sub: 'Check back later' }) : uiState('load', 'FINDING THINGS YOU MIGHT LIKE…'));
+    else if (s === 'int') h = top + ytGrid(ytSecInt(), 'y57i', { desc: 1, empty: 'NO SAVED VIDEOS', sub: 'Tap ♥ on a video to save it here' });
+    else if (s === 'trl') h = top + ytRibbon(F) + ytGrid(ytSecTrailers(), 'y57r', { empty: 'NO TRAILERS YET', sub: 'Titles on your list with a trailer show here' });
+    else if (s === 'gen') h = top + ytRibbon(F) + (YH.cat ? (F.trending ? ytGrid(F.trending, 'y57g', { empty: 'NOTHING IN THIS CATEGORY' }) : uiState('load', 'LOADING CATEGORY…')) : uiState('empty', 'PICK A CATEGORY ABOVE'));
+    else if (s === 'rs') h = top + (YRS.length ? '<div class="ytrs57">' + YRS.map(function (x, i) { return '<button class="ui-btn" data-yrsq="' + i + '">🔍 ' + esc(x.q) + '<small>' + new Date(x.at).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }) + '</small></button>'; }).join('') + '<button class="ui-btn ytrsx" data-yrsclr="1">CLEAR ALL</button></div>' : uiState('empty', 'NO SEARCHES YET', 'Searches you make are saved here'));
+    else if (s === 'lgg') h = top + ytGrid(ytSecLogging(), 'y57l', { desc: 1, empty: 'NOTHING HALF-WATCHED', sub: 'Start a video and it shows here with its resume point' });
+    else if (s === 'lgd') h = top + ytGrid(ytSecLogged(), 'y57d', { desc: 1, empty: 'NO FULLY WATCHED VIDEOS YET' });
+    else if (s === 'gw') h = top + gwLobbyHtml(); }
+  B.innerHTML = head + h; ytBurger(); if (s === 'gw') gwLobbyLoad(); };
+document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-ysec],[data-ygen],[data-yrsq],[data-yrsclr],[data-ytfullh]'); if (!b || !b.closest('#ytpage')) return; e.stopImmediatePropagation(); e.preventDefault(); SFX.tap && SFX.tap();
+  if (b.dataset.ysec != null) { R57.sec = b.dataset.ysec; if (R57.sec !== 'gen' && YH.cat) { YH.cat = ''; ytLoad(); } else ytDraw(); $('ytBody').scrollTop = 0; return; }
+  if (b.dataset.ygen) { R57.sec = 'gen'; YH.cat = b.dataset.ygen; ytLoad(); return; }
+  if (b.dataset.ytfullh) return yhOpen();
+  if (b.dataset.yrsq) { var q = (YRS[+b.dataset.yrsq] || {}).q, f = $('ytHomeQ'); if (q && f) { f.q.value = q; f.requestSubmit ? f.requestSubmit() : f.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true })); } return; }
+  if (b.dataset.yrsclr) { var keep = YRS.slice(); YRS = []; ytStore('lg_ytrs', YRS); ytDraw(); toast('Searches cleared', function () { YRS = keep; ytStore('lg_ytrs', keep); ytDraw(); }); } }, true);
+
+/* ---------- Description page (player button + Logged/History entries) + channel page ---------- */
+function ytNum(n) { return n == null ? '' : Number(n).toLocaleString('en-AU'); }
+function ytLinkify(s) { return esc(s).replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>').replace(/\n/g, '<br>'); }
+function ytDescOpen(id) { var x = $('ytdp'); if (!x) { document.body.insertAdjacentHTML('beforeend', '<div id="ytdp" class="ytdp" role="dialog" aria-label="Video description"><div class="ytds"></div></div>'); x = $('ytdp'); } R57.d = { id: id }; x.classList.add('open');
+  var S = x.firstChild; S.innerHTML = '<div class="ytsh"><button class="ui-btn" data-ytdx="1">◀ BACK</button><h2 class="ui-h">ℹ DESCRIPTION</h2></div>' + uiState('load', 'LOADING DETAILS…');
+  run('ytDetails', [id], function (d) { if (R57.d.id !== id) return; R57.d = d || { id: id }; ytDescPaint(); }, function () { if (R57.d.id !== id) return; S.innerHTML = '<div class="ytsh"><button class="ui-btn" data-ytdx="1">◀ BACK</button><h2 class="ui-h">ℹ DESCRIPTION</h2></div>' + uiState('err', 'COULDN\u2019T LOAD DETAILS', 'Check your connection and try again'); }); }
+function ytDescPaint() { var d = R57.d, S = $('ytdp').firstChild, date = d.date ? new Date(d.date).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' }) : (d.dateText || '');
+  var st = [d.views != null ? ['👁', ytNum(d.views), 'VIEWS'] : d.viewsText ? ['👁', d.viewsText, ''] : null, d.likes != null ? ['👍', ytNum(d.likes), 'LIKES'] : null, date ? ['📅', date, 'UPLOADED'] : null].filter(Boolean);
+  S.innerHTML = '<div class="ytsh"><button class="ui-btn" data-ytdx="1">◀ BACK</button><h2 class="ui-h">ℹ DESCRIPTION</h2></div><img class="ytdth" src="https://i.ytimg.com/vi/' + esc(d.id) + '/hqdefault.jpg" alt=""><h3 class="ytdt">' + esc(d.t || '') + '</h3>' +
+    (d.ch ? '<button class="ui-btn ytdch" data-ytdch="' + esc(d.chId || '') + '">👤 ' + esc(d.ch) + ' ›</button>' : '') + '<div class="ytdst">' + st.map(function (x) { return '<div><i>' + x[0] + '</i><b>' + esc(x[1]) + '</b><small>' + x[2] + '</small></div>'; }).join('') + '</div>' +
+    (d.likes == null && d.src !== 'api' ? '<p class="meta">Exact likes need the YouTube Data API key; showing what YouTube\u2019s page reports.</p>' : '') + '<div class="ytdd">' + (d.desc ? ytLinkify(d.desc) : '<i>No description.</i>') + '</div>' +
+    '<div class="ytda"><button class="ui-btn y" data-ytdplay="' + esc(d.id) + '">▶ PLAY</button></div>'; }
+function ytChanOpen(chId, n) { var S = $('ytdp').firstChild; R57.ch = { id: chId, n: n }; S.innerHTML = '<div class="ytsh"><button class="ui-btn" data-ytdback="1">◀ BACK</button><h2 class="ui-h">👤 ' + esc(n || 'CHANNEL') + '</h2></div>' + uiState('load', 'LOADING VIDEOS…');
+  if (!chId) { S.insertAdjacentHTML('beforeend', uiState('err', 'CHANNEL UNKNOWN')); return; }
+  run('ytUploads', [chId], function (L) { if (!R57.ch || R57.ch.id !== chId) return; S.innerHTML = '<div class="ytsh"><button class="ui-btn" data-ytdback="1">◀ BACK</button><h2 class="ui-h">👤 ' + esc(n || 'CHANNEL') + '</h2></div>' + ytGrid((L || []).map(function (v) { return Object.assign({ ch: n, chId: chId }, v); }), 'y57c', { empty: 'NO VIDEOS FOUND' }); }, function () { S.innerHTML = '<div class="ytsh"><button class="ui-btn" data-ytdback="1">◀ BACK</button></div>' + uiState('err', 'COULDN\u2019T LOAD THIS CHANNEL'); }); }
+document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-ytdesc],[data-ytdx],[data-ytdch],[data-ytdback],[data-ytdplay],#ytdp [data-ytv]'); if (!b) return; e.stopImmediatePropagation(); e.preventDefault(); SFX.tap && SFX.tap();
+  if (b.dataset.ytdesc) return ytDescOpen(b.dataset.ytdesc);
+  if (b.dataset.ytdx) return $('ytdp').classList.remove('open');
+  if (b.dataset.ytdback) return ytDescPaint();
+  if (b.dataset.ytdch != null) return ytChanOpen(b.dataset.ytdch, R57.d.ch);
+  var play = function (grp, i) { $('ytdp').classList.remove('open'); var P = $('ytp'); if (P && P.classList.contains('open')) { try { ytnClose(); } catch (x) {} } ytVid(grp, i); };
+  if (b.dataset.ytdplay) { YG.y57p = [{ id: R57.d.id, t: R57.d.t, ch: R57.d.ch, chId: R57.d.chId }]; return play('y57p', 0); }
+  var p = String(b.dataset.ytv).split(':'); play(p[0], +p[1]); }, true);
+var _adRow57 = adRow; adRow = function () { var r = _adRow57.apply(this, arguments); if (r && !r.querySelector('[data-ytdescp]')) r.querySelector('.adgo').insertAdjacentHTML('afterend', '<button class="adgo addesc" data-ytdescp="1">ℹ DESCRIPTION</button>'); return r; };
+document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-ytdescp]'); if (!b) return; e.stopImmediatePropagation(); e.preventDefault(); var id = (window.YTX || {}).id; if (id) { try { ypCmd({ op: 'pause' }); } catch (x) {} ytDescOpen(id); } }, true);
+
+/* ---------- AD BREAK: Next game + 2 new games ---------- */
+function adTitles() { return rows.filter(function (r) { return !isYT(r) && isWatched(r); }); }
+ADG.push(
+  { k: 'scram', n: 'TITLE SCRAMBLE', hint: 'UNSCRAMBLE A TITLE YOU\u2019VE LOGGED', mount: function (el, done) { var sc = 0, off = 0, L = adTitles().filter(function (r) { var t = baseTitle(r.title).replace(/[^A-Za-z ]/g, ''); return t.replace(/ /g, '').length >= 4 && t.length <= 18; });
+      var round = function () { if (off) return; if (L.length < 4) { el.innerHTML = uiState('empty', 'LOG A FEW MORE TITLES TO PLAY'); return; } var pk = L.slice().sort(function () { return Math.random() - .5; }).slice(0, 4), ans = pk[0], t = baseTitle(ans.title).toUpperCase(), w = t.split(' ').map(function (x) { var a = x.split(''); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), q = a[i]; a[i] = a[j]; a[j] = q; } return a.join(''); }).join(' ');
+        if (w === t && t.length > 3) return round(); var opts = pk.slice().sort(function () { return Math.random() - .5; });
+        el.innerHTML = '<div class="adsc"><b>' + esc(w) + '</b><div class="adop">' + opts.map(function (r) { return '<button class="ui-btn" data-v="' + (r === ans ? 1 : 0) + '">' + esc(baseTitle(r.title)) + '</button>'; }).join('') + '</div><small>SCORE ' + sc + '</small></div>';
+        [].forEach.call(el.querySelectorAll('.adop button'), function (b) { b.onclick = function () { var ok = b.dataset.v === '1'; b.classList.add(ok ? 'y' : 'n'); if (ok) { sc++; SFX.coin && SFX.coin(); done(sc); } else { SFX.back && SFX.back(); sc = 0; } setTimeout(round, 700); }; }); };
+      round(); return function () { off = 1; }; } },
+  { k: 'hilo', n: 'HIGHER OR LOWER', hint: 'WHICH DID YOU RATE HIGHER?', mount: function (el, done) { var st = 0, off = 0, mine = me() === 'lewy' ? 'lewyRating' : 'samRating', L = rows.filter(function (r) { return num(r[mine]) != null; });
+      var round = function () { if (off) return; if (L.length < 2) { el.innerHTML = uiState('empty', 'RATE A FEW MORE TITLES TO PLAY'); return; } var a, b, n = 0; do { a = L[Math.floor(Math.random() * L.length)]; b = L[Math.floor(Math.random() * L.length)]; } while ((a === b || num(a[mine]) === num(b[mine])) && ++n < 40); if (a === b || num(a[mine]) === num(b[mine])) { el.innerHTML = uiState('empty', 'NEED TITLES WITH DIFFERENT RATINGS'); return; }
+        var card = function (r) { var p = posters[r.title]; return '<button class="adhl" data-r="' + r.row + '">' + (p ? '<img src="' + esc(p) + '" alt="" onerror="this.remove()">' : '') + '<b>' + esc(baseTitle(r.title)) + '</b></button>'; };
+        el.innerHTML = '<div class="adhlw">' + card(a) + '<i>VS</i>' + card(b) + '</div><small class="adst">STREAK ' + st + '</small>';
+        [].forEach.call(el.querySelectorAll('.adhl'), function (x) { x.onclick = function () { var r = byId(x.dataset.r), o = r === a ? b : a, ok = num(r[mine]) > num(o[mine]); x.classList.add(ok ? 'y' : 'n'); [a, b].forEach(function (q) { var e2 = el.querySelector('[data-r="' + q.row + '"] b'); if (e2) e2.insertAdjacentHTML('beforeend', ' · ★' + num(q[mine])); }); if (ok) { st++; SFX.coin && SFX.coin(); done(st); } else { st = 0; SFX.back && SFX.back(); } setTimeout(round, 1100); }; }); };
+      round(); return function () { off = 1; }; } });
+function adNextGame() { var el = $('adb'); if (!el || !ADB.on) return; try { ADB.game && ADB.game(); } catch (e) {} var i = (ADG.indexOf(ADB.g) + 1) % ADG.length, G = ADG[i]; ADB.g = G; ADS.breaks = i + 1;
+  el.querySelector('.adn').innerHTML = G.n + ' <small>' + G.hint + '</small><em>BEST ' + (ADS.hi[G.k] != null ? ADS.hi[G.k] + (G.lowBest ? 'ms' : '') : '—') + '</em>';
+  ADB.game = G.mount(el.querySelector('.adb'), function (v) { var h = ADS.hi[G.k]; if (h == null || (G.lowBest ? v < h : v > h)) { ADS.hi[G.k] = v; el.querySelector('.adn em').textContent = 'BEST ' + v + (G.lowBest ? 'ms' : '') + ' ★'; } adSave(); }); }
+var _adStart57 = adStart; adStart = function () { var r = _adStart57.apply(this, arguments); var el = $('adb'); if (el && !el.querySelector('[data-adnext]')) el.querySelector('.adt').insertAdjacentHTML('beforeend', '<button class="adnx" data-adnext="1" aria-label="Next game">NEXT GAME ⏭</button>'); return r; };
+document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-adnext]'); if (!b) return; e.stopImmediatePropagation(); e.preventDefault(); SFX.tap && SFX.tap(); adNextGame(); }, true);
+
+/* ===== R57 GROUP WATCH — polled Apps Script backend (transport isolated in GWT so Firebase could replace it) ===== */
+var GWT = { call: function (fn, args, ok, fail) { run(fn, args, ok, fail || function (e) { gwNet(false, e); }); } };
+var GW = { id: '', g: null, since: 0, ev: [], off: 0, poll: 0, player: null, ready: false, net: true, fails: 0, rev: 0, lastPos: 0, lastT: 0, apply: 0, cdT: 0, err: '' };
+var GW_EMO = ['😂', '😱', '❤️', '🔥', '👀', '🍿', '💀', '👏'];
+function gwName(p) { return p === 'sam' ? 'SAM' : 'LEWY'; }
+function gwNow() { return Date.now() + GW.off; }
+function gwOnline(m) { return m && m.on && gwNow() - (m.lastSeen || 0) < 9000; }
+/* lobby (inside the YouTube section) */
+function gwLobbyHtml() { var cur = window.YTX && YTX.id ? [{ id: YTX.id, t: YTX.t || 'Current video' }] : [], pick = cur.concat(ytSecInt(), ytSecLogging(), ytSecHist()).filter(function (v, i, a) { return v.id && a.findIndex(function (x) { return x.id === v.id; }) === i; }).slice(0, 12); YG.y57w = pick;
+  return '<div id="gwOpenBox">' + uiState('load', 'CHECKING FOR A LIVE SESSION…') + '</div><h4 class="gwh">START A SESSION · PICK A VIDEO</h4><form id="gwUrlF" class="gwurl"><input class="f kbt" name="u" placeholder="Paste a YouTube link" autocomplete="off"><button class="ui-btn y">START</button></form>' +
+    (pick.length ? '<div class="ytg57">' + pick.map(function (v, i) { return '<button class="ytc gwpick" data-gwpick="' + i + '"><img loading="lazy" src="' + esc(v.th || ('https://i.ytimg.com/vi/' + v.id + '/hqdefault.jpg')) + '" alt=""><span>' + esc(v.t || '') + '</span></button>'; }).join('') + '</div>' : uiState('empty', 'NO VIDEOS TO PICK YET', 'Paste a link above')); }
+function gwLobbyLoad() { GWT.call('gwOpen', [], function (o) { var B = $('gwOpenBox'); if (!B) return; R57.gwo = o; B.innerHTML = o ? '<div class="gwlive"><b>🔴 LIVE · ' + gwName(o.host) + '\u2019S SESSION</b><span>' + esc(o.t || o.vid) + '</span><button class="ui-btn y" data-gwjoin="' + esc(o.id) + '">' + (o.host === me() ? 'REJOIN' : 'JOIN') + '</button></div>' : uiState('empty', 'NO LIVE SESSION', 'Start one below — the other person can join from here'); }, function () { var B = $('gwOpenBox'); if (B) B.innerHTML = uiState('err', 'COULDN\u2019T CHECK SESSIONS', 'Pull to retry'); }); }
+function gwVidFromUrl(u) { var m = String(u || '').match(/(?:v=|youtu\.be\/|shorts\/|embed\/)([\w-]{11})/) || String(u || '').match(/^([\w-]{11})$/); return m ? m[1] : ''; }
+document.addEventListener('submit', function (e) { if (!e.target || e.target.id !== 'gwUrlF') return; e.preventDefault(); var id = gwVidFromUrl(e.target.u.value); if (!id) return toast('THAT DOESN\u2019T LOOK LIKE A YOUTUBE LINK'); gwCreate({ id: id, t: '' }); }, true);
+function gwCreate(v) { toast('STARTING SESSION…'); GWT.call('gwCreate', [v, me()], function (g) { gwEnter(g); }, function (e) { toast('COULDN\u2019T START: ' + String(e && e.message || e).slice(0, 60)); }); }
+function gwJoinId(id) { GWT.call('gwJoin', [id, me()], function (g) { gwEnter(g); }, function (e) { toast(String(e && e.message || 'COULDN\u2019T JOIN').slice(0, 60)); gwLobbyLoad(); }); }
+document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-gwpick],[data-gwjoin]'); if (!b) return; e.stopImmediatePropagation(); e.preventDefault(); SFX.tap && SFX.tap();
+  if (b.dataset.gwjoin) return gwJoinId(b.dataset.gwjoin); var v = (YG.y57w || [])[+b.dataset.gwpick]; if (v) gwCreate({ id: v.id, t: v.t, ch: v.ch || '' }); }, true);
+/* room page */
+function gwEnter(g) { GW.id = g.id; GW.g = null; GW.since = 0; GW.ev = []; GW.rev = 0; GW.err = ''; GW.ready = false; var P = $('gwp');
+  if (!P) { document.body.insertAdjacentHTML('beforeend', '<div id="gwp" class="gwp" role="dialog" aria-label="Group watch"><div class="gwtop"></div><div class="gwvid"><div id="gwPl"></div><div class="gwcd" id="gwCd"></div><div class="gwmsg" id="gwMsg"></div></div><div class="gwmid"></div><div class="gwchat" id="gwChat"></div><form class="gwin" id="gwIn"><div class="gwemo">' + GW_EMO.map(function (x) { return '<button type="button" data-gwemo="' + x + '">' + x + '</button>'; }).join('') + '</div><input class="f kbt" name="t" placeholder="Say something…" autocomplete="off" maxlength="300"><button class="ui-btn y">SEND</button></form></div>'); P = $('gwp'); }
+  P.classList.add('open'); document.body.classList.add('gwon'); try { var yp = $('ytp'); if (yp && yp.classList.contains('open')) ytnClose(); } catch (e) {}
+  gwApply(g); gwLoop(); gwPlayerInit(g.vid); }
+function gwLoop() { clearTimeout(GW.poll); if (!GW.id) return; var t0 = Date.now(), pos = gwPos(), st = GW.player && GW.player.getPlayerState ? GW.player.getPlayerState() : -2;
+  GWT.call('gwPoll', [GW.id, me(), GW.since, pos, st], function (g) { var t1 = Date.now(); if (g && g.serverNow) { var o = g.serverNow - (t0 + t1) / 2; GW.offs = (GW.offs || []).concat([o]).slice(-5); var s = GW.offs.slice().sort(function (a, b) { return a - b; }); GW.off = s[Math.floor(s.length / 2)]; }
+    gwNet(true); if (!g || g.state === 'gone') { gwGone(); return; } gwApply(g); GW.poll = setTimeout(gwLoop, GW.g && GW.g.state === 'countdown' ? 700 : 1500); },
+    function (e) { gwNet(false, e); GW.poll = setTimeout(gwLoop, Math.min(8000, 1500 * Math.pow(1.6, GW.fails))); }); }
+function gwNet(ok) { if (ok) { if (!GW.net) toast('RECONNECTED ✓'); GW.net = true; GW.fails = 0; } else { GW.fails++; if (GW.fails >= 2) GW.net = false; } var t = document.querySelector('#gwp .gwnet'); if (t) t.style.display = GW.net ? 'none' : ''; }
+window.addEventListener('online', function () { if (GW.id) { GW.fails = 0; gwLoop(); } }); document.addEventListener('visibilitychange', function () { if (!document.hidden && GW.id) { GWT.call('gwJoin', [GW.id, me()], function (g) { gwApply(g); gwLoop(); }, function () { gwLoop(); }); } });
+function gwApply(g) { var prev = GW.g; GW.g = g; (g.ev || []).forEach(function (e) { if (e.id > GW.since) { GW.since = e.id; GW.ev.push(e); if (e.type === 'emoji') gwFloat(e.text); } }); GW.ev = GW.ev.slice(-150);
+  gwPaint(prev); if (!prev || prev.rev !== g.rev || prev.state !== g.state) gwSync(g); }
+function gwPaint(prev) { var g = GW.g, P = $('gwp'); if (!P || !g) return; var me2 = me(), o = me2 === 'sam' ? 'lewy' : 'sam', M = g.members || {};
+  P.querySelector('.gwtop').innerHTML = '<button class="ui-btn" data-gwleave="1">◀ LEAVE</button><div class="gwti"><b>' + esc(g.t || 'GROUP WATCH') + '</b><small>ROOM ' + esc(g.id) + ' · ' + String(g.state).toUpperCase() + '</small></div>' +
+    '<div class="gwpr">' + ['sam', 'lewy'].map(function (p) { var m = M[p]; return '<span class="gwdot ' + p + (gwOnline(m) ? ' on' : '') + '" title="' + gwName(p) + (gwOnline(m) ? ' online' : ' offline') + '">' + gwName(p)[0] + (m && m.ready && g.state === 'lobby' ? '✓' : '') + '</span>'; }).join('') + '</div><span class="gwnet" style="display:' + (GW.net ? 'none' : '') + '">RECONNECTING…</span>';
+  var mid = '', mine = (g.preds || []).filter(function (p) { return p.who === me2; }), theirs = (g.preds || []).filter(function (p) { return p.who !== me2; });
+  if (g.state === 'lobby') { mid = '<div class="gwpred"><h4 class="gwh">🔮 PREDICTIONS <small>hidden from ' + gwName(o) + ' until the start</small></h4>' + mine.map(function (p) { return '<div class="gwpc mine">' + esc(p.text) + '<button data-gwpdel="' + p.id + '" aria-label="Remove">✕</button></div>'; }).join('') +
+      (mine.length < 5 ? '<form id="gwPF" class="gwurl"><input class="f kbt" name="p" maxlength="140" placeholder="e.g. Someone cries in the first 5 minutes" autocomplete="off"><button class="ui-btn">ADD</button></form>' : '') + '<p class="meta">' + gwName(o) + ': ' + (theirs.length ? theirs.length + ' prediction' + (theirs.length > 1 ? 's' : '') + ' locked in' : gwOnline(M[o]) ? 'thinking…' : 'not here yet') + '</p></div>' +
+      '<button class="ui-btn ' + ((M[me2] || {}).ready ? 'on' : 'y') + ' gwready" data-gwready="' + ((M[me2] || {}).ready ? 0 : 1) + '">' + ((M[me2] || {}).ready ? '✓ READY · WAITING FOR ' + gwName(o) : '▶ I\u2019M READY') + '</button>'; }
+  else if (g.state === 'review') { mid = '<div class="gwpred"><h4 class="gwh">🔮 DID THEY COME TRUE?</h4>' + (g.preds || []).map(function (p) { return '<div class="gwpc ' + (p.res || '') + '"><em>' + gwName(p.who) + '</em> ' + esc(p.text) + '<span><button class="ui-btn' + (p.res === 'y' ? ' on' : '') + '" data-gwmark="' + p.id + ':y">✓ TRUE</button><button class="ui-btn' + (p.res === 'n' ? ' on' : '') + '" data-gwmark="' + p.id + ':n">✕ NOPE</button></span></div>'; }).join('') + ((g.preds || []).length ? '<p class="meta">SCORE · SAM ' + (g.preds || []).filter(function (p) { return p.who === 'sam' && p.res === 'y'; }).length + ' · LEWY ' + (g.preds || []).filter(function (p) { return p.who === 'lewy' && p.res === 'y'; }).length + '</p>' : uiState('empty', 'NO PREDICTIONS THIS TIME')) + '</div><button class="ui-btn" data-gwend="1">END SESSION</button>'; }
+  else if (g.state === 'ended') mid = uiState('empty', 'SESSION ENDED', 'Thanks for watching together') + '<button class="ui-btn y" data-gwleave="1">CLOSE</button>';
+  else mid = '<div class="gwctl"><button class="ui-btn" data-gwop="' + (g.state === 'paused' ? 'resume' : 'pause') + '">' + (g.state === 'paused' ? '▶ RESUME' : '❚❚ PAUSE') + '</button><button class="ui-btn" data-gwop="back10">⟲ 10s</button><button class="ui-btn" data-gwop="fwd10">10s ⟳</button><button class="ui-btn" data-gwop="ended">🏁 FINISHED</button></div>';
+  var md = P.querySelector('.gwmid'), keepV = md.querySelector('input') ? md.querySelector('input').value : ''; if (md.dataset.h !== mid) { md.innerHTML = mid; md.dataset.h = mid; var inp = md.querySelector('input'); if (inp && keepV) inp.value = keepV; }
+  var pins = g.state !== 'lobby' ? (g.preds || []).map(function (p) { return '<div class="gwpin">📌 <em>' + gwName(p.who) + '</em> ' + esc(p.text) + (p.res ? (p.res === 'y' ? ' ✓' : ' ✕') : '') + '</div>'; }).join('') : '';
+  var C = $('gwChat'), atEnd = C.scrollTop + C.clientHeight >= C.scrollHeight - 30; C.innerHTML = (pins ? '<div class="gwpins">' + pins + '</div>' : '') + (GW.ev.length ? GW.ev.filter(function (e) { return e.type !== 'pred'; }).map(function (e) { return e.type === 'sys' ? '<div class="gwsys">' + esc(e.text) + '</div>' : '<div class="gwm ' + e.who + (e.who === me2 ? ' me' : '') + (e.type === 'emoji' ? ' emo' : '') + '"><em>' + gwName(e.who) + '</em><span>' + esc(e.text) + '</span></div>'; }).join('') : uiState('empty', 'SAY HI 👋'));
+  if (atEnd) C.scrollTop = C.scrollHeight; }
+function gwFloat(x) { var V = document.querySelector('#gwp .gwvid'); if (!V) return; var s = document.createElement('span'); s.className = 'gwfl'; s.textContent = x; s.style.left = (15 + Math.random() * 70) + '%'; V.appendChild(s); setTimeout(function () { s.remove(); }, 2200); }
+/* player + sync */
+function gwYTApi(cb) { if (window.YT && YT.Player) return cb(); (window.GWQ = window.GWQ || []).push(cb); if (window.GWQ.length > 1) return; var prev = window.onYouTubeIframeAPIReady; window.onYouTubeIframeAPIReady = function () { try { prev && prev(); } catch (e) {} (window.GWQ || []).splice(0).forEach(function (f) { f(); }); };
+  var s = document.createElement('script'); s.src = 'https://www.youtube.com/iframe_api'; s.onerror = function () { gwMsg('⚠ COULDN\u2019T LOAD THE YOUTUBE PLAYER', 1); }; document.head.appendChild(s); }
+function gwPlayerInit(vid) { GW.ready = false; GW.err = ''; gwMsg(''); try { GW.player && GW.player.destroy && GW.player.destroy(); } catch (e) {} var host = $('gwPl'); if (host) host.outerHTML = '<div id="gwPl"></div>';
+  gwYTApi(function () { GW.player = new YT.Player('gwPl', { videoId: vid, playerVars: { playsinline: 1, rel: 0, modestbranding: 1, controls: 1, origin: location.origin && location.origin !== 'null' ? location.origin : undefined },
+    events: { onReady: function () { GW.ready = true; gwSync(GW.g); }, onError: function (e) { var c = e && e.data; GW.err = c; gwMsg(c === 101 || c === 150 || c === 100 ? '🚫 THIS VIDEO CAN\u2019T PLAY INSIDE LOGGED (the uploader blocked embedding' + (c === 100 ? ' or it was removed' : '') + '). Group sync won\u2019t work for it — open it in YouTube instead.' : '⚠ PLAYER ERROR ' + c, 1); },
+      onStateChange: function (e) { gwLocalState(e.data); } } }); }); }
+function gwMsg(t, open) { var m = $('gwMsg'); if (!m) return; m.innerHTML = t ? '<p>' + t + '</p>' + (open && GW.g ? '<a class="ui-btn y" href="https://www.youtube.com/watch?v=' + esc(GW.g.vid) + '" target="_blank" rel="noopener">OPEN IN YOUTUBE ↗</a>' : '') : ''; m.style.display = t ? '' : 'none'; }
+function gwPos() { try { return GW.player && GW.player.getCurrentTime ? +GW.player.getCurrentTime() || 0 : 0; } catch (e) { return 0; } }
+function gwExpected(g) { if (g.state === 'playing' && g.startAt) return Math.max(0, g.basePos + (gwNow() - g.startAt) / 1000); return g.basePos || 0; }
+function gwSync(g) { if (!g) return; clearInterval(GW.cdT); var P = GW.player, cd = $('gwCd'); if (cd) cd.style.display = 'none';
+  if (g.state === 'countdown' || (g.state === 'playing' && g.startAt && gwNow() < g.startAt)) { if (P && GW.ready) { GW.apply = Date.now(); try { P.seekTo(g.basePos || 0, true); P.pauseVideo(); } catch (e) {} }
+    var tick = function () { var ms = g.startAt - gwNow(); if (cd) { cd.style.display = ''; cd.textContent = ms > 0 ? Math.ceil(ms / 1000) : 'GO!'; } if (ms <= 0) { clearInterval(GW.cdT); setTimeout(function () { if (cd) cd.style.display = 'none'; }, 600); GW.apply = Date.now(); try { P && GW.ready && P.playVideo(); } catch (e) {} SFX.coin && SFX.coin(); } else if (ms % 1000 < 120) SFX.tick && SFX.tick(); };
+    tick(); GW.cdT = setInterval(tick, 100); return; }
+  if (!P || !GW.ready) return; GW.apply = Date.now();
+  try { if (g.state === 'playing') { var ex = gwExpected(g); if (Math.abs(gwPos() - ex) > 1.2) P.seekTo(ex, true); P.playVideo(); } else if (g.state === 'paused' || g.state === 'review' || g.state === 'lobby') { P.pauseVideo(); if (g.state === 'paused' && Math.abs(gwPos() - g.basePos) > 1) P.seekTo(g.basePos, true); } } catch (e) {} }
+setInterval(function () { var g = GW.g, P = GW.player; if (!g || !GW.ready || g.state !== 'playing' || !g.startAt || gwNow() < g.startAt) return; var d = gwPos() - gwExpected(g);
+  try { if (Math.abs(d) > 1.5) { GW.apply = Date.now(); P.seekTo(gwExpected(g), true); } else if (Math.abs(d) > 0.4) { P.setPlaybackRate(d > 0 ? 0.95 : 1.05); setTimeout(function () { try { P.setPlaybackRate(1); } catch (e) {} }, 3000); } } catch (e) {} }, 5000);
+/* local YT controls → shared state (ignore changes we caused in the last 1.5 s) */
+function gwLocalState(s) { var g = GW.g; if (!g || Date.now() - GW.apply < 1500) return; var pos = gwPos();
+  if (s === 2 && g.state === 'playing') gwOp('pause', pos); else if (s === 1 && g.state === 'paused') { if (Math.abs(pos - g.basePos) > 2) gwOp('seek', pos); gwOp('resume', pos); } else if (s === 0 && (g.state === 'playing' || g.state === 'paused')) gwOp('ended', pos);
+  else if (s === 1 && g.state === 'playing' && Math.abs(pos - gwExpected(g)) > 3) gwOp('seek', pos); }
+function gwOp(op, pos) { GWT.call('gwControl', [GW.id, me(), op, pos], function (g) { gwApply(g); }); }
+document.addEventListener('submit', function (e) { var f = e.target; if (!f || (f.id !== 'gwIn' && f.id !== 'gwPF')) return; e.preventDefault(); e.stopImmediatePropagation();
+  if (f.id === 'gwIn') { var t = f.t.value.trim(); if (!t) return; f.t.value = ''; GW.ev.push({ id: GW.since + 0.001, who: me(), type: 'chat', text: t }); gwPaint(); GWT.call('gwChat', [GW.id, me(), t, 'chat'], function () { gwLoop(); }, function () { toast('MESSAGE NOT SENT'); }); }
+  else { var p = f.p.value.trim(); if (!p) return; f.p.value = ''; GWT.call('gwPred', [GW.id, me(), p], function (g) { gwApply(g); }, function (x) { toast(String(x && x.message || 'NOT SAVED').slice(0, 60)); }); } }, true);
+document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('#gwp [data-gwready],#gwp [data-gwop],#gwp [data-gwemo],#gwp [data-gwleave],#gwp [data-gwend],#gwp [data-gwmark],#gwp [data-gwpdel]'); if (!b) return; e.stopImmediatePropagation(); e.preventDefault(); SFX.tap && SFX.tap(); var D = b.dataset;
+  if (D.gwready != null) { if (GW.player && GW.ready && D.gwready === '1') { try { GW.apply = Date.now(); GW.player.mute(); GW.player.playVideo(); setTimeout(function () { try { GW.player.pauseVideo(); GW.player.seekTo(0, true); GW.player.unMute(); } catch (x) {} }, 350); } catch (x) {} } /* iOS: unlock playback inside the tap */ return GWT.call('gwReady', [GW.id, me(), D.gwready === '1'], function (g) { gwApply(g); }); }
+  if (D.gwop) { var pos = gwPos(); if (D.gwop === 'back10' || D.gwop === 'fwd10') return gwOp('seek', Math.max(0, pos + (D.gwop === 'fwd10' ? 10 : -10))); if (D.gwop === 'ended') return confirm8('🏁', 'VIDEO FINISHED?', 'Moves you both to marking predictions', 'FINISHED', function () { gwOp('ended', pos); }); return gwOp(D.gwop, pos); }
+  if (D.gwemo) { gwFloat(D.gwemo); return GWT.call('gwChat', [GW.id, me(), D.gwemo, 'emoji'], function () {}); }
+  if (D.gwmark) { var q = D.gwmark.split(':'); return GWT.call('gwMark', [GW.id, me(), +q[0], q[1]], function (g) { gwApply(g); }); }
+  if (D.gwpdel) return GWT.call('gwPred', [GW.id, me(), '', +D.gwpdel], function (g) { gwApply(g); });
+  if (D.gwend) return confirm8('👥', 'END SESSION?', 'Ends it for both of you', 'END', function () { GWT.call('gwControl', [GW.id, me(), 'end', gwPos()], function () { gwClose(); }); });
+  if (D.gwleave) { if (GW.g && GW.g.state === 'ended') return gwClose(); return confirm8('👥', 'LEAVE SESSION?', 'You can rejoin from YouTube › Group Watch', 'LEAVE', function () { GWT.call('gwLeave', [GW.id, me()], function () {}, function () {}); gwClose(); }); } }, true);
+function gwClose() { clearTimeout(GW.poll); clearInterval(GW.cdT); try { GW.player && GW.player.destroy(); } catch (e) {} GW.player = null; GW.id = ''; GW.g = null; var P = $('gwp'); if (P) P.classList.remove('open'); document.body.classList.remove('gwon'); if (R57.sec === 'gw') ytDraw(); }
+function gwGone() { toast('SESSION ENDED'); if (GW.g) { GW.g.state = 'ended'; gwPaint(); } clearTimeout(GW.poll); }
+
+/* ---------- r58 HOTFIX: iOS trivia audio ----------
+   iOS ignores preload/load() on media elements outside a user gesture, so the r56 muted-<audio> preload never reached canplaythrough on iPhone:
+   every clip hit the 9 s timeout and got swapped out / marked noclip, and the first play() then ran outside the PLAY tap. Clips are already
+   verified server-side (tvClipOk_), so the client preload is now instant and the first question renders + plays inside the tap. */
+trvPreload = function (qs, done) { TRV.swap = {}; done(); };
+function trvSession() { try { if (navigator.audioSession && navigator.audioSession.type !== 'playback') navigator.audioSession.type = 'playback'; } catch (e) {} }
+document.addEventListener('click', function (e) { if (e.target.closest && e.target.closest('#trv button,[data-trv],[data-trvday],[data-trvgo],[data-trvsnd],.trvo button')) trvSession(); }, true);
+document.addEventListener('touchend', function (e) { if (e.target.closest && e.target.closest('#trv')) trvSession(); }, true);
+/* ---------- r58: YouTube drawer (☰ top-left → slide-out with the sections) ---------- */
+function ytMenuHtml() { return '<div class="ytmenu">' + YSECS.map(function (x) { var n = x[0] === 'gen' || x[0] === 'gw' ? '' : x[0] === 'rs' ? YRS.length : ytSecCount(x[0]); return '<button class="ytsec57' + (R57.sec === x[0] ? ' on' : '') + '" data-ysec="' + x[0] + '"><i>' + x[1] + '</i><b>' + x[2] + '</b><small>' + x[3] + '</small>' + (n !== '' && n != null ? '<em>' + n + '</em>' : '') + '</button>'; }).join('') + '</div>'; }
+function ytBurger() { var B = $('ytBody'), hd = B && B.querySelector('.ythd'); if (!hd || hd.querySelector('#ytBurg')) return; hd.insertAdjacentHTML('afterbegin', '<button id="ytBurg" class="ui-btn" aria-label="YouTube menu" aria-haspopup="menu"><svg viewBox="0 0 8 7" shape-rendering="crispEdges" width="20" height="18"><path fill="currentColor" d="M0 0h8v1H0zM0 3h8v1H0zM0 6h8v1H0z"/></svg></button>'); }
+function ytDrawerOpen() { ytDrawerClose(true); var yp = $('ytpage') || document.body; yp.insertAdjacentHTML('beforeend', '<div id="ytdrw" role="dialog" aria-label="YouTube menu"><div class="ytdrwbg" data-ytdx="1"></div><aside><div class="ytdrwh"><b>▶ YOUTUBE</b><button class="ui-btn" data-ytdx="1" aria-label="Close">✕</button></div><button class="ytsec57' + (!R57.sec ? ' on' : '') + '" data-ysec=""><i>🏠</i><b>HOME</b><small>For you · from your history & lists</small></button>' + ytMenuHtml() + '</aside></div>');
+  requestAnimationFrame(function () { var d = $('ytdrw'); d && d.classList.add('open'); }); }
+function ytDrawerClose(now) { var d = $('ytdrw'); if (!d) return; if (now) return d.remove(); d.classList.remove('open'); setTimeout(function () { d.remove(); }, 200); }
+window.addEventListener('click', function (e) { var t = e.target.closest && e.target.closest('#ytBurg,[data-ytdx]'); if (t) { e.stopImmediatePropagation(); e.preventDefault(); SFX.tap && SFX.tap(); return t.id === 'ytBurg' ? ytDrawerOpen() : ytDrawerClose(); }
+  if (e.target.closest && e.target.closest('#ytdrw [data-ysec]')) setTimeout(function () { ytDrawerClose(); }, 0); }, true);
+/* ---------- r58: YouTube recommendations from THEIR signals (no random trending in the main feed) ---------- */
+ytSeeds = function () { var p = me(), s = [], add = function (x) { x = String(x || '').trim(); if (x && s.indexOf(x) < 0) s.push(x); };
+  try { ytSecHist().slice(0, 12).forEach(function (v) { if (v.ch) add(v.ch); }); } catch (e) {}                         // 1) channels in their own YT history
+  rows.filter(isYT).filter(function (r) { return isY(r[p + 'Watched']) || r[p + 'Watched'] === 'As we speak'; }).sort(function (a, b) { return b.row - a.row; }).forEach(function (r) { add((r.ytm && r.ytm.ch) || r.title.replace(/ \(Channel\)$/, '')); }); // 2) channels they logged
+  try { ytSecInt().forEach(function (v) { add(v.ch || v.t); }); } catch (e) {}                                          // 3) Interested videos
+  s = s.slice(0, 3); rows.filter(function (r) { return !isYT(r) && !isWatched(r); }).sort(function (a, b) { return (intGet(rKey(b)) ? 1 : 0) - (intGet(rKey(a)) ? 1 : 0) || b.row - a.row; }).slice(0, 2).forEach(function (r) { add(baseTitle(r.title) + ' official trailer'); }); // 4) trailers of list titles
+  return s.slice(0, 4); };
+var _ytDraw58 = ytDraw; ytDraw = function () { var F = YH.feed; if (F && F.rec && !F._r58) { F._r58 = 1; var tr = {}; (F.trending || []).forEach(function (x) { tr[x.id] = 1; }); var own = [];
+    try { own = ytSecTrailers().slice(0, 4).map(function (x) { return Object.assign({ k: 'video', src: 'trl' }, x); }).concat(ytSecInt().slice(0, 3).map(function (x) { return Object.assign({ k: 'video', src: 'int' }, x); })); } catch (e) {}
+    var seen = {}; F.rec = own.concat(F.rec.filter(function (x) { return x.src !== 'new' && !tr[x.id]; })).filter(function (x) { if (!x.id || seen[x.id]) return false; seen[x.id] = 1; return true; }); }
+  return _ytDraw58.apply(this, arguments); };
+/* ---------- r58: hotbar EXPLORE · [LOG] (gold centre, real Logged logo; one arc: Logging/Logged/Interested/New entry) · CAMP. YouTube lives inside Explore ---------- */
+(function () { var N = $('nav'); if (!N || N.dataset.r58) return; N.dataset.r58 = 1; var cp = N.querySelector('[data-v=stats]'), lg = $('navLogM'), ex = N.querySelector('[data-v=home]');
+  [].forEach.call(N.children, function (b) { if (b !== ex && b !== lg && b !== cp) b.classList.add('nhide'); }); if (cp) cp.classList.remove('nhide');
+  [ex, lg, cp].forEach(function (b) { if (b) N.appendChild(b); }); if (lg) { lg.classList.add('gold58'); var ic = lg.querySelector('.nlogm'); if (ic) ic.innerHTML = typeof logoSvg === 'function' ? logoSvg() : LOG_ICON; } N.classList.add('nav58'); })();
+var _logItems58 = logItems; logItems = function () { return _logItems58.apply(this, arguments).concat([{ ic: '<span class="aplus">+</span>', t: 'NEW ENTRY', go: function () { $('fab').onclick(); } }]); };
+var _navHi58 = r56NavHi; r56NavHi = function () { _navHi58.apply(this, arguments); setTimeout(function () { var yt = $('ytpage') && $('ytpage').classList.contains('open'), C = document.querySelector('#nav [data-v=stats]'), E = document.querySelector('#nav [data-v=home]'); C && C.classList.toggle('on', !yt && view === 'stats'); if (yt && E) E.classList.add('on'); avPin(); }, 40); };
+var _renderHome58 = renderHome; renderHome = function () { var r = _renderHome58.apply(this, arguments); try { var V = $('v-home'); if (V && !$('q').value.trim() && !V.querySelector('#ytTile')) V.insertAdjacentHTML('afterbegin', '<button id="ytTile" class="ui-btn" aria-label="Open YouTube"><span class="yti58">' + (typeof ytI === 'function' ? ytI(34) : '▶') + '</span><span><b>YOUTUBE</b><small>For you · history · trailers · group watch</small></span><i>▶</i></button>'); } catch (e) {} return r; };
+document.addEventListener('click', function (e) { if (e.target.closest && e.target.closest('#ytTile')) { e.stopImmediatePropagation(); e.preventDefault(); SFX.tap && SFX.tap(); navTap('navYT'); r56NavHi(); } }, true);
+/* ---------- r58: who's logged in — small avatar by the inbox on Logged; tap → Camp ---------- */
+function avPin() { var b = $('avPin'), ib = $('inboxB') || $('mute'); if (!b && ib) { ib.insertAdjacentHTML('beforebegin', '<button id="avPin" class="icon px" aria-label="Your camp"><canvas data-av="' + me() + '"></canvas></button>'); b = $('avPin'); }
+  if (!b) return; b.className = 'icon px ' + me(); var cv = b.querySelector('canvas'); if (cv.dataset.av !== me() || !cv.dataset.done) { cv.dataset.av = me(); try { drawAvatar(cv, me()); cv.dataset.done = 1; } catch (e) {} } b.style.display = view === 'all' && !($('ytpage') && $('ytpage').classList.contains('open')) ? '' : 'none'; }
+document.addEventListener('click', function (e) { if (e.target.closest && e.target.closest('#avPin')) { e.stopImmediatePropagation(); e.preventDefault(); SFX.tap && SFX.tap(); navTap('stats'); } }, true);
+setTimeout(avPin, 800);
+/* ---------- r58: Camp — profile at the top, trophy cabinet right below it ---------- */
+var _renderStats58 = renderStats; renderStats = function () { var r = _renderStats58.apply(this, arguments); try { var cab = $('cab'), hd = document.querySelector('#v-stats .lk .lkh2, #v-stats .lk .lkh'); if (cab && hd) hd.insertAdjacentElement('afterend', cab); } catch (e) {} return r; };
+/* ---------- r58: native app feel — fixed header + hotbar, each section scrolls in its own container, scroll memory per section ---------- */
+(function () { var B = document.body, Mn = document.querySelector('body>main'); if (!Mn) return; B.classList.add('app58');
+  var fit = function () { var h = document.querySelector('header'), n = $('nav'); B.style.setProperty('--hdr58', (h ? Math.round(h.getBoundingClientRect().height) : 0) + 'px'); B.style.setProperty('--nav58', (n && getComputedStyle(n).display !== 'none' ? Math.round(n.getBoundingClientRect().height) : 0) + 'px'); };
+  fit(); window.addEventListener('resize', fit); try { new ResizeObserver(fit).observe(document.querySelector('header')); new ResizeObserver(fit).observe($('nav')); } catch (e) { setInterval(fit, 1000); }
+  var _sT = window.scrollTo.bind(window); window.scrollTo = function (x, y) { var t = typeof x === 'object' && x ? x.top : y; if (t != null) Mn.scrollTop = t; return _sT.apply(window, arguments); };
+  Object.defineProperty(window, 'scrollY', { configurable: true, get: function () { return Mn.scrollTop; } }); Object.defineProperty(window, 'pageYOffset', { configurable: true, get: function () { return Mn.scrollTop; } });
+  window.SCR58 = {}; var cur = typeof view !== 'undefined' ? view : 'home';
+  var _show58 = show; show = function (v) { SCR58[cur] = Mn.scrollTop; var r = _show58.apply(this, arguments); var nv = typeof view !== 'undefined' ? view : v; if (nv !== cur) { cur = nv; var y = SCR58[nv] || 0; Mn.scrollTop = y; requestAnimationFrame(function () { Mn.scrollTop = y; }); } fit(); return r; };
+  document.addEventListener('dblclick', function (e) { if (!e.target.closest('input,textarea')) e.preventDefault(); }, { passive: false });
+  document.addEventListener('gesturestart', function (e) { e.preventDefault(); }, { passive: false }); })();
+/* skeletons instead of blank/jumping loaders */
+function skel58(n) { var h = ''; for (var i = 0; i < (n || 3); i++) h += '<div class="skel58"></div>'; return h; }
+if (typeof uiState === 'function') { var _uiState58 = uiState; uiState = function (k) { if (k === 'load') return '<div aria-busy="true" aria-label="Loading">' + skel58(3) + '</div>'; return _uiState58.apply(this, arguments); }; }
 
 </script></body></html>

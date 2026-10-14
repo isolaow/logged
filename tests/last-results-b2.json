@@ -1,10 +1,10 @@
 {
  "1a hotbar shows only EXPLORE · + · LOG": {
-  "pass": true
+  "pass": false
  },
  "1b LOG opens arch: LOGGED | INTERESTED | LOGGING": {
-  "pass": true,
-  "d": "LOGGED|INTERESTED|LOGGING"
+  "pass": false,
+  "d": "LOGGED|INTERESTED|LOGGING|NEW ENTRY"
  },
  "1c arch is semi-transparent": {
   "pass": true
@@ -19,11 +19,11 @@
   "pass": true
  },
  "1g + opens arch: NEW ENTRY | YOUTUBE | CAMP": {
-  "pass": true,
-  "d": "NEW ENTRY|YOUTUBE|CAMP"
+  "pass": false,
+  "d": ""
  },
  "1h CAMP item → Camp view": {
-  "pass": true
+  "pass": false
  },
  "1i tapping outside closes the arch": {
   "pass": true
@@ -53,7 +53,7 @@
    "p": "",
    "k": "movie",
    "v": "y",
-   "at": 1791968879689,
+   "at": 1791970355363,
    "h": 2
   }
  },
@@ -204,18 +204,18 @@
    "tab": 5
   }
  },
- "11.0 \"loading tracks\" shown before the timer started": {
+ "11.0 \"loading tracks\" shown; timer not started while loading": {
   "pass": false
  },
  "11.0b broken clip swapped for its stand-in question before play": {
-  "pass": true
+  "pass": false
  },
  "11.1 Q1 plays its own clip (All Star), time advancing, SFX did not replace it": {
   "pass": true,
   "d": {
    "src": "710220894021381.plus.aac.p.m4a",
-   "t": 4.635689,
-   "t2": 5.840569
+   "t": 4.70654,
+   "t2": 5.91295
   }
  },
  "11.s skip button on question": {
@@ -225,25 +225,25 @@
   "pass": true,
   "d": {
    "src": "078769097048384.plus.aac.p.m4a",
-   "t": 1.905452,
-   "t2": 3.110494
+   "t": 1.881602,
+   "t2": 3.085936
   }
  },
  "11.3 Q3 plays its own clip (Bohemian Rhapsody), time advancing, SFX did not replace it": {
   "pass": true,
   "d": {
    "src": "639854395137008.plus.aac.p.m4a",
-   "t": 1.879072,
-   "t2": 3.082371
+   "t": 1.830732,
+   "t2": 3.035312
   }
  },
  "11.k solo skip = one vote; sent as -1; swapped answer sent as +100": {
-  "pass": true,
+  "pass": false,
   "d": [
    0,
    0,
    -1,
-   100
+   0
   ]
  },
  "12a shows = sum of episodes actually watched (BB S2 3 eps = 140m; Severance 8 eps with 1 gap filled by avg = 57+53+49+55+50+40+45+50)": {
