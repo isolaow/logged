@@ -4239,10 +4239,10 @@ function oxClip(i) { var t = oxTrack(i), r = byId(OSX.r); if (!t) return; OXS.i 
 oxPlay = function (i) { var t = oxTrack(i); if (!t) return; oxBless();
   if (OXS.i === i && OXS.mode === 'clip') { if (OXA.paused) OXA.play(); else OXA.pause(); spBar('♪ ' + oxLabel() + ' · 30s', !OXA.paused); return; }
   var c = (typeof CONN !== 'undefined' && CONN && CONN[me()]) || {};
-  if (t.uri && c.sp && c.spPlay) { OXA.pause(); OXS.i = i; OXS.mode = 'sp'; OXS.playing = true; oxPaint(); var d = OSX.d, G = d.groups[OSX.g] || d.groups[0], uris = G.tracks.map(function (x) { return x.uri; }).filter(Boolean);
-    spBar('STARTING ' + oxLabel() + '…', true); run('spPlay', [me(), uris, uris.indexOf(t.uri)], function (o) { if (o && o.ok) { spBar(oxLabel(), true); toast('▶ PLAYING IN SPOTIFY' + (o.device ? ' · ' + o.device.toUpperCase() : '')); return; } if (o && o.needScope) oxScope(); toast(o && o.needDevice ? 'SPOTIFY APP NOT OPEN — TAP ▶ AGAIN FOR A 30s CLIP' : '30s CLIP'); OXS.mode = ''; OXS.playing = false; oxPaint(); spBar('TAP ▶ FOR A 30s CLIP · ' + oxLabel(), false); }, function () { OXS.mode = ''; OXS.playing = false; oxPaint(); });
-    return; }
-  oxClip(i); };
+  oxClip(i); /* always start the inline clip inside the tap (iOS); hand over to Spotify if Connect really plays */
+  if (t.uri && c.sp && c.spPlay) { var d = OSX.d, G = d.groups[OSX.g] || d.groups[0], uris = G.tracks.map(function (x) { return x.uri; }).filter(Boolean);
+    run('spPlay', [me(), uris, uris.indexOf(t.uri)], function (o) { if (o && o.ok && OXS.i === i) { OXA.pause(); OXS.mode = 'sp'; OXS.playing = true; oxPaint(); spBar(oxLabel(), true); toast('▶ FULL SONG IN SPOTIFY' + (o.device ? ' · ' + o.device.toUpperCase() : '')); } else if (o && o.needScope) oxScope(); }, function () {}); }
+  };
 /* mini-player controls drive the inline clip when it's ours */
 window.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-spc]'); if (!b || OXS.mode !== 'clip') return; e.stopImmediatePropagation(); var k = b.dataset.spc; oxBless();
   if (k === 'toggle') { if (OXA.paused) OXA.play(); else OXA.pause(); spBar('♪ ' + oxLabel() + ' · 30s', !OXA.paused); }
