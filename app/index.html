@@ -898,6 +898,34 @@ body.ytp-on{overflow:hidden}
 .xmw [data-xspin]{background:linear-gradient(135deg,#123a3a,#10202a);box-shadow:0 0 0 3px #000,4px 4px 0 #000,inset 0 -3px 0 #39e4c0}
 .xmw .xmi{font-size:22px;line-height:1}.xmw .xspi{font:24px var(--pix);color:#39e4c0;animation:xspin 3s steps(8) infinite}@keyframes xspin{to{transform:rotate(360deg)}}
 .xmw b{font:9px var(--pix);letter-spacing:1px}.xmw small{font:6px var(--pix);opacity:.6;letter-spacing:1px;line-height:1.5}
+#ostx{margin:18px 0 6px;padding:12px 12px 10px;background:linear-gradient(180deg,#1a1430,#100d1e);box-shadow:0 0 0 3px #000,5px 5px 0 #000,inset 0 3px 0 #1ed760}
+.oxh{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px}.oxh b{font:13px var(--pix);letter-spacing:2px;color:#1ed760;text-shadow:3px 3px 0 #000}.oxh small{font:7px var(--pix);opacity:.55;letter-spacing:1px}
+.oxld{font:8px var(--pix);opacity:.7;padding:10px 0}
+.oxg{display:flex;gap:6px;overflow-x:auto;margin-bottom:10px}.oxg button{flex:none;height:30px;padding:0 10px;border:0;font:7px var(--pix);background:#221c3a;color:#c9c6e6;box-shadow:inset 0 0 0 2px #2c2c4a}.oxg button.on{background:#1ed760;color:#000;box-shadow:2px 2px 0 #000}
+.oxal{font:7px var(--pix);opacity:.55;margin-bottom:6px;letter-spacing:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.oxl{list-style:none;margin:0;padding:0;max-height:330px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.oxl li{display:flex;align-items:center;gap:10px;min-height:46px;padding:4px 6px;cursor:pointer;border-bottom:2px solid rgba(0,0,0,.35)}.oxl li:active{background:#2a2148}
+.oxl .oxn{font:8px var(--pix);color:#1ed760;width:18px;flex:none}.oxl div{flex:1;min-width:0}.oxl b{display:block;font:8px var(--pix);line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.oxl small{font-size:11px;opacity:.6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.oxl em{font:7px var(--pix);font-style:normal;opacity:.5}.oxl i{font-style:normal;width:30px;height:30px;flex:none;display:flex;align-items:center;justify-content:center;background:#1ed760;color:#000;font-size:11px;box-shadow:2px 2px 0 #000}
+.oxf{display:flex;flex-direction:column;gap:8px;margin-top:10px}.oxf span{font:6px var(--pix);opacity:.5;letter-spacing:1px;line-height:1.6}.oxf div{display:flex;gap:8px}.oxf .btn{font-size:8px}
+.oxsc{display:flex;align-items:center;gap:10px;background:#ffcc00;color:#000;padding:8px 10px;margin-bottom:10px;font:7px var(--pix);line-height:1.5;box-shadow:3px 3px 0 #000}.oxsc .btn{flex:none}
+#ost.flash{animation:oxfl .4s steps(2) 3}@keyframes oxfl{50%{box-shadow:0 0 0 3px #1ed760}}
+#thm.spm{box-shadow:0 0 0 3px #000,4px 4px 0 #000,inset 0 -3px 0 #1ed760}#thm.spm .spi{font-style:normal;color:#1ed760;margin-right:6px}#thm.spm [data-spc=toggle]{background:#1ed760;color:#000}
+#ostx,.oxl li,.oxl div{text-align:left}
+#thm.spm span{flex:1;min-width:0;display:block;font:8px var(--pix);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;animation:none}
+#thm.spm .spi{font:10px var(--pix)}
+#thm.spm button{width:34px;height:34px}
+#thm.spm{left:calc(10px + env(safe-area-inset-left))!important;right:calc(10px + env(safe-area-inset-right))!important;width:auto!important;max-width:none!important}
+#thm.spm span{display:block!important}#thm.spm .spi{display:inline!important}
+#thm.gp{height:32px;padding:0 3px 0 8px;gap:5px;font-size:7px}
+#thm.gp>span{position:relative;flex:1;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:clip;font:7px var(--pix)!important;animation:none!important}
+#thm.gp>span .mq{display:inline-block;font-style:normal}
+#thm.gp>span.run .mq{animation:mqs var(--mqd,8s) steps(60) infinite alternate}
+@keyframes mqs{0%,12%{transform:translateX(0)}88%,100%{transform:translateX(var(--mqx,0))}}
+#thm.gp>span .spi{font-size:8px!important;margin-right:4px}
+#thm.gp button{position:relative;width:26px!important;height:26px!important;font-size:8px!important;padding:0}
+#thm.gp button::after{content:"";position:absolute;inset:-9px -4px}
+#thm.gp.spm>span{font:7px var(--pix)!important;text-align:left}#thm.gp>span{text-align:left}
 </style></head><body>
 <div id="splash" aria-label="Logged"></div>
 <header><div class="hin">
@@ -3809,11 +3837,25 @@ function intSet(k, v, meta) { var p = me(), prev = (INT[p] || {})[k]; INT[p] = I
 setTimeout(function () { intLoad(function () { window.intRedraw && intRedraw(); }); }, 1500);
 function ytDockFix() { var P = $('ytp'), d = P && P.querySelector('.ydock'); if (!d || d.dataset.r38) return; d.dataset.r38 = 1; var id = YTX.id, o = YTX.info[id] || {}, k = 'yt:' + id, v = intGet(k);
   var lb = d.querySelector('[data-yta=log]'); if (lb && /LOGGED/.test(lb.textContent)) { lb.querySelector('i').innerHTML = lgdI(); lb.classList.add('ylg'); }
-  d.insertAdjacentHTML('beforeend', '<button data-yint="y" class="yin' + (v === 'y' ? ' on' : '') + '"><i>♥</i><span>' + 'INTERESTED' + '</span></button><button data-yint="n" class="ynot' + (v === 'n' ? ' on' : '') + '"><i>✕</i><span>NOT INTERESTED</span></button>');
+  d.insertAdjacentHTML('beforeend', '<button data-yint="y" class="yin"><i>♥</i><span>' + 'INTERESTED' + '</span></button><button data-yint="n" class="ynot' + (v === 'n' ? ' on' : '') + '"><i>✕</i><span>NOT INTERESTED</span></button>');
   d.classList.add('y6'); }
 var _ytnRenderI = ytnRender; ytnRender = function () { var r = _ytnRenderI.apply(this, arguments); try { ytDockFix(); } catch (e) {} return r; };
-document.addEventListener('click', function (e) { var b = e.target.closest('[data-yint]'); if (!b) return; e.stopPropagation(); var id = YTX.id; if (!id) return; var o = YTX.info[id] || {}, k = 'yt:' + id, v = b.dataset.yint, nv = intGet(k) === v ? '' : v;
-  intSet(k, nv, { t: o.t || YTX.t || '', p: 'https://i.ytimg.com/vi/' + id + '/mqdefault.jpg', k: 'yt' }); var d = b.parentNode; d.querySelector('.yin').classList.toggle('on', nv === 'y'); d.querySelector('.ynot').classList.toggle('on', nv === 'n'); SFX.tap && SFX.tap(); }, true);
+/* R44: INTERESTED / NOT INTERESTED in the player act on the movie/show the trailer is for — never on the video itself */
+function ytBase_(t) { return norm(String(t || '').replace(/\s*\((S\d+|\d{4})\)\s*$/i, '')); }
+document.addEventListener('click', function (e) { var b = e.target.closest('[data-yint]'); if (!b) return; e.stopPropagation(); var id = YTX.id; if (!id || b.disabled) return; var o = YTX.info[id] || {}, v = b.dataset.yint, lab = b.querySelector('span'), old = lab.textContent;
+  b.disabled = true; lab.textContent = '…'; SFX.tap && SFX.tap();
+  var done = function () { b.disabled = false; lab.textContent = old; };
+  run('trailerMatch', [o.t || YTX.t || '', o.ch || ''], function (m) { done(); if (!m) return toast('No movie/show found for this video');
+    var RS = rows.filter(function (x) { return !isYT(x) && ytBase_(x.title) === norm(m.title); }), r = RS.filter(function (x) { return !started(x[me() + 'Watched']); })[0] || RS[0];
+    if (r) { if (RS.some(function (x) { return started(x[me() + 'Watched']); })) return toast((v === 'y' ? '♥ ' : '') + m.title + ' — you\u2019ve already started it'); var k = rKey(r), prev = (INT[me()] || {})[k];
+      intSet(k, v, { t: r.title, p: posters[r.title] || m.poster, k: m.tv ? 'tv' : 'movie' }); b.classList.add('on');
+      return toast((v === 'y' ? '♥ ' + r.title + ' marked Interested' : '✕ ' + r.title + ' hidden'), function () { intSet(k, prev ? prev.v : ''); b.classList.remove('on'); }); }
+    if (v !== 'y') return toast(m.title + ' isn\u2019t on your list — nothing to hide');
+    var fl = { suggestedBy: me() === 'lewy' ? 'Lewy' : 'Sam', spesh: 'Optional', samWatched: 'Not yet', lewyWatched: 'Not yet' }, tmp = { row: 1e9, title: m.title, type: m.tv ? 'TV Show' : 'Movie', genres: '', samRating: '', lewyRating: '', samComment: '', lewyComment: '' }; Object.assign(tmp, fl); if (m.poster) posters[m.title] = m.poster; rows.push(tmp); busy++; render();
+    run('addFromTmdb', [{ id: m.id, tv: m.tv, title: m.title, season: 0, genres: [], poster: m.poster }, fl], function (res) { finishAdd(tmp, m.title, res); b.classList.add('on');
+        toast('♥ Added ' + m.title + ' to Interested', function () { busy++; run('deleteEntry', [tmp.row, tmp.title], function () { busy--; var i2 = rows.indexOf(tmp); if (i2 >= 0) rows.splice(i2, 1); render(); toast('Removed ' + m.title); b.classList.remove('on'); }, function () { busy--; toast('Couldn\u2019t undo'); }); }); },
+      function () { busy--; var i3 = rows.indexOf(tmp); if (i3 >= 0) rows.splice(i3, 1); render(); toast('Couldn\u2019t add ' + m.title); }); },
+    function () { done(); toast('No movie/show found for this video'); }); }, true);
 
 /* ===== R39: Mood Pick — 3 genuinely new questions (already asked: who/solo-together, mood, time, movie/show, new/classic, list/discover) ===== */
 var MPV = { medieval: ['⚔', 'MEDIEVAL', ['History', 'War', 'Fantasy']], fantasy: ['🪄', 'MAGIC & FANTASY', ['Fantasy']], ancient: ['🏛', 'ANCIENT ROME & GREECE', ['History']], space: ['🚀', 'SPACE', ['Sci-Fi', 'Science Fiction']], cyber: ['🌆', 'CYBERPUNK', ['Sci-Fi', 'Science Fiction']],
@@ -3968,5 +4010,58 @@ document.addEventListener('click', function (e) { var b = e.target.closest('[dat
 var _renderHomeMW = renderHome; renderHome = function () { _renderHomeMW.apply(this, arguments); var H = $('v-home'), q = H.querySelector('.qt'); if (!q || H.querySelector('.xmw')) return;
   q.insertAdjacentHTML('beforebegin', '<div class="xmw"><button data-xmood="1"><span class="xmi">🎭</span><b>MOOD PICK</b><small>ANSWER A FEW, GET 3 PICKS</small></button><button data-xspin="1"><span class="xmi xspi">◎</span><b>SPIN THE WHEEL</b><small>LET FATE DECIDE</small></button></div>'); };
 document.addEventListener('click', function (e) { var b = e.target.closest('[data-xmood],[data-xspin]'); if (!b) return; e.stopPropagation(); SFX.tap && SFX.tap(); if (b.dataset.xmood) return mpOpen(); show('wheel'); navHi(); }, true);
+
+/* ===== R42 (held): SOUNDTRACK section high on every title page — auto tracklist (server: ostAlbum), tap = full track via Spotify Connect (spPlay), fallback = iTunes 30s clip ===== */
+var OSX = { r: null, d: null, g: 0, poll: null };
+function ostxHtml(r) { var d = OSX.r === r.row ? OSX.d : null, h = '<section id="ostx"><div class="oxh"><b>♪ SOUNDTRACK</b>' + (d && d.groups && d.groups.length ? '<small>' + (d.src === 'spotify' ? 'VIA SPOTIFY' : 'VIA APPLE MUSIC') + '</small>' : '') + '</div>';
+  var cc = (typeof CONN !== 'undefined' && CONN && CONN[me()]) || {}; if (cc.sp && cc.spPlay === false) h += '<div class="oxsc"><span>SPOTIFY NEEDS ONE MORE PERMISSION TO PLAY FULL SONGS HERE</span><button class="btn y" data-oxre="1">↻ RECONNECT</button></div>';
+  if (!d) return h + '<div class="oxld">FINDING THE SONGS<i>...</i></div></section>';
+  if (!d.groups.length) return h + '<div class="oxld">NO OFFICIAL SOUNDTRACK FOUND</div><button class="btn oxman" data-oxman="1">🎵 PICK A SONG MANUALLY</button></section>';
+  var G = d.groups[OSX.g] || d.groups[0];
+  h += (d.groups.length > 1 ? '<div class="oxg">' + d.groups.map(function (g, i) { return '<button data-oxg="' + i + '" class="' + (g === G ? 'on' : '') + '">' + esc(g.h) + '</button>'; }).join('') + '</div>' : '');
+  h += '<div class="oxal">' + esc(G.al) + ' · ' + G.tracks.length + ' TRACKS</div><ol class="oxl">' + G.tracks.map(function (t, i) { return '<li data-oxt="' + i + '"><span class="oxn">' + String(i + 1).padStart(2, '0') + '</span><div><b>' + esc(t.n) + '</b><small>' + esc(t.a) + '</small></div><em>' + (t.s ? Math.floor(t.s / 60) + ':' + String(t.s % 60).padStart(2, '0') : '') + '</em><i>▶</i></li>'; }).join('') + '</ol>';
+  return h + '<div class="oxf"><span>' + (connSp() ? 'FULL TRACKS PLAY THROUGH YOUR SPOTIFY APP' : 'CONNECT SPOTIFY FOR FULL TRACKS') + ' · 30s CLIPS OTHERWISE</span><div>' + (G.url ? '<a class="btn" target="_blank" rel="noopener" href="' + esc(G.url) + '">↗ ALBUM</a>' : '') + '<button class="btn" data-oxman="1">🎵 PICK MANUALLY</button></div></div></section>'; }
+function connSp() { var c = (typeof CONN !== 'undefined' && CONN) || {}; return !!(c[me()] && c[me()].sp); }
+function ostxDraw() { var r = byId(OSX.r), x = $('ostx'); if (r && x) x.outerHTML = ostxHtml(r); }
+var _openDetailX = openDetail; openDetail = function (r) { _openDetailX.apply(this, arguments); if (isYT(r)) return; var b = $('detailBody').querySelector('.btns'); if (!b) return;
+  if (OSX.r !== r.row) { OSX.r = r.row; OSX.d = null; OSX.g = 0; } b.insertAdjacentHTML('afterend', ostxHtml(r)); if (OSX.d) return; var m = M(r);
+  run('ostAlbum', [r.title, m.year || '', r.type === 'TV Show' ? 'tv' : 'movie', m.seasons || 0, me()], function (d) { if (OSX.r !== r.row) return; OSX.d = d || { groups: [] }; ostxDraw(); }, function () { if (OSX.r !== r.row) return; OSX.d = { groups: [] }; ostxDraw(); }); };
+function spBar(t, playing) { var x = $('thm'); if (!x || !x.classList.contains('spm')) { themeStop(); document.body.insertAdjacentHTML('beforeend', '<div id="thm" class="gp spm"><span></span><button data-spc="prev" aria-label="Previous">⏮</button><button data-spc="toggle" class="spt" aria-label="Play or pause">❚❚</button><button data-spc="next" aria-label="Next">⏭</button><button data-spc="stop" aria-label="Stop">■</button></div>'); x = $('thm'); }
+  x.querySelector('span').innerHTML = '<i class="spi">♫</i>' + esc(t || '');
+  x.classList.toggle('paused', !playing); x.querySelector('.spt').textContent = playing ? '❚❚' : '▶'; GP.pin = true; GP.paused = !playing;
+  clearInterval(OSX.poll); OSX.poll = setInterval(spPoll, 6000); }
+function spPoll() { if (!$('thm') || !$('thm').classList.contains('spm')) return clearInterval(OSX.poll); if (document.hidden) return; run('spNow', [me()], function (o) { if (!o || o.err || o.needScope) return; if (o.idle) return spBar('SPOTIFY IDLE', false); spBar(o.n + ' — ' + o.a, o.playing); }, function () {}); }
+function oxPlay(i) { var d = OSX.d, G = d && (d.groups[OSX.g] || d.groups[0]), t = G && G.tracks[i]; if (!t) return; var r = byId(OSX.r), label = t.n + ' — ' + t.a;
+  var clip = function (why) { if (why) toast(why); ostPv(r ? r.title : t.n, { n: t.n, a: t.a.split(',')[0] }, function (o) { var u = t.pv || (o && o.url); if (!u) return toast('NO PLAYABLE CLIP FOR THIS SONG');
+      var x = $('thm'); x && x.remove(); if (CLIPSTOP) try { CLIPSTOP(); } catch (e) {} CLIPSTOP = null; document.body.insertAdjacentHTML('beforeend', '<div id="thm"><div class="thh"></div><span>♪ ' + esc(label) + ' · 30s</span><button data-thoff="1" aria-label="Stop">■</button></div>'); THEME_NOW = OSX.r;
+      clipMount($('thm').querySelector('.thh'), { src: 'sp', pv: u, st: 0, n: t.n }, { vol: 90 }); GP.pin = true; }); };
+  if (!t.uri || !connSp()) return clip(connSp() ? '' : '30s CLIP · CONNECT SPOTIFY IN CAMP FOR FULL TRACKS');
+  var uris = G.tracks.map(function (x) { return x.uri; }).filter(Boolean), off = uris.indexOf(t.uri), tries = 0;
+  spBar('STARTING ' + label + '…', true);
+  var go = function () { run('spPlay', [me(), uris, off], function (o) { o = o || {};
+      if (o.ok) { spBar(label, true); toast('▶ PLAYING IN SPOTIFY' + (o.device ? ' · ' + o.device.toUpperCase() : '')); setTimeout(spPoll, 2500); return; }
+      if (o.needDevice && tries++ < 2) { toast('WAKING SPOTIFY…'); var back = function () { if (!document.hidden) { document.removeEventListener('visibilitychange', back); setTimeout(go, 800); } }; document.addEventListener('visibilitychange', back); setTimeout(function () { document.removeEventListener('visibilitychange', back); go(); }, 4000); location.href = 'spotify:'; return; }
+      themeStop();
+      if (o.needScope) { oxScope(); return clip(''); }
+      clip(o.needDevice ? 'SPOTIFY APP NOT READY — PLAYING A 30s CLIP' : o.needPremium ? 'SPOTIFY PREMIUM NEEDED — 30s CLIP' : '30s CLIP (SPOTIFY: ' + String(o.err || '?').slice(0, 30) + ')'); }, function () { themeStop(); clip('30s CLIP'); }); };
+  go(); }
+function oxScope() { var x = $('ostx'); if (!x || x.querySelector('.oxsc')) return; x.querySelector('.oxh').insertAdjacentHTML('afterend', '<div class="oxsc"><span>SPOTIFY NEEDS ONE MORE PERMISSION TO PLAY FULL SONGS HERE</span><button class="btn y" data-oxre="1">↻ RECONNECT</button></div>'); }
+document.addEventListener('click', function (e) { var b = e.target.closest('[data-oxt],[data-oxg],[data-oxman],[data-oxre],[data-spc]'); if (!b) return; e.stopPropagation();
+  if (b.dataset.oxt != null) { SFX.tap && SFX.tap(); return oxPlay(+b.dataset.oxt); }
+  if (b.dataset.oxg != null) { OSX.g = +b.dataset.oxg; return ostxDraw(); }
+  if (b.dataset.oxman) { var o = $('ost'); if (o) { o.scrollIntoView({ behavior: 'smooth', block: 'center' }); o.classList.add('flash'); setTimeout(function () { o.classList.remove('flash'); }, 1200); } return; }
+  if (b.dataset.oxre) return connGo('sp', me());
+  if (b.dataset.spc) { var op = b.dataset.spc; if (op === 'stop') { run('spCtl', [me(), 'pause'], function () {}, function () {}); clearInterval(OSX.poll); return themeStop(); }
+    if (op === 'toggle') { var pl = !$('thm').classList.contains('paused'); spBar($('thm').querySelector('span').textContent.replace(/^♫/, ''), !pl); return run('spCtl', [me(), pl ? 'pause' : 'resume'], function (o) { if (o && o.needScope) oxScope(); }, function () {}); }
+    run('spCtl', [me(), op], function () { setTimeout(spPoll, 900); }, function () {}); } }, true);
+/* status for the needs-reconnect hint */
+setTimeout(function () { if (typeof CONN !== 'undefined' && CONN && CONN[me()] && CONN[me()].sp && CONN[me()].spPlay === false) OSX.needScope = true; }, 4000);
+
+/* ===== R45: slim 32px mini-player with a scrolling title ===== */
+function gpMarq() { var t = $('thm'); if (!t) return; var s = t.querySelector(':scope > span'); if (!s) return; var m = s.querySelector('.mq');
+  if (!m) { s.innerHTML = '<em class="mq">' + s.innerHTML + '</em>'; m = s.querySelector('.mq'); }
+  var over = m.scrollWidth - s.clientWidth; s.classList.toggle('run', over > 4); if (over > 4) { s.style.setProperty('--mqx', -(over + 12) + 'px'); s.style.setProperty('--mqd', Math.max(6, over / 18) + 's'); } }
+new MutationObserver(function () { clearTimeout(gpMarq.h); gpMarq.h = setTimeout(gpMarq, 60); }).observe(document.body, { childList: true, subtree: false, characterData: false });
+setInterval(function () { var t = $('thm'), s = t && t.querySelector(':scope > span'); if (s && !s.querySelector('.mq')) gpMarq(); }, 700);
 
 </script></body></html>
