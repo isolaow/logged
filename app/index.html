@@ -3558,7 +3558,7 @@ function thaUnlock() { if (THA_OK) return; try { THA.src = SILENT; var p = THA.p
 var _AudioN = window.Audio; window.Audio = function (src) { try { THA.pause(); } catch (e) {} THA.onloadedmetadata = THA.ontimeupdate = THA.onended = THA.onerror = null; THA.loop = false; if (src) THA.src = src; return THA; };
 // 3) album / song previews from iTunes (m4a): used when a title has no theme, and as the iOS path for Spotify/SoundCloud/YouTube themes that can't autoplay in an embed
 var OPV = {};
-function ostPv(title, c, cb) { var k = title + '|' + (c ? c.n : ''); if (OPV[k] !== undefined) return cb(OPV[k]); run('ostPreview', [title, c && c.n || '', c && c.a || ''], function (o) { OPV[k] = o || null; cb(OPV[k]); }, function () { cb(null); }); }
+function ostPv(title, c, cb) { var k = title + '|' + (c ? c.n : ''); if (OPV[k] !== undefined) return cb(OPV[k]); run('ostPreview', [title, c && c.n || '', c && c.a || '', (function () { var r = byTitle(title); return r && yearOf(r) || ''; })()], function (o) { OPV[k] = o || null; cb(OPV[k]); }, function () { cb(null); }); }
 function thPlayPv(r, o, label) { if (THEME_NOW !== r.row) return; var t = $('thm'); if (!t) return; var host = t.querySelector('.thh');
   t.querySelector('span').textContent = '♪ ' + (label || '') + o.n; clipMount(host, { src: 'sp', pv: o.url, st: 0, n: o.n }, { vol: 30, loop: 1 }); }
 var _themeAutoB = themeAuto; themeAuto = function (r) { var th = r.theme || {}, c = th[WHO] || th.sam || th.lewy, off = muted || localStorage.getItem('lg_themeauto') === '0';
