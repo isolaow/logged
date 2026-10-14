@@ -98,7 +98,7 @@
  },
  "4b create session → room open": {
   "pass": true,
-  "d": "5V9PHR"
+  "d": "KUZSQ4"
  },
  "4c presence: Lewy shows online": {
   "pass": true
@@ -114,7 +114,7 @@
   "d": [
    "countdown",
    "9",
-   8239
+   8204
   ]
  },
  "4g predictions pinned in chat once started": {
@@ -130,7 +130,7 @@
    true,
    "",
    1,
-   2.3586171811981202
+   2.3307238474121093
   ]
  },
  "4j remote pause applies (state paused at Lewy’s position)": {

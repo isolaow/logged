@@ -1202,6 +1202,8 @@ body.gwon #dlg{z-index:1400}
 img.poster,img[data-px]{image-rendering:pixelated;image-rendering:crisp-edges;object-fit:cover}
 img.poster.loading{background:repeating-linear-gradient(90deg,#1a1830 0 6px,#24213f 6px 12px);animation:pxsh58 1s steps(4) infinite}
 @keyframes pxsh58{to{background-position:24px 0}}
+body nav#nav.nav58>button:not(#navLogM){display:flex!important;flex-direction:column;align-items:center;justify-content:flex-start;align-self:stretch;line-height:12px}
+body nav#nav.nav58>button>span:first-child{height:30px!important;min-height:30px;display:flex!important;align-items:center;justify-content:center;margin:0!important;padding:0!important;transform:none!important}
 #set58{position:fixed;inset:0;z-index:950;background:#0b0b14;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;display:none;padding:calc(10px + env(safe-area-inset-top)) 14px calc(30px + env(safe-area-inset-bottom))}#set58.open{display:block;animation:v58in .18s ease-out}
 .sth58{display:flex;align-items:center;gap:10px;margin-bottom:12px}.sth58 h2{margin:0;font-size:13px}.sth58 h2 small{display:block;font-size:9px;opacity:.7;margin-top:4px}
 .sg58{background:#16162a;border:3px solid #000;box-shadow:4px 4px 0 #000;margin:0 0 14px;padding:10px 12px}.sg58 h4{font:10px var(--pix);color:#ffcc33;margin:2px 0 8px}
@@ -5302,7 +5304,7 @@ var _renderHome58 = renderHome; renderHome = function () { var r = _renderHome58
 document.addEventListener('click', function (e) { if (e.target.closest && e.target.closest('#ytTile')) { e.stopImmediatePropagation(); e.preventDefault(); SFX.tap && SFX.tap(); navTap('navYT'); r56NavHi(); } }, true);
 /* ---------- r58: who's logged in — small avatar by the inbox on Logged; tap → Camp ---------- */
 function avPin() { var b = $('avPin'), ib = $('inboxB') || $('mute'); if (!b && ib) { ib.insertAdjacentHTML('beforebegin', '<button id="avPin" class="icon px" aria-label="Your camp"><canvas data-av="' + me() + '"></canvas></button>'); b = $('avPin'); }
-  if (!b) return; b.className = 'icon px ' + me(); var cv = b.querySelector('canvas'); if (cv.dataset.av !== me() || !cv.dataset.done) { cv.dataset.av = me(); try { drawAvatar(cv, me()); cv.dataset.done = 1; } catch (e) {} } b.style.display = view === 'all' && !($('ytpage') && $('ytpage').classList.contains('open')) ? '' : 'none'; }
+  if (!b) return; b.className = 'icon px ' + me(); var cv = b.querySelector('canvas'); if (cv.dataset.av !== me() || !cv.dataset.done) { cv.dataset.av = me(); try { drawAvatar(cv, me()); cv.dataset.done = 1; } catch (e) {} } b.style.display = !($('ytpage') && $('ytpage').classList.contains('open')) ? '' : 'none'; }
 document.addEventListener('click', function (e) { if (e.target.closest && e.target.closest('#avPin')) { e.stopImmediatePropagation(); e.preventDefault(); SFX.tap && SFX.tap(); navTap('stats'); } }, true);
 setTimeout(avPin, 800);
 /* ---------- r58: Camp — profile at the top, trophy cabinet right below it ---------- */
@@ -5365,7 +5367,7 @@ cabinetHtml = function () { var p = (typeof statWho !== 'undefined' && statWho) 
     '<div class="cbs"><h4>♪ TOP 5 SOUNDTRACKS</h4>' + (snd.length ? '<ol class="cbsnd">' + snd.map(function (s, i) { return '<li><button class="oxmp" data-cbsnd="' + i + '" aria-label="Play ' + esc(s.n) + '">▶</button><span><b>' + esc(s.n) + '</b> <small>' + esc(s.a) + ' · ' + esc(baseTitle(s.t)) + '</small></span></li>'; }).join('') + '</ol>' : uiState('empty', 'NO SOUNDTRACKS PICKED YET', 'Open a title → ♪ add a song')) + '</div>' +
     shelf58('▶ TOP 5 YOUTUBE', topY, 'LOG SOME YOUTUBE TO FILL THIS SHELF', ytile) +
     '<div class="cbst">' + [[mv.length, 'FILMS'], [tv.length, 'SEASONS'], [both, 'WATCHED TOGETHER']].map(function (x) { return '<div><b>' + x[0] + '</b><small>' + x[1] + '</small></div>'; }).join('') + '</div></section>'; };
-(function () { var fit = function () { var a = $('avPin'), b = $('inboxB'); if (a && b && b.offsetWidth) { a.style.width = a.style.minWidth = a.style.maxWidth = b.offsetWidth + 'px'; a.style.height = b.offsetHeight + 'px'; a.style.flex = '0 0 ' + b.offsetWidth + 'px'; } }; setTimeout(fit, 900); setInterval(fit, 3000); window.addEventListener('resize', fit); })();
+(function () { var fit = function () { var a = $('avPin'), b = $('inboxB'); if (a && b && b.offsetWidth) { var R = b.getBoundingClientRect(), wv = R.width + 'px', hv = R.height + 'px'; a.style.boxSizing = 'border-box'; a.style.padding = getComputedStyle(b).padding; a.style.width = a.style.minWidth = a.style.maxWidth = wv; a.style.height = hv; a.style.flex = '0 0 ' + wv; } }; setTimeout(fit, 900); setInterval(fit, 3000); window.addEventListener('resize', fit); })();
 /* ---------- r58f: shared OUR TOP 5 (both edit; server-side; auto-filled from combined ratings until edited) — first in the cabinet ---------- */
 var OT58 = { o: null, edit: false };
 function ourTopList58() { var W = rows.filter(function (r) { return !isYT(r) && (isY(r.samWatched) || isY(r.lewyWatched)); });
@@ -5420,6 +5422,11 @@ pxScan58(document.body);
 /* r58g: html.lock (scroll/touch lock while splash/trailer up) could stick if the splash node was removed instead of hidden → release it */
 (function () { var fix = function () { var sp = document.getElementById('splash'), up = (sp && sp.style.display !== 'none' && !sp.dataset.done) || $('trl').classList.contains('open'); if (!up) document.documentElement.classList.remove('lock'); };
   new MutationObserver(fix).observe(document.body, { childList: true }); setInterval(fix, 1500); fix(); })();
+/* r58g: Mood Pick "♥ ADD TO INTERESTED" only added the title to the list — now it also marks it Interested, which pops the 1/2/3-heart picker */
+var MPH58 = null;
+['pointerdown', 'touchstart', 'click'].forEach(function (ev) { window.addEventListener(ev, function (e) { var ad = e.target.closest && e.target.closest('[data-mpdadd]'); if (ad && typeof MPD !== 'undefined' && MPD && MPD.tmp && MPD.tmp.__tmdb) MPH58 = MPD.tmp.__tmdb.title; }, { capture: true, passive: true }); });
+var _finishAdd58 = finishAdd; finishAdd = function (tmp, title) { var r = _finishAdd58.apply(this, arguments);
+  if (MPH58 && title === MPH58) { MPH58 = null; setTimeout(function () { var row = rows.filter(function (x) { return x.title === title; })[0]; if (row) intSet(rKey(row), 'y', { t: row.title, p: posters[row.title] || '', k: row.type === 'TV Show' ? 'tv' : 'movie' }); }, 120); } return r; };
 
 /* ===== r58: EXPLORE + CAMP arcs (same style as LOG) and a real per-person SETTINGS page (auto-saved server-side) ===== */
 function mainTo58(el) { var Mn = document.querySelector('body>main'); if (el && Mn) Mn.scrollTop = Math.max(0, el.getBoundingClientRect().top - Mn.getBoundingClientRect().top + Mn.scrollTop - 8); }
