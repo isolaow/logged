@@ -3349,4 +3349,186 @@ var _wrStateG = wrState; wrState = function (p) { wrSync(); return _wrStateG(p).
 // locked tiles: greyed outfit (badge-style), not a black silhouette
 var _wrDrawG = wrDraw; wrDraw = function () { _wrDrawG(); [].forEach.call(document.querySelectorAll('#wrm canvas[data-sil]'), function (c) { c.removeAttribute('data-sil'); }); paintAvatars(); };
 
+
+/* ===== R33: character-accurate outfits for every list title (spec-driven pixel painter) ===== */
+var WEMB = { tree: ['.ggg.', 'ggggg', '.ggg.', '..b..'], star: ['..y..', 'yyyyy', '.yyy.', 'y...y'], wolf: ['g...g', 'gg.gg', 'ggggg', '.g.g.', '..g..'], skull: ['.www.', 'wkwkw', '.www.', '.w.w.'], cross: ['..r..', 'rrrrr', '..r..', '..r..'],
+  sun: ['y.y.y', '.yyy.', 'yyyyy', '.yyy.', 'y.y.y'], i: ['ooooo', 'o.k.o', 'o.k.o', 'o.k.o', '.ooo.'], s: ['.yyy.', 'y....', '.yyy.', '....y', '.yyy.'], heart: ['r.r', 'rrr', '.r.'], dot: ['ww', 'ww'], flame: ['..r..', '.ror.', 'royor', '.ooo.'],
+  fs: ['.yyyyy', 'y.....', '.yyy..', '....y.', 'yyyy..'], bolt: ['..y', '.y.', 'yyy', '.y.', 'y..'], badge: ['.yyy.', 'yyyyy', 'yyyyy', '.yyy.'], leaf: ['..g', '.gg', 'gg.', 'g..'], snow: ['w.w.w', '.www.', 'wwwww', '.www.', 'w.w.w'], w: ['w...w', 'w.w.w', '.w.w.'] };
+var WEPAL = { g: '#3f8a4a', b: '#6b4a26', y: '#ffd23f', w: '#f4f4f0', k: '#141418', r: '#d8323f', o: '#ff8a1f' };
+function wrHead(cx, A, h, c, c2) { c2 = c2 || '#1b1b22'; var T = A.hat;
+  if (h === 'cap') { wrRect(cx, c, 9, T - 2, 14, 3); wrRect(cx, c, 18, T + 1, 7, 1); wrRect(cx, c2, 9, T, 14, 1); }
+  else if (h === 'beanie') { wrRect(cx, c, 9, T - 3, 15, 4); wrRect(cx, c2, 9, T + 1, 15, 1); wrRect(cx, c, 15, T - 4, 3, 1); }
+  else if (h === 'bucket') { wrRect(cx, c, 10, T - 3, 13, 3); wrRect(cx, c2, 8, T, 17, 1); }
+  else if (h === 'toque') { wrRect(cx, '#f6f7f9', 11, T - 6, 11, 5); wrRect(cx, '#dfe3e8', 10, T - 1, 13, 2); wrRect(cx, '#fff', 12, T - 7, 9, 1); }
+  else if (h === 'conductor') { wrRect(cx, c, 10, T - 3, 13, 3); wrRect(cx, '#1b1b22', 9, T, 15, 1); wrRect(cx, '#ffd23f', 15, T - 2, 3, 1); }
+  else if (h === 'viking') { wrRect(cx, '#8d939c', 10, T - 3, 13, 4); wrRect(cx, '#5d636c', 10, T, 13, 1); wrRect(cx, '#8d939c', 16, T + 1, 1, 3); }
+  else if (h === 'coif') { wrRect(cx, c, 7, T - 2, 19, 3); wrRect(cx, c, 7, T, 3, 13); wrRect(cx, c, 23, T, 3, 13); for (var i = 0; i < 19; i += 2) wrRect(cx, c2, 7 + i, T - 1, 1, 1); }
+  else if (h === 'wig') { wrRect(cx, c, 7, T - 9, 19, 9); wrRect(cx, c, 6, T, 4, 10); wrRect(cx, c, 23, T, 4, 10); wrRect(cx, c2, 10, T - 8, 3, 1); wrRect(cx, c2, 20, T - 6, 3, 1); }
+  else if (h === 'tiara') { wrRect(cx, c, 11, T - 1, 11, 1); wrRect(cx, c, 13, T - 2, 1, 1); wrRect(cx, c, 16, T - 3, 1, 2); wrRect(cx, c, 19, T - 2, 1, 1); }
+  else if (h === 'mask') { wrRect(cx, c, A.el - 3, A.eye - 1, A.er - A.el + 7, 3); wrRect(cx, '#fff', A.el - 1, A.eye, 2, 1); wrRect(cx, '#fff', A.er - 1, A.eye, 2, 1); }
+  else if (h === 'headband') { wrRect(cx, c, 8, T + 1, 17, 2); }
+  else if (h === 'specs') WRD.specs(cx, A);
+  else if (h === 'shades') { wrRect(cx, c || '#0c0c10', A.el - 2, A.eye - 1, 4, 2); wrRect(cx, c || '#0c0c10', A.er - 2, A.eye - 1, 4, 2); wrRect(cx, c || '#0c0c10', A.el + 2, A.eye - 1, A.er - A.el - 4, 1); }
+  else if (h === 'headset') { wrRect(cx, '#141418', 7, A.eye - 4, 1, 7); wrRect(cx, '#141418', 6, A.eye + 2, 2, 2); wrRect(cx, '#141418', 8, A.mouth, 4, 1); }
+  else if (h === 'bowler') { wrRect(cx, c, 11, T - 3, 11, 3); wrRect(cx, c, 9, T, 15, 1); }
+  else if (h === 'fedora') WRD.fedora(cx, A); else if (h === 'cowboy') { wrSpr(cx, ['....######....', '....######....', '...kkkkkkkk...', '##############', '.############.'], 9, T - 4, { '#': c, k: c2 }); }
+  else if (h === 'crown') WRD.crown(cx, A); else if (h === 'porkpie') WRD.porkpie(cx, A);
+  else if (h === 'helmet') { wrRect(cx, c, 9, T - 3, 15, 4); wrRect(cx, c2, 9, T, 15, 1); wrRect(cx, '#fff', 13, T - 2, 1, 1); }
+  else if (h === 'goggles') { wrRect(cx, '#3a2a1a', 8, T + 1, 17, 1); wrRect(cx, c, 11, T, 4, 2); wrRect(cx, c, 18, T, 4, 2); }
+  else if (h === 'hood') { wrRect(cx, c, 7, T - 3, 19, 3); wrRect(cx, c, 7, T, 3, 14); wrRect(cx, c, 23, T, 3, 14); wrRect(cx, c2, 10, T, 13, 1); }
+  else if (h === 'ears') { wrRect(cx, c, 8, T - 4, 4, 4); wrRect(cx, c, 21, T - 4, 4, 4); wrRect(cx, c2, 9, T - 3, 2, 2); wrRect(cx, c2, 22, T - 3, 2, 2); }
+  else if (h === 'santa') { wrRect(cx, '#d8323f', 10, T - 4, 12, 4); wrRect(cx, '#d8323f', 21, T - 3, 3, 2); wrRect(cx, '#fff', 24, T - 2, 2, 2); wrRect(cx, '#fff', 9, T, 15, 1); }
+  else if (h === 'flower') { wrRect(cx, c, 21, T - 1, 3, 3); wrRect(cx, '#ffd23f', 22, T, 1, 1); }
+  else if (h === 'mic') { wrRect(cx, '#141418', 26, 20, 1, 6); wrRect(cx, '#6b6f78', 25, 18, 3, 3); } }
+function wrHand(cx, a, c) { if (a === 'sword') { wrRect(cx, c || '#cfd5dd', 28, 8, 1, 15); wrRect(cx, '#8a6a2a', 26, 23, 5, 1); wrRect(cx, '#3a2716', 28, 24, 1, 3); }
+  else if (a === 'axe') { wrRect(cx, '#6b4a26', 28, 10, 1, 17); wrRect(cx, '#aeb6c0', 26, 10, 2, 4); }
+  else if (a === 'staff') { wrRect(cx, '#6b4a26', 28, 6, 1, 22); wrRect(cx, c || '#7fe3ff', 27, 5, 3, 2); }
+  else if (a === 'clip') { wrRect(cx, '#8a6a40', 24, 22, 5, 7); wrRect(cx, '#f4f4f0', 25, 23, 3, 5); }
+  else if (a === 'axe2') { wrRect(cx, '#6b4a26', 27, 12, 1, 15); wrRect(cx, '#9aa0aa', 28, 12, 3, 3); }
+  else if (a === 'wand') { wrRect(cx, '#141418', 27, 18, 1, 8); wrRect(cx, '#fff', 27, 17, 1, 1); } }
+// spec → painter
+function wrSpec(S) { return function (cx, p, A) { if (S.sk) wrSkinTo(cx, p, S.sk);
+  wrBody(cx, p, function (dx, yy, e, h) { var ad = Math.abs(dx), xx = dx + 64;
+    if (S.iw > 0 && V(dx, yy, S.iw)) { if (S.t && ad <= (S.tw || 0) && yy > 0) return S.t; return S.i; }
+    if (S.iw === -1 && yy < 1 && ad < 3) return S.i;
+    if (S.lap && ad === S.iw + 1 && yy < S.iw + 3) return S.lap;
+    if (S.z && ad === 0 && yy > 0) return S.z;
+    if (S.b && yy === S.b) return ad === 0 && S.bk ? S.bk : S.bc;
+    if (S.pa && yy < 3 && ad > 6) return (ad + yy) % 2 ? S.pa : S.pa2 || S.s;
+    if (S.sur && ad < S.sur && yy > 1) { if (S.sp === 'quarter') return (dx < 0) === (yy < 6) ? S.surc : S.surc2; return S.surc; }
+    if (S.fur && yy < 2) return (ad + yy) % 3 ? S.fur : S.fur2 || S.s;
+    if (e) return S.s;
+    var pt = S.p; if (pt === 'plaid') return (xx % 4 === 0 || yy % 4 === 0) ? S.p2 : ((xx % 4 === 2 && yy % 4 === 2) ? S.p3 || S.c : S.c);
+    if (pt === 'stripe') return xx % 3 === 0 ? S.p2 : S.c; if (pt === 'hstripe') return yy % 2 ? S.p2 : S.c; if (pt === 'dots') return (xx + yy) % 4 === 0 && yy % 2 === 0 ? S.p2 : S.c;
+    if (pt === 'mail') return (xx + yy) % 2 ? S.c : S.p2 || S.s; if (pt === 'spark') return (xx * 7 + yy * 5) % 9 === 0 ? S.p2 : S.c; if (pt === 'grid') return (xx % 3 === 0 || yy % 3 === 0) ? S.p2 : S.c;
+    if (pt === 'half') return dx < 0 ? S.c : S.p2; if (pt === 'chev') return (yy + ad) % 4 === 0 ? S.p2 : S.c; if (pt === 'spots') return (xx * 3 + yy * 7) % 11 === 0 ? S.p2 : S.c;
+    return S.c; });
+  if (S.e) wrSpr(cx, WEMB[S.e], S.ex != null ? S.ex : (S.sur ? 14 : 19), A.body + (S.ey || 3), Object.assign({}, WEPAL, S.ep || {}));
+  if (S.e2) wrSpr(cx, WEMB[S.e2], S.e2x, A.body + S.e2y, Object.assign({}, WEPAL, S.ep2 || {})); if (S.h) wrHead(cx, A, S.h, S.hc, S.hc2); if (S.h2) wrHead(cx, A, S.h2, S.hc3); if (S.a) wrHand(cx, S.a, S.ac); }; }
+var SUIT = function (c, s, t, o) { return Object.assign({ c: c, s: s, i: '#f2f3f5', iw: 3, t: t, tw: 0 }, o || {}); };
+var WRT = { // base title (lowercase) → [character outfit, spec]
+  'a knight of the seven kingdoms': ["DUNK'S HEDGE KNIGHT ARMOUR", { c: '#8d939c', s: '#4a4f57', p: 'mail', p2: '#6f757e', sur: 7, surc: '#7a4a2a', e: 'tree', ep: { g: '#3f8a4a', b: '#3a2716' }, ex: 12, ey: 3, e2: 'bolt', e2x: 17, e2y: 1, ep2: { y: '#ffd23f' }, b: 8, bc: '#3a2716', h: 'coif', hc: '#8d939c', hc2: '#5d636c', a: 'sword' }],
+  'apex': ["SASHA'S CLIMBING FLANNEL", { c: '#b3402c', s: '#7a2a1c', p: 'plaid', p2: '#2a2a35', p3: '#e8c56a', iw: -1, i: '#e8e2d4' }],
+  'baby teeth': ["MILLA'S SCHOOL UNIFORM", { c: '#2a3c6a', s: '#1b2848', i: '#f2f3f5', iw: 3, t: '#2a7a4a', tw: 1, lap: '#3a4f88' }],
+  'berserk': ["GUTS' BLACK SWORDSMAN CLOAK", { c: '#1b1b22', s: '#0b0b0f', pa: '#5d636c', pa2: '#3a3d45', b: 6, bc: '#3a2716', a: 'sword', ac: '#9aa0aa' }],
+  'bodies bodies bodies': ["SOPHIE'S PARTY GLOWSTICKS", { c: '#2a2433', s: '#1a1622', iw: -1, i: '#2a2433', e: 'bolt', ep: { y: '#7cff6b' }, h: 'headband', hc: '#7cff6b' }],
+  'bring her back': ["LAURA'S FLORAL HOUSE DRESS", { c: '#e8d9b8', s: '#bfae8a', p: 'spots', p2: '#c0506a', iw: -1, i: '#e8d9b8' }],
+  'captain phillips': ["CAPT. PHILLIPS' MAERSK UNIFORM", { c: '#2b3c5c', s: '#1b2840', iw: 2, i: '#f2f3f5', pa: '#ffd23f', pa2: '#2b3c5c', h: 'specs' }],
+  'chernobyl': ["LIQUIDATOR'S RADIATION GEAR", { c: '#6b7048', s: '#4a4e30', z: '#3a3d24', b: 6, bc: '#2a2a2a', h: 'hood', hc: '#6b7048', hc2: '#2a2a2a', h2: 'mask', hc3: '#2a2e33' }],
+  'drag race - canada all stars': ["CROWNED QUEEN'S MAPLE GOWN", { c: '#d8323f', s: '#9a1a24', p: 'spark', p2: '#ffb3ba', iw: 0, e: 'leaf', ep: { g: '#fff' }, h: 'wig', hc: '#f2d36b', hc2: '#fff6c2', h2: 'tiara', hc3: '#e9e9f2' }],
+  'drag race - down under': ["QUEEN'S SEQUIN GOWN", { c: '#7b3fd8', s: '#4f238f', p: 'spark', p2: '#e3c6ff', h: 'wig', hc: '#ff6fa8', hc2: '#ffb3d1', h2: 'tiara', hc3: '#ffd23f' }],
+  'drag race - down under vs the world': ["GLOBAL QUEEN'S GOLD GOWN", { c: '#e9c04a', s: '#a8841c', p: 'spark', p2: '#fff3b0', h: 'wig', hc: '#1b1b22', hc2: '#3a3a48', h2: 'tiara', hc3: '#e9e9f2' }],
+  'dungeons and dragons': ["EDGIN'S BARD DOUBLET", { c: '#6b4a26', s: '#4a3218', iw: 2, i: '#e8dcc0', b: 6, bc: '#2a1a10', pa: '#8d939c', fur: 0 }],
+  'east bound & down': ["KENNY POWERS' WARM-UP", { c: '#1f3c8a', s: '#13285e', z: '#f2f3f5', p: 'stripe', p2: '#1f3c8a', pa: '#f2f3f5', pa2: '#d8323f', h: 'shades', h2: 'headband', hc3: '#d8323f' }],
+  'fairy tail': ["NATSU'S SCALE SCARF & VEST", { c: '#1b1b22', s: '#0b0b0f', iw: 4, i: '#e8b090', fur: '#f4f4f0', fur2: '#cfd3da', lap: '#e9c04a', b: 7, bc: '#e9c04a' }],
+  'fast and furious - five': ["DOM'S BLACK TANK & CROSS", { c: '#141418', s: '#0b0b0f', iw: 2, i: '#e0b08a', e: 'cross', ep: { r: '#c9cdd4' }, ex: 15, ey: 2, h: 'shades' }],
+  'fast and furious - tokyo drift': ["SEAN'S DRIFT RACING JACKET", { c: '#2a2a30', s: '#1a1a1f', p: 'half', p2: '#d8323f', z: '#ffd23f', e: 'star', ex: 20 }],
+  'flight': ["CAPT. WHIP WHITAKER'S PILOT UNIFORM", { c: '#f2f3f5', s: '#cfd3da', iw: 2, i: '#f2f3f5', t: '#141418', tw: 0, pa: '#ffd23f', pa2: '#f2f3f5', e: 'w', ep: { w: '#ffd23f' }, h: 'shades' }],
+  'flying high': ["TED STRIKER'S AIRLINE UNIFORM", { c: '#1b2848', s: '#101a30', iw: 3, i: '#f2f3f5', t: '#1b1b22', tw: 0, e: 'w', ep: { w: '#ffd23f' }, h: 'conductor', hc: '#1b2848' }],
+  'goat story': ["KUBA'S MEDIEVAL PRAGUE TUNIC", { c: '#7a5a3a', s: '#55402a', b: 6, bc: '#3a2716', iw: -1, i: '#e8dcc0', h: 'cap', hc: '#4a6a3a' }],
+  'heretic': ["MR. REED'S CARDIGAN", { c: '#6b5a48', s: '#4a3e30', iw: 3, i: '#e8e2d4', lap: '#55473a', h: 'specs' }],
+  'infinity pool': ["JAMES' RESORT LINEN & MASK", { c: '#e8dcc0', s: '#c0b090', iw: 2, i: '#e0b08a', h: 'mask', hc: '#c43b3b' }],
+  'inglorious basterds': ["LT. ALDO RAINE'S PARATROOPER JACKET", { c: '#6b6a3a', s: '#4a4a26', z: '#3a3a24', b: 6, bc: '#3a2716', e: 'badge', ep: { y: '#c9a227' }, ex: 21 }],
+  "ja'mie private school girl": ["JA'MIE'S HILFORD BLAZER", { c: '#2a2a5c', s: '#1a1a3c', i: '#f2f3f5', iw: 3, t: '#b3202c', tw: 1, lap: '#ffd23f', e: 'badge', ep: { y: '#ffd23f' }, ex: 20 }],
+  'life of brian': ["BRIAN'S JUDEAN ROBE", { c: '#e8dcc0', s: '#c0b090', iw: 2, i: '#e0b08a', b: 6, bc: '#6b4a26', h: 'headband', hc: '#b3402c' }],
+  'love on the spectrum': ["DATE-NIGHT SUIT (MICHAEL)", SUIT('#2a2f3a', '#1b1f28', '#b3202c', { e: 'heart', ex: 21 })],
+  'm3gan': ["M3GAN'S PLEATED DRESS & BOW", { c: '#e8e4d8', s: '#bfb9a8', iw: 2, i: '#1b1b22', p: 'stripe', p2: '#d8d2c2', h: 'tiara', hc: '#1b1b22' }],
+  'mafs': ["WEDDING-DAY TUX", SUIT('#141418', '#0b0b0f', '#141418', { tw: 1, e: 'flower', e2: 0, h: 'flower', hc: '#f4f4f0' })],
+  'making a murderer': ["STEVEN AVERY'S JAIL JUMPSUIT", { c: '#ff8a1f', s: '#c9621a', iw: 1, i: '#e0b08a', e: 'w', ep: { w: '#1b1b22' }, ex: 20 }],
+  'manchester by the sea': ["LEE CHANDLER'S JANITOR PARKA", { c: '#2a3a52', s: '#1b2738', z: '#4a5a72', fur: '#7a6a52', fur2: '#5a4c3a', h: 'beanie', hc: '#2a2a30' }],
+  'mindhunter': ["AGENT FORD'S FBI SUIT", SUIT('#3a3f4a', '#262a33', '#2a3a5c', { e: 'badge', ex: 21 })],
+  'moonrise kingdom': ["SAM'S KHAKI SCOUT UNIFORM", { c: '#b89a64', s: '#8e744a', iw: 2, i: '#d8323f', e: 'badge', ep: { y: '#3f8a4a' }, ex: 20, h: 'cap', hc: '#7a6340', hc2: '#5a4830' }],
+  'mr inbetween': ["RAY'S BLACK HITMAN TEE", { c: '#141418', s: '#0b0b0f', iw: -1, i: '#141418', p: 'none' }],
+  'mr robot': ["ELLIOT'S BLACK HOODIE", { c: '#141418', s: '#0b0b0f', z: '#2a2a30', h: 'hood', hc: '#141418', hc2: '#2a2a30' }],
+  'mysterious skin': ["NEIL'S LEATHER JACKET", { c: '#2b2220', s: '#1a1412', iw: 3, i: '#f2f3f5', lap: '#3d322e' }],
+  'obsession': ["BEAR'S MUSIC-STORE POLO", { c: '#2a6a5a', s: '#1b4a3e', iw: 1, i: '#2a6a5a', e: 'dot', ep: { w: '#f4f4f0' }, ex: 20 }],
+  'once upon a time in hollywood': ["CLIFF BOOTH'S HAWAIIAN SHIRT", { c: '#e9c04a', s: '#b08a20', iw: 2, i: '#f2f3f5', p: 'spots', p2: '#3a6a8a', h: 'shades', hc: '#6b4a26' }],
+  'perfect days': ["HIRAYAMA'S BLUE TOILET-CLEANER OVERALLS", { c: '#2c4f8a', s: '#1b3460', z: '#1b3460', e: 'w', ep: { w: '#f4f4f0' }, ex: 19 }],
+  'picnic at hanging rock': ["MIRANDA'S WHITE PICNIC DRESS", { c: '#f6f4ec', s: '#d8d4c6', p: 'hstripe', p2: '#efece2', iw: 0, b: 5, bc: '#e9c6cf', h: 'bowler', hc: '#e8d9b8' }],
+  'pillion': ["RAY'S BIKER LEATHERS", { c: '#141418', s: '#0b0b0f', z: '#9aa0aa', pa: '#2a2a30', b: 6, bc: '#9aa0aa', h: 'cap', hc: '#141418' }],
+  'push': ["NICK GANT'S MOVER JACKET", { c: '#5a4a3a', s: '#3e3228', iw: 2, i: '#3a5a7a' }],
+  'road train': ["CRAIG'S OUTBACK FLANNEL", { c: '#3a5a8a', s: '#263e60', p: 'plaid', p2: '#1b1b22', iw: -1, i: '#e0b08a' }],
+  'saltburn': ["OLIVER'S SALTBURN DINNER SUIT", SUIT('#141418', '#0b0b0f', '#141418', { tw: 1, lap: '#2a2a30' })],
+  'sausage party': ["FRANK THE SAUSAGE", { c: '#c76a3a', s: '#9a4a24', p: 'chev', p2: '#b25a30', iw: 0, h: 'headband', hc: '#ffd23f' }],
+  'shutter island': ["TEDDY DANIELS' MARSHAL TRENCH", { c: '#8a7a5a', s: '#5e5238', iw: 3, i: '#f2f3f5', t: '#3a2a1a', tw: 0, b: 6, bc: '#5e5238', h: 'fedora' }],
+  'sting': ["FRANK'S EXTERMINATOR OVERALLS", { c: '#3a5a3a', s: '#263e26', z: '#ffd23f', e: 'badge', ep: { y: '#ffd23f' }, ex: 20, h: 'cap', hc: '#ffd23f' }],
+  'summer heights high': ["MR G'S DRAMA TEACHER SHIRT", { c: '#8a3fb3', s: '#5f2a7c', iw: 2, i: '#e0b08a', p: 'dots', p2: '#ffd23f', h: 'specs' }],
+  'the equaliser': ["McCALL'S HARDWARE-STORE APRON", { c: '#2a3a52', s: '#1b2738', sur: 6, surc: '#ff8a1f', iw: -1, i: '#2a3a52' }],
+  'the fall of the house of usher': ["RODERICK USHER'S BLACK SUIT", SUIT('#141418', '#0b0b0f', '#5a0c14', { tw: 0, h: 'specs' })],
+  'the haunting of hill house': ["THE BENT-NECK LADY", { c: '#e8e6dc', s: '#bcb9ac', p: 'hstripe', p2: '#d6d3c6', iw: 0, sk: ['#cfd8d4', '#b2bdb8', '#8a9692'], h: 'wig', hc: '#1b1b22', hc2: '#2a2a30' }],
+  'the other guys': ["DET. GAMBLE'S ACCOUNTANT SUIT", SUIT('#5a5a62', '#3e3e45', '#6a8ab0', { e: 'badge', ex: 21 })],
+  'the phoneician scheme': ["ZSA-ZSA KORDA'S SAFARI SUIT", SUIT('#c8b88a', '#a09060', '#8a2a2a', { h: 'bandhat' })],
+  'the ritual': ["LUKE'S HIKING SHELL", { c: '#3a6a5a', s: '#264a3e', z: '#1b1b22', b: 5, bc: '#ff8a1f', h: 'beanie', hc: '#5a3a2a' }],
+  'the summit of the gods': ["HABU'S EVEREST DOWN SUIT", { c: '#d8323f', s: '#9a1a24', p: 'hstripe', p2: '#c02a36', z: '#1b1b22', h: 'goggles', hc: '#ffb23f' }],
+  'toy story': ["WOODY'S SHERIFF OUTFIT", { c: '#e9c04a', s: '#b08a20', p: 'plaid', p2: '#d8323f', p3: '#e9c04a', sur: 0, lap: '#f4f4f0', pa: '#f4f4f0', pa2: '#141418', e: 'star', ex: 19, h: 'cowboy', hc: '#7a4a24', hc2: '#3c2412' }],
+  'toy story 2': ["AL'S CHICKEN SUIT", { c: '#f6f4ec', s: '#d8d4c6', p: 'chev', p2: '#e8e4d8', iw: 0, h: 'ears', hc: '#d8323f', hc2: '#ff6f6f' }],
+  'toy story 3': ["BUZZ LIGHTYEAR'S SPACE RANGER SUIT", { c: '#f4f6f8', s: '#c8d0d8', iw: 2, i: '#7b3fd8', pa: '#3f8a4a', pa2: '#9fdc5a', e: 'dot', ep: { w: '#d8323f' }, ex: 19, h: 'helmet', hc: '#7b3fd8', hc2: '#4f238f' }],
+  'toy story 4': ["BO PEEP'S SHEPHERDESS CAPE", { c: '#7fb6e8', s: '#4a86c0', sur: 4, surc: '#f4f6f8', b: 6, bc: '#e9a0c8', a: 'staff', ac: '#e9a0c8' }],
+  'toy story 5': ["JESSIE'S YODELLING COWGIRL", { c: '#f4f4f0', s: '#cfd3da', p: 'dots', p2: '#d8323f', iw: 0, b: 6, bc: '#ffd23f', h: 'cowboy', hc: '#d8323f', hc2: '#9a1a24' }],
+  'train dreams': ["ROBERT GRAINIER'S LOGGER WOOLS", { c: '#8a3a2a', s: '#5e261c', p: 'plaid', p2: '#2a2a2a', b: 7, bc: '#3a2716', h: 'bowler', hc: '#3a2e24', a: 'axe' }],
+  'triangle of sadness': ["CARL'S MODEL CASTING TEE", { c: '#f4f4f0', s: '#cfd3da', iw: -1, i: '#f4f4f0', h: 'shades' }],
+  'tropic thunder': ["SGT. OSIRIS' JUNGLE FATIGUES", { c: '#4b5634', s: '#353d24', p: 'spots', p2: '#6b7048', b: 7, bc: '#2a2a2a', h: 'headband', hc: '#4b5634' }],
+  'twinless': ["ROMAN'S GRIEF-GROUP HOODIE", { c: '#3a4a6a', s: '#26324a', z: '#1b2433', iw: -1, i: '#3a4a6a' }],
+  'vinland saga': ["THORFINN'S FARMHAND TUNIC", { c: '#6b5a3a', s: '#4a3e26', iw: 2, i: '#e0b08a', b: 6, bc: '#3a2716', pa: '#8a7a5a', a: 'axe2' }],
+  'wicker': ['THE WICKER HUSBAND', { c: '#c8a060', s: '#8e6c38', p: 'grid', p2: '#9a7840', iw: 0, sk: ['#d8b070', '#c09858', '#8e6c38'] }],
+  'wolf creek': ["MICK TAYLOR'S OUTBACK GEAR", { c: '#7a6a4a', s: '#55482e', iw: 2, i: '#e0b08a', b: 6, bc: '#3a2716', h: 'cowboy', hc: '#5a4430', hc2: '#3a2a1a' }],
+  "you don't know me": ["HERO'S PUFFER JACKET", { c: '#1b1b22', s: '#0b0b0f', p: 'hstripe', p2: '#2a2a30', z: '#9aa0aa' }],
+  'your name': ["TAKI'S SCHOOL GAKURAN", { c: '#1b1b2a', s: '#0e0e18', z: '#ffd23f', iw: 0, h: 'headband', hc: '#d8323f' }],
+  'el camino': ["JESSE'S BEANIE & HOODIE", { c: '#4a5a3a', s: '#323e26', z: '#2a3420', h: 'beanie', hc: '#2a2a30', hc2: '#3a3a42' }],
+  'the odyssey': ["ODYSSEUS' BRONZE CUIRASS", { c: '#b58a3a', s: '#7a5a20', p: 'chev', p2: '#9a7228', pa: '#b3202c', b: 6, bc: '#3a2716', h: 'helmet', hc: '#b58a3a', hc2: '#7a5a20', a: 'sword' }],
+  'possessor': ["TASYA VOS' POSSESSION SUIT", { c: '#2a2a30', s: '#141418', iw: 0, sk: ['#e8d0c0', '#cdb0a0', '#9a7a6a'], h: 'wig', hc: '#e8e6dc', hc2: '#bcb9ac' }],
+  'the inbetweeners': ["WILL'S BRIEFCASE BLAZER", { c: '#1b2a5c', s: '#101a3c', i: '#f2f3f5', iw: 3, t: '#3a5a8a', tw: 1, e: 'badge', ex: 20, h: 'specs', a: 'clip' }],
+  'sully': ["CAPT. SULLY'S US AIRWAYS UNIFORM", SUIT('#1b2848', '#101a30', '#1b1b22', { pa: '#ffd23f', pa2: '#1b2848', e: 'w', ep: { w: '#ffd23f' } })],
+  'the inbetweeners movie': ["JAY'S MALIA HOLIDAY SHIRT", { c: '#3fb3d8', s: '#2a86a8', p: 'spots', p2: '#ffd23f', iw: 1, i: '#e0b08a' }],
+  'the inbetweeners 2': ["NEIL'S BACKPACKER VEST", { c: '#e9c04a', s: '#b08a20', iw: 3, i: '#e0b08a', h: 'bucket', hc: '#3a6a3a', hc2: '#264a26' }],
+  'better call saul': ["SAUL GOODMAN'S LOUD SUIT", SUIT('#5a7ab0', '#3e5a88', '#e9c04a', { tw: 1, p: 'stripe', p2: '#4a6aa0', i: '#e8c0c8' })],
+  'minutes inside the twin towers': ['FDNY TURNOUT GEAR', { c: '#3a3424', s: '#2a2418', p: 'hstripe', p2: '#3a3424', b: 6, bc: '#e9ff4a', pa: '#e9ff4a', pa2: '#3a3424', h: 'helmet', hc: '#141418', hc2: '#ffd23f' }],
+  'ice age': ["MANNY'S WOOLLY MAMMOTH COAT", { c: '#6b4a2e', s: '#4a3220', p: 'chev', p2: '#5a3c24', fur: '#7a5a38', fur2: '#5a3c24', iw: 0 }],
+  'incredibles 2': ["ELASTIGIRL'S SUPER SUIT", { c: '#c83a2a', s: '#8a2418', pa: '#141418', pa2: '#141418', b: 6, bc: '#141418', e: 'i', ep: { o: '#ff8a1f', k: '#141418' }, ex: 14, ey: 1, h: 'mask', hc: '#141418' }],
+  'saban': ["COACH SABAN'S CRIMSON SIDELINE JACKET", { c: '#9a1a24', s: '#6a1018', z: '#f4f4f0', iw: 1, i: '#f4f4f0', e: 'badge', ep: { y: '#f4f4f0' }, ex: 20, h: 'headset' }],
+  'the incredibles': ["MR. INCREDIBLE'S SUPER SUIT", { c: '#c83a2a', s: '#8a2418', b: 6, bc: '#141418', e: 'i', ep: { o: '#ff8a1f', k: '#141418' }, ex: 14, ey: 1, h: 'mask', hc: '#141418' }],
+  'the polar express': ["THE CONDUCTOR'S UNIFORM", SUIT('#1b2a5c', '#101a3c', '#1b2a5c', { iw: 2, z: '#ffd23f', h: 'conductor', hc: '#1b2a5c' })],
+  'how the grinch stole christmas': ["THE GRINCH'S SANTA SUIT", { c: '#d8323f', s: '#9a1a24', z: '#f4f4f0', fur: '#f4f4f0', fur2: '#dfe3e8', b: 6, bc: '#141418', bk: '#ffd23f', sk: ['#9fd05a', '#7ab03a', '#5a8a26'], h: 'santa' }],
+  'cars': ["LIGHTNING McQUEEN'S PIT CREW JACKET", { c: '#d8323f', s: '#9a1a24', z: '#ffd23f', e: 'bolt', ep: { y: '#ffd23f' }, ex: 19, h: 'cap', hc: '#d8323f', hc2: '#ffd23f' }],
+  'finding nemo': ["NEMO'S CLOWNFISH STRIPES", { c: '#ff8a1f', s: '#c9621a', p: 'none', sur: 0, iw: 0, e: 'dot', ep: { w: '#f4f4f0' }, ex: 10, pa: '#f4f4f0', pa2: '#141418' }],
+  'finding dory': ["DORY'S BLUE TANG SCALES", { c: '#2c6ad8', s: '#1b4aa0', p: 'chev', p2: '#141418', pa: '#ffd23f', pa2: '#2c6ad8' }],
+  'inside out 2': ["JOY'S STARRY DRESS", { c: '#9fdc5a', s: '#6aa83a', p: 'spark', p2: '#f6f7f9', iw: 0, h: 'wig', hc: '#2c6ad8', hc2: '#5a8aff' }],
+  'ratatouille': ["LINGUINI'S CHEF WHITES", { c: '#f6f7f9', s: '#cfd3da', i: '#f6f7f9', iw: 0, e: 'dot', ep: { w: '#9aa0aa' }, ex: 18, b: 7, bc: '#cfd3da', h: 'toque' }],
+  'monsters, inc.': ["SULLEY'S BLUE FUR", { c: '#3fb3d8', s: '#2a86a8', p: 'spots', p2: '#7b3fd8', iw: 0, sk: ['#7fd4f0', '#5ab8d8', '#3a8ab0'], h: 'ears', hc: '#e8dcc0', hc2: '#c8b890' }],
+  'madagascar': ["MARTY'S ZEBRA STRIPES", { c: '#f4f4f0', s: '#cfd3da', p: 'stripe', p2: '#141418', iw: 0, h: 'ears', hc: '#f4f4f0', hc2: '#141418' }],
+  'kung fu panda': ["PO'S DRAGON WARRIOR SHORTS & BELT", { c: '#f4f4f0', s: '#cfd3da', p: 'spots', p2: '#141418', iw: 0, b: 7, bc: '#e9c04a', pa: '#141418', pa2: '#1b1b22', h: 'ears', hc: '#141418', hc2: '#2a2a30' }],
+  'over the hedge': ["RJ'S RACCOON BANDIT LOOK", { c: '#7a7a82', s: '#55555c', p: 'hstripe', p2: '#5a5a62', iw: 0, h: 'mask', hc: '#2a2a30' }],
+  'shark tale': ["OSCAR'S CAR-WASH UNIFORM", { c: '#2c6ad8', s: '#1b4aa0', i: '#f4f4f0', iw: 2, e: 'star', ep: { y: '#ffd23f' }, ex: 20, h: 'cap', hc: '#ffd23f', hc2: '#c9952b' }],
+  'garfield': ["GARFIELD'S ORANGE TABBY", { c: '#ff8a1f', s: '#c9621a', p: 'hstripe', p2: '#2a1a10', iw: 0, h: 'ears', hc: '#ff8a1f', hc2: '#c9621a' }],
+  'mary poppins': ["MARY POPPINS' NANNY COAT", { c: '#1b2a4a', s: '#101a30', i: '#f4f4f0', iw: 2, t: '#d8323f', tw: 1, b: 6, bc: '#1b2a4a', h: 'bowler', hc: '#141418' }],
+  'tron: ares': ["ARES' RED GRID SUIT", { c: '#141418', s: '#0b0b0f', p: 'grid', p2: '#ff2e3b', z: '#ff2e3b', iw: 0, pa: '#ff2e3b', pa2: '#141418' }],
+  // YouTube channels — the host's on-camera kit
+  'forging a knife & survival camping alone in the wilderness': ["BUSHCRAFTER'S CANVAS GEAR", { c: '#6b6040', s: '#4a4228', b: 6, bc: '#3a2716', z: '#4a4228', h: 'bucket', hc: '#55603a', hc2: '#3a4228', a: 'axe' }],
+  'wild scites': ["FIELD BIOLOGIST'S KIT", { c: '#c8b88a', s: '#a09060', iw: 2, i: '#3f8a4a', b: 6, bc: '#6b4a26', h: 'bucket', hc: '#c8b88a', hc2: '#a09060' }],
+  'explore with us': ["EXPLORER'S FLEECE", { c: '#2a7a6a', s: '#1b5a4e', z: '#f4f4f0', h: 'cap', hc: '#2a2a30' }],
+  'vs 2026 van camping!': ["VANLIFER'S PUFFER", { c: '#ff8a1f', s: '#c9621a', p: 'hstripe', p2: '#e0761a', z: '#1b1b22', h: 'beanie', hc: '#3a5a8a' }],
+  'weeks in taiwan - hunting jade, shrimp fishing, indigenous survival & more': ["JADE HUNTER'S RAIN GEAR", { c: '#ffd23f', s: '#c9a227', z: '#9a7a1a', h: 'bucket', hc: '#ffd23f', hc2: '#c9a227' }],
+  // extra character outfits for titles that already share a bespoke one
+  'gravity': ["DR. RYAN STONE'S EVA TANK", { c: '#9aa3ae', s: '#6f7884', iw: -1, i: '#9aa3ae', p: 'none' }],
+  'apollo 13': ["GENE KRANZ'S WHITE VEST", { c: '#f4f6f8', s: '#cfd3da', iw: 3, i: '#e8eef8', t: '#1b2848', tw: 0, h: 'headset' }],
+  'project hail mary': ["RYLAND GRACE'S SCIENCE-TEACHER CARDIGAN", { c: '#8a6a48', s: '#5e4830', iw: 3, i: '#dfe9f5', lap: '#6b5238' }]
+};
+WRT['the phoneician scheme'][1].h = 'bucket'; WRT['the phoneician scheme'][1].hc = '#c8b88a';
+// accuracy audit of bespoke names (character attributed)
+var WRN = { heis: "WALTER WHITE'S HAZMAT SUIT", heis2: "HEISENBERG'S HAT & JACKET", iron: "NED STARK'S NORTHERN ARMOUR", nwatch: "JON SNOW'S NIGHT'S WATCH FURS", drgn: "DAEMON'S TARGARYEN BLACKS", saber: "OBI-WAN'S JEDI ROBES", sith: "DARTH SIDIOUS' SITH ROBES", xwing: "LUKE'S X-WING FLIGHT SUIT",
+  peaky: "TOMMY SHELBY'S THREE-PIECE", ogre: "SHREK'S TUNIC & VEST", space: "COOPER'S ENDURANCE SPACESUIT", lumon: "MARK S.'S LUMON ATTIRE", outie: "MARK SCOUT'S OUTIE KNIT", ctrl: "MISSION CONTROL SHIRT & HEADSET", top: "COBB'S SPINNING-TOP TOTEM", drum: "ANDREW NEIMAN'S STUDIO BAND BLACKS", fletch: "TERENCE FLETCHER'S BLACK TEE",
+  gems: "JESSE GEMSTONE'S WHITE SUIT", lotus: "GREG'S HAWAIIAN SHIRT", staff: "BELINDA'S SPA UNIFORM", django: "DJANGO'S BLUE VALET SUIT", farm: "JEREMY'S DIDDLY SQUAT GEAR", bot: "OPTIMUS PRIME ARMOUR", bee: "BUMBLEBEE ARMOUR", dancing: "DONNA & THE DYNAMOS JUMPSUIT", saw: "DENJI'S DEVIL HUNTER SUIT",
+  pine: "DALE'S PINEAPPLE EXPRESS", roy: "KENDALL ROY'S SUIT", box: "DET. SOMERSET'S TRENCH COAT" };
+WARD.forEach(function (w) { if (WRN[w[0]]) w[1] = WRN[w[0]]; });
+WRO.wrPlaceholder = WRO.g_turtle;
+// re-sync: bespoke spec for every title in WRT (same ids as before → equipped stays); unknown new titles → clearly-labelled placeholder
+wrSync = function () { if (!window.rows || rows.length === WRGN) return; WRGN = rows.length; for (var i = WARD.length - 1; i >= 0; i--) if (WARD[i][7]) WARD.splice(i, 1);
+  var seen = {}, bespoke = WARD.filter(function (w) { return w[3]; });
+  rows.forEach(function (r) { var b = wrBase(r.title), k = b.toLowerCase().replace(/^\d+\s+/, '').replace(/\s*\(channel\)\s*$/i, '').replace(/^\d+\s+(minutes inside)/, '$1'); if (!b || seen[b.toLowerCase()]) return; seen[b.toLowerCase()] = 1;
+    var key = Object.keys(WRT).filter(function (t) { return k === t || k.indexOf(t) === 0 && t.length > 12; })[0], re = new RegExp('^' + b.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '$', 'i');
+    if (key) { var sk = 'wt_' + wrHash(key); WRO[sk] = WRO[sk] || wrSpec(WRT[key][1]); if (/^(cap|beanie|bucket|toque|conductor|viking|coif|wig|helmet|cowboy|fedora|bowler|santa|hood|crown|porkpie)$/.test(WRT[key][1].h || '')) WRHO[sk] = 1; WARD.push([wrHash(b.toLowerCase()), WRT[key][0], 'clown', re, undefined, undefined, sk, 1]); return; }
+    if (bespoke.some(function (w) { return w[3].test(b); })) return;
+    WARD.push([wrHash(b.toLowerCase()), 'PLACEHOLDER · BESPOKE OUTFIT COMING', 'clown', re, undefined, undefined, 'wrPlaceholder', 1, 1]); }); };
+var _wrStateP = wrState; wrState = function (p) { return _wrStateP(p).map(function (s) { var w = WARD.filter(function (x) { return x[0] === s.id; })[0]; s.ph = !!(w && w[8]); return s; }); };
+
 </script></body></html>
