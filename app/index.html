@@ -807,6 +807,18 @@ body.ytp-on{overflow:hidden}
 #ytp .yv .ypo{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:manipulation}
 #thm.alb span{opacity:.85}
 .cnr.ex .cnt small{color:#ff8fa3}.cnb.re{background:#ff8fa3;color:#000}
+.mpclose{font:9px var(--pix);letter-spacing:1px;color:#000;background:#7cdcff;padding:8px 10px;margin:0 0 12px;box-shadow:3px 3px 0 #000}#ytp .yx{display:none}
+.yback{position:fixed;left:calc(12px + env(safe-area-inset-left));bottom:calc(14px + env(safe-area-inset-bottom));z-index:960;min-width:48px;height:48px;padding:0 14px 0 10px;display:flex;align-items:center;gap:8px;border:0;background:#ffcc00;color:#000;font:10px var(--pix);letter-spacing:1px;box-shadow:3px 3px 0 #000,inset -3px -3px 0 rgba(0,0,0,.18);cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.yback i{font-style:normal;font-size:14px}
+.yback:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #000}
+#ytp:not(.open) .yback,#ytp.mini .yback{display:none}
+#ytpage:not(.open) .yback.g{display:none}
+#ytp.open:not(.mini) ~ #ytpage .yback.g{display:none}
+#ytp .yv .yback{z-index:30;position:absolute;left:calc(14px + env(safe-area-inset-left));bottom:auto;top:50%;transform:translateY(-50%)}
+
+#ytpage .ythd{position:sticky;top:0;z-index:5;background:inherit;padding-top:env(safe-area-inset-top)}
+#ytpage .ythd [data-ytx]{min-width:44px;min-height:44px}
+#ytpage .yback.g{bottom:calc(var(--ybkb,14px) + env(safe-area-inset-bottom))}
 </style></head><body>
 <div id="splash" aria-label="Logged"></div>
 <header><div class="hin">
@@ -3109,13 +3121,13 @@ function mpFits(r, a) { var g = genresOf(r), mg = MPG[a.mood] || [], hit = g.fil
 function mpSolve() { var a = MP.a, L = a.src === 'new' ? [] : rows.map(function (r) { return mpFits(r, a); }).filter(Boolean).sort(function (x, y) { return y.sc - x.sc; }); var mpSeen = {}; L = L.filter(function (x) { var b = String(x.r.title || x.title || '').replace(/\s*\(S\d+\)\s*$/i, '').toLowerCase(); if (mpSeen[b]) return false; mpSeen[b] = 1; return true; });
   var nList = a.src === 'list' ? 3 : a.src === 'new' ? 0 : 2; MP.res = { list: L.slice(0, nList), fresh: [], loading: a.src !== 'list' }; mpResults();
   if (a.src === 'list') { if (MP.res.list.length < 3) { MP.res.loading = true; } else return; }
-  run('tmdbMood', [{ mood: a.mood, kind: a.kind, era: a.era, len: a.len }], function (X) { var have = {}; rows.forEach(function (r) { have[norm(String(r.title).replace(/\s*\(S\d+\)\s*$/, ''))] = 1; });
-    var F = (X || []).filter(function (x) { return !have[norm(x.title)] && x.poster; }).sort(function () { return Math.random() - .5; }); MP.res.fresh = F.slice(0, 3 - MP.res.list.length); MP.res.loading = false; mpResults(); }, function () { MP.res.loading = false; mpResults(); }); }
+  run('tmdbMood', [{ mood: a.mood, kind: a.kind, era: a.era, len: a.len, exclude: rows.map(function (r) { return String(r.title).replace(/^\d+\s+/, '').replace(/\s*\((S\d+|[IVX]+)\)\s*$/i, ''); }) }], function (X) { var have = {}; rows.forEach(function (r) { have[norm(String(r.title).replace(/\s*\(S\d+\)\s*$/, ''))] = 1; });
+    var F = (X || []).filter(function (x) { return !have[norm(x.title)] && x.poster; }).map(function (x) { x._r = (x.lvl || 0) + Math.random() * .9; return x; }).sort(function (p, q) { return p._r - q._r; }); MP.res.fresh = F.slice(0, Math.max(1, 3 - MP.res.list.length)); MP.res.close = MP.res.fresh.length && MP.res.fresh.every(function (x) { return x.close; }); MP.res.loading = false; mpResults(); }, function () { MP.res.loading = false; mpResults(); }); }
 function mpResults() { var R = MP.res, a = MP.a, mood = MPQ[1].o.filter(function (o) { return o[0] === a.mood; })[0] || ['', '🎭', ''];
   var card = function (img, t, sub, why, act, tag) { return '<div class="mpc"><span class="mpp">' + (img || '') + '<em>' + tag + '</em></span><div class="mpx"><b>' + esc(t) + '</b><small>' + esc(sub) + '</small><div class="mpw">' + why.map(function (w) { return '<span>' + esc(w) + '</span>'; }).join('') + '</div>' + act + '</div></div>'; };
   var h = R.list.map(function (x) { var m = M(x.r); return card(art(x.r), x.r.title, [m.year, x.r.type === 'TV Show' ? 'SHOW' : 'MOVIE'].filter(Boolean).join(' · '), x.why, '<button class="btn" data-mpopen="' + x.r.row + '">OPEN ›</button>', 'ON YOUR LIST'); }).join('') +
-    R.fresh.map(function (x, i) { return card('<img src="' + esc(x.poster) + '" alt="">', x.title, [x.year, x.tv ? 'SHOW' : 'MOVIE', (x.vote ? 'TMDB ' + x.vote : '')].filter(Boolean).join(' · '), [mood[2] + ' PICK', x.overview.split('. ')[0].slice(0, 70) + (x.overview.length > 70 ? '…' : '')], '<button class="btn y" data-mpadd="' + i + '">＋ ADD TO LIST</button>', 'NEW TO YOU'); }).join('');
-  m19('mpm', '<div class="mp"><h2><span>' + mood[1] + ' YOUR PICKS</span><button class="btn" data-m19x="1">✕</button></h2>' + (h || '') + (R.loading ? '<div class="mpld">SCANNING THE ARCHIVES<i>...</i></div>' : !h ? '<div class="mpld">NOTHING FITS — TRY ANOTHER MOOD</div>' : '') +
+    R.fresh.map(function (x, i) { return card('<img src="' + esc(x.poster) + '" alt="">', x.title, [x.year, x.tv ? 'SHOW' : 'MOVIE', (x.vote ? 'TMDB ' + x.vote : '')].filter(Boolean).join(' · '), [mood[2] + ' PICK', (x.close ? '≈ CLOSE MATCH' : '') , x.overview.split('. ')[0].slice(0, 70) + (x.overview.length > 70 ? '…' : '')].filter(Boolean), '<button class="btn y" data-mpadd="' + i + '">＋ ADD TO LIST</button>', 'NEW TO YOU'); }).join('');
+  m19('mpm', '<div class="mp"><h2><span>' + mood[1] + ' YOUR PICKS</span><button class="btn" data-m19x="1">✕</button></h2>' + (R.close && !R.loading ? '<div class="mpclose">≈ NO EXACT MATCH — HERE\u2019S SOMETHING CLOSE</div>' : '') + (h || '') + (R.loading ? '<div class="mpld">SCANNING THE ARCHIVES<i>...</i></div>' : !h ? '<div class="mpld">NOTHING FITS — TRY ANOTHER MOOD</div>' : '') +
     '<div class="dpa"><button class="btn" data-mpagain="1">↻ AGAIN</button><button class="btn" data-mpnew="1">🎭 NEW MOOD</button></div></div>'); }
 document.addEventListener('click', function (e) { var b = e.target.closest('[data-mood],[data-mpa],[data-mpbk],[data-mpopen],[data-mpadd],[data-mpagain],[data-mpnew]'); if (!b) return; e.stopPropagation(); var x = b.dataset;
   if (x.mood) { ac(); SFX.coin && SFX.coin(); return mpOpen(); }
@@ -3613,5 +3625,65 @@ window.addEventListener('click', function (e) { var b = e.target.closest('[data-
       function (e) { toast('⚠ ' + (e && e.message || 'Connection failed')); connLoad(); }); }; go(0); })();
 // Camp stats still read SPOT.status — keep it in step with the server status
 var _loadSpotR35 = loadSpot; loadSpot = function () { _loadSpotR35(); connLoad(); };
+
+
+/* ===== R36: face items anchored to the sprites' real eyes (measured: both avatars eye row 13, irises centred x13 & x19, nose 15, mouth 17) ===== */
+['sam', 'lewy'].forEach(function (p) { Object.assign(WRA[p], { eye: 13, el: 13, er: 19, nose: 15, mouth: 17 }); });
+function wrLens(x, A, c, h) { h = h || 2; [A.el, A.er].forEach(function (e) { wrRect(x, c, e - 2, A.eye - (h > 2 ? 1 : 0), 5, h); }); wrRect(x, c, A.el + 3, A.eye, A.er - A.el - 5, 1); }
+WRD.specs = function (x, A) { var c = '#15151c'; [A.el, A.er].forEach(function (e) { wrRect(x, c, e - 2, A.eye - 1, 5, 1); wrRect(x, c, e - 2, A.eye + 1, 5, 1); wrRect(x, c, e - 2, A.eye, 1, 1); wrRect(x, c, e + 2, A.eye, 1, 1); }); wrRect(x, c, A.el + 3, A.eye, A.er - A.el - 5, 1); };
+WRD.hearts = function (x, A) { var p = { h: '#ff4f8b' }; [A.el, A.er].forEach(function (e) { wrSpr(x, ['h.h', 'hhh', '.h.'], e - 1, A.eye - 1, p); }); wrRect(x, '#ff4f8b', A.el + 2, A.eye, A.er - A.el - 3, 1); };
+WRD.disco = function (x, A) { var p = { m: '#ff4fd8', w: '#ffe0f8' }; [A.el, A.er].forEach(function (e) { wrSpr(x, ['.m.', 'mwm', '.m.'], e - 1, A.eye - 1, p); }); wrRect(x, '#ff4fd8', A.el + 2, A.eye, A.er - A.el - 3, 1); };
+WRD.visor = function (x, A) { wrRect(x, '#2a2f3a', A.el - 3, A.eye - 1, A.er - A.el + 7, 3); wrRect(x, '#ff3b4a', A.el - 2, A.eye, A.er - A.el + 5, 1); wrRect(x, '#ffc2c7', A.el - 1, A.eye, 2, 1); };
+WRD.hockey = function (x, A) { wrRect(x, '#f1efe6', A.el - 3, A.eye - 3, A.er - A.el + 7, 10); [A.el, A.er].forEach(function (e) { wrRect(x, '#1b1b22', e - 1, A.eye, 3, 1); }); [[A.el - 1, A.eye + 3], [16, A.eye + 4], [A.er, A.eye + 3], [A.er + 1, A.eye + 5], [A.el, A.eye + 5]].forEach(function (q) { wrRect(x, '#c8433a', q[0], q[1], 1, 1); }); };
+WRD.clown = function (x, A) { wrRect(x, '#ff2e3b', 15, A.nose, 2, 2); wrRect(x, '#ff9aa1', 15, A.nose, 1, 1); };
+var _wrHeadE = wrHead; wrHead = function (cx, A, h, c, c2) {
+  if (h === 'shades') return wrLens(cx, A, c || '#0c0c10', 2);
+  if (h === 'mask') { wrRect(cx, c, A.el - 3, A.eye - 1, A.er - A.el + 7, 3); [A.el, A.er].forEach(function (e) { wrRect(cx, '#fff', e - 1, A.eye, 3, 1); }); return; }
+  if (h === 'goggles') { wrRect(cx, '#3a2a1a', 8, A.eye, 17, 1); [A.el, A.er].forEach(function (e) { wrRect(cx, '#1b1b22', e - 2, A.eye - 1, 5, 3); wrRect(cx, c, e - 1, A.eye - 1, 3, 2); }); return; }
+  return _wrHeadE(cx, A, h, c, c2); };
+WRO.hazmat = (function (body) { return function (cx, p, A) { wrBody(cx, p, body);
+  wrRect(cx, '#2b2e33', A.el - 1, A.nose, A.er - A.el + 3, 4); wrRect(cx, '#3d4148', A.el, A.nose + 1, A.er - A.el + 1, 2); wrRect(cx, '#14161a', A.el - 3, A.nose + 1, 3, 3); wrRect(cx, '#14161a', A.er + 1, A.nose + 1, 3, 3);
+  [A.el, A.er].forEach(function (e) { wrRect(cx, '#2b2e33', e - 2, A.eye - 1, 5, 3); wrRect(cx, '#7fd4ff', e - 1, A.eye - 1, 3, 2); }); wrRect(cx, '#2b2e33', A.el + 3, A.eye, A.er - A.el - 5, 1); }; })(function (dx, yy, e) { if (dx === 0 && yy > 1) return '#7a5a08'; if (yy === 0) return '#d9a514'; if (e) return '#c48d0c'; return (yy + dx) % 7 === 0 ? '#e7b21c' : '#f5c629'; });
+WRO.heisen = (function (o) { return function (cx, p, A) { o(cx, p, A); var hs = WRD.porkpie; }; })(function (cx, p, A) { wrBody(cx, p, function (dx, yy, e) { var ad = Math.abs(dx); if (V(dx, yy, 3)) return ad === 0 ? '#3c4a3a' : '#556b52'; if (ad === 4 && yy < 5) return '#0c0c10'; return e ? '#0c0c10' : (dx + yy) % 6 === 0 ? '#22222a' : '#18181e'; }); WRD.porkpie(cx, A); wrLens(cx, A, '#0c0c10', 2); wrRect(cx, '#5a6070', A.el - 1, A.eye, 1, 1); wrRect(cx, '#5a6070', A.er - 1, A.eye, 1, 1); });
+WRO.bee = (function (body) { return function (cx, p, A) { wrBody(cx, p, body); wrRect(cx, '#2b2e33', A.el - 3, A.eye - 1, A.er - A.el + 7, 3); wrRect(cx, '#5fd0ff', A.el - 2, A.eye, A.er - A.el + 5, 1); }; })(function (dx, yy, e) { var ad = Math.abs(dx); if (yy >= 1 && yy <= 3 && ad >= 2 && ad <= 6) return yy === 1 ? '#fff6c2' : '#2b2e33'; if (ad <= 1 && yy < 5) return '#2b2e33'; return e ? '#b88a00' : ad === 8 ? '#d9a514' : '#ffc61a'; });
+WRO.ctrl = (function (body) { return function (cx, p, A) { wrBody(cx, p, body); wrHead(cx, A, 'headset'); }; })(function (dx, yy, e) { var ad = Math.abs(dx); if (ad === 0 && yy > 0) return '#141418'; if (yy === 3 && dx >= 4 && dx <= 6) return '#3b6bd8'; return e ? '#cfd3da' : '#f6f7f9'; });
+// spec outfits are cached painters → rebuild them so they pick up the new head/face functions
+Object.keys(WRO).forEach(function (k) { if (k.indexOf('wt_') === 0) delete WRO[k]; }); WRGN = -1;
+
+/* ===== R36: Spotify clips — Spotify rarely returns preview_url now. Order: Spotify preview → iTunes match of the same song (plays inline on iPhone) → Spotify embed with a clear tap prompt ===== */
+var _clipMountS = clipMount; clipMount = function (host, c, o) { o = o || {};
+  if (c && c.src === 'sp' && !c.pv && !o.noMatch) { if (CLIPSTOP) try { CLIPSTOP(); } catch (e) {} CLIPSTOP = null; var dead = false; host.innerHTML = '<div class="spm">♪ FINDING A PLAYABLE CLIP…</div>';
+    var rid = (typeof THEME_NOW !== 'undefined' && THEME_NOW) || (typeof OSTED !== 'undefined' && OSTED && OSTED.row), r = rows.filter(function (x) { return x.row === rid; })[0], t = (r && r.title) || c.n;
+    ostPv(t, { n: c.n, a: c.a }, function (x) { if (dead) return; if (x && x.url) return _clipMountS(host, Object.assign({}, c, { pv: x.url, st: 0 }), o); _clipMountS(host, c, Object.assign({}, o, { noMatch: 1 })); var t2 = $('thm'); if (host.classList.contains('thh') && t2) { t2.classList.add('need'); var sp = t2.querySelector('span'); if (sp) sp.textContent = '♪ ' + c.n + ' · TAP ▶ IN SPOTIFY'; } });
+    return (CLIPSTOP = function () { dead = true; host.innerHTML = ''; }); }
+  return _clipMountS(host, c, o); };
+
+/* ===== R36: thumb-reachable BACK for the YouTube section + player (≥48px, bottom-left, safe-area aware) + swipe-down / edge-swipe / system back ===== */
+(function () {
+  var P = $('ytp'), G = $('ytpage');
+  P.insertAdjacentHTML('beforeend', '<button class="yback" data-yback="p" aria-label="Close player"><i>◀</i><span>BACK</span></button>');
+  G.insertAdjacentHTML('beforeend', '<button class="yback g" data-yback="g" aria-label="Close YouTube"><i>◀</i><span>BACK</span></button>');
+  var fsEl = function () { return document.fullscreenElement || document.webkitFullscreenElement; };
+  var _close = ytnClose; ytnClose = function () { try { if (fsEl()) (document.exitFullscreen || document.webkitExitFullscreen).call(document); } catch (e) {} P.classList.remove('flip'); try { screen.orientation.unlock(); } catch (e) {} var b = P.querySelector('.yback'); if (b && b.parentNode !== P) P.appendChild(b); return _close.apply(this, arguments); };
+  // in native fullscreen only the fullscreen element is visible → carry the back button into it
+  ['fullscreenchange', 'webkitfullscreenchange'].forEach(function (ev) { document.addEventListener(ev, function () { place(); }); });
+  var place = function () { var b = document.querySelector('.yback[data-yback="p"]'), f = fsEl(), v = P.querySelector('.yv'); if (!b) return; var t = f && P.contains(f) ? f : P.classList.contains('flip') && v ? v : P; if (b.parentNode !== t) t.appendChild(b); };
+  new MutationObserver(place).observe(P, { attributes: true, attributeFilter: ['class'] });
+  var navH = function () { var n = $('nav'); document.documentElement.style.setProperty('--ybkb', ((n && getComputedStyle(n).display !== 'none' ? n.getBoundingClientRect().height : 0) + 12) + 'px'); }; navH(); window.addEventListener('resize', navH); new MutationObserver(navH).observe(G, { attributes: true, attributeFilter: ['class'] });
+  var pOpen = function () { return P.classList.contains('open') && !P.classList.contains('mini'); }, gOpen = function () { return G.classList.contains('open'); };
+  function closeTop(fromPop) { if (pOpen()) { ytnClose(); SFX.back && SFX.back(); } else if (gOpen()) { G.classList.remove('open'); SFX.back && SFX.back(); } else return false; if (!fromPop && history.state && history.state.lgYT) { HB.skip = 1; history.back(); } return true; }
+  var HB = { skip: 0 };
+  document.addEventListener('click', function (e) { var b = e.target.closest('[data-yback]'); if (!b) return; e.preventDefault(); e.stopPropagation(); closeTop(false); }, true);
+  // system back / iOS edge-swipe history: push a state whenever the section or player opens
+  var push = function (k) { if (!history.state || history.state.lgYT !== k) try { history.pushState({ lgYT: k }, ''); } catch (e) {} };
+  new MutationObserver(function () { if (pOpen()) push('p'); else if (gOpen()) push('g'); }).observe(P, { attributes: true, attributeFilter: ['class'] });
+  new MutationObserver(function () { if (gOpen()) push('g'); }).observe(G, { attributes: true, attributeFilter: ['class'] });
+  window.addEventListener('popstate', function () { if (HB.skip) { HB.skip = 0; return; } closeTop(true); });
+  // swipe down (from the video, or from the top of the section) and swipe right from the left edge
+  function swipe(el, isTop) { var x0, y0, ok; el.addEventListener('touchstart', function (e) { var t = e.touches[0]; x0 = t.clientX; y0 = t.clientY; ok = isTop(e); }, { passive: true });
+    el.addEventListener('touchend', function (e) { if (x0 == null) return; var t = e.changedTouches[0], dx = t.clientX - x0, dy = t.clientY - y0; if ((ok && dy > 90 && Math.abs(dx) < 70) || (x0 < 28 && dx > 90 && Math.abs(dy) < 60)) closeTop(false); x0 = null; }, { passive: true }); }
+  swipe(P, function (e) { return !!e.target.closest('.yv') && !e.target.closest('.ybar,.yseek,input'); });
+  swipe(G, function () { var b = $('ytBody'); return !b || b.scrollTop <= 0; });
+})();
 
 </script></body></html>
