@@ -728,6 +728,16 @@ body.ytp-on{overflow:hidden}
 #ytp .ic-pause::before,#ytp .ic-pp.on::before{width:10px;height:12px;box-shadow:none;clip-path:none;background:linear-gradient(currentColor,currentColor) 0 0/4px 100% no-repeat,linear-gradient(currentColor,currentColor) 100% 0/4px 100% no-repeat}
 #ytp .ybig::before{transform:scale(1.6)}
 #ytp .yvol{background:rgba(255,255,255,.35);border-radius:0}#ytp .yvol::-moz-range-thumb{width:8px;height:8px;background:#fff;border:0;border-radius:0}
+.conn{margin:0 0 16px;padding:12px 12px 6px;background:linear-gradient(180deg,rgba(255,204,0,.06),transparent 70%),#100d1c;box-shadow:0 0 0 2px #000,0 0 0 4px rgba(255,204,0,.22)}
+.conn h4{margin:0 0 10px;font:7px var(--pix);letter-spacing:2px;color:#ffcc00}
+.cnr{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:2px dotted rgba(255,255,255,.07)}.cnr:first-of-type{border-top:0}
+.cni{width:30px;height:30px;flex:none;display:flex;align-items:center;justify-content:center;background:#07060d;box-shadow:0 0 0 2px #000,0 0 0 4px #2a2440}.cnr.on .cni{box-shadow:0 0 0 2px #000,0 0 0 4px #39d353}
+.spdot{width:14px;height:14px;background:#1ed760;clip-path:polygon(30% 0,70% 0,70% 15%,85% 15%,85% 30%,100% 30%,100% 70%,85% 70%,85% 85%,70% 85%,70% 100%,30% 100%,30% 85%,15% 85%,15% 70%,0 70%,0 30%,15% 30%,15% 15%,30% 15%)}
+.cnt{flex:1;min-width:0}.cnt b{display:block;font:8px var(--pix);color:#f1ecff}.cnt small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font:6px var(--pix);color:#8d86a8;margin-top:5px;letter-spacing:.5px}
+.cnb{border:0;background:#ffcc00;color:#07060d;font:7px var(--pix);padding:9px 10px;box-shadow:0 0 0 2px #000,inset 0 -3px 0 rgba(0,0,0,.25)}.cnb:active{transform:translateY(2px)}
+.cnok{font:6px var(--pix);color:#39d353;letter-spacing:1px}.cnok i{font-style:normal}
+.cnx{border:0;background:none;color:#6f6890;font:8px var(--pix);padding:6px}
+.cnre{width:100%;margin:4px 0 6px;border:0;background:#141022;color:#cfc9e6;font:6px var(--pix);padding:8px;letter-spacing:1px;box-shadow:0 0 0 2px #000}
 </style></head><body>
 <div id="splash" aria-label="Logged"></div>
 <header><div class="hin">
@@ -2935,4 +2945,20 @@ function ypSeekAt(x) { var s = $('ytp').querySelector('.yseek').getBoundingClien
     else if (k === 'q') { var Q = (YPS.qs || []).filter(function (x) { return x !== 'auto'; }); if (!Q.length) return; var j = Q.indexOf(YPS.q); var nq = Q[(j + 1) % Q.length]; ypCmd({ op: 'q', v: nq }); savedTick((QL[nq] || nq).toUpperCase()); }
     else if (k === 'cc') { ytCcToggle(); ypPaint(); }
     else if (k === 'fs') ytFs(); }, true); })();
+/* ---------- R27: CONNECTIONS card at the top of your own Camp profile ---------- */
+function connCard(p) { if (p !== me()) return ''; if (!SPOT) setTimeout(loadSpot, 0);
+  var sp = SPOT && (SPOT.status || {})[p], yt = localStorage.getItem('lg_ytconn_' + p);
+  var row = function (k, ic, name, on, sub) { return '<div class="cnr ' + (on ? 'on' : '') + '"><span class="cni ' + k + '">' + ic + '</span><span class="cnt"><b>' + name + '</b><small>' + sub + '</small></span>' +
+    (on ? '<span class="cnok">CONNECTED <i>✓</i></span><button class="cnx" data-cnx="' + k + '" aria-label="Disconnect ' + name + '">✕</button>' : '<button class="cnb" data-cnc="' + k + '">CONNECT</button>') + '</div>'; };
+  return '<div class="conn"><h4>CONNECTIONS</h4>' + row('yt', ytI(14), 'YOUTUBE', !!yt, yt ? 'SUBS + LIKES IMPORTED' : 'SUBS + LIKES → SUGGESTIONS') + row('sp', '<span class="spdot"></span>', 'SPOTIFY', !!sp, SPOT ? (sp ? 'SOUNDTRACK STATS ON' : 'SEE WHAT YOU REALLY PLAY') : 'CHECKING…') +
+    (yt ? '<button class="cnre" data-cnc="yt">↻ RE-IMPORT FROM YOUTUBE</button>' : '') + '</div>'; }
+var _lockerShellC = lockerShell; lockerShell = function (p, teamH) { var h = _lockerShellC(p, teamH), i = h.indexOf('class="sw"'), j = i < 0 ? -1 : h.indexOf('</button></div></div>', i); if (j < 0) return connCard(p) + h; j += '</button></div></div>'.length; return h.slice(0, j) + connCard(p) + h.slice(j); };
+var _ytImportC = ytImport; ytImport = function (tok) { localStorage.setItem('lg_ytconn_' + me(), String(Date.now())); window.__ytTok = tok; savedTick('YOUTUBE ✓'); return _ytImportC(tok); };
+var _loadSpotC = loadSpot; loadSpot = function () { run('getSpotify', [], function (d) { SPOT = d; if (view === 'stats') renderStats(); connRefresh(); }, function () { SPOT = { status: {} }; connRefresh(); }); };
+function connRefresh() { var c = document.querySelector('.conn'); if (c) c.outerHTML = connCard(me()); }
+document.addEventListener('click', function (e) { var b = e.target.closest('[data-cnc],[data-cnx]'); if (!b) return; e.stopImmediatePropagation(); var p = me(), k = b.dataset.cnc || b.dataset.cnx;
+  if (b.dataset.cnc) return k === 'yt' ? ytConnect(p) : spotifyConnect(p);
+  confirm8(k === 'yt' ? '▶' : '🎧', 'DISCONNECT?', k === 'yt' ? 'YouTube' : 'Spotify', 'DISCONNECT', function () {
+    if (k === 'yt') { try { if (window.__ytTok && google.accounts.oauth2.revoke) google.accounts.oauth2.revoke(window.__ytTok); } catch (x) {} localStorage.removeItem('lg_ytconn_' + p); savedTick('DISCONNECTED'); connRefresh(); }
+    else run('spotifyDisconnect', [p], function () { SPOT = null; loadSpot(); savedTick('DISCONNECTED'); }); }); }, true);
 </script></body></html>
