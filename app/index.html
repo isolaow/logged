@@ -1202,8 +1202,13 @@ body.gwon #dlg{z-index:1400}
 img.poster,img[data-px]{image-rendering:pixelated;image-rendering:crisp-edges;object-fit:cover}
 img.poster.loading{background:repeating-linear-gradient(90deg,#1a1830 0 6px,#24213f 6px 12px);animation:pxsh58 1s steps(4) infinite}
 @keyframes pxsh58{to{background-position:24px 0}}
-body nav#nav.nav58>button:not(#navLogM){display:flex!important;flex-direction:column;align-items:center;justify-content:flex-start;align-self:stretch;line-height:12px}
+body nav#nav.nav58>button[data-v=home],body nav#nav.nav58>button[data-v=stats]{display:flex!important;flex-direction:column;align-items:center;justify-content:flex-start;align-self:stretch;line-height:12px}
 body nav#nav.nav58>button>span:first-child{height:30px!important;min-height:30px;display:flex!important;align-items:center;justify-content:center;margin:0!important;padding:0!important;transform:none!important}
+#ytpage .ytchips{display:none!important}
+#ytBody{padding-top:0!important}
+#ytpage .ythd{padding-top:calc(6px + env(safe-area-inset-top))!important}
+#set58{z-index:1450}
+body:has(#set58.open) #dlg{z-index:1500}
 #set58{position:fixed;inset:0;z-index:950;background:#0b0b14;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;display:none;padding:calc(10px + env(safe-area-inset-top)) 14px calc(30px + env(safe-area-inset-bottom))}#set58.open{display:block;animation:v58in .18s ease-out}
 .sth58{display:flex;align-items:center;gap:10px;margin-bottom:12px}.sth58 h2{margin:0;font-size:13px}.sth58 h2 small{display:block;font-size:9px;opacity:.7;margin-top:4px}
 .sg58{background:#16162a;border:3px solid #000;box-shadow:4px 4px 0 #000;margin:0 0 14px;padding:10px 12px}.sg58 h4{font:10px var(--pix);color:#ffcc33;margin:2px 0 8px}
@@ -5333,7 +5338,7 @@ var _trlPlay58 = trlPlay; trlPlay = function (id, title, fb) { if (window.__ytGa
 window.addEventListener('message', function (e) { var d = e.data; if (d && d.logged === 'yt' && d.wrongVid) ytLoadLog('player-corrected ' + d.wrongVid + '→', d.want, true); });
 /* ---------- r58b: drawer icons = the app's own Logging / Logged icons ---------- */
 var _ytMenuHtml58 = ytMenuHtml; ytMenuHtml = function () { var h = _ytMenuHtml58.apply(this, arguments), lg = document.querySelector('#nav #navLog .nlgg'), ld = typeof logoSvg === 'function' ? logoSvg() : '';
-  h = h.replace(/(data-ysec="lgg"><i>)[^<]*(<\/i>)/, '$1<span class="dic58">' + (lg ? lg.innerHTML : '⏯') + '</span>$2').replace(/(data-ysec="lgd"><i>)[^<]*(<\/i>)/, '$1<span class="dic58">' + ld + '</span>$2'); return h; };
+  h = h.replace(/(data-ysec="lgg"><i>)[^<]*(<\/i>)/, '$1<span class="dic58">' + (lg ? lg.innerHTML : '⏯') + '</span>$2').replace(/(data-ysec="lgd"><i>)[^<]*(<\/i>)/, '$1<span class="dic58">' + ld + '</span>$2'); return h.replace(/<\/div>\s*$/, '<button class="ytsec57" data-ytset58="1"><i>⚙</i><b>YOUTUBE SETTINGS</b><small>Recs, Shorts, autoplay, captions</small></button></div>'); };
 /* ---------- r58c: GROUP WATCH — LEAVE/FINISH did nothing on iPhone: the confirm dialog (#dlg z 250) opened UNDER the Group Watch page (z 1150), invisible.
    Dialog now sits above it; LEAVE always exits locally even if the server call fails; FINISH (ended) falls back to local review if the server is unreachable. ---------- */
 var _gwOp58 = gwOp; gwOp = function (op, pos) { GWT.call('gwControl', [GW.id, me(), op, pos], function (g) { gwApply(g); }, function (er) { if (op === 'ended' && GW.g) { GW.g = Object.assign({}, GW.g, { state: 'review' }); try { gwPaint(); } catch (e) {} } toast('⚠ ' + (er && er.message || 'Couldn\u2019t reach the server — try again')); }); };
@@ -5428,6 +5433,10 @@ var MPH58 = null;
 var _finishAdd58 = finishAdd; finishAdd = function (tmp, title) { var r = _finishAdd58.apply(this, arguments);
   if (MPH58 && title === MPH58) { MPH58 = null; setTimeout(function () { var row = rows.filter(function (x) { return x.title === title; })[0]; if (row) intSet(rKey(row), 'y', { t: row.title, p: posters[row.title] || '', k: row.type === 'TV Show' ? 'tv' : 'movie' }); }, 120); } return r; };
 
+/* r58h: ONE chip bar on YouTube home — 🎬 TRAILERS · ALL · genres (the small duplicate row is hidden) */
+var _ytRibbon58 = ytRibbon; ytRibbon = function (F) { return _ytRibbon58.apply(this, arguments).replace('data-ysec="trl">🎬 TRAILERS</button>', 'data-ysec="trl">🎬 TRAILERS</button><button class="chip' + (!R57.sec ? ' on' : '') + '" data-yall58="1">ALL</button>'); };
+document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-yall58]'); if (!b) return; e.stopImmediatePropagation(); e.preventDefault(); R57.sec = ''; YH.cat = ''; ytLoad(); }, true);
+
 /* ===== r58: EXPLORE + CAMP arcs (same style as LOG) and a real per-person SETTINGS page (auto-saved server-side) ===== */
 function mainTo58(el) { var Mn = document.querySelector('body>main'); if (el && Mn) Mn.scrollTop = Math.max(0, el.getBoundingClientRect().top - Mn.getBoundingClientRect().top + Mn.scrollTop - 8); }
 function trvHub58() { trvShow('<div class="trvlob"><div class="big">' + (typeof tvi === 'function' ? tvi('daily', 64) : '🧠') + '</div><p>TRIVIA</p><button class="ui-btn y" data-trv="daily">📅 TODAY\u2019S DAILY</button><button class="ui-btn" data-trv="live">⚔ LIVE 1v1</button></div>'); }
@@ -5447,7 +5456,7 @@ window.addEventListener('click', function (e) { var b = e.target.closest && e.ta
     [].forEach.call(A.querySelectorAll('[data-archi]'), function (x, i) { if (P[i]) { x.style.left = P[i][0] + '%'; x.style.top = P[i][1] + '%'; } if (L[i] && L[i].main) x.classList.add('main58'); }); var cs = A.querySelector('.ncamp'), src = document.querySelector('#nav [data-v=stats] .ncamp'); if (cs && src) cs.innerHTML = src.innerHTML; } }, true);
 /* ---------- SETTINGS ---------- */
 var SETL = (function () { try { return JSON.parse(localStorage['lg_set_' + me()] || '{}'); } catch (e) { return {}; } })();
-var SETD = { nLogs: true, nTrivia: true, nEps: true, nRate: true, qOn: false, qFrom: 22, qTo: 8, vol: 100, adAuto: true, sHist: true, sLogged: true, sInt: true, sTrl: true, ytNoShorts: false, ytPause: false, rm: false, fs: 100, tab: 'home' };
+var SETD = { nLogs: true, nTrivia: true, nEps: true, nRate: true, qOn: false, qFrom: 22, qTo: 8, vol: 100, adAuto: true, sHist: true, sLogged: true, sInt: true, sTrl: true, ytNoShorts: false, ytPause: false, ytNext: true, ytCC: false, hrtAsk: true, rm: false, fs: 100, tab: 'home' };
 function sv(k) { return k in SETL ? SETL[k] : SETD[k]; }
 function setPut58(k, v) { SETL[k] = v; try { localStorage['lg_set_' + me()] = JSON.stringify(SETL); } catch (e) {} setApply58(); var o = {}; o[k] = v; run('setSettings', [o], function () { savedTick && savedTick('SAVED'); }, function () { toast('⚠ Not saved to server — kept on this phone'); }); }
 setTimeout(function () { run('getSettings', [], function (s) { if (s && typeof s === 'object') { SETL = Object.assign({}, SETL, s); try { localStorage['lg_set_' + me()] = JSON.stringify(SETL); } catch (e) {} setApply58(); } }, function () {}); }, 1200);
@@ -5467,29 +5476,37 @@ function tg58(k, t, sub) { return '<label class="st58"><span><b>' + t + '</b>' +
 function sel58(k, t, opts, sub) { return '<label class="st58"><span><b>' + t + '</b>' + (sub ? '<small>' + sub + '</small>' : '') + '</span><select data-setsel="' + k + '">' + opts.map(function (o) { return '<option value="' + o[0] + '"' + (String(sv(k)) === String(o[0]) ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select></label>'; }
 function btn58(a, t, sub, cls) { return '<button class="st58 stb ' + (cls || '') + '" data-seta="' + a + '"><span><b>' + t + '</b>' + (sub ? '<small>' + sub + '</small>' : '') + '</span><em>›</em></button>'; }
 function grp58(t, h) { return '<section class="sg58"><h4>' + t + '</h4>' + h + '</section>'; }
+function ytCtl58() { return tg58('ytNoShorts', 'Hide Shorts') + tg58('ytNext', 'Autoplay next video', 'Keep playing the next one in the list') + tg58('ytCC', 'Captions on by default') + tg58('adAuto', 'Ad-break game opens itself', 'When an ad starts, pop up a minigame') + tg58('hrtAsk', 'Ask how keen (♥♥♥)', 'Heart picker when you mark something Interested') + tg58('ytPause', 'Pause watch history', 'Videos you open aren\u2019t added') + btn58('ythclr', 'Clear watch history', 'On this phone', 'warn') + btn58('ytrsclr', 'Clear recent YouTube searches', '', 'warn'); }
+function ytSetHtml58() { var p = me(); return '<div class="sth58"><button class="ui-btn" data-seta="close">◀ BACK</button><h2 class="ui-h">⚙ YOUTUBE SETTINGS <small>' + (p === 'sam' ? 'SAM' : 'LEWY') + ' · SAME AS CAMP › SETTINGS</small></h2></div>' +
+  grp58('🔗 CONNECTION', '<div id="setConn">' + (typeof connCard === 'function' ? connCard(p) : '') + '</div>') +
+  grp58('✨ RECOMMENDATIONS USE', tg58('sHist', 'Your YouTube history') + tg58('sLogged', 'Channels you logged') + tg58('sInt', 'Videos you saved (♥)') + tg58('sTrl', 'Trailers for titles on your list')) +
+  grp58('▶ PLAYBACK & FEED', ytCtl58()); }
+var SETM58 = '';
 function setHtml58() { var p = me(), hrs = []; for (var i = 0; i < 24; i++) hrs.push([i, (i % 12 || 12) + (i < 12 ? 'am' : 'pm')]);
   var nf = (NFM[p] || []), hid = Object.keys(INT[p] || {}).filter(function (k) { return INT[p][k].v === 'n'; });
   return '<div class="sth58"><button class="ui-btn" data-seta="close">◀ BACK</button><h2 class="ui-h">⚙ SETTINGS <small>' + (p === 'sam' ? 'SAM' : 'LEWY') + ' · SAVES AUTOMATICALLY</small></h2></div>' +
     grp58('👤 PROFILE', btn58('outfit', 'Outfit', 'Wardrobe — what your avatar wears') + btn58('bg', 'Background', 'Your Camp scene')) +
     grp58('🔗 CONNECTIONS', '<div id="setConn">' + (typeof connCard === 'function' ? connCard(p) : '') + '</div>') +
     grp58('🔔 NOTIFICATIONS', tg58('nLogs', (p === 'sam' ? 'Lewy' : 'Sam') + ' logs something', 'Finished / started / rated') + tg58('nEps', 'New episodes & streaming changes') + tg58('nRate', '“Rate it?” after watching') + tg58('qOn', 'Quiet hours', 'No pings in this window (Sydney time)') + (sv('qOn') ? sel58('qFrom', 'From', hrs) + sel58('qTo', 'Until', hrs) : '')) +
-    grp58('▶ PLAYBACK', sel58('vol', 'Video volume', [[100, '100%'], [75, '75%'], [50, '50%'], [25, '25%']], 'Starting volume for videos & trailers') + tg58('adAuto', 'Ad-break game opens itself', 'When an ad starts, pop up a minigame')) +
-    grp58('📺 YOUTUBE', '<p class="sn58">RECOMMENDATIONS USE</p>' + tg58('sHist', 'Your YouTube history') + tg58('sLogged', 'Channels you logged') + tg58('sInt', 'Videos you saved (♥)') + tg58('sTrl', 'Trailers for titles on your list') + tg58('ytNoShorts', 'Hide Shorts') + tg58('ytPause', 'Pause watch history', 'Videos you open aren\u2019t added') + btn58('ythclr', 'Clear watch history', 'On this phone', 'warn')) +
+    grp58('▶ PLAYBACK', sel58('vol', 'Video volume', [[100, '100%'], [75, '75%'], [50, '50%'], [25, '25%']], 'Starting volume for videos & trailers')) +
+    grp58('📺 YOUTUBE', '<p class="sn58">RECOMMENDATIONS USE</p>' + tg58('sHist', 'Your YouTube history') + tg58('sLogged', 'Channels you logged') + tg58('sInt', 'Videos you saved (♥)') + tg58('sTrl', 'Trailers for titles on your list') + ytCtl58()) +
     grp58('🧠 TRIVIA', tg58('nTrivia', 'Daily quiz reminder', 'Ping at 9pm + when the other person finishes')) +
     grp58('🖥 DISPLAY', tg58('rm', 'Reduce motion', 'Fewer animations') + tg58('snd', 'App sounds', 'Bleeps & SFX') + sel58('fs', 'Text size', [[90, 'Small'], [100, 'Normal'], [110, 'Large'], [120, 'Extra large']]) + sel58('tab', 'Open on', [['home', 'Explore'], ['all', 'Logged'], ['int', 'Interested'], ['logging', 'Logging'], ['stats', 'Camp']])) +
     grp58('🔒 PRIVACY & DATA', '<p class="sn58">NOT FOR ME (' + nf.length + ')</p>' + (nf.length ? nf.map(function (t) { return '<div class="st58 sti"><span><b>' + esc(t) + '</b></span><button class="ui-btn" data-setnfm="' + esc(t) + '">RESTORE</button></div>'; }).join('') : '<p class="sn58 dim">Nothing hidden</p>') +
       '<p class="sn58">HIDDEN FROM INTERESTED (' + hid.length + ')</p>' + (hid.length ? hid.map(function (k) { var o = INT[p][k]; return '<div class="st58 sti"><span><b>' + esc(o.t || k.replace(/^\w+:/, '')) + '</b></span><button class="ui-btn" data-setunhide="' + esc(k) + '">UN-HIDE</button></div>'; }).join('') : '<p class="sn58 dim">Nothing hidden</p>') +
       btn58('rsclr', 'Clear search history', 'App + YouTube searches', 'warn') + btn58('mhclr', 'Clear Mood Pick history', '', 'warn') + btn58('export', 'Export my data', 'Download a JSON file')) +
     grp58('ℹ ABOUT', '<div class="st58"><span><b>Version</b><small>' + esc(window.APPV58 || 'r58') + '</small></span></div>' + btn58('new', 'What\u2019s new') + btn58('bug', 'Report a bug', 'Opens a GitHub issue')); }
-function setOpen58() { archClose(); var x = $('set58'); if (!x) { document.body.insertAdjacentHTML('beforeend', '<div id="set58" role="dialog" aria-label="Settings"></div>'); x = $('set58'); } SETL.snd = !muted; x.innerHTML = setHtml58(); x.classList.add('open'); x.scrollTop = 0; }
-function setRedraw58() { var x = $('set58'); if (!x || !x.classList.contains('open')) return; var st = x.scrollTop; SETL.snd = !muted; x.innerHTML = setHtml58(); x.scrollTop = st; }
+function setOpen58() { archClose(); var x = $('set58'); if (!x) { document.body.insertAdjacentHTML('beforeend', '<div id="set58" role="dialog" aria-label="Settings"></div>'); x = $('set58'); } SETL.snd = !muted; SETM58 = ''; x.innerHTML = setHtml58(); x.classList.add('open'); x.scrollTop = 0; }
+function ytSetOpen58() { setOpen58(); SETM58 = 'yt'; $('set58').innerHTML = ytSetHtml58(); $('set58').classList.add('yt58'); }
+function setRedraw58() { var x = $('set58'); if (!x || !x.classList.contains('open')) return; var st = x.scrollTop; SETL.snd = !muted; x.innerHTML = SETM58 === 'yt' ? ytSetHtml58() : setHtml58(); x.scrollTop = st; }
 document.addEventListener('change', function (e) { var t = e.target; if (!t.closest || !t.closest('#set58')) return;
   if (t.dataset.set) { if (t.dataset.set === 'snd') { if (t.checked === muted) $('mute').onclick(); return; } setPut58(t.dataset.set, t.checked); if (t.dataset.set === 'qOn') setRedraw58(); if (/^s(Hist|Logged|Int|Trl)$/.test(t.dataset.set)) { try { YH.feed = null; } catch (x) {} } }
   if (t.dataset.setsel) { var v = t.value; setPut58(t.dataset.setsel, /^\d+$/.test(v) ? +v : v); } }, true);
 document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('#set58 [data-seta],#set58 [data-setnfm],#set58 [data-setunhide]'); if (!b) return; e.stopImmediatePropagation(); e.preventDefault(); SFX.tap && SFX.tap(); var a = b.dataset.seta, p = me();
   if (b.dataset.setnfm) { run('setNotForMe', [b.dataset.setnfm, false], function (o) { if (o) NFM = o; setRedraw58(); savedTick('RESTORED'); }); return; }
   if (b.dataset.setunhide) { intSet(b.dataset.setunhide, ''); setTimeout(setRedraw58, 300); return; }
-  if (a === 'close') return $('set58').classList.remove('open');
+  if (a === 'close') { $('set58').classList.remove('yt58'); return $('set58').classList.remove('open'); }
+  if (a === 'ytrsclr') return confirm8('🗑', 'CLEAR YOUTUBE SEARCHES?', 'Recent searches on the YouTube screen', 'CLEAR', function () { try { YRS = []; localStorage.lg_ytrs = '[]'; } catch (x) {} savedTick('CLEARED'); });
   if (a === 'outfit') { $('set58').classList.remove('open'); return wrOpen(p); }
   if (a === 'bg') { $('set58').classList.remove('open'); campGo58(); return setTimeout(function () { var x = document.querySelector('[data-bgpick="' + p + '"]'); x && x.click(); }, 300); }
   if (a === 'ythclr') return confirm8('🗑', 'CLEAR HISTORY?', 'YouTube watch history on this phone', 'CLEAR', function () { localStorage.removeItem('lg_ythist'); savedTick('CLEARED'); });
@@ -5516,5 +5533,10 @@ var _ytnOpenGT = ytnOpen; ytnOpen = function (id) { var now = Date.now(); if (GT
 window.addEventListener('click', function (e) { var c = e.target.closest && e.target.closest('#ytpage [data-ytv],#ytpage .ytth,#ytdp [data-ytv]'); if (!c) return; var P = $('ytp'), full = P && P.classList.contains('open') && !P.classList.contains('mini');
   if (Date.now() - GT58.at < 700 || full) { e.stopImmediatePropagation(); e.preventDefault(); try { ytLoadLog('ghost-tap', c.dataset.ytid || '', false); } catch (x) {} } }, true);
 (function () { var P = $('ytp'); if (!P) return; var f = function () { document.body.classList.toggle('ytfull58', P.classList.contains('open') && !P.classList.contains('mini')); }; new MutationObserver(f).observe(P, { attributes: true, attributeFilter: ['class'] }); f(); })();
+
+/* r58h: wiring for YouTube settings — autoplay next, captions default, heart prompt */
+var _trlQ58y = trlQ; trlQ = function () { var q = _trlQ58y.apply(this, arguments); if (!sv('ytNext')) q = q.replace(/&next=[^&]*/g, ''); if (sv('ytCC') && !/[?&]cc=/.test(q)) q += '&cc=1'; return q; };
+var _intSet58h = intSet; intSet = function () { if (sv('hrtAsk')) return _intSet58h.apply(this, arguments); var o = R56.noHeart; R56.noHeart = 1; try { return _intSet58h.apply(this, arguments); } finally { R56.noHeart = o; } };
+document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-ytset58]'); if (!b) return; e.stopImmediatePropagation(); e.preventDefault(); try { ytDrawerClose(1); } catch (x) {} ytSetOpen58(); }, true);
 
 </script></body></html>

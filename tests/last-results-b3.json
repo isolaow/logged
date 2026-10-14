@@ -11,7 +11,8 @@
    "RECENT SEARCHES",
    "LOGGING",
    "LOGGED",
-   "GROUP WATCH"
+   "GROUP WATCH",
+   "YOUTUBE SETTINGS"
   ]
  },
  "1b genre ribbon at top with TRAILERS first": {
@@ -98,7 +99,7 @@
  },
  "4b create session → room open": {
   "pass": true,
-  "d": "KUZSQ4"
+  "d": "GCP8LD"
  },
  "4c presence: Lewy shows online": {
   "pass": true
@@ -130,7 +131,7 @@
    true,
    "",
    1,
-   2.3307238474121093
+   2.360800024795532
   ]
  },
  "4j remote pause applies (state paused at Lewy’s position)": {
