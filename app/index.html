@@ -866,6 +866,16 @@ body.ytp-on{overflow:hidden}
 .ipy{background:#ff4f8b;color:#fff}.ipn{background:#2a2840;color:#c9c6e6}.ipa button:active{transform:translate(3px,3px);box-shadow:0 0 0 3px #000,1px 1px 0 #000}
 .ipu{display:block;margin:6px auto 0;font-size:8px}
 .iplist{display:flex;flex-direction:column;gap:8px}.ipr{display:flex;align-items:center;gap:10px;background:#141022;padding:6px;box-shadow:0 0 0 2px #000}.ipr img{width:40px;height:60px;object-fit:cover}.ipr b{flex:1;font:9px var(--pix);line-height:1.4}
+.xtab{display:flex;gap:0;margin:2px 0 14px;box-shadow:0 0 0 3px #000,4px 4px 0 #000}
+.xtab button{flex:1;height:44px;border:0;background:#141022;color:#a9a5c9;font:9px var(--pix);letter-spacing:1px}
+.xtab button.on{background:#ff4f8b;color:#fff;box-shadow:inset 0 -3px 0 rgba(0,0,0,.3)}
+.xtab button+button{border-left:3px solid #000}
+.xih{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px}.xih h2{margin:0;font:15px var(--pix);color:#ff4f8b;text-shadow:3px 3px 0 #000}.xih h2 small{font-size:9px;color:#fff;opacity:.7}.xih span{font:7px var(--pix);opacity:.55;letter-spacing:1px}
+.xif{display:flex;gap:6px;overflow-x:auto;margin-bottom:14px;padding-bottom:4px}.xif i{flex:none;width:2px;background:#2c2c4a}.xif .chip{flex:none}
+.xig{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:14px 10px}
+.xic{display:flex;flex-direction:column;min-width:0}.xic b{font:8px var(--pix);line-height:1.4;margin-top:6px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}.xic small{font:7px var(--pix);opacity:.55;margin-top:2px}
+.xpp{position:relative;aspect-ratio:2/3;overflow:hidden;box-shadow:0 0 0 2px #000,3px 3px 0 #000;cursor:pointer}.xpp img,.xpp .pico{width:100%;height:100%;object-fit:cover}.xpp em{position:absolute;top:4px;left:4px;font:7px var(--pix);font-style:normal;background:#ff4f8b;color:#fff;padding:2px 4px;box-shadow:2px 2px 0 #000}
+.xia{display:flex;gap:4px;margin-top:6px}.xia .btn{flex:1;min-height:32px;padding:0;font-size:8px}.xia .xno{flex:none;width:32px;background:#2a2840;color:#c9c6e6}
 </style></head><body>
 <div id="splash" aria-label="Logged"></div>
 <header><div class="hin">
@@ -3880,5 +3890,32 @@ $('nav').onclick = (function (old) { return function (e) { var b = e.target.clos
 document.addEventListener('click', function (e) { var b = e.target.closest('[data-browse=watchlist]'); if (!b) return; e.stopPropagation(); e.preventDefault(); show('logging'); }, true);
 var _renderBrowseL = renderBrowse; renderBrowse = function () { _renderBrowseL.apply(this, arguments); if (view === 'logging') renderLogging(); };
 var _renderL = render; render = function () { var r = _renderL.apply(this, arguments); if (view === 'logging') renderLogging(); return r; };
+
+/* ===== R41: INTERESTED by default + INTERESTED as Explore's first main tab ===== */
+untouched = function (r) { return neither(r) && !isYT(r); };
+/* non-destructive default: an unstarted list title with no explicit call counts as INTERESTED for both people (no sheet/row data touched; explicit Not interested always wins; new unstarted additions inherit it automatically) */
+function intOf(r, p) { var o = (INT[p || me()] || {})[rKey(r)]; if (o) return o.v; return untouched(r) ? 'y' : ''; }
+var _ipDeckI = ipDeck; ipDeck = function () { var L = _ipDeckI.apply(this, arguments); return IP.tab === 'list' ? L.filter(function (c) { return !c.r || intOf(c.r) !== 'y'; }) : L; };
+var _ipDecidedI = ipDecided; ipDecided = function (v) { var L = _ipDecidedI(v); if (v !== 'y') return L; var seen = {}; L.forEach(function (x) { seen[x.k] = 1; }); rows.filter(function (r) { return untouched(r) && !(INT[me()] || {})[rKey(r)]; }).forEach(function (r) { if (!seen[rKey(r)]) L.push({ k: rKey(r), t: r.title, p: posters[r.title] || '', r: r }); }); return L; };
+var XT = { tab: localStorage.lg_xtab || 'int', type: 'all', sort: 'new' };
+function intList() { var p = me(), L = rows.filter(function (r) { return untouched(r) && intOf(r, p) === 'y'; });
+  if (XT.type !== 'all') L = L.filter(function (r) { return XT.type === 'tv' ? r.type === 'TV Show' : r.type === 'Movie'; });
+  var cmp = { new: function (a, b) { return b.row - a.row; }, az: function (a, b) { return a.title.localeCompare(b.title, undefined, { sensitivity: 'base' }); }, year: function (a, b) { return (Number(M(b).year) || 0) - (Number(M(a).year) || 0); }, both: function (a, b) { return (intOf(b, 'sam') === 'y' && intOf(b, 'lewy') === 'y') - (intOf(a, 'sam') === 'y' && intOf(a, 'lewy') === 'y') || b.row - a.row; } }[XT.sort];
+  return L.sort(cmp); }
+function renderInt() { var L = intList(), nm = me() === 'lewy' ? 'LEWY' : 'SAM', other = me() === 'lewy' ? 'sam' : 'lewy', ch = function (k, v, t) { return '<button class="chip' + (XT[k] === v ? ' on' : '') + '" data-xt="' + k + ':' + v + '">' + t + '</button>'; };
+  return '<div class="xint"><div class="xih"><h2>♥ INTERESTED <small>' + L.length + '</small></h2><span>' + nm + '\u2019S WATCH-NEXT SHELF</span></div>' +
+    '<div class="xif">' + ch('type', 'all', 'ALL') + ch('type', 'movie', '🎞 MOVIES') + ch('type', 'tv', '📺 SHOWS') + '<i></i>' + ch('sort', 'new', 'NEWEST') + ch('sort', 'az', 'A–Z') + ch('sort', 'year', 'YEAR') + ch('sort', 'both', '♥♥ BOTH') + '</div>' +
+    (L.length ? '<div class="xig">' + L.map(function (r) { var m = M(r), both = intOf(r, other) === 'y'; return '<div class="xic"><div class="xpp" data-open="' + r.row + '">' + art(r) + (both ? '<em>♥♥</em>' : '') + '</div><b>' + esc(r.title) + '</b><small>' + [m.year, r.type === 'TV Show' ? 'SHOW' : 'MOVIE'].filter(Boolean).join(' · ') + '</small><div class="xia"><button class="btn y" data-xstart="' + r.row + '">▶ START</button><button class="btn xno" data-xno="' + r.row + '" aria-label="Not interested">✕</button></div></div>'; }).join('') + '</div>' : '<div class="empty">Nothing on the shelf — swipe some ✦ PICKS 🍿</div>') +
+    (IP.lastNo ? '<button class="btn ipu" data-xundo="1">↺ UNDO ' + esc(IP.lastNo.title.slice(0, 24)) + '</button>' : '') + '</div>'; }
+var _renderHomeI = renderHome; renderHome = function () { var H = $('v-home'); if ($('q').value.trim() || !rows.length) return _renderHomeI.apply(this, arguments);
+  var bar = '<div class="xtab"><button data-xtab="int" class="' + (XT.tab === 'int' ? 'on' : '') + '">♥ INTERESTED</button><button data-xtab="browse" class="' + (XT.tab === 'browse' ? 'on' : '') + '">🧭 BROWSE</button><button data-intpage="1">✦ PICKS</button></div>';
+  if (XT.tab === 'int') { H.innerHTML = bar + renderInt(); return; } _renderHomeI.apply(this, arguments); H.insertAdjacentHTML('afterbegin', bar); };
+document.addEventListener('click', function (e) { var b = e.target.closest('[data-xtab],[data-xt],[data-xstart],[data-xno],[data-xundo]'); if (!b) return; e.stopPropagation();
+  if (b.dataset.xtab) { XT.tab = localStorage.lg_xtab = b.dataset.xtab; renderHome(); window.scrollTo(0, 0); return; }
+  if (b.dataset.xt) { var kv = b.dataset.xt.split(':'); XT[kv[0]] = kv[1]; return renderHome(); }
+  if (b.dataset.xstart) { var r = byId(b.dataset.xstart); if (!r) return; var f = {}; f[me() + 'Watched'] = 'As we speak'; saveFields(r, f, '▶ Now logging ' + r.title); return setTimeout(renderHome, 50); }
+  if (b.dataset.xno) { var r2 = byId(b.dataset.xno); if (!r2) return; IP.lastNo = r2; intSet(rKey(r2), 'n', { t: r2.title, p: posters[r2.title] || '', k: r2.type === 'TV Show' ? 'tv' : 'movie' }); return renderHome(); }
+  if (b.dataset.xundo && IP.lastNo) { intSet(rKey(IP.lastNo), ''); IP.lastNo = null; return renderHome(); } }, true);
+var _intRedrawI = window.intRedraw; window.intRedraw = function () { _intRedrawI && _intRedrawI(); if (view === 'home') renderHome(); };
 
 </script></body></html>
