@@ -1567,6 +1567,25 @@ nav#nav.nav58 #navLogM.gold58:not(.on){background:#1d1a30;color:#ffcc33;box-shad
 #lfc70 .lfc{position:absolute;left:10px;right:10px;top:12%;background:#15132a;border:4px solid #d51007;box-shadow:4px 4px 0 #000;padding:14px}
 #lfc70 h3{font:11px var(--pix);color:#fff;margin:0 0 8px}#lfc70 p{font-size:12px;color:var(--dim,#aaa);margin:0 0 10px}
 #lfc70 .lfb{display:flex;gap:8px;margin-top:10px}#lfc70 .lfb .ui-btn{flex:1;min-height:44px}#lfc70 .lfe{color:#ff6b6b;font:7px var(--pix);margin:8px 0 0}
+/* R72: iPhone keyboard metrics (iPhone 13 portrait ≈ 291px incl. bottom area): 42px keys, 12px row gap, 6px key gap, 3px side inset */
+#kb.kb72{padding:8px 3px max(76px,calc(42px + env(safe-area-inset-bottom)));background:#16122b;border-top:3px solid var(--gold);box-shadow:0 -4px 0 #000;box-sizing:border-box;user-select:none;-webkit-user-select:none;touch-action:manipulation}
+#kb.kb72 .kr72{display:flex;gap:6px;margin:0 auto 12px;max-width:560px;justify-content:center}
+#kb.kb72 .kr72.bot{margin-bottom:0}
+#kb.kb72 .kr72.in{padding:0 calc((100% - 54px) / 20)}
+#kb.kb72 button{flex:0 0 calc((100% - 54px) / 10);height:42px;min-width:0;padding:0;margin:0;background:#3b3760;color:#fff;border:2px solid #000;border-radius:0;box-shadow:inset 0 -3px 0 rgba(0,0,0,.45),inset 2px 2px 0 rgba(255,255,255,.12);font:500 22px -apple-system,system-ui,sans-serif;display:flex;align-items:center;justify-content:center}
+#kb.kb72 .kr72.in button{flex-basis:calc((100% - 48px) / 9)}
+#kb.kb72 .fn{background:#24213f;font:8px var(--pix);color:#ddd}
+#kb.kb72 .sh,#kb.kb72 .bs{flex:0 0 calc((100% - 54px) / 10 * 1.3);font-size:18px;font-family:-apple-system,system-ui,sans-serif}
+#kb.kb72 .kr72:not(.sym) .sh{margin-right:auto}#kb.kb72 .kr72:not(.sym) .bs{margin-left:auto}
+#kb.kb72 .kr72.sym button.ch{flex-basis:calc((100% - 54px) / 10 * 1.35)}
+#kb.kb72 .sh.on,#kb.kb72 .sh.caps{background:#fff;color:#000}#kb.kb72 .sh.caps{box-shadow:inset 0 -4px 0 var(--gold)}
+#kb.kb72 .pg{flex:0 0 calc((100% - 54px) / 10 * 2.5)}#kb.kb72 .ret{flex:0 0 calc((100% - 54px) / 10 * 2.5);background:var(--grn);color:#000}
+#kb.kb72 .spc{flex:1 1 auto;font:8px var(--pix);color:#bbb}
+#kb.kb72 button.dn{background:var(--gold);color:#000;box-shadow:none;transform:translateY(1px)}
+#kb.kb72 .pop72{display:none;position:absolute;transform:translate(-50%,-100%);height:56px;margin-top:-4px;align-items:center;justify-content:center;background:#fff;color:#000;border:3px solid #000;box-shadow:3px 3px 0 #000;font:500 32px -apple-system,system-ui,sans-serif;pointer-events:none;z-index:2}
+.car72{position:fixed;z-index:2960;width:2px;background:#4da3ff;display:none;pointer-events:none;animation:car72 1s steps(1) infinite}
+@keyframes car72{50%{opacity:0}}
+.clr72{position:fixed;z-index:2960;width:26px;height:26px;display:none;align-items:center;justify-content:center;background:#555;color:#fff;border:2px solid #000;border-radius:50%;font:12px system-ui;padding:0}
 </style></head><body>
 <div id="splash" aria-label="Logged"></div>
 <header><div class="hin">
@@ -6673,6 +6692,72 @@ setInterval(function () { try { var k = document.getElementById('kb'); if (!k ||
     if (t.dataset.lfc) sheet(); else if (t.dataset.lfx) setU(''); else if (t.dataset.lfcx) close();
     else { var v = String($('lfm70u').value || '').trim(); if (!/^[\w.\-]{2,40}$/.test(v)) { $('lfe70').textContent = 'Type your Last.fm username'; return; } $('lfe70').textContent = 'Saving…'; setU(v, close); } }, true);
   document.addEventListener('keydown', function (e) { if (e.target && e.target.id === 'lfm70u' && e.key === 'Enter') { var b = document.querySelector('[data-lfsave]'); b && b.click(); } }, true);
+})();
+
+/* ===== R72: 8-bit keyboard rebuilt to iPhone size/layout/feel: QWERTY 10/9/7 + shift/delete, 123 · space · return,
+   123 and #+= symbol pages, shift + caps lock (double-tap), sentence auto-capitalise, key popups, hold-to-repeat delete,
+   tap tick + haptic, a real caret you can move by tapping the text, edits at the caret, and a ✕ clear button in the field. ===== */
+(function () {
+  var old = $('kb'); if (!old) return; var K = old.cloneNode(false); old.parentNode.replaceChild(K, old); /* drop the old key listeners */
+  K.classList.add('kb72');
+  var L = { abc: ['qwertyuiop', 'asdfghjkl', 'zxcvbnm'], n: ['1234567890', '-/:;()$&@"', '.,?!\''], s: ['[]{}#%^*+=', '_\\|~<>€£¥•', '.,?!\''] };
+  var S = { page: 'abc', shift: false, caps: false, lastShift: 0 };
+  var key = function (k, lab, cls) { return '<button type="button" data-k72="' + esc(k) + '" class="' + (cls || '') + '" data-nosfx="1">' + lab + '</button>'; };
+  function draw() { var P = L[S.page], up = S.shift || S.caps, h = '';
+    h += '<div class="kr72">' + P[0].split('').map(function (c) { var d = S.page === 'abc' && up ? c.toUpperCase() : c; return key(d, esc(d), 'ch'); }).join('') + '</div>';
+    h += '<div class="kr72' + (S.page === 'abc' ? ' in' : '') + '">' + P[1].split('').map(function (c) { var d = S.page === 'abc' && up ? c.toUpperCase() : c; return key(d, esc(d), 'ch'); }).join('') + '</div>';
+    var left = S.page === 'abc' ? key('SHIFT', S.caps ? '⇪' : '⇧', 'fn sh' + (S.caps ? ' caps' : S.shift ? ' on' : '')) : key(S.page === 'n' ? 'PG:s' : 'PG:n', S.page === 'n' ? '#+=' : '123', 'fn sh');
+    h += '<div class="kr72' + (S.page === 'abc' ? '' : ' sym') + '">' + left + P[2].split('').map(function (c) { var d = S.page === 'abc' && up ? c.toUpperCase() : c; return key(d, esc(d), 'ch'); }).join('') + key('BS', '⌫', 'fn bs') + '</div>';
+    h += '<div class="kr72 bot">' + key(S.page === 'abc' ? 'PG:n' : 'PG:abc', S.page === 'abc' ? '123' : 'ABC', 'fn pg') + key(' ', 'space', 'spc') + key('OK', 'return', 'fn ret') + '</div><div class="pop72" aria-hidden="true"></div>';
+    K.innerHTML = h; }
+  /* caret + clear overlays */
+  var C = document.createElement('i'); C.className = 'car72'; document.body.appendChild(C);
+  var X = document.createElement('button'); X.type = 'button'; X.className = 'clr72 qx'; X.setAttribute('aria-label', 'Clear text'); X.textContent = '✕'; X.dataset.nosfx = '1'; document.body.appendChild(X);
+  var cv = document.createElement('canvas').getContext('2d');
+  var tw = function (el, s) { var cs = getComputedStyle(el); cv.font = cs.fontStyle + ' ' + cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily; return cv.measureText(s).width + (parseFloat(cs.letterSpacing) || 0) * s.length; };
+  var pos = function (el) { var v = el.value || ''; if (el.__p72 == null || el.__p72 > v.length) el.__p72 = v.length; return el.__p72; };
+  function paintCaret() { var el = KB.target; if (!el || !K.classList.contains('on') || !el.isConnected) { C.style.display = X.style.display = 'none'; return; }
+    var r = el.getBoundingClientRect(), cs = getComputedStyle(el); if (!r.width) { C.style.display = X.style.display = 'none'; return; }
+    var padL = parseFloat(cs.paddingLeft) + parseFloat(cs.borderLeftWidth), padR = parseFloat(cs.paddingRight) + parseFloat(cs.borderRightWidth) + 30, inner = r.width - padL - padR;
+    var x = tw(el, (el.value || '').slice(0, pos(el))); if (x - el.scrollLeft > inner) el.scrollLeft = x - inner + 2; else if (x < el.scrollLeft) el.scrollLeft = Math.max(0, x - 4);
+    var fs = parseFloat(cs.fontSize) || 16, ta = cs.textAlign === 'center' ? (inner - tw(el, el.value || '')) / 2 : 0;
+    C.style.display = 'block'; C.style.left = Math.round(r.left + padL + ta + x - el.scrollLeft) + 'px'; C.style.top = Math.round(r.top + (r.height - fs * 1.25) / 2) + 'px'; C.style.height = Math.round(fs * 1.25) + 'px';
+    var own = el.id === 'q' || (el.parentNode && el.parentNode.querySelector('.qx:not(.clr72)'));
+    X.style.display = el.value && !own ? 'flex' : 'none'; X.style.left = Math.round(r.right - 38) + 'px'; X.style.top = Math.round(r.top + r.height / 2 - 13) + 'px'; }
+  setInterval(paintCaret, 250); window.addEventListener('resize', paintCaret); document.addEventListener('scroll', paintCaret, true);
+  var fire = function (el) { if (el.oninput) el.oninput(); else el.dispatchEvent(new Event('input', { bubbles: true })); };
+  var autoCap = function (el) { if (S.caps || S.page !== 'abc') return; var b = (el.value || '').slice(0, pos(el)); var on = !b.length || /[.!?]\s+$/.test(b); if (on !== S.shift) { S.shift = on; draw(); } };
+  function ins(el, ch) { var v = el.value || '', p = pos(el); if (v.length >= 120) return; el.value = v.slice(0, p) + ch + v.slice(p); el.__p72 = p + ch.length; fire(el); }
+  function del(el) { var v = el.value || '', p = pos(el); if (!p) return false; el.value = v.slice(0, p - 1) + v.slice(p); el.__p72 = p - 1; fire(el); return true; }
+  var tick = function (hi) { try { if (!muted && typeof tone === 'function') tone(hi ? 1400 : 900, .018, 'square', .012); } catch (e) {} try { navigator.vibrate && navigator.vibrate(6); } catch (e) {} };
+  /* kbKey: physical keys + any caller still use it; OK keeps the existing chain (change/Enter/close) */
+  var _kk = kbKey; kbKey = function (k, raw) { var el = KB.target; if (!el) return; if (k === 'OK') return _kk.apply(this, arguments);
+    if (k === 'BS') del(el); else if (k === 'CLR') { el.value = ''; el.__p72 = 0; fire(el); } else ins(el, raw ? k : k); autoCap(el); paintCaret(); };
+  var _ko = kbOpen; kbOpen = function (el) { var r = _ko.apply(this, arguments); el.__p72 = (el.value || '').length; S.page = 'abc'; S.caps = false; S.shift = false; draw(); autoCap(el);
+    document.documentElement.style.setProperty('--kbh', K.offsetHeight + 'px'); paintCaret(); return r; };
+  var _kc = kbClose; kbClose = function () { var r = _kc.apply(this, arguments); paintCaret(); return r; };
+  /* keys: popup on touch-down, letters commit on release (like iOS); delete repeats while held */
+  var rep = 0, rept = 0, down = null;
+  var pop = function (b) { var P = K.querySelector('.pop72'); if (!P) return; if (!b) { P.style.display = 'none'; return; } var r = b.getBoundingClientRect(), kr = K.getBoundingClientRect(); P.textContent = b.textContent; P.style.display = 'flex'; P.style.left = (r.left - kr.left + r.width / 2) + 'px'; P.style.top = (r.top - kr.top) + 'px'; P.style.width = (r.width + 20) + 'px'; };
+  var stopRep = function () { clearTimeout(rept); clearInterval(rep); rep = rept = 0; };
+  K.addEventListener('pointerdown', function (e) { e.preventDefault(); var b = e.target.closest('[data-k72]'), el = KB.target; if (!b || !el) return; var k = b.dataset.k72; b.classList.add('dn'); down = b;
+    if (b.classList.contains('ch') || k === ' ') { if (k !== ' ') pop(b); return; }
+    tick(true);
+    if (k === 'BS') { del(el); autoCap(el); paintCaret(); rept = setTimeout(function () { rep = setInterval(function () { if (!KB.target || !del(KB.target)) stopRep(); paintCaret(); }, 70); }, 450); return; }
+    if (k === 'SHIFT') { var t = Date.now(); if (t - S.lastShift < 320 && !S.caps) { S.caps = true; S.shift = true; } else if (S.caps) { S.caps = false; S.shift = false; } else S.shift = !S.shift; S.lastShift = t; draw(); return; }
+    if (k.indexOf('PG:') === 0) { S.page = k.slice(3); draw(); return; }
+    if (k === 'OK') { kbKey('OK'); } });
+  var up = function (e) { stopRep(); pop(null); var b = down; down = null; if (!b) return; b.classList.remove('dn'); var el = KB.target; if (!el || !b.isConnected) return; var k = b.dataset.k72;
+    if (e && e.type === 'pointercancel') return;
+    if (b.classList.contains('ch') || k === ' ') { tick(); ins(el, k); if (S.shift && !S.caps && S.page === 'abc') { S.shift = false; draw(); }
+      if (k === ' ' && S.page !== 'abc') { S.page = 'abc'; draw(); } if (k === '\'' && S.page !== 'abc') { S.page = 'abc'; draw(); } autoCap(el); paintCaret(); } };
+  window.addEventListener('pointerup', up, true); window.addEventListener('pointercancel', up, true);
+  /* tap in the text to move the caret */
+  document.addEventListener('pointerdown', function (e) { var el = KB.target; if (!el || e.target !== el) return; var r = el.getBoundingClientRect(), cs = getComputedStyle(el), v = el.value || '';
+    var x = e.clientX - r.left - parseFloat(cs.paddingLeft) - parseFloat(cs.borderLeftWidth) + el.scrollLeft, best = v.length, bd = 1e9;
+    for (var i = 0; i <= v.length; i++) { var d = Math.abs(tw(el, v.slice(0, i)) - x); if (d < bd) { bd = d; best = i; } } el.__p72 = best; autoCap(el); paintCaret(); }, true);
+  X.addEventListener('pointerdown', function (e) { e.preventDefault(); e.stopPropagation(); var el = KB.target; if (!el) return; el.value = ''; el.__p72 = 0; fire(el); tick(true); autoCap(el); paintCaret(); });
+  draw();
 })();
 
 </script></body></html>
