@@ -4723,7 +4723,7 @@ function themeSave(r, p, list, done) { var tries = 0, sibs = rows.filter(functio
 ['pointerdown', 'touchstart', 'mousedown'].forEach(function (ev) { document.addEventListener(ev, function (e) { var b = e.target.closest && e.target.closest('[data-pku]'); if (b) R55.sc = b.dataset.sc || 'show'; }, { capture: true, passive: true }); });
 pkUse = function (id, sc) { var t = pkItem(id), r = byId(OSX.r), p = me(); if (!t || !r) return; sc = sc || R55.sc || 'show'; R55.sc = '';
   var L = themeAll(r, p).slice(), k = (t.n + '|' + t.a + '|' + sc).toLowerCase(); if (L.some(function (c) { return (c.n + '|' + c.a + '|' + c.sc).toLowerCase() === k; })) return toast('ALREADY IN YOUR SOUNDTRACKS');
-  L.push({ n: t.n2 && t.via === 'youtube' ? t.n2 : t.n, a: t.a, pv: /^https:\/\/audio-ssl/.test(t.pv || '') ? t.pv : '', art: t.art || '', via: t.via || 'itunes', yt: t.yt || '', sc: sc });
+  L.push({ n: t.n2 && t.via === 'youtube' ? t.n2 : t.n, a: t.a, pv: /^https:\/\/(audio-ssl|p\.scdn\.co)/.test(t.pv || '') ? t.pv : '', art: t.art || '', via: t.via || 'itunes', yt: t.yt || '', sc: sc });
   var b = document.querySelector('[data-pku="' + id + '"][data-sc="' + sc + '"]'); if (b) { b.disabled = true; b.textContent = '…'; }
   themeSave(r, p, L, function (ok) { if (b) { b.disabled = false; b.textContent = ok ? '✓ ADDED' : 'RETRY'; b.classList.toggle('ok', ok); } if (ok) { SFX.coin && SFX.coin(); toast('★ ADDED TO YOUR ' + r.title.toUpperCase() + ' SOUNDTRACKS' + (sc !== 'show' ? ' (' + sc + ')' : '')); } }); };
 oxMine = function () { var r = byId(OSX.r); if (!r) return null; return themeList(r, me())[0] || (r.theme && r.theme[me()]) || null; };
@@ -4747,7 +4747,7 @@ setInterval(function () { if (OXA && $('ostx') && OXS.mode === 'tl') { var n = !
 
 /* ---------- 2) TRIVIA: clip element blessed on the PLAY tap (any trivia button), one element, results/leaderboard, 9pm unlock countdown ---------- */
 document.addEventListener('click', function (e) { if (e.target.closest && e.target.closest('#trv button,[data-trv],[data-trvday]')) { try { TRA_OK = false; trvUnlock(); } catch (x) {} } }, true);
-var _trvAudio55 = trvAudio; trvAudio = function (src) { r55log('trv-audio ' + String(src || '').slice(0, 60)); if (src && /p\.scdn\.co/.test(src)) src = ''; return _trvAudio55.apply(this, src === undefined ? [] : [src]); };
+var _trvAudio55 = trvAudio; trvAudio = function (src) { r55log('trv-audio ' + String(src || '').slice(0, 60)); return _trvAudio55.apply(this, src === undefined ? [] : [src]); };
 function trvNext9() { var now = new Date(), syd = new Date(now.toLocaleString('en-US', { timeZone: 'Australia/Sydney' })), off = syd.getTime() - now.getTime() + now.getMilliseconds(), n = new Date(syd); n.setHours(21, 0, 0, 0); if (n <= syd) n.setDate(n.getDate() + 1); return n.getTime() - off; }
 function trvCD() { var ms = Math.max(0, trvNext9() - Date.now()), h = Math.floor(ms / 36e5), m = Math.floor(ms % 36e5 / 6e4), s = Math.floor(ms % 6e4 / 1e3); return (h ? h + 'h ' : '') + ('0' + m).slice(-2) + 'm ' + ('0' + s).slice(-2) + 's'; }
 setInterval(function () { var c = $('trvCD'); if (c) c.textContent = trvCD(); }, 1000);
@@ -5796,5 +5796,53 @@ yimPaint = function () { var id = YTX && YTX.id, P = $('ytp'), d = P && P.queryS
   [['y', 'INTERESTED'], ['n', 'NOT INTERESTED']].forEach(function (a) { var b = d.querySelector('[data-yint="' + a[0] + '"]'); if (!b || b.disabled) return; var on = v === a[0]; b.classList.toggle('on', on); b.classList.remove('act'); var s = b.querySelector('span'); if (s) s.textContent = a[1] + (on ? ' ✓' : ''); b.setAttribute('aria-pressed', on ? 'true' : 'false'); }); };
 yinPaint59 = window.yinPaint59 = function () { yimPaint(); };
 var _ytnOpen59 = ytnOpen; ytnOpen = function () { var P = $('ytp'); if (P) delete P.dataset.trlk; return _ytnOpen59.apply(this, arguments); };
+
+/* ===== R60: ONE song path (the 'Baby Blue' path). Root cause: Baby Blue carried a Spotify p.scdn.co MP3 and was set on the shared <audio>
+   synchronously inside the tap. Every other song went through oxStart's async iTunes JSONP lookup (r55 even stripped p.scdn.co URLs),
+   so play() ran after the tap had ended and iOS refused it. Now every track gets its direct MP3 resolved server-side (songPv, cached) ahead
+   of time, and every player (soundtrack list, picker, mini player, cabinet, trivia) sets it on OXA and plays inside the tap. ===== */
+(function () {
+var DIRECT = /^https:\/\/(p\.scdn\.co\/mp3-preview\/|audio-ssl\.itunes\.apple\.com\/)/, SP = /^https:\/\/p\.scdn\.co\//;
+var PVM = {}; try { PVM = JSON.parse(localStorage.getItem('lg_pv60') || '{}'); } catch (e) {}
+function key(t) { return String(t.sp || t.id || '').replace(/[^\w]/g, '') || (String(t.n || '') + '|' + String(t.a || '')).toLowerCase(); }
+function apply(t) { var u = PVM[key(t)]; if (u && (!SP.test(t.pv || '') || u !== t.pv)) { if (SP.test(u) || !DIRECT.test(t.pv || '')) t.pv = u; } return t; }
+var Q = [], qt = 0, busy = 0;
+function pvFix(list) { (list || []).forEach(function (t) { if (!t || !t.n) return; apply(t); if (SP.test(t.pv || '') || t._pv60) return; t._pv60 = 1; Q.push(t); }); if (Q.length && !qt) qt = setTimeout(flush, 60); }
+function flush() { qt = 0; if (busy || !Q.length) return; var B = Q.splice(0, 25); busy = 1;
+  run('songPv', [B.map(function (t) { return { id: t.sp || (/^[A-Za-z0-9]{22}$/.test(t.id || '') ? t.id : ''), n: t.n, a: t.a || '' }; })], function (R) { busy = 0;
+    (R || []).forEach(function (r, i) { var t = B[i]; if (!r || !t) return; if (r.id) t.sp = r.id; if (r.u) { PVM[key(t)] = r.u; PVM[(String(t.n) + '|' + String(t.a || '')).toLowerCase()] = r.u; if (SP.test(r.u) || !DIRECT.test(t.pv || '')) t.pv = r.u; } });
+    try { var ks = Object.keys(PVM); if (ks.length > 600) ks.slice(0, ks.length - 600).forEach(function (k) { delete PVM[k]; }); localStorage.setItem('lg_pv60', JSON.stringify(PVM)); } catch (e) {}
+    if (Q.length) flush(); }, function () { busy = 0; B.forEach(function (t) { t._pv60 = 0; }); }); }
+window.pvFix60 = pvFix; window.PVM60 = PVM;
+/* the single play path: direct URL known → set on the shared element and play() synchronously in this tap */
+var _oxStart = oxStart; oxStart = function (t, mode, label) { if (t) apply(t);
+  if (t && DIRECT.test(t.pv || '')) { oxEnsure(); OXS.mode = mode; OXS.cur = t; if (OXA.src !== t.pv) OXA.src = t.pv; try { OXA.currentTime = 0; } catch (e) {}
+    var p = OXA.play(); p && p.catch(function (er) { if (er.name === 'NotAllowedError') spBar('TAP ▶ TO PLAY · ' + (label || t.n), false); });
+    spBar('♪ ' + (label || (t.n + (t.a ? ' — ' + t.a : ''))) + ' · 30s', true); return; }
+  pvFix([t]); return _oxStart.apply(this, arguments); };
+/* resolve ahead of the tap everywhere songs are listed */
+oxPrefetch = function () { var d = OSX.d; if (!d) return; var all = []; (d.groups || []).forEach(function (G) { all = all.concat(G.tracks || []); }); pvFix(all); };
+var _oxPaint = oxPaint; oxPaint = function () { var r = _oxPaint.apply(this, arguments); try { var rr = byId(OSX.r); if (rr) ['sam', 'lewy'].forEach(function (p) { pvFix(themeAll(rr, p)); }); if (R55.tl) Object.keys(R55.tl).forEach(function (p) { pvFix(R55.tl[p]); }); oxPrefetch(); } catch (e) {} return r; };
+var _pkDraw = pkDraw; pkDraw = function () { var r = _pkDraw.apply(this, arguments); try { pvFix([].concat(PK.res || [], PK.sp || [], PK.paste ? [PK.paste] : [])); } catch (e) {} return r; };
+if (typeof renderStats === 'function') { var _rs60 = renderStats; renderStats = function () { var r = _rs60.apply(this, arguments); try { pvFix(R56.snd || []); } catch (e) {} return r; }; }
+/* saved picks keep the Spotify MP3 too */
+var _pkUse = pkUse; pkUse = function (id) { var t = pkItem(id); if (t) apply(t); return _pkUse.apply(this, arguments); };
+
+/* 'Listen on YouTube' → Logged's own player (not Safari / the YouTube app); BACK closes it back to the sheet */
+songYT = function (t) { SFX.tap && SFX.tap(); toast('Finding “' + t.n + '” on YouTube…');
+  songVid(t, function (v) { if (v && v.id) { t.yt = v.id; YTO.tap = Date.now(); ytnOpen(v.id, t.n + (t.a ? ' — ' + t.a : '')); return; }
+    toast('NO EXACT VIDEO — SEARCHING IN LOGGED'); try { navTap('navYT'); var q = $('ytHomeQ'); if (q) { q.value = t.n + ' ' + (t.a || ''); q.dispatchEvent(new Event('input', { bubbles: true })); var f = q.closest('form'); if (f) f.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true })); } } catch (e) {} }); };
+
+/* returning to the app (iOS bfcache / app switch) left the player or sheet stuck: restore a sane, closable state */
+function revive() { try { document.documentElement.classList.remove('lock'); if (!$('splash')) document.body.classList.remove('lock'); } catch (e) {}
+  try { GT58.at = 0; } catch (e) {}
+  var P = $('ytp'); if (P) { P.querySelectorAll('button[disabled]').forEach(function (b) { b.disabled = false; });
+    if (P.classList.contains('open') && !P.querySelector('.yvb iframe,.yvb video')) { try { ytnClose(); } catch (e) { P.classList.remove('open', 'mini'); } }
+    document.body.classList.toggle('ytfull58', P.classList.contains('open') && !P.classList.contains('mini')); }
+  document.querySelectorAll('.m19.open,.sheet.open,#dlg').forEach(function (m) { m.style.pointerEvents = ''; }); }
+window.addEventListener('pageshow', function (e) { if (e.persisted) revive(); });
+document.addEventListener('visibilitychange', function () { if (!document.hidden) revive(); });
+window.revive60 = revive;
+})();
 
 </script></body></html>
