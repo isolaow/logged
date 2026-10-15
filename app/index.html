@@ -64,23 +64,64 @@ function mock(fn, args, who) { if (global.MOCKX) { const x = global.MOCKX(fn, ar
     case 'triviaDays': return [{ d: '2026-10-12', n: 8, sam: null, lewy: { sc: 300 } }];
     default: return null; } }
 
-  /* demo seed: grow the test data to a realistic sheet size (same row shape as the real sheet / tests) */
+  /* demo seed: realistic sheet size and shape (real years, genres, directors, runtimes); same row shape as the real sheet */
+  var D68 = {"mv": [["The Godfather", "1972", "Crime, Drama", "Francis Ford Coppola", "175"], ["Pulp Fiction", "1994", "Crime, Drama", "Quentin Tarantino", "154"], ["The Dark Knight", "2008", "Action, Crime", "Christopher Nolan", "152"], ["Interstellar", "2014", "Sci-Fi, Drama", "Christopher Nolan", "169"], ["Parasite", "2019", "Thriller, Drama", "Bong Joon Ho", "132"], ["La La Land", "2016", "Romance, Musical", "Damien Chazelle", "128"], ["Arrival", "2016", "Sci-Fi, Drama", "Denis Villeneuve", "116"], ["Mad Max: Fury Road", "2015", "Action, Adventure", "George Miller", "120"], ["Get Out", "2017", "Horror, Thriller", "Jordan Peele", "104"], ["Her", "2013", "Romance, Sci-Fi", "Spike Jonze", "126"], ["Moonlight", "2016", "Drama", "Barry Jenkins", "111"], ["Spirited Away", "2001", "Animation, Fantasy", "Hayao Miyazaki", "125"], ["Toy Story", "1995", "Animation, Comedy", "John Lasseter", "81"], ["Up", "2009", "Animation, Adventure", "Pete Docter", "96"], ["Coco", "2017", "Animation, Family", "Lee Unkrich", "105"], ["Ratatouille", "2007", "Animation, Comedy", "Brad Bird", "111"], ["The Matrix", "1999", "Sci-Fi, Action", "Lana Wachowski", "136"], ["Fight Club", "1999", "Drama", "David Fincher", "139"], ["Se7en", "1995", "Crime, Thriller", "David Fincher", "127"], ["Gone Girl", "2014", "Thriller, Mystery", "David Fincher", "149"], ["The Social Network", "2010", "Drama", "David Fincher", "120"], ["Zodiac", "2007", "Crime, Thriller", "David Fincher", "157"], ["Drive", "2011", "Crime, Drama", "Nicolas Winding Refn", "100"], ["Blade Runner 2049", "2017", "Sci-Fi, Drama", "Denis Villeneuve", "164"], ["Everything Everywhere All at Once", "2022", "Sci-Fi, Comedy", "Daniel Kwan", "139"], ["Oppenheimer", "2023", "Drama, History", "Christopher Nolan", "180"], ["Barbie", "2023", "Comedy, Fantasy", "Greta Gerwig", "114"], ["Lady Bird", "2017", "Comedy, Drama", "Greta Gerwig", "94"], ["Little Women", "2019", "Drama, Romance", "Greta Gerwig", "135"], ["Knives Out", "2019", "Mystery, Comedy", "Rian Johnson", "130"], ["The Grand Budapest Hotel", "2014", "Comedy", "Wes Anderson", "99"], ["Fantastic Mr. Fox", "2009", "Animation, Comedy", "Wes Anderson", "87"], ["Jaws", "1975", "Thriller, Adventure", "Steven Spielberg", "124"], ["Alien", "1979", "Horror, Sci-Fi", "Ridley Scott", "117"], ["Aliens", "1986", "Action, Sci-Fi", "James Cameron", "137"], ["Heat", "1995", "Crime, Action", "Michael Mann", "170"], ["Goodfellas", "1990", "Crime, Drama", "Martin Scorsese", "146"], ["Amélie", "2001", "Romance, Comedy", "Jean-Pierre Jeunet", "122"], ["Pan's Labyrinth", "2006", "Fantasy, Drama", "Guillermo del Toro", "118"], ["Prisoners", "2013", "Thriller, Crime", "Denis Villeneuve", "153"], ["Sicario", "2015", "Thriller, Crime", "Denis Villeneuve", "121"], ["No Country for Old Men", "2007", "Crime, Thriller", "Joel Coen", "122"], ["There Will Be Blood", "2007", "Drama", "Paul Thomas Anderson", "158"], ["Inside Out", "2015", "Animation, Comedy", "Pete Docter", "95"], ["WALL-E", "2008", "Animation, Sci-Fi", "Andrew Stanton", "98"], ["Paddington 2", "2017", "Comedy, Family", "Paul King", "104"], ["Hot Fuzz", "2007", "Comedy, Action", "Edgar Wright", "121"], ["Shaun of the Dead", "2004", "Comedy, Horror", "Edgar Wright", "99"], ["Baby Driver", "2017", "Action, Crime", "Edgar Wright", "113"], ["Top Gun: Maverick", "2022", "Action, Drama", "Joseph Kosinski", "131"], ["Spider-Man: Into the Spider-Verse", "2018", "Animation, Action", "Bob Persichetti", "117"], ["The Truman Show", "1998", "Comedy, Drama", "Peter Weir", "103"], ["Eternal Sunshine of the Spotless Mind", "2004", "Romance, Sci-Fi", "Michel Gondry", "108"], ["Superbad", "2007", "Comedy", "Greg Mottola", "113"], ["Mean Girls", "2004", "Comedy", "Mark Waters", "97"], ["Clueless", "1995", "Comedy, Romance", "Amy Heckerling", "97"], ["Titanic", "1997", "Romance, Drama", "James Cameron", "194"], ["Jurassic Park", "1993", "Adventure, Sci-Fi", "Steven Spielberg", "127"], ["Back to the Future", "1985", "Sci-Fi, Comedy", "Robert Zemeckis", "116"], ["Ghostbusters", "1984", "Comedy, Fantasy", "Ivan Reitman", "105"], ["The Princess Bride", "1987", "Fantasy, Comedy", "Rob Reiner", "98"], ["Rocky", "1976", "Drama, Sport", "John G. Avildsen", "120"], ["Creed", "2015", "Drama, Sport", "Ryan Coogler", "133"], ["The Prestige", "2006", "Mystery, Thriller", "Christopher Nolan", "130"], ["Memento", "2000", "Mystery, Thriller", "Christopher Nolan", "113"], ["Tenet", "2020", "Action, Sci-Fi", "Christopher Nolan", "150"], ["Dunkirk", "2017", "War, Drama", "Christopher Nolan", "106"], ["Joker", "2019", "Crime, Drama", "Todd Phillips", "122"], ["The Batman", "2022", "Crime, Action", "Matt Reeves", "176"], ["Aftersun", "2022", "Drama", "Charlotte Wells", "102"], ["Poor Things", "2023", "Comedy, Fantasy", "Yorgos Lanthimos", "141"], ["Anatomy of a Fall", "2023", "Drama, Mystery", "Justine Triet", "152"], ["Challengers", "2024", "Drama, Romance", "Luca Guadagnino", "131"], ["Saltburn", "2023", "Thriller, Comedy", "Emerald Fennell", "131"], ["Talk to Me", "2023", "Horror", "Danny Philippou", "95"], ["Nope", "2022", "Horror, Sci-Fi", "Jordan Peele", "130"], ["Us", "2019", "Horror, Thriller", "Jordan Peele", "116"], ["Hereditary", "2018", "Horror, Drama", "Ari Aster", "127"], ["Midsommar", "2019", "Horror, Drama", "Ari Aster", "148"]], "tv": [["The Office (S1)", "2005", "Comedy", "6"], ["The Office (S2)", "2005", "Comedy", "22"], ["Succession (S1)", "2018", "Drama", "10"], ["Succession (S2)", "2019", "Drama", "10"], ["Fleabag (S1)", "2016", "Comedy, Drama", "6"], ["Atlanta (S1)", "2016", "Comedy, Drama", "10"], ["Stranger Things (S1)", "2016", "Sci-Fi, Horror", "8"], ["Stranger Things (S2)", "2017", "Sci-Fi, Horror", "9"], ["The Last of Us (S1)", "2023", "Drama, Sci-Fi", "9"], ["Better Call Saul (S1)", "2015", "Crime, Drama", "10"], ["Ted Lasso (S1)", "2020", "Comedy", "10"], ["Euphoria (S1)", "2019", "Drama", "8"], ["Chernobyl (S1)", "2019", "Drama, History", "5"], ["True Detective (S1)", "2014", "Crime, Mystery", "8"], ["Mindhunter (S1)", "2017", "Crime, Thriller", "10"], ["Dark (S1)", "2017", "Sci-Fi, Mystery", "10"], ["Shōgun (S1)", "2024", "Drama, History", "10"], ["Abbott Elementary (S1)", "2021", "Comedy", "13"], ["Bluey (S1)", "2018", "Animation, Family", "52"], ["Arcane (S1)", "2021", "Animation, Action", "9"], ["Andor (S1)", "2022", "Sci-Fi, Drama", "12"], ["Barry (S1)", "2018", "Comedy, Crime", "8"], ["The White Lotus (S1)", "2021", "Drama, Comedy", "6"], ["Hacks (S1)", "2021", "Comedy", "10"], ["Slow Horses (S1)", "2022", "Thriller", "6"]], "yt": [["jfKfPfyJRdk", "lofi hip hop radio – beats to relax/study to", "Lofi Girl"], ["dQw4w9WgXcQ", "Never Gonna Give You Up", "Rick Astley"], ["aqz-KE-bpKQ", "Big Buck Bunny 4K", "Blender"], ["9bZkp7q19f0", "Gangnam Style", "officialpsy"], ["kJQP7kiw5Fk", "Despacito", "Luis Fonsi"], ["YQHsXMglC9A", "Hello", "Adele"], ["fJ9rUzIMcZQ", "Bohemian Rhapsody", "Queen Official"], ["OPf0YbXqDm0", "Uptown Funk", "Mark Ronson"], ["JGwWNGJdvx8", "Shape of You", "Ed Sheeran"], ["hT_nvWreIhg", "Counting Stars", "OneRepublic"], ["60ItHLz5WEA", "Faded", "Alan Walker"], ["RgKAFK5djSk", "See You Again", "Wiz Khalifa"], ["CevxZvSJLk8", "Roar", "Katy Perry"], ["pRpeEdMmmQ0", "Waka Waka", "Shakira"], ["09R8_2nJtjg", "Sugar", "Maroon 5"], ["nfWlot6h_JM", "Shake It Off", "Taylor Swift"], ["uelHwf8o7_U", "Love The Way You Lie", "Eminem"], ["2Vv-BfVoq4g", "Perfect", "Ed Sheeran"]], "fr": [["Sinners", "2025", "0"], ["Weapons", "2025", "0"], ["One Battle After Another", "2025", "0"], ["The Brutalist", "2024", "0"], ["Anora", "2024", "0"], ["Conclave", "2024", "0"], ["Wicked", "2024", "0"], ["Dune: Part Two", "2024", "0"], ["Nosferatu", "2024", "0"], ["The Substance", "2024", "0"], ["Severance (S2)", "2025", "1"], ["The Studio", "2025", "1"], ["Adolescence", "2025", "1"], ["The Pitt", "2025", "1"], ["Andor (S2)", "2025", "1"]]};
   (function () {
-    var MV = 'The Godfather,Pulp Fiction,The Dark Knight,Interstellar,Parasite,La La Land,Arrival,Mad Max: Fury Road,Get Out,Her,Moonlight,Spirited Away,Toy Story,Up,Coco,Ratatouille,The Matrix,Fight Club,Se7en,Gone Girl,The Social Network,Zodiac,Drive,Blade Runner 2049,Everything Everywhere All at Once,Oppenheimer,Barbie,Lady Bird,Little Women,Knives Out,The Grand Budapest Hotel,Fantastic Mr. Fox,Jaws,Alien,Aliens,Heat,Goodfellas,Casino,Amelie,Pan\'s Labyrinth,Am\u00e9lie,Prisoners,Sicario,No Country for Old Men,There Will Be Blood,Inside Out,Wall-E,Paddington 2,Hot Fuzz,Shaun of the Dead,Baby Driver,Top Gun: Maverick,Spider-Man: Into the Spider-Verse,The Truman Show,Eternal Sunshine of the Spotless Mind,Superbad,Mean Girls,Clueless,Titanic,Jurassic Park,Back to the Future,Ghostbusters,The Princess Bride,Rocky,Creed,The Prestige,Memento,Tenet,Dunkirk,Joker,The Batman,Aftersun,Poor Things,Anatomy of a Fall,Challengers,Saltburn,Talk to Me,Nope,Us,Hereditary,Midsommar'.split(',');
-    var TV = 'The Office (S1),The Office (S2),Succession (S1),Succession (S2),Fleabag (S1),Atlanta (S1),Stranger Things (S1),Stranger Things (S2),The Last of Us (S1),Better Call Saul (S1),Ted Lasso (S1),Euphoria (S1),Chernobyl (S1),True Detective (S1),Mindhunter (S1),Dark (S1),Shogun (S1),Abbott Elementary (S1),Bluey (S1),Arcane (S1),Andor (S1),Barry (S1),White Lotus (S1),Hacks (S1),Slow Horses (S1)'.split(',');
-    var YT = [['jfKfPfyJRdk','Lofi Girl'],['dQw4w9WgXcQ','Rick Astley'],['aqz-KE-bpKQ','Blender'],['M7lc1UVf-VE','Google Developers'],['9bZkp7q19f0','officialpsy'],['kJQP7kiw5Fk','Luis Fonsi'],['YQHsXMglC9A','Adele'],['hT_nvWreIhg','OneRepublic'],['OPf0YbXqDm0','Mark Ronson'],['fJ9rUzIMcZQ','Queen Official'],['60ItHLz5WEA','Alan Walker'],['RgKAFK5djSk','Wiz Khalifa'],['CevxZvSJLk8','Katy Perry'],['JGwWNGJdvx8','Ed Sheeran'],['pRpeEdMmmQ0','Shakira'],['lp-EO5I60KA','Ed Sheeran'],['2Vv-BfVoq4g','Ed Sheeran'],['09R8_2nJtjg','Maroon 5'],['uelHwf8o7_U','Eminem'],['nfWlot6h_JM','Taylor Swift']];
-    var G = ['Drama','Comedy','Thriller','Sci-Fi','Animation','Horror','Romance','Action','Crime'], n = rows.length + 2, rnd = function (i, m) { return (i * 2654435761 >>> 0) % m; }, W = ['Yes', 'Yes', 'Yes', 'Not yet', 'Not yet', 'As we speak'];
-    MV.forEach(function (t, i) { var s = W[rnd(i + 1, 6)], l = W[rnd(i + 7, 6)], o = { genres: G[rnd(i, 9)] + ', ' + G[rnd(i + 3, 9)], suggestedBy: i % 2 ? 'Lewy' : 'Sam', samWatched: s === 'As we speak' ? 'Yes' : s, lewyWatched: l === 'As we speak' ? 'Not yet' : l, dates: {} };
-      if (o.samWatched === 'Yes') { o.samRating = 5 + rnd(i, 6); o.dates.samDone = '2025-' + ('0' + (1 + rnd(i, 12))).slice(-2) + '-1' + rnd(i, 9); }
-      if (o.lewyWatched === 'Yes') { o.lewyRating = 4 + rnd(i + 2, 7); o.dates.lewyDone = '2026-' + ('0' + (1 + rnd(i + 4, 9))).slice(-2) + '-0' + (1 + rnd(i, 8)); }
-      if (o.samWatched === 'Yes' && o.lewyWatched === 'Yes') o.both = 'Yes'; if (i % 9 === 0 && o.samRating) o.samComment = 'Rewatch soon';
-      rows.push(R(n++, t, 'Movie', o)); });
-    TV.forEach(function (t, i) { var o = { genres: G[rnd(i + 5, 9)], suggestedBy: i % 3 ? 'Sam' : 'Lewy', ep: {} }; if (i % 3 === 0) { o.samWatched = 'Yes'; o.samRating = 7 + rnd(i, 4); } else if (i % 3 === 1) { o.samWatched = 'As we speak'; o.ep.sam = { e: 1 + rnd(i, 7) }; }
-      if (i % 4 === 0) { o.lewyWatched = 'Yes'; o.lewyRating = 6 + rnd(i, 5); } else if (i % 4 === 1) { o.lewyWatched = 'As we speak'; o.ep.lewy = { e: 1 + rnd(i + 1, 6) }; } rows.push(R(n++, t, 'TV Show', o)); meta[t] = { eps: 8 + rnd(i, 6) }; });
-    YT.forEach(function (y, i) { rows.push(R(n++, 'Video ' + (i + 1) + ' \u00b7 ' + y[1], 'YouTube', { samWatched: i % 3 ? 'Yes' : 'Not yet', lewyWatched: i % 2 ? 'Yes' : 'Not yet', ytm: { k: 'video', id: y[0], ch: y[1] } })); });
-    MV.slice(0, 40).forEach(function (t, i) { meta[t] = meta[t] || { year: String(1972 + rnd(i, 52)), runtime: 90 + rnd(i, 80) }; });
-    rows.forEach(function (r, i) { var k = 'r:' + r.title; if (r.type === 'YouTube') return; if (r.samWatched === 'Not yet' && i % 2) S.int.sam[k] = S.int.sam[k] || { v: i % 5 ? 'y' : 'n', at: i, h: 1 + i % 3 }; if (r.lewyWatched === 'Not yet' && i % 3) S.int.lewy[k] = S.int.lewy[k] || { v: i % 4 ? 'y' : 'n', at: i, h: 1 + i % 3 }; });
+    var n = rows.length + 2, h = function (i, m) { return (((i + 1) * 2654435761) >>> 0) % m; };
+    D68.mv.forEach(function (x, i) { var t = x[0], o = { genres: x[2], suggestedBy: i % 2 ? 'Lewy' : 'Sam', dates: {} }, k = h(i, 10);
+      /* 0-4 both seen · 5 Sam only · 6 Lewy only · 7 Sam watching · 8-9 nobody yet (swipe deck) */
+      if (k <= 4 || k === 5) { o.samWatched = 'Yes'; o.samRating = 5 + h(i + 3, 6); o.dates.samDone = '2025-' + ('0' + (1 + h(i, 12))).slice(-2) + '-' + ('0' + (1 + h(i + 1, 27))).slice(-2); }
+      if (k <= 4 || k === 6) { o.lewyWatched = 'Yes'; o.lewyRating = Math.max(4, Math.min(10, (o.samRating || 7) + h(i + 5, 5) - 2)); o.dates.lewyDone = '2026-' + ('0' + (1 + h(i + 2, 9))).slice(-2) + '-' + ('0' + (1 + h(i + 4, 27))).slice(-2); }
+      if (k === 7) o.samWatched = 'As we speak'; if (k <= 4) o.both = 'Yes'; if (i % 11 === 0 && o.samRating) o.samComment = 'Rewatch soon';
+      rows.push(R(n++, t, 'Movie', o)); meta[t] = { year: x[1], director: x[3], runtime: +x[4], genres: x[2] }; });
+    D68.tv.forEach(function (x, i) { var t = x[0], o = { genres: x[2], suggestedBy: i % 3 ? 'Sam' : 'Lewy', ep: {} }, k = h(i + 40, 6);
+      if (k <= 2) { o.samWatched = 'Yes'; o.lewyWatched = 'Yes'; o.samRating = 7 + h(i, 4); o.lewyRating = 6 + h(i + 1, 5); o.both = 'Yes'; }
+      else if (k === 3) { o.samWatched = 'As we speak'; o.ep.sam = { e: 1 + h(i, +x[3] - 1) }; }
+      else if (k === 4) { o.lewyWatched = 'As we speak'; o.ep.lewy = { e: 1 + h(i + 2, +x[3] - 1) }; }
+      rows.push(R(n++, t, 'TV Show', o)); meta[t] = { year: x[1], eps: +x[3], runtime: 45, genres: x[2] }; });
+    D68.yt.forEach(function (y, i) { rows.push(R(n++, y[1], 'YouTube', { samWatched: i % 2 ? 'Yes' : 'Not yet', lewyWatched: i % 2 ? 'Not yet' : 'Yes', suggestedBy: i % 2 ? 'Sam' : 'Lewy', ytm: { k: 'video', id: y[0], ch: y[2] } })); if (i % 5 === 0) { var r = rows[rows.length - 1]; r.samWatched = r.lewyWatched = 'Yes'; } });
+    Object.assign(meta['Dune'] = meta['Dune'] || {}, { year: '2021', director: 'Denis Villeneuve', runtime: 155 }); Object.assign(meta['Past Lives'] = meta['Past Lives'] || {}, { year: '2023', director: 'Celine Song', runtime: 106 });
+    Object.assign(meta['Garfield'] = meta['Garfield'] || {}, { year: '2004', runtime: 80 }); Object.assign(meta['Shrek'], { year: '2001', director: 'Andrew Adamson' }); Object.assign(meta['The Bear (S1)'] = meta['The Bear (S1)'] || {}, { year: '2022', eps: 8, runtime: 30 });
+    /* interest: a few each, so both people still have a full deck */
+    rows.forEach(function (r, i) { if (r.type === 'YouTube' || r.samWatched !== 'Not yet' || r.lewyWatched !== 'Not yet') return; var k = 'r:' + r.title; if (i % 4 === 1) S.int.sam[k] = S.int.sam[k] || { v: 'y', at: i, h: 1 + i % 3 }; if (i % 4 === 3) S.int.lewy[k] = S.int.lewy[k] || { v: 'y', at: i, h: 1 + i % 3 }; if (i % 9 === 0) S.int.lewy[k] = { v: 'n', at: i }; });
   })();
+  /* demo trivia: one consistent in-memory engine (scores, board, days, results all agree) */
+  var TV = (function () { var DAY = 864e5, today = function () { var d = new Date(Date.now() + 11 * 36e5); return d.toISOString().slice(0, 10); }, days = {};
+    var pool = function () { return rows.filter(function (r) { return r.type !== 'YouTube' && meta[r.title] && meta[r.title].year && (r.samWatched === 'Yes' || r.lewyWatched === 'Yes'); }); };
+    var rnd = function (seed) { var x = seed; return function () { x = (x * 1103515245 + 12345) % 2147483648; return x / 2147483648; }; };
+    var build = function (d) { var R0 = rnd(+d.replace(/-/g, '')), P = pool().slice().sort(function () { return R0() - .5; }), qs = [], used = {}, kinds = ['year', 'director', 'higher', 'year', 'director', 'year', 'higher', 'director'];
+      P.forEach(function (r) { if (qs.length >= 8 || used[r.title]) return; var m = meta[r.title], k = kinds[qs.length], q = null, opts, a;
+        if (k === 'director' && m.director) { var ds = pool().map(function (x) { return meta[x.title].director; }).filter(function (x, i, A) { return x && x !== m.director && A.indexOf(x) === i; }).sort(function () { return R0() - .5; }).slice(0, 3); opts = ds.concat([m.director]).sort(function () { return R0() - .5; }); a = opts.indexOf(m.director); q = { kind: 'director', q: 'BEHIND THE CAMERA: WHO DIRECTED ' + r.title.toUpperCase() + '?' }; }
+        else if (k === 'higher' && +r.samRating && +r.lewyRating) { opts = ['SAM', 'LEWY', 'TIE']; a = +r.samRating > +r.lewyRating ? 0 : +r.lewyRating > +r.samRating ? 1 : 2; q = { kind: 'higher', q: 'YOU BOTH RATED ' + r.title.toUpperCase() + ' — WHO WENT HIGHER?' }; }
+        else { var y = +m.year, ys = [y - 2, y - 1, y + 1, y + 2].sort(function () { return R0() - .5; }).slice(0, 3).concat([y]).sort(); opts = ys.map(String); a = opts.indexOf(String(y)); q = { kind: 'year', q: 'TIME CHECK: WHAT YEAR DID ' + r.title.toUpperCase() + ' COME OUT?' }; }
+        q.opts = opts; q.a = a; q.t = r.title; qs.push(q); used[r.title] = 1; }); return qs; };
+    var score = function (q, pk, ms) { return pk === q.a ? 100 + Math.round(50 * Math.max(0, 1 - (ms || 8000) / 15000)) : 0; };
+    var day = function (d) { if (!days[d]) { days[d] = { d: d, qs: build(d), ans: {} }; } return days[d]; };
+    /* history: both played the last 5 days (one day Lewy caught up late) */
+    for (var i = 5; i >= 1; i--) { var dd = new Date(Date.parse(today()) - i * DAY).toISOString().slice(0, 10), D = day(dd); ['sam', 'lewy'].forEach(function (p, j) { var R1 = rnd(i * 7 + j * 3 + 1), picks = D.qs.map(function (q) { return R1() < (p === 'sam' ? .72 : .66) ? q.a : (q.a + 1) % q.opts.length; }), sc = 0, ok = 0; D.qs.forEach(function (q, k) { var s = score(q, picks[k], 3000 + R1() * 9000); sc += s; if (s) ok++; }); D.ans[p] = { p: picks, m: D.qs.map(function () { return Math.round(3000 + R1() * 9000); }), sc: sc, ok: ok, n: D.qs.length, at: dd, late: p === 'lewy' && i === 3 }; }); }
+    var strip = function (q, show) { var o = {}; for (var k in q) if (k !== 'a' && k !== 't') o[k] = q[k]; o.ax = (q.a + 3) * 7; if (show) { o.a = q.a; o.t = q.t; } return o; };
+    var list = function () { return Object.keys(days).sort().reverse().map(function (k) { var x = days[k], pk = function (a) { return a ? { sc: a.sc, late: !!a.late, ok: a.ok, n: a.n } : null; }; return { d: k, n: x.qs.length, sam: pk(x.ans.sam), lewy: pk(x.ans.lewy) }; }); };
+    var board = function () { var L = list(), B = { live: { sam: 0, lewy: 0, tie: 0 }, daily: { sam: 0, lewy: 0, tie: 0 }, best: {}, runBest: {}, photo: {}, perfect: {} };
+      ['sam', 'lewy'].forEach(function (p) { var pts = 0, ok = 0, n = 0, played = 0, late = 0, run = 0, best = 0; L.slice().reverse().forEach(function (x) { var a = x[p]; if (a) { played++; pts += a.sc; ok += a.ok; n += a.n; if (a.late) late++; if (!a.late) { run++; best = Math.max(best, run); } } else if (x.d !== today()) run = 0; if (a && a.ok === a.n) B.perfect[p] = (B.perfect[p] || 0) + 1; });
+        B[p] = { pts: pts, acc: n ? Math.round(ok / n * 100) : 0, played: played, late: late, streak: run, bestStreak: best }; });
+      L.forEach(function (x) { if (x.sam && x.lewy) B.daily[x.sam.sc > x.lewy.sc ? 'sam' : x.lewy.sc > x.sam.sc ? 'lewy' : 'tie']++; }); ['sam', 'lewy'].forEach(function (p) { B[p].wins = B.daily[p] + B.live[p]; }); return B; };
+    var daily = function (who, d) { var D = day(d || today()), o = who === 'sam' ? 'lewy' : 'sam', mine = D.ans[who], both = D.ans.sam && D.ans.lewy; return { d: D.d, today: D.d === today(), qs: D.qs.map(function (q) { return strip(q, !!mine); }), mine: mine || null, other: both ? D.ans[o] : (D.ans[o] ? 'done' : null), both: !!both, stats: board() }; };
+    return { daily: daily, list: list, board: board, today: today,
+      answer: function (who, picks, ms, d) { var D = day(d || today()); if (D.ans[who]) return daily(who, D.d); var sc = 0, ok = 0; D.qs.forEach(function (q, i) { var pk = +(picks || [])[i], m = Array.isArray(ms) ? ms[i] : (+ms || 0) / Math.max(1, D.qs.length); if (pk >= 100) pk -= 100; var s = score(q, pk, m); sc += s; if (s) ok++; }); D.ans[who] = { p: (picks || []).map(Number), m: (Array.isArray(ms) ? ms : []).map(Number), sc: sc, ok: ok, n: D.qs.length, at: today(), late: D.d !== today() }; return daily(who, D.d); },
+      results: function () { var out = []; list().forEach(function (x) { ['sam', 'lewy'].forEach(function (p) { var a = x[p], o = x[p === 'sam' ? 'lewy' : 'sam']; if (a) out.push({ id: 'daily-' + x.d, d: x.d, m: a.late ? 'Daily (catch-up)' : 'Daily', p: p === 'sam' ? 'Sam' : 'Lewy', sc: a.sc, ok: a.ok, n: a.n, res: o ? (a.sc > o.sc ? 'Win' : a.sc < o.sc ? 'Loss' : 'Tie') : '—' }); }); }); return out; } }; })();
+  var FRESH68 = D68.fr.map(function (x, i) { return { id: 880000 + i, title: x[0], year: x[1], tv: x[2] === '1', poster: '', overview: '', vote: 7 + (i % 3) / 2 }; });
+  var _mock68 = mock; mock = function (fn, args, who) { args = args || [];
+    switch (fn) { case 'triviaDaily': return TV.daily(args[0] || who, args[1]); case 'triviaDailyAnswer': return TV.answer(args[0] || who, args[1], args[2], args[3]); case 'triviaDays': return TV.list();
+      case 'triviaBoard': case 'triviaStats': return TV.board(); case 'triviaResults': return TV.results(); case 'triviaOpen': return '';
+      case 'triviaNew': case 'triviaJoin': return { __err: 'Live trivia needs both phones, so it is off in the demo. Try today\u2019s quiz!' };
+      case 'tmdbFresh': return FRESH68.slice();
+      case 'ytFeed': var cat = String((args[0] || {}).cat || ''), V = function (L) { return L.map(function (y) { return { id: y[0], t: y[1], ch: y[2], th: 'https://i.ytimg.com/vi/' + y[0] + '/mqdefault.jpg' }; }); };
+        var MUS = D68.yt.filter(function (y) { return !/Blender|Lofi/.test(y[2]); }), FILM = [['aqz-KE-bpKQ', 'Big Buck Bunny 4K', 'Blender'], ['eRsGyueVLvQ', 'Sintel', 'Blender'], ['R6MlUcmOul8', 'Tears of Steel', 'Blender'], ['WhWc3b3KhnY', 'Spring', 'Blender'], ['Y-rmzh0PI3c', 'Cosmos Laundromat', 'Blender']];
+        var L = cat === '10' ? MUS : cat === '1' || cat === '24' ? FILM : cat ? FILM.concat(MUS.slice(0, 4)) : MUS.slice(0, 8).concat(FILM.slice(0, 3));
+        return { cats: [{ id: '', t: 'ALL' }, { id: '10', t: 'MUSIC' }, { id: '20', t: 'GAMING' }, { id: '23', t: 'COMEDY' }, { id: '1', t: 'FILM' }], rec: V(FILM.slice(0, 2).concat(MUS.slice(0, 2))), trending: V(L) };
+      case 'ytSearch': var qq = String(args[0] || '').toLowerCase(), hit = D68.yt.filter(function (y) { return (y[1] + ' ' + y[2]).toLowerCase().indexOf(qq) >= 0; }); return (hit.length ? hit : D68.yt.slice(0, 6)).map(function (y) { return { k: 'video', id: y[0], t: y[1], ch: y[2], th: 'https://i.ytimg.com/vi/' + y[0] + '/mqdefault.jpg' }; });
+      case 'getMeta': var o = {}; (args[0] || []).forEach(function (x) { if (x && meta[x.title]) o[x.title] = meta[x.title]; }); return o; }
+    return _mock68.apply(this, arguments); };
   var _fetch = window.fetch.bind(window), J = function (o) { return Promise.resolve(new Response(JSON.stringify(o), { status: 200, headers: { 'Content-Type': 'application/json' } })); };
   window.fetch = function (u, opt) { var url = String(u && u.url || u);
     if (/script\.google(usercontent)?\.com/.test(url)) { var j = {}; try { j = JSON.parse(opt && opt.body || '{}'); } catch (e) {}
@@ -95,6 +136,18 @@ function mock(fn, args, who) { if (global.MOCKX) { const x = global.MOCKX(fn, ar
   var paint = function () { var t = document.getElementById('demo65t'); if (!t) return; var w = (window.me && me()) || L.getItem('lg_who'); t.innerHTML = 'DEMO <button data-iam61="sam" class="' + (w === 'sam' ? 'on' : '') + '">1P</button><button data-iam61="lewy" class="' + (w === 'lewy' ? 'on' : '') + '">2P</button>'; };
   document.addEventListener('DOMContentLoaded', function () { var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st); var t = document.createElement('div'); t.id = 'demo65t'; document.body.appendChild(t); paint(); });
   window.addEventListener('click', function (e) { if (e.target.closest && e.target.closest('#demo65t [data-iam61]')) setTimeout(paint, 50); setTimeout(paint, 600); }, true); setInterval(paint, 2000);
+})();
+</script>
+<script id="early68">/* R68: per-person device settings (two people may share a phone's history): these keys are stored per 1P/2P */
+(function () { var PER = { wl_mute: 1, lg_psoff: 1, lg_psmute: 1, lg_themeauto: 1, sp_v: 1 };
+  var wrap = function (o) { if (!o || o.__per68) return; var g = o.getItem, s = o.setItem, r = o.removeItem; var who = function (t) { try { return g.call(t, 'lg_who') || 'sam'; } catch (e) { return 'sam'; } };
+    o.getItem = function (k) { if (PER[k]) { var v = g.call(this, k + '__' + who(this)); if (v != null) return v; return g.call(this, k); } return g.apply(this, arguments); };
+    o.setItem = function (k, v) { if (PER[k]) return s.call(this, k + '__' + who(this), v); return s.apply(this, arguments); };
+    o.removeItem = function (k) { if (PER[k]) return r.call(this, k + '__' + who(this)); return r.apply(this, arguments); };
+    try { Object.defineProperty(o, '__per68', { value: 1 }); } catch (e) {} };
+  try { wrap(Storage.prototype); } catch (e) {} try { if (!(window.localStorage instanceof Storage)) wrap(window.localStorage); } catch (e) {}
+  /* lg_rec_ caches expire after 3 days */
+  try { var L = window.localStorage, now = Date.now(); for (var i = L.length - 1; i >= 0; i--) { var k = L.key(i); if (k && k.indexOf('lg_rec_') === 0) { var at = +(L.getItem('lg_recat_' + k.slice(7)) || 0); if (!at) L.setItem('lg_recat_' + k.slice(7), String(now)); else if (now - at > 3 * 864e5) { L.removeItem(k); L.removeItem('lg_recat_' + k.slice(7)); } } } } catch (e) {}
 })();
 </script>
 <script>/* Logged on GitHub Pages: google.script.run -> Apps Script JSON RPC, with offline cache + edit queue. No secrets in this file. */
@@ -1400,6 +1453,79 @@ body.ytfull58 #ytpage,body.ytfull58 body>main{pointer-events:none}
 /* r67: the 8-bit keyboard must sit above the add sheet (it was hidden under it) */
 body.addopen #kb{z-index:320}
 body.addopen.kbo #add .sheet{padding-bottom:calc(var(--kbh,300px) + 12px)}
+/* ===== R68 ===== */
+/* layers: pages < hotbar(nav) < mini player < arc backdrop < arc menus < sheets/modals < keyboard < toasts < splash */
+#archbd{position:fixed;inset:0 0 var(--nav62,84px) 0;background:rgba(5,4,12,.55);z-index:1480;opacity:0;pointer-events:none;transition:opacity .14s}
+#archbd.on{opacity:1;pointer-events:auto}
+#arch.arch{z-index:1500}
+#arch.arch5{width:min(380px,97vw);height:200px}#arch.arch5 .archi{width:76px}
+#arch .archi b{font-size:8px;line-height:1.3}
+/* swipe page: action buttons clear of the hotbar */
+#ipage.open{bottom:var(--nav62,84px)!important;height:auto!important}
+/* splash label readable */
+#splash .ps{animation:none!important;opacity:1!important;font-size:11px}
+/* one active state: gold = active; LOG is outlined gold when another tab is active */
+nav#nav.nav58 #navLogM.gold58:not(.on){background:#1d1a30;color:#ffcc33;box-shadow:inset 0 0 0 3px #ffcc33,0 3px 0 #000}
+/* demo tag: small, out of the way */
+#demo65t{top:42%!important;right:0!important;left:auto!important;transform:none!important;flex-direction:column;padding:4px 3px!important;opacity:.9}#demo65t button{min-width:30px!important}
+#ipage .ipst{height:calc(100dvh - var(--nav62,84px) - 236px - env(safe-area-inset-top))!important;min-height:230px}
+#ipage .ipa{gap:10px;align-items:stretch}
+#ipage .ipa button{display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:60px;font:22px/1 -apple-system,system-ui,sans-serif!important;white-space:normal;text-align:center;padding:6px 8px!important}
+#ipage .ipa button span{font:8px/1.25 var(--pix)!important;display:block}
+.trvo{min-height:176px;align-content:start}
+.trvo button:last-child:nth-child(odd){grid-column:1/-1}
+.trvo button.bad68{background:#7a1f2a}
+#trvfb{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 70px);transform:translate(-50%,-12px);z-index:2147483100;font:12px var(--pix);padding:10px 16px;border:3px solid #000;box-shadow:4px 4px 0 #000;opacity:0;pointer-events:none;transition:opacity .12s,transform .12s;text-align:center}
+#trvfb.ok{opacity:1;transform:translate(-50%,0);background:#1fae4b;color:#fff}#trvfb.bad{opacity:1;transform:translate(-50%,0);background:#d8323f;color:#fff}
+#trvfb small{display:block;font:9px var(--pix);margin-top:4px;opacity:.95}
+/* one colour per player everywhere: 1P Sam = blue, 2P Lewy = green */
+:root{--p1:#4da3ff;--p2:#3ddc84}
+.kv .pt.s{background:var(--p1)!important;color:#000!important}.kv .pt.l{background:var(--p2)!important;color:#000!important}
+.qr .who2.s,.epl summary .s,.ytw .s,.trvlb th.s{color:var(--p1)!important}
+.qr .who2.l,.epl summary .l,.ytw .l,.trvlb th.l,.yhm em.l{color:var(--p2)!important}
+.trvsc .s,.trvo b.s{background:#17396b!important;color:#d8e9ff!important}.trvsc .l,.trvo b.l{background:#145a32!important;color:#d9ffe7!important}
+.dts b.s{background:var(--p1)!important;color:#000!important}.dts b.l{background:var(--p2)!important;color:#000!important}
+.lgw.sam{background:var(--p1)!important;color:#000!important}.lgw.lewy{background:var(--p2)!important;color:#000!important}
+.tsc.s{background:#17396b!important;color:#d8e9ff!important}.tsc.l{background:#145a32!important;color:#d9ffe7!important}
+#trvfb{top:auto!important;bottom:calc(var(--nav62,84px) + 70px)}
+.ytnoth68{background:#1d1d33 linear-gradient(135deg,#2a2440,#141424)!important}
+#kb{z-index:2950!important}
+/* Top 5 soundtracks: proper 8-bit play buttons, fixed-size covers */
+.cbsnd li{display:flex;align-items:center;gap:10px}
+.cbsnd .sa61{flex:0 0 48px!important;width:48px!important;height:48px!important;margin:0!important}
+.cbsnd .sa61.fail,.sa61.fail{background:#1b1b2e url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' shape-rendering='crispEdges'%3E%3Cpath fill='%23000' d='M4 1h4v1h2v2h1v4h-1v2H8v1H4v-1H2V8H1V4h1V2h2z'/%3E%3Cpath fill='%23333' d='M4 2h4v1h1v1h1v4H9v1H8v1H4V9H3V8H2V4h1V3h1z'/%3E%3Cpath fill='%23d8323f' d='M5 4h2v1h1v2H7v1H5V7H4V5h1z'/%3E%3Cpath fill='%23000' d='M6 5h0v1h0z M5.5 5.5h1v1h-1z'/%3E%3C/svg%3E") center/28px 28px no-repeat!important;image-rendering:pixelated;filter:none!important}
+.cbsnd .oxmp,.cbsnd [data-cbsnd]{-webkit-appearance:none;appearance:none;flex:0 0 44px;width:44px;height:44px;min-width:44px;padding:0;border-radius:0;border:3px solid #000;background:#ffcc33;color:#000;box-shadow:3px 3px 0 #000,inset -3px -3px 0 #c99a00;font:16px/1 -apple-system,system-ui,sans-serif;display:flex;align-items:center;justify-content:center;background-image:none!important}
+.cbsnd .oxmp.on68{background:#1fae4b;color:#fff;box-shadow:3px 3px 0 #000,inset -3px -3px 0 #137a33}
+.cbsnd .oxmp:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #000}
+.cbt b{white-space:normal!important;display:-webkit-box!important;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.25}
+#nav button{font-size:8px}
+#banner{top:calc(env(safe-area-inset-top) + 56px)!important;z-index:2100!important}
+#banner div{padding:10px 16px!important;font-size:12px!important;box-shadow:0 0 0 3px var(--red),5px 5px 0 #000!important}
+#banner small{font-size:16px!important}
+.trs68 h3{font:11px var(--pix);color:var(--gold);margin:10px 0}
+.trs68 table{width:100%;border-collapse:collapse;font-size:14px}
+.trs68 th{font:8px var(--pix);padding:6px 4px;text-align:left}.trs68 th.sam{color:var(--p1)}.trs68 th.lewy{color:var(--p2)}
+.trs68 .trq td{padding:10px 4px 4px;border-top:2px solid #2a2840}.trs68 .trq b{font:9px var(--pix);color:var(--gold)}
+.trs68 .trq img{display:block;width:100%;max-height:120px;object-fit:cover;margin:6px 0;border:3px solid #000}
+.trs68 .trq q{display:block;font-style:italic;margin:4px 0;opacity:.9}
+.trs68 .trsa{margin-top:4px;color:#3ddc84;font:9px/1.4 var(--pix)}.trs68 .trsa small{font:12px var(--body);color:#aaa}
+.trs68 .trpk td{padding:4px;vertical-align:top;font-size:13px}.trs68 td.sam{border-left:4px solid var(--p1)}.trs68 td.lewy{border-left:4px solid var(--p2)}
+.trs68 td.no{color:#ff8080}.trs68 td.ok{color:#9ff0b8}.trs68 td i{opacity:.7;font:8px var(--pix)}.trs68 td small{display:block;opacity:.7;font-size:11px}
+.trs68 .trtot td{font:9px var(--pix);padding:10px 4px;border-top:3px solid var(--gold)}
+.trs68 .trsp{min-width:44px;min-height:44px;margin:6px 0}
+.trvdr68{display:flex;gap:6px;align-items:stretch}.trvdr68 .trvday{flex:1}.trvrb68{min-width:44px}
+.trs68b{width:100%;margin:8px 0}
+.trvday span.sam{color:var(--p1)}.trvday span.lewy{color:var(--p2)}
+.trvsc>div:not(.vs){min-width:0}
+.trvsc b{font-size:12px!important;flex:none;white-space:nowrap;overflow:visible!important;text-overflow:clip!important;max-width:none!important}
+.trvsc>div:not(.vs)>span,.trvsc>div:not(.vs)>i{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#trvB{padding-bottom:12px!important}
+#trv .trvbars,#trv hr{display:none}
+#arch.arc68{background:#15132a!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;border:3px solid #000;box-shadow:0 -3px 0 rgba(255,204,51,.55),0 0 0 2px #2a2546 inset}
+#arch.arc68 .archi{min-height:56px;padding:6px 3px;transform:translate(-50%,-50%)!important}
+#arch.arc68 .archi.main58{transform:translate(-50%,-50%) scale(1.08)!important}
+#arch.arc68 .archt{bottom:6px}
+#archbd.on{background:rgba(5,4,12,.72)}
 </style></head><body>
 <div id="splash" aria-label="Logged"></div>
 <header><div class="hin">
@@ -1659,7 +1785,7 @@ function renderHome() {
   h += '<div class="qt"><button data-browse="tv"><span>📺</span>TV</button><button data-browse="mv"><span>🎞</span>FILMS</button><button data-genres="1"><span class="lgi"><img src="' + GENRES_ICON + '" alt=""></span>GENRES</button><button data-browse="spesh"><span>🍃</span>SPESH</button></div>';
   var wl = L.filter(isWatchlist).sort(specialOrder), cont = L.filter(prog);
   var top = L.filter(function (r) { return score(r) > 0; }).sort(function (a, b) { return score(b) - score(a); }).slice(0, 20);
-  if (!heroPick || !byId(heroPick) || !pass(byId(heroPick))) { var pool = cont.length ? cont : wl.length ? wl : top; var p = pool[Math.floor(Math.random() * pool.length)]; heroPick = p && p.row; }
+  if (!heroPick || !byId(heroPick) || !pass(byId(heroPick))) { var pool = cont.length ? cont : wl.length ? wl : top; var p = pool.slice().sort(function (a, b) { return b.row - a.row; })[0]; heroPick = p && p.row; /* r68: steady pick (latest in progress), not random per reload */ }
   var hr = byId(heroPick);
   if (hr) { var m = M(hr), pu = posters[hr.title]; if (pu && !pxGet(pu)) setTimeout(function () { pxMake(pu); }, 0);
     h += '<div class="hero px"><div class="bg" ' + (pu ? 'data-bg="' + esc(pu) + '" style="background-image:url(&quot;' + esc(pxSrc(pu) || pu) + '&quot;)"' : '') + '></div><div class="fg">' + art(hr) + leaf(hr) + eye(hr) + '<div style="flex:1;min-width:0"><span class="tag">' + (prog(hr) ? '▶ NEXT UP' : isWatchlist(hr) ? '' + lgI() + 'LOGGING' : '♛ TOP RATED') + '</span><h2>' + esc(hr.title) + '</h2>' +
@@ -4908,7 +5034,7 @@ function trvCD() { var ms = Math.max(0, trvNext9() - Date.now()), h = Math.floor
 setInterval(function () { var c = $('trvCD'); if (c) c.textContent = trvCD(); }, 1000);
 function trvLB() { var el = $('trvLB'); if (!el) return; el.innerHTML = '<div class="lbl">🏆 LEADERBOARD · ALL RESULTS</div><p class="blink">LOADING…</p>';
   run('triviaResults', [], function (L) { el = $('trvLB'); if (!el) return; L = L || []; var tot = { Sam: { w: 0, pts: 0, g: 0 }, Lewy: { w: 0, pts: 0, g: 0 } }; L.forEach(function (x) { var T = tot[x.p]; if (!T) return; T.g++; T.pts += x.sc; if (x.res === 'Win') T.w++; });
-    el.innerHTML = '<div class="lbl">🏆 LEADERBOARD · ALL RESULTS</div><div class="lbt">' + ['Sam', 'Lewy'].map(function (p) { var T = tot[p]; return '<div class="' + p.toLowerCase() + '"><b>' + p.toUpperCase() + '</b><span>' + T.w + ' WINS</span><small>' + T.g + ' PLAYED · ' + T.pts + ' PTS</small></div>'; }).join('') + '</div>' +
+    el.innerHTML = '<div class="lbl">🏆 LEADERBOARD · ALL RESULTS</div><div class="lbt">' + ['Sam', 'Lewy'].map(function (p) { var T = tot[p]; return '<div class="' + p.toLowerCase() + '"><b>' + p.toUpperCase() + '</b><span>' + T.w + (T.w === 1 ? ' WIN' : ' WINS') + '</span><small>' + T.g + ' PLAYED · ' + T.pts + ' PTS</small></div>'; }).join('') + '</div>' +
       (L.length ? '<table class="lbr"><tr><th>DATE</th><th>WHO</th><th>MODE</th><th>SCORE</th></tr>' + L.slice(0, 40).map(function (x) { return '<tr class="' + x.p.toLowerCase() + '"><td>' + esc(x.d.slice(5)) + '</td><td>' + esc(x.p) + '</td><td>' + esc(x.m.replace('Daily (catch-up)', 'CATCH-UP')) + '</td><td>' + x.sc + (x.ok != null ? ' <small>' + x.ok + '/' + x.n + '</small>' : '') + (x.res === 'Win' ? ' 🏆' : '') + '</td></tr>'; }).join('') + '</table>' : '<p>NO RESULTS YET</p>'); }, function () { el.innerHTML = ''; }); }
 var _trvDailyRes55 = trvDailyRes; trvDailyRes = function () { var r = _trvDailyRes55.apply(this, arguments); try { var b = $('trvB'), d = TRV.daily; if (b && d && !b.querySelector('#trvLB')) b.insertAdjacentHTML('beforeend', (d.today !== false ? '<div class="trvcd">✓ PLAYED TODAY · NEXT SET UNLOCKS 9PM IN <b id="trvCD">' + trvCD() + '</b></div>' : '') + '<div id="trvDays"></div><div id="trvLB"></div>'); trvDaysLoad(); trvLB(); } catch (e) {} return r; };
 var _trvDailyIntro55 = trvDailyIntro; trvDailyIntro = function () { var r = _trvDailyIntro55.apply(this, arguments); try { var b = $('trvB'); if (b && !b.querySelector('#trvLB')) b.insertAdjacentHTML('beforeend', '<div class="trvcd">NEW SET EVERY NIGHT AT 9PM · NEXT IN <b id="trvCD">' + trvCD() + '</b></div><div id="trvLB"></div>'); trvLB(); } catch (e) {} return r; };
@@ -5529,7 +5655,7 @@ function shelf58(t, L, empty, tile) { return '<div class="cbs"><h4>' + t + '</h4
 cabinetHtml = function () { var p = (typeof statWho !== 'undefined' && statWho) || me(), P2 = p === 'sam' ? 'SAM' : 'LEWY', rt = function (r) { return num(r[p + 'Rating']) || 0; };
   var W = rows.filter(function (r) { return !isYT(r) && isY(r[p + 'Watched']); }), mv = W.filter(function (r) { return r.type === 'Movie'; }), tv = W.filter(function (r) { return r.type === 'TV Show'; });
   var rated = W.filter(function (r) { return rt(r) > 0; }), avg = rated.length ? rated.reduce(function (t, r) { return t + rt(r); }, 0) / rated.length : 0, both = W.filter(function (r) { return isY(r.samWatched) && isY(r.lewyWatched); }).length;
-  var srt = function (a, b) { return rt(b) - rt(a) || b.row - a.row; }, top5m = rated.filter(function (r) { return r.type === 'Movie'; }).sort(srt).slice(0, 5), top5t = rated.filter(function (r) { return r.type === 'TV Show'; }).sort(srt).slice(0, 5);
+  var oth = function (r) { return num(r[(p === 'sam' ? 'lewy' : 'sam') + 'Rating']) || 0; }, dt = function (r) { var d = (r.dates || {})[p + 'Done'] || ''; return d ? Date.parse(d) || 0 : 0; }, srt = function (a, b) { return rt(b) - rt(a) || oth(b) - oth(a) || dt(b) - dt(a) || b.row - a.row; } /* r68: ties → the other person's rating, then most recently finished */, top5m = rated.filter(function (r) { return r.type === 'Movie'; }).sort(srt).slice(0, 5), top5t = rated.filter(function (r) { return r.type === 'TV Show'; }).sort(srt).slice(0, 5);
   var yw = function (r) { return Object.keys(((r.ytw || {})[p]) || {}).length; }, topY = rows.filter(function (r) { return isYT(r) && (isY(r[p + 'Watched']) || r[p + 'Watched'] === 'As we speak' || yw(r)); }).sort(function (a, b) { return rt(b) - rt(a) || yw(b) - yw(a) || b.row - a.row; }).slice(0, 5);
   var ytile = function (r, i) { var id = r.ytm && r.ytm.k === 'video' ? r.ytm.id : '', th = id ? 'https://i.ytimg.com/vi/' + id + '/mqdefault.jpg' : (posters[r.title] || ''); return '<button class="cbt cby" data-open="' + r.row + '"><span class="cbr">' + (i + 1) + '</span>' + (th ? '<img loading="lazy" src="' + esc(th) + '" alt="">' : '<i>▶</i>') + '<b>' + esc(r.title.replace(/ \(Channel\)$/, '')) + '</b><small>' + (rt(r) ? '★' + rt(r) : esc((r.ytm && r.ytm.ch) || 'YOUTUBE')) + '</small></button>'; };
   var S = {}; rows.forEach(function (r) { var L = ((r.themeL || {})[p] || []).slice(), o = (r.theme || {})[p]; if (o && o.n) L.push(o); L.forEach(function (c, i) { var k = (c.n + '|' + (c.a || '')).toLowerCase(); if (!S[k]) S[k] = { n: c.n, a: c.a || '', pv: c.pv || '', c: 1, t: r.title, sc: rt(r), i: i }; }); });
@@ -6043,7 +6169,8 @@ var _pkDraw61 = pkDraw; pkDraw = function () { var r = _pkDraw61.apply(this, arg
 function ptile(o, i, kind) { var r = o.row, t = r ? r.title : o.t, ps = r ? posters[r.title] : o.p, yt = kind === 'yt' && !r;
   var th = yt ? (o.th || (o.id ? 'https://i.ytimg.com/vi/' + o.id + '/mqdefault.jpg' : '')) : (r && isYT(r) && r.ytm && r.ytm.id ? 'https://i.ytimg.com/vi/' + r.ytm.id + '/mqdefault.jpg' : ps);
   return '<button class="cbt' + (kind === 'yt' ? ' cby' : '') + '" ' + (r ? 'data-open="' + r.row + '"' : yt ? 'data-ytext61="' + esc(o.id || '') + '"' : 'data-ext61="1"') + '><span class="cbr">' + (i + 1) + '</span>' + (th && /^http|^data:/.test(th) ? '<img loading="lazy" src="' + esc(th) + '" alt="">' : '<i>' + esc(String(t || '?')[0]) + '</i>') + '<b>' + esc(baseTitle(t || '')) + '</b><small>' + (yt ? esc(o.ch || '▶') : kind === 'tv' || (o.tv) ? '📺' : kind === 'yt' ? '▶' : '🎞') + (r ? '' : ' · PICK') + '</small></button>'; }
-function songsHtml(L) { return '<ol class="cbsnd">' + L.map(function (s, i) { return '<li><button class="oxmp" data-cbsnd="' + i + '" aria-label="Play ' + esc(s.n) + '">▶</button>' + art61(s.art) + '<span><b>' + esc(s.n) + '</b> <small>' + esc(s.a || '') + '</small></span></li>'; }).join('') + '</ol>'; }
+function artOf68(s) { var A = window.ART61 || {}; return A[String(s.sp || '').replace(/[^\w]/g, '')] || A[(String(s.n || '') + '|' + String(s.a || '')).toLowerCase()] || ''; }
+function songsHtml(L) { return '<ol class="cbsnd">' + L.map(function (s, i) { return '<li><button class="oxmp" data-cbsnd="' + i + '" aria-label="Play ' + esc(s.n) + '">▶</button>' + art61(s.art || artOf68(s)) + '<span><b>' + esc(s.n) + '</b> <small>' + esc(s.a || '') + '</small></span></li>'; }).join('') + '</ol>'; }
 var _cab61 = cabinetHtml; cabinetHtml = function () { var h = _cab61.apply(this, arguments), p = (typeof statWho !== 'undefined' && statWho) || me(), pr = profiles[p] || {};
   var T = document.createElement('div'); T.innerHTML = h; var heads = [].slice.call(T.querySelectorAll('.cbs > h4'));
   var body = function (lab) { var h4 = heads.filter(function (x) { return x.textContent.indexOf(lab) >= 0; })[0]; if (!h4) return null; var box = h4.parentNode; [].slice.call(box.children).forEach(function (c) { if (c !== h4) c.remove(); }); return box; };
@@ -6310,5 +6437,138 @@ window.addEventListener('click', function (e) { var b = e.target.closest && e.ta
 /* r67: Our Top 5 repaints after its fetch replaced the section and dropped its arrange key/controls (so it vanished from the order and saves) */
 (function () { var _otp = ourTopPaint58; ourTopPaint58 = function () { var x = document.querySelector('#cab .ot58'), sec = x && x.dataset.sec, arc = x && x.querySelector(':scope > .arc64'), arcH = arc && arc.outerHTML; var r = _otp.apply(this, arguments);
   var y = document.querySelector('#cab .ot58'); if (y && sec) { y.dataset.sec = sec; if (arcH && !y.querySelector(':scope > .arc64')) y.insertAdjacentHTML('afterbegin', arcH); } return r; }; })();
+
+/* ===== R68: playtest fix batch 1 ===== */
+(function () {
+/* header avatar follows a 1P/2P switch */
+var _sw68 = setWho; setWho = function () { var r = _sw68.apply(this, arguments); try { avPin(); } catch (e) {} return r; };
+
+/* splash: a tap starts the app straight away (the intro jingle keeps playing); label always readable */
+(function () { var s = $('splash'); if (!s) return; var hide = function () { if (s.dataset.done) return; s.dataset.done = 1; s.style.opacity = 0; s.style.pointerEvents = 'none'; setTimeout(function () { s.style.display = 'none'; }, 260); };
+  s.addEventListener('click', function (e) { if (e.target.closest && e.target.closest('#spMute')) return; setTimeout(hide, 350); });
+  setTimeout(function () { var ps = $('spPs'); if (ps && /LOADING/.test(ps.textContent) && !s.dataset.done) { ps.textContent = '▶ TAP TO START'; s.classList.add('tap'); } }, 1800); })();
+
+/* arc menus: real arc positions, dimmed backdrop, outside tap closes */
+var _ao68 = archOpen; archOpen = function (key, items, opt) { var r = _ao68.apply(this, arguments); var a = $('arch'); if (!a) return r;
+  var n = items.length, W = Math.min(380, window.innerWidth - 12), H = Math.round(W / 2 + 26), cx = W / 2, R = W / 2 - (n >= 5 ? 74 : 70), iw = n >= 5 ? 72 : 80;
+  a.classList.add('arc68'); a.style.width = W + 'px'; a.style.height = H + 'px'; a.style.borderRadius = (W / 2) + 'px ' + (W / 2) + 'px 0 0';
+  [].forEach.call(a.querySelectorAll('.archi'), function (b, i) { var A0 = n >= 5 ? 162 : n === 4 ? 150 : 140, A1 = 180 - A0, ang = (n === 1 ? 90 : A0 - (A0 - A1) * i / (n - 1)) * Math.PI / 180, x = cx + Math.cos(ang) * R, y = H - 44 - Math.sin(ang) * (R + 4);
+    b.style.setProperty('left', x.toFixed(1) + 'px', 'important'); b.style.setProperty('top', y.toFixed(1) + 'px', 'important'); b.style.setProperty('width', iw + 'px', 'important'); });
+  var bd = $('archbd'); if (!bd) { document.body.insertAdjacentHTML('beforeend', '<div id="archbd" aria-hidden="true"></div>'); bd = $('archbd'); } if (a.classList.contains('archh')) bd.classList.add('hi'); else bd.classList.remove('hi'); bd.classList.add('on'); return r; };
+var _ac68 = archClose; archClose = function () { var bd = $('archbd'); if (bd) bd.classList.remove('on'); return _ac68.apply(this, arguments); };
+['pointerdown'].forEach(function (ev) { window.addEventListener(ev, function (e) { var bd = $('archbd'); if (bd && e.target === bd && bd.classList.contains('on')) { e.preventDefault(); e.stopImmediatePropagation(); archClose(); try { r56NavHi && r56NavHi(); } catch (er) {} } }, true); });
+window.addEventListener('click', function (e) { if (e.target && e.target.id === 'archbd') { e.preventDefault(); e.stopImmediatePropagation(); } }, true);
+
+/* details: never stuck on "Loading info…" once the lookup has answered */
+var TRIED68 = {};
+var _run68 = run; run = function (fn, args, ok, fail) { if (fn === 'getMeta' && args && args[0]) { var L = args[0]; var done = function () { (L || []).forEach(function (x) { if (x && x.title) TRIED68[String(x.title).trim()] = 1; }); setTimeout(fixSyn68, 30); };
+    var ok2 = function (r) { try { return ok && ok.apply(this, arguments); } finally { done(); } }, f2 = function () { try { return fail && fail.apply(this, arguments); } finally { done(); } }; return _run68.call(this, fn, args, ok2, f2); } return _run68.apply(this, arguments); };
+function fixSyn68() { var d = $('detail'); if (!d || !d.classList.contains('open') || !editing) return; var t = String(editing.title || '').trim(); if (!TRIED68[t]) return; [].forEach.call(d.querySelectorAll('.syn'), function (x) { if (/Loading info/.test(x.textContent)) { x.textContent = 'No synopsis found for this one yet.'; x.classList.add('syn68'); } }); }
+var _od68 = openDetail; openDetail = function () { var r = _od68.apply(this, arguments); setTimeout(fixSyn68, 0); setTimeout(fixSyn68, 6000); return r; };
+})();
+/* trivia: right/wrong feedback after each daily answer, clear titles, no empty answer slot */
+(function () {
+  var _show = trvShow; trvShow = function (h) { var r = _show.apply(this, arguments); try { var sp = document.querySelector('#trvB .trvhd span'); if (sp && !TRV.daily && !TRV.code && /LIVE TRIVIA/.test(sp.textContent)) sp.lastChild.textContent = 'TRIVIA'; } catch (e) {} return r; };
+  var _pick = trvDPick; trvDPick = function (c) { try { var d = TRV.daily, q = d && d.qs[TRV.dq]; if (q && c !== -1 && c != null) { var alt = +c >= 100, qq = alt ? q.alt : q, ax = qq && qq.ax != null ? qq.ax / 7 - 3 : null, pk = alt ? +c - 100 : +c;
+        if (ax != null) { var B = document.querySelectorAll('#trvB .trvo button'); if (B[pk]) B[pk].classList.add(pk === ax ? 'ok' : 'bad68'); if (pk !== ax && B[ax]) B[ax].classList.add('ok');
+          var fb = document.getElementById('trvfb'); if (!fb) { document.body.insertAdjacentHTML('beforeend', '<div id="trvfb" role="status"></div>'); fb = document.getElementById('trvfb'); }
+          fb.className = pk === ax ? 'ok' : 'bad'; fb.innerHTML = pk === ax ? '✓ RIGHT!' : '✕ WRONG<small>' + esc(String((qq.opts || [])[ax] || '')) + '</small>'; clearTimeout(fb.t); fb.t = setTimeout(function () { fb.className = ''; }, 1100); } } } catch (e) {}
+    return _pick.apply(this, arguments); };
+})();
+/* broken YouTube thumbnails: try the other size once, then a neutral tile (no grey "…" placeholder) */
+window.addEventListener('error', function (e) { var i = e.target; if (!i || i.tagName !== 'IMG' || !/i\.ytimg\.com\/vi\//.test(i.src)) return; if (!i.dataset.yf) { i.dataset.yf = 1; i.src = i.src.replace(/\/(mq|hq|sd|maxres)default\.jpg/, '/hqdefault.jpg'); return; } i.style.visibility = 'hidden'; i.parentNode && i.parentNode.classList.add('ytnoth68'); }, true);
+window.addEventListener('load', function (e) { var i = e.target; if (!i || i.tagName !== 'IMG' || !/i\.ytimg\.com\/vi\//.test(i.src)) return; if (i.naturalWidth === 120 && i.naturalHeight === 90) { i.style.visibility = 'hidden'; i.parentNode && i.parentNode.classList.add('ytnoth68'); } }, true);
+/* 8-bit keyboard for every text field app-wide (native only for links/tokens/passwords) */
+(function () { if (!KB.touch) return;
+  var OK = function (el) { if (!el || el.tagName !== 'INPUT' || el.disabled) return false; var t = (el.getAttribute('type') || 'text').toLowerCase(); if (t !== 'text' && t !== 'search') return false; if (el.hasAttribute('data-native') || /tok|token|secret|key|code/i.test(el.id + ' ' + (el.name || '') + ' ' + (el.placeholder || ''))) return false; if (el.closest('#setup')) return false; return true; };
+  var prep = function (el) { if (el.dataset.kb68) return; el.dataset.kb68 = 1; el.setAttribute('inputmode', 'none'); el.readOnly = true; el.classList.add('kbt'); };
+  var open = function (el) { prep(el); kbOpen(el); try { el.scrollIntoView({ block: 'center' }); } catch (e) {} };
+  document.addEventListener('pointerdown', function (e) { var el = e.target; if (!OK(el) || el === KB.target) return; e.preventDefault(); open(el); }, true);
+  document.addEventListener('focusin', function (e) { var el = e.target; if (!OK(el) || ['q', 'aTitle', 'fq'].indexOf(el.id) >= 0) return; if (!el.dataset.kb68) { prep(el); } el.blur(); if (KB.target !== el) open(el); }, true);
+  var _k = kbKey; kbKey = function (k, raw) { var el = KB.target, had = el && el.oninput; var r = _k.apply(this, arguments); try { if (el && !had && k !== 'OK') el.dispatchEvent(new Event('input', { bubbles: true })); if (el && k === 'OK') { el.dispatchEvent(new Event('change', { bubbles: true })); el.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true })); } } catch (e) {} return r; };
+})();
+/* ===== one navigation/active-state hook: everything that changes the screen calls NAV68.sync() ===== */
+(function () {
+  var OVL = '#ytpage.open,#detail.open,.page.open,#set58.open,#trv.open,#ed61.open,#ed61:not([hidden]),#ipage.open,#bpage.open,#arch.open,#ytp.open,#add.open,#dlg.open';
+  var onProfile = function () { try { return view === 'stats' && (!window.CP59 || CP59.page === 'profile') && !document.querySelector(OVL) && !document.hidden; } catch (e) { return false; } };
+  var psMutedNow = function () { return localStorage.getItem('lg_psmute') === '1' || localStorage.getItem('lg_psoff') === '1'; };
+  var tm = 0, sync = function () { clearTimeout(tm); tm = setTimeout(run1, 30); };
+  function run1() { try { var on = onProfile();
+      if (typeof OXS !== 'undefined' && OXS.mode === 'ps' && (!on || psMutedNow())) { try { window.psStop64 && psStop64(); } catch (e) {} try { OXA.pause(); } catch (e) {} }
+      else if (on && !psMutedNow() && window.psStart64) { try { psStart64(); } catch (e) {} }
+      try { var dr = $('ytdrw'); if (dr && dr.classList.contains('open') && document.querySelector('#arch.open,#set58.open,#detail.open,#trv.open,#ed61.open')) dr.classList.remove('open'); } catch (e) {}
+      /* one active state for the hotbar: exactly one tab lit */
+      var N = $('nav'); if (N) { var cur = view === 'stats' ? 'stats' : (document.querySelector('#bpage.open,#ipage.open') ? 'log' : 'home'); [].forEach.call(N.querySelectorAll('button'), function (b) { var k = b.dataset.v === 'stats' ? 'stats' : b.dataset.v === 'home' ? 'home' : b.id === 'navLogM' ? 'log' : ''; if (k) b.classList.toggle('on', k === cur); }); }
+    } catch (e) {} }
+  window.NAV68 = { sync: sync, onProfile: onProfile };
+  ['show', 'campPage59', 'archOpen', 'archClose', 'openBrowse', 'openDetail', 'ytnOpen', 'ytnClose', 'renderStats', 'closePage'].forEach(function (f) { if (typeof window[f] !== 'function') return; var o = window[f]; window[f] = function () { var r = o.apply(this, arguments); sync(); return r; }; });
+  new MutationObserver(function (M) { for (var i = 0; i < M.length; i++) { var t = M[i].target; if (t.nodeType === 1 && (t.id || /page|sheet|modal|arch/.test(t.className))) { sync(); return; } } }).observe(document.body, { attributes: true, attributeFilter: ['class', 'hidden'], subtree: true, childList: false });
+  document.addEventListener('visibilitychange', sync);
+  /* profile-song mute: instant, on touch-down, remembered per person */
+  var mg = 0; window.addEventListener('pointerdown', function (e) { var b = e.target.closest && e.target.closest('[data-ps64m]'); if (!b) return; e.preventDefault(); e.stopImmediatePropagation(); mg = Date.now();
+    var m = localStorage.getItem('lg_psmute') !== '1'; localStorage.setItem('lg_psmute', m ? '1' : '0'); if (m) { try { psStop64(); OXA.pause(); } catch (er) {} } else if (onProfile()) { try { psStart64(); } catch (er) {} }
+    b.textContent = m ? '🔇' : '🔊'; b.setAttribute('aria-label', (m ? 'Unmute' : 'Mute') + ' profile song'); }, true);
+  window.addEventListener('click', function (e) { if (e.target.closest && e.target.closest('[data-ps64m]') && Date.now() - mg < 800) { e.preventDefault(); e.stopImmediatePropagation(); } }, true);
+})();
+/* rows never repeat the same title: CONTINUE wins over LOGGING; RECOMMENDED wins over TRENDING (YouTube) */
+(function () { var key = function (el) { var o = el.getAttribute('data-open') || el.getAttribute('data-ytv') || el.getAttribute('data-yv') || el.getAttribute('data-vid') || el.getAttribute('data-id'); return o || ''; };
+  var dedupe = function (root, firstRe, laterRe) { if (!root) return; var S = [].slice.call(root.querySelectorAll('.sec, section, .ysec, [class*="ysec"]')); var first = S.filter(function (s) { var h = s.querySelector('h3,h4,.yhd'); return h && firstRe.test(h.textContent); })[0], later = S.filter(function (s) { var h = s.querySelector('h3,h4,.yhd'); return h && laterRe.test(h.textContent); });
+    if (!first) return; var seen = {}; [].forEach.call(first.querySelectorAll('[data-open],[data-ytv],[data-yv],[data-vid]'), function (el) { var k = key(el); if (k) seen[k] = 1; });
+    later.forEach(function (s) { if (s === first) return; [].forEach.call(s.querySelectorAll('[data-open],[data-ytv],[data-yv],[data-vid]'), function (el) { var k = key(el); if (k && seen[k]) { var card = el.closest('.pc,.ytc,.ycard,li') || el; card.style.display = 'none'; } }); }); };
+  var _r = render; render = function () { var r = _r.apply(this, arguments); try { dedupe($('v-home'), /CONTINUE/, /LOGGING/); } catch (e) {} return r; };
+  new MutationObserver(function () { try { dedupe($('ytpage'), /RECOMMENDED/, /TRENDING/); } catch (e) {} }).observe(document.body, { childList: true, subtree: false });
+  setInterval(function () { var y = $('ytpage'); if (y && y.classList.contains('open')) try { dedupe(y, /RECOMMENDED/, /TRENDING/); } catch (e) {} }, 1500);
+})();
+/* ===== trivia: results screen per day + one source of truth (triviaBoard) for board and leaderboard ===== */
+(function () {
+  var NM = { sam: '1P SAM', lewy: '2P LEWY' };
+  var pickCell = function (q, A, i, p) { if (!A || A === 'done') return '<td class="' + p + '"><i>' + (A === 'done' ? 'HIDDEN TILL YOU PLAY' : 'NOT ANSWERED YET') + '</i></td>'; var pk = +(A.p || [])[i], qa = q.a, opts = q.opts || [];
+    if (pk === -1 || isNaN(pk)) return '<td class="' + p + '"><i>SKIPPED</i></td>'; if (pk >= 100 && q.alt) { pk -= 100; qa = q.alt.a; opts = q.alt.opts || []; } var ok = pk === qa, ms = (A.m || [])[i];
+    return '<td class="' + p + (ok ? ' ok' : ' no') + '">' + (ok ? '✓ ' : '✕ ') + esc(String(opts[pk] != null ? opts[pk] : '—')) + (ms ? '<small>' + (ms / 1000).toFixed(1) + 's</small>' : '') + '</td>'; };
+  window.trvResults68 = function (date) { trvShow('<div class="trvlob"><p class="blink">LOADING RESULTS…</p></div>');
+    run('triviaDaily', [me(), date], function (d) { if (!d) return; TRV.daily = null; var m = me(), o = m === 'sam' ? 'lewy' : 'sam', A = { }; A[m] = d.mine; A[o] = d.other;
+      if (!d.mine) { trvShow('<div class="trvlob"><p>PLAY ' + esc(d.d) + ' FIRST TO SEE THE ANSWERS</p><button class="btn y" data-trvday="' + esc(d.d) + '">▶ PLAY</button></div>'); return; }
+      var h = '<div class="trs68"><h3>📋 RESULTS · ' + esc(d.d) + '</h3><table><tr><th>Q</th><th class="sam">' + NM.sam + '</th><th class="lewy">' + NM.lewy + '</th></tr>' +
+        d.qs.map(function (q, i) { var media = q.img ? '<img src="' + esc(q.img) + '" alt="" loading="lazy">' : q.audio ? '<button class="ui-btn trsp" data-trsa="' + esc(q.audio) + '" aria-label="Play clip">▶</button>' : q.quote ? '<q>' + esc(q.quote) + '</q>' : '';
+          var ans = (q.opts || [])[q.a]; return '<tr class="trq"><td colspan="3"><b>Q' + (i + 1) + '</b> ' + esc(q.q || '') + media + '<div class="trsa">✔ ' + esc(String(ans != null ? ans : '?')) + (q.more ? ' <small>' + esc(q.more) + '</small>' : '') + '</div></td></tr><tr class="trpk"><td></td>' + pickCell(q, A.sam, i, 'sam') + pickCell(q, A.lewy, i, 'lewy') + '</tr>'; }).join('') +
+        '<tr class="trtot"><td>ROUND</td><td class="sam">' + (A.sam && A.sam.sc != null ? A.sam.sc + ' PTS · ' + A.sam.ok + '/' + A.sam.n : '—') + '</td><td class="lewy">' + (A.lewy && A.lewy.sc != null ? A.lewy.sc + ' PTS · ' + A.lewy.ok + '/' + A.lewy.n : '—') + '</td></tr></table>' + trvBoard(d.stats || {}) + '<button class="btn" data-trvhub68="1">◀ BACK TO TRIVIA</button></div>';
+      trvShow(h); }, function (e) { toast(String(e && e.message || e)); }); };
+  document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-trvres],[data-trsa],[data-trvhub68]'); if (!b) return; e.preventDefault(); e.stopImmediatePropagation();
+    if (b.dataset.trvres) return trvResults68(b.dataset.trvres); if (b.dataset.trsa) { try { trvAudio(b.dataset.trsa); } catch (er) {} return; } if (b.dataset.trvhub68) { try { trvDaily(); } catch (er) {} } }, true);
+  /* end of a set: results button */
+  var _res = trvDailyRes; trvDailyRes = function () { var r = _res.apply(this, arguments); try { var B = $('trvB'), d = TRV.daily; if (B && d && d.mine && !B.querySelector('[data-trvres]')) { var st = B.querySelector('.trvlob, .trvres, h3') || B.firstChild; (B.querySelector('.trvhd') || B.firstChild).insertAdjacentHTML('afterend', '<button class="btn y trs68b" data-trvres="' + esc(d.d) + '">📋 SEE RESULTS · ANSWER BY ANSWER</button>'); } } catch (e) {} return r; };
+  /* past days: a RESULTS button on every day you played */
+  trvDaysLoad = function () { run('triviaDays', [me()], function (L) { var el = $('trvDays'); if (!el || !L) return; var m = me(), o = m === 'sam' ? 'lewy' : 'sam';
+    el.innerHTML = '<div class="lbl">' + tvi('catch', 12) + ' PAST DAYS · CATCH UP</div>' + L.map(function (x) { var a = x[m], b = x[o]; return '<div class="trvdr68"><button class="trvday' + (a ? '' : ' miss') + '" data-trvday="' + x.d + '"><b>' + x.d.slice(5) + '</b><span class="' + m + '">' + (a ? '✓ ' + a.sc + (a.late ? ' <i>LATE</i>' : '') : '▶ PLAY') + '</span><span class="' + o + '">' + (o === 'sam' ? '1P ' : '2P ') + (b ? '✓ ' + b.sc + (b.late ? ' <i>LATE</i>' : '') : '–') + '</span></button>' + (a ? '<button class="ui-btn trvrb68" data-trvres="' + x.d + '" aria-label="Results for ' + x.d + '">📋</button>' : '') + '</div>'; }).join(''); }); };
+  /* leaderboard totals from the same board the results use */
+  trvLB = function () { var el = $('trvLB'); if (!el) return; el.innerHTML = '<div class="lbl">🏆 LEADERBOARD · ALL TIME</div><p class="blink">LOADING…</p>';
+    run('triviaBoard', [], function (B) { el = $('trvLB'); if (!el || !B) return; window.TVS = B;
+      el.innerHTML = '<div class="lbl">🏆 LEADERBOARD · ALL TIME</div><div class="lbt">' + ['sam', 'lewy'].map(function (p) { var T = B[p] || {}, w = T.wins || 0; return '<div class="' + p + '"><b>' + NM[p] + '</b><span>' + w + (w === 1 ? ' WIN' : ' WINS') + '</span><small>' + (T.played || 0) + ' PLAYED · ' + (T.pts || 0) + ' PTS · 🔥' + (T.streak || 0) + '</small></div>'; }).join('') + '</div>'; }, function () { el.innerHTML = ''; }); };
+})();
+/* ===== one audio controller for SFX: unlocked on the first tap, effects pre-rendered to WebAudio buffers (no per-sound oscillator scheduling that glitches next to a playing song) ===== */
+(function () { var BUF = {}, busy = {}, OAC = window.OfflineAudioContext || window.webkitOfflineAudioContext, master = null, SKIP = { intro: 1 };
+  var real = function () { var a = ac(); if (a && !master) { try { master = a.createGain(); master.gain.value = .9; master.connect(a.destination); } catch (e) {} } return a; };
+  var render = function (name, arg, fn) { var key = name + ':' + (arg == null ? '' : arg); if (BUF[key] || busy[key] || !OAC) return; var a = real(); if (!a) return; busy[key] = 1;
+    try { var sr = a.sampleRate || 44100, off = new OAC(1, Math.ceil(sr * 1.6), sr), keep = AC; try { Object.defineProperty(off, "state", { value: "running" }); off.resume = function () { return Promise.resolve(); }; } catch (e) {} var _z = 0, km = muted; AC = off; muted = false; try { fn.call(SFX, arg); } finally { AC = keep; muted = km; }
+      var done = function (b) { BUF[key] = b; }; var pr = off.startRendering(); if (pr && pr.then) pr.then(done); else off.oncomplete = function (e) { done(e.renderedBuffer); }; } catch (e) { busy[key] = 0; } };
+  var playBuf = function (b) { var a = real(); if (!a || !b || muted) return false; try { var s = a.createBufferSource(); s.buffer = b; s.connect(master || a.destination); s.start(); return true; } catch (e) { return false; } };
+  Object.keys(SFX).forEach(function (k) { var fn = SFX[k]; if (typeof fn !== 'function' || SKIP[k]) return;
+    SFX[k] = function (arg) { var key = k + ':' + (arg == null ? '' : arg); if (BUF[key] && playBuf(BUF[key])) return; real(); var r = fn.apply(this, arguments); render(k, arg, fn); return r; }; });
+  var pre = function () { real(); ['blip', 'tap', 'back', 'coin', 'save', 'key', 'tick'].forEach(function (k) { var f = SFX[k]; if (f && f.toString) {} }); };
+  window.AUD68 = { buffers: BUF, unlock: real };
+  ['pointerdown', 'touchend'].forEach(function (ev) { document.addEventListener(ev, function () { real(); }, { capture: true, passive: true }); });
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) { try { var a = AC; if (a && a.state !== 'running') a.resume(); } catch (e) {} } });
+})();
+/* trivia header: the right mode name */
+(function () { var _s = trvShow; trvShow = function () { var r = _s.apply(this, arguments); try { var sp = document.querySelector('#trvB .trvhd span'); if (sp) { var t = TRV.daily ? 'DAILY TRIVIA' : TRV.code ? (TRV.st && !TRV.st.guest ? 'SOLO TRIVIA' : 'LIVE TRIVIA') : 'TRIVIA'; var n = sp.lastChild; if (n && n.nodeType === 3) n.textContent = t; } } catch (e) {} return r; }; })();
+
+// r68: close the 8-bit keyboard when its input is gone/hidden (e.g. a sheet closed under it)
+setInterval(function () { try { var k = document.getElementById('kb'); if (!k || !k.classList.contains('on')) return; var t = KB.target; if (!t || !t.isConnected || !t.offsetParent || t.getClientRects().length === 0) kbClose(); } catch (e) {} }, 300);
+// r68: lift the sheet that owns the focused input above the 8-bit keyboard so its bottom buttons stay tappable
+(function () { var lifted = null; setInterval(function () { try { var k = document.getElementById('kb'), on = k && k.classList.contains('on'), t = on && KB.target, host = null;
+  if (t) { var e = t.parentElement; while (e && e !== document.body) { if (getComputedStyle(e).position === 'fixed') { host = e; break; } e = e.parentElement; } }
+  if (lifted && lifted !== host) { lifted.style.paddingBottom = lifted.dataset.pb68 || ''; delete lifted.dataset.pb68; lifted = null; }
+  if (host && host !== k) { var h = Math.round(k.getBoundingClientRect().height) + 'px'; if (lifted !== host) { host.dataset.pb68 = host.style.paddingBottom; lifted = host; } if (host.style.paddingBottom !== h) { host.style.boxSizing = 'border-box'; host.style.paddingBottom = h; } }
+} catch (e) {} }, 200); })();
 
 </script></body></html>
