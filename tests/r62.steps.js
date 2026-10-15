@@ -15,6 +15,7 @@ out.counts = counts;
 await p.evaluate(() => { const r = rows.filter(x => !isYT(x))[0]; r.themeL = { [me()]: [{ n: 'Baby Blue', a: 'Badfinger', pv: 'https://p.scdn.co/mp3-preview/bb', art: 'https://i.scdn.co/image/ab67616d00001e02255e131abc1410833be95673', sc: 'show' }, { n: 'Bones', a: 'Imagine Dragons', pv: 'https://p.scdn.co/mp3-preview/bo', sc: 'show' }] }; openDetail(r); window.PL = []; HTMLMediaElement.prototype.play = function () { PL.push({ src: this.src, ev: window.event && window.event.type }); return Promise.resolve(); }; });
 await p.waitForTimeout(1200);
 await p.tap('[data-tlp="' + who + ':0"]', { timeout: 4000 }).catch(e => out.playErr = e.message.slice(0, 100)); await p.waitForTimeout(500);
+await p.waitForTimeout(1200); out.mini67 = await p.evaluate(() => { const a = document.querySelector('#thm .m62a'); if (!a) return null; const i = a.querySelector('img'), s = a.querySelector('.sa61'); return { cls: s && s.className, src: i && i.src.slice(0, 70), filt: i && getComputedStyle(i).filter, ir: i && getComputedStyle(i).imageRendering, op: i && getComputedStyle(i).opacity, mode: OXS.mode }; });
 out.inTap = await p.evaluate(() => PL.filter(x => x.src === OXA.src).map(x => x.ev));
 await p.evaluate(() => { try { document.querySelector('#detail .x, [data-close=detail]')?.click(); } catch (e) {} });
 out.mini = await p.evaluate(() => { const x = document.getElementById('thm'), n = document.getElementById('nav'); if (!x) return 'none'; const r = x.getBoundingClientRect(), nr = n.getBoundingClientRect();

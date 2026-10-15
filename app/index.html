@@ -1397,6 +1397,9 @@ body.ytfull58 #ytpage,body.ytfull58 body>main{pointer-events:none}
 .ps64 .ui-btn{min-width:44px;min-height:44px;padding:0}
 #set58 .ps63t{display:flex;align-items:center;justify-content:space-between;padding:10px 0}
 #set58 .ps63t span{font:9px var(--pix)}#set58 .ps63t .ui-btn{min-width:72px;min-height:44px}#set58 .ps63t .ui-btn.on{background:#1fae4b;color:#fff}
+/* r67: the 8-bit keyboard must sit above the add sheet (it was hidden under it) */
+body.addopen #kb{z-index:320}
+body.addopen.kbo #add .sheet{padding-bottom:calc(var(--kbh,300px) + 12px)}
 </style></head><body>
 <div id="splash" aria-label="Logged"></div>
 <header><div class="hin">
@@ -5959,12 +5962,12 @@ var DIRECT = /^https:\/\/(p\.scdn\.co\/mp3-preview\/|audio-ssl\.itunes\.apple\.c
 var ART = {}; try { ART = JSON.parse(localStorage.getItem('lg_art61') || '{}'); } catch (e) {} window.ART61 = ART;
 var PVM = {}; try { PVM = JSON.parse(localStorage.getItem('lg_pv60') || '{}'); } catch (e) {}
 function key(t) { return String(t.sp || t.id || '').replace(/[^\w]/g, '') || (String(t.n || '') + '|' + String(t.a || '')).toLowerCase(); }
-function apply(t) { if (!t.art && ART[key(t)]) t.art = ART[key(t)]; var u = PVM[key(t)]; if (u && (!SP.test(t.pv || '') || u !== t.pv)) { if (SP.test(u) || !DIRECT.test(t.pv || '')) t.pv = u; } return t; }
+function apply(t) { if (!t.art && ART[key(t)]) t.art = ART[key(t)]; if (t.art && t.pv) ART['u:' + t.pv] = t.art; var u = PVM[key(t)]; if (u && (!SP.test(t.pv || '') || u !== t.pv)) { if (SP.test(u) || !DIRECT.test(t.pv || '')) t.pv = u; } return t; }
 var Q = [], qt = 0, busy = 0;
 function pvFix(list) { (list || []).forEach(function (t) { if (!t || !t.n) return; apply(t); if ((SP.test(t.pv || '') && t.art) || t._pv60) return; t._pv60 = 1; Q.push(t); }); if (Q.length && !qt) qt = setTimeout(flush, 60); }
 function flush() { qt = 0; if (busy || !Q.length) return; var B = Q.splice(0, 25); busy = 1;
   run('songPv', [B.map(function (t) { return { id: t.sp || (/^[A-Za-z0-9]{22}$/.test(t.id || '') ? t.id : ''), n: t.n, a: t.a || '' }; })], function (R) { busy = 0;
-    (R || []).forEach(function (r, i) { var t = B[i]; if (!r || !t) return; if (r.id) t.sp = r.id; if (r.art) { t.art = t.art || r.art; ART[key(t)] = r.art; } if (r.u) { PVM[key(t)] = r.u; PVM[(String(t.n) + '|' + String(t.a || '')).toLowerCase()] = r.u; if (SP.test(r.u) || !DIRECT.test(t.pv || '')) t.pv = r.u; } });
+    (R || []).forEach(function (r, i) { var t = B[i]; if (!r || !t) return; if (r.id) t.sp = r.id; if (r.art) { t.art = t.art || r.art; ART[key(t)] = r.art; if (r.u) ART['u:' + r.u] = r.art; ART[(String(t.n) + '|' + String(t.a || '')).toLowerCase()] = r.art; } if (r.u) { PVM[key(t)] = r.u; PVM[(String(t.n) + '|' + String(t.a || '')).toLowerCase()] = r.u; if (SP.test(r.u) || !DIRECT.test(t.pv || '')) t.pv = r.u; } });
     try { var ks = Object.keys(PVM); if (ks.length > 600) ks.slice(0, ks.length - 600).forEach(function (k) { delete PVM[k]; }); localStorage.setItem('lg_pv60', JSON.stringify(PVM)); localStorage.setItem('lg_art61', JSON.stringify(ART)); } catch (e) {} try { window.decorate61 && decorate61(); } catch (e) {}
     if (Q.length) flush(); }, function () { busy = 0; B.forEach(function (t) { t._pv60 = 0; }); }); }
 window.pvFix60 = pvFix; window.PVM60 = PVM;
@@ -6130,7 +6133,9 @@ var _sp = spBar; spBar = function (t, playing) { var r = _sp.apply(this, argumen
   if (!x.dataset.v62) { x.dataset.v62 = 1; x.classList.add('mp62'); x.innerHTML = '<div class="m62a"></div><div class="m62m"><span></span><div class="m62p" aria-hidden="true"><i></i></div></div><div class="m62c"><button data-spc="prev" aria-label="Previous">⏮</button><button data-spc="toggle" class="spt" aria-label="Play or pause">❚❚</button><button data-spc="next" aria-label="Next">⏭</button><button data-spc="stop" class="m62x" aria-label="Close">✕</button></div>'; }
   var lab = String(t || '').replace(/\s·\s30s$/, '').replace(/^♪\s*/, ''), sp = split(lab), c = (typeof OXS !== 'undefined' && OXS.cur) || {};
   x.querySelector('.m62m span').innerHTML = '<b>' + esc(c.n && lab.indexOf(c.n) >= 0 ? c.n : sp[0]) + '</b><small>' + esc(c.n && lab.indexOf(c.n) >= 0 ? (c.a || sp[1]) : sp[1]) + '</small>';
-  var a = x.querySelector('.m62a'), u = c.art || ''; if (a.dataset.u !== u) { a.dataset.u = u; a.innerHTML = art61(u); }
+  var a = x.querySelector('.m62a'), AR = window.ART61 || {}, src = (typeof OXA !== 'undefined' && OXA && OXA.src) || '', mine = c.n && lab.indexOf(c.n) >= 0, u = (mine && c.art) || AR['u:' + src] || AR[(String(sp[0] || '') + '|' + String(sp[1] || '')).toLowerCase()] || (mine && c.a && AR[(c.n + '|' + c.a).toLowerCase()]) || '';
+  /* r67: same cover logic as the cabinet — keep the current cover while the same track plays (no re-insert flicker); skeleton while unknown, vinyl only on a real failure */
+  if (!u && a.dataset.src === src && a.dataset.u) u = a.dataset.u; if (a.dataset.u !== u || !a.firstChild) { a.dataset.u = u; a.dataset.src = src; a.innerHTML = u ? art61(u) : '<span class="sa61"></span>'; }
   var list = OXS.mode === 'clip' || (OXS.mode === 'tl' && window.R55 && R55.tl && Object.keys(R55.tl).reduce(function (t, p) { return t + (R55.tl[p] || []).length; }, 0) > 1); x.classList.toggle('m62one', !list);
   x.classList.toggle('paused', !playing); x.querySelector('.spt').textContent = playing ? '❚❚' : '▶'; prog(); return r; };
 function prog() { var x = $('thm'); if (!x || !x.dataset.v62 || typeof OXA === 'undefined') return; var d = OXA.duration || 30, f = Math.max(0, Math.min(1, (OXA.currentTime || 0) / (isFinite(d) && d > 0 ? d : 30))); var i = x.querySelector('.m62p i'); if (i) i.style.width = (f * 100).toFixed(1) + '%'; }
@@ -6223,12 +6228,17 @@ var _cab = cabinetHtml; cabinetHtml = function () { var h = _cab.apply(this, arg
   var secs = [].slice.call(C.children).filter(function (x) { return !/^H3$/.test(x.tagName) && !x.classList.contains('cbdv') && !x.classList.contains('arr64'); });
   var KNOWN = [[/OUR TOP 5/, 'OURTOP5'], [/TOP 5 MOVIES/, 'MOVIES'], [/TOP 5 SHOWS/, 'SHOWS'], [/TOP 5 SOUNDTRACKS/, 'SOUNDTRACKS'], [/TOP 5 YOUTUBE/, 'YOUTUBE']];
   secs.forEach(function (x) { if (x.dataset.sec) return; var h4 = x.querySelector('h4,h3,.lbl'), tx = h4 ? (h4.firstChild && h4.firstChild.nodeType === 3 ? h4.firstChild.textContent : h4.textContent) : ''; var k = KNOWN.filter(function (m) { return m[0].test(tx); })[0]; x.dataset.sec = k ? k[1] : x.classList.contains('cbst') ? 'STATS' : slug(tx.replace(/✎/g, '') || x.className); });
-  var order = (LAY66[p] || pr.lay || []).slice(), idx = function (k) { var i = order.indexOf(k); return i < 0 ? 1e3 + secs.findIndex(function (s) { return s.dataset.sec === k; }) : i; };
+  var order = mergeLay67(LAY66[p] || pr.lay || [], secs.map(function (s) { return s.dataset.sec; })), idx = function (k) { var i = order.indexOf(k); return i < 0 ? 1e3 + secs.findIndex(function (s) { return s.dataset.sec === k; }) : i; };
   secs.sort(function (a, b) { return idx(a.dataset.sec) - idx(b.dataset.sec); }).forEach(function (s) { C.appendChild(s); });
   if (own(p)) { var lab = C.querySelector('.cbdv'); var bar = '<div class="arr64"><button class="ui-btn' + (ARR ? ' on' : '') + '" data-arr64="toggle">' + (ARR ? '✓ DONE ARRANGING' : '⇅ ARRANGE') + '</button></div>'; if (lab) lab.insertAdjacentHTML('afterend', bar); else C.insertAdjacentHTML('afterbegin', bar); }
   if (ARR && own(p)) { C.classList.add('arranging'); secs.forEach(function (s, i) { s.insertAdjacentHTML('afterbegin', '<div class="arc64"><button class="ui-btn" data-arr64="up:' + s.dataset.sec + '"' + (i ? '' : ' disabled') + ' aria-label="Move section up">▲</button><b>' + esc(s.dataset.sec.replace(/-/g, ' ')) + '</b><button class="ui-btn" data-arr64="dn:' + s.dataset.sec + '"' + (i < secs.length - 1 ? '' : ' disabled') + ' aria-label="Move section down">▼</button></div>'); }); }
   return T.innerHTML; };
-var lt = 0, LAY66 = {}, LSEQ66 = {};
+var lt = 0, LAY66 = window.LAY66 = {}, LSEQ66 = {};
+/* r67: a saved order may be partial (e.g. saved before Our Top 5 had loaded). Keep its relative order and slot every missing section next to its default neighbour. */
+var DEF67 = ['OURTOP5', 'MOVIES', 'SHOWS', 'SOUNDTRACKS', 'YOUTUBE', 'QUOTES', 'STATS'];
+function mergeLay67(saved, present) { var out = (saved || []).filter(function (k, i, a) { return typeof k === 'string' && k && a.indexOf(k) === i; });
+  (present || []).forEach(function (k, i) { if (out.indexOf(k) >= 0) return; var prev = null; for (var j = i - 1; j >= 0; j--) if (out.indexOf(present[j]) >= 0) { prev = present[j]; break; } out.splice(prev ? out.indexOf(prev) + 1 : 0, 0, k); }); return out; }
+window.mergeLay67 = mergeLay67;
 function arrFix66(C) { var L = [].slice.call(C.children).filter(function (x) { return x.dataset && x.dataset.sec; }); L.forEach(function (s, i) { var u = s.querySelector(':scope > .arc64 [data-arr64^="up:"]'), d = s.querySelector(':scope > .arc64 [data-arr64^="dn:"]'); if (u) u.disabled = i === 0; if (d) d.disabled = i === L.length - 1; }); return L.map(function (x) { return x.dataset.sec; }); }
 function arrAct66(b) { var a = b.dataset.arr64, p = me();
   if (a === 'toggle') { ARR = !ARR; return renderStats(); }
@@ -6236,7 +6246,7 @@ function arrAct66(b) { var a = b.dataset.arr64, p = me();
   var L = [].slice.call(C.children).filter(function (x) { return x.dataset && x.dataset.sec; }), s = a.split(':'), i = L.findIndex(function (x) { return x.dataset.sec === s[1]; }), j = i + (s[0] === 'up' ? -1 : 1); if (i < 0 || j < 0 || j >= L.length) return;
   var el = L[i], top = el.getBoundingClientRect().top; if (s[0] === 'up') C.insertBefore(el, L[j]); else C.insertBefore(el, L[j].nextSibling);
   var keys = arrFix66(C); window.scrollBy(0, el.getBoundingClientRect().top - top); /* keep the moved section under the finger */
-  LAY66[p] = keys; profiles[p] = Object.assign({}, profiles[p] || {}, { lay: keys });
+  LAY66[p] = mergeLay67(keys, mergeLay67((profiles[p] || {}).lay || [], keys)); (function () { var full = mergeLay67((profiles[p] || {}).lay || [], []), seen = keys.slice(); full.forEach(function (k) { if (seen.indexOf(k) < 0) { var i = full.indexOf(k), prev = null; for (var j = i - 1; j >= 0; j--) if (seen.indexOf(full[j]) >= 0) { prev = full[j]; break; } seen.splice(prev ? seen.indexOf(prev) + 1 : 0, 0, k); } }); LAY66[p] = mergeLay67(seen, DEF67); })(); profiles[p] = Object.assign({}, profiles[p] || {}, { lay: LAY66[p] });
   clearTimeout(lt); lt = setTimeout(function () { var q = (LSEQ66[p] || 0) + 1; LSEQ66[p] = q; var pr = Object.assign({}, profiles[p] || {}, { lay: LAY66[p] }); busy++;
     run('saveProfile', [p, pr], function (o) { busy--; if (q !== LSEQ66[p]) return; /* stale */ if (o) profiles[p] = Object.assign({}, o, { lay: LAY66[p] }); }, function () { busy--; toast('COULDN\u2019T SAVE ORDER — CHECK CONNECTION'); }); }, 600); }
 var ag66 = 0;
@@ -6287,5 +6297,18 @@ window.PS64 = PS; window.psStart64 = psStart; window.psStop64 = psStop;
 window.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('button[data-who]'); if (!b || !$('v-stats') || !$('v-stats').contains(b)) return; e.preventDefault(); e.stopImmediatePropagation(); SFX.tap && SFX.tap();
   var w = b.dataset.who; if (w !== 'sam' && w !== 'lewy') return; try { psStop(); } catch (er) {} statWho = w; ARR = false; try { renderStats(); } catch (er) { console.error(er); } var Mn = document.querySelector('body>main'); if (Mn) Mn.scrollTop = 0; }, true);
 })();
+/* r67: every add-title entry point opens the add sheet with the title field active inside the same tap */
+(function () { var F = $('fab'); if (!F) return; var go = function () { initAdd(); $('add').classList.add('open'); var t = $('aTitle'); try { kbOpen(t); } catch (e) {} try { t.focus({ preventScroll: true }); } catch (e) {} try { t.scrollIntoView({ block: 'center' }); } catch (e) {} };
+  F.onclick = go; window.addNew67 = go;
+  var _oaw = openAddWith; openAddWith = function () { var r = _oaw.apply(this, arguments); try { kbOpen($('aTitle')); } catch (e) {} return r; }; })();
+
+/* r67: every profile save carries the newest local order; polls/refreshes never put an older order back */
+(function () { var _run = run; run = function (fn, args, ok, fail) { if (fn === 'saveProfile' && args && args[1] && window.LAY66 && LAY66[args[0]]) args[1] = Object.assign({}, args[1], { lay: LAY66[args[0]].slice() }); return _run.apply(this, arguments); };
+  setInterval(function () { try { ['sam', 'lewy'].forEach(function (p) { if (LAY66[p] && profiles[p] && JSON.stringify(profiles[p].lay) !== JSON.stringify(LAY66[p])) { var srv = profiles[p].lay; if (Array.isArray(srv) && srv.length && JSON.stringify(srv) === JSON.stringify(LAY66[p])) return; profiles[p] = Object.assign({}, profiles[p], { lay: LAY66[p].slice() }); } }); } catch (e) {} }, 1000); })();
+/* r67: shelf edit buttons always carry a visible label */
+(function () { var _r = renderStats; renderStats = function () { var r = _r.apply(this, arguments); try { document.querySelectorAll('#cab .ced59').forEach(function (b) { if (b.textContent.trim() !== '✎ EDIT') b.textContent = '✎ EDIT'; }); document.querySelectorAll('#cab h4 button').forEach(function (b) { if (!b.textContent.trim() && !b.querySelector('img,svg,canvas')) b.textContent = '✎ EDIT'; }); } catch (e) {} return r; }; })();
+/* r67: Our Top 5 repaints after its fetch replaced the section and dropped its arrange key/controls (so it vanished from the order and saves) */
+(function () { var _otp = ourTopPaint58; ourTopPaint58 = function () { var x = document.querySelector('#cab .ot58'), sec = x && x.dataset.sec, arc = x && x.querySelector(':scope > .arc64'), arcH = arc && arc.outerHTML; var r = _otp.apply(this, arguments);
+  var y = document.querySelector('#cab .ot58'); if (y && sec) { y.dataset.sec = sec; if (arcH && !y.querySelector(':scope > .arc64')) y.insertAdjacentHTML('afterbegin', arcH); } return r; }; })();
 
 </script></body></html>

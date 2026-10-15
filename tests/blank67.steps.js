@@ -1,0 +1,5 @@
+(async () => { const out = {}; await p.evaluate(() => { const s = document.getElementById('splash'); s && s.remove(); }); const who = await p.evaluate(() => me()); out.who = who;
+const arc = async (label) => { await p.tap('#nav [data-v=stats]', { timeout: 4000 }); await p.waitForTimeout(500); const ok = await p.evaluate(l => { const b = [...document.querySelectorAll('#arch .archi')].find(x => x.innerText.toUpperCase().includes(l)); if (!b) return false; return true; }, label); if (!ok) return 'no item'; await p.evaluate(l => { [...document.querySelectorAll('#arch .archi')].find(x => x.innerText.toUpperCase().includes(l)).click(); }, label); await p.waitForTimeout(900); };
+await arc('PROFILE'); await p.waitForTimeout(500);
+out.blank = await p.evaluate(() => [...document.querySelectorAll('#cab button')].filter(b => !b.innerText.trim() && !b.querySelector('img,canvas,svg,.sa61')).map(b => b.outerHTML.slice(0, 200) + ' @' + (b.closest('[data-sec]') || {}).dataset?.sec + ' bg=' + getComputedStyle(b).backgroundImage.slice(0, 40)));
+console.log('BL67 ' + JSON.stringify(out)); })()
