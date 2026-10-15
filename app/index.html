@@ -109,11 +109,25 @@ function mock(fn, args, who) { if (global.MOCKX) { const x = global.MOCKX(fn, ar
     return { daily: daily, list: list, board: board, today: today,
       answer: function (who, picks, ms, d) { var D = day(d || today()); if (D.ans[who]) return daily(who, D.d); var sc = 0, ok = 0; D.qs.forEach(function (q, i) { var pk = +(picks || [])[i], m = Array.isArray(ms) ? ms[i] : (+ms || 0) / Math.max(1, D.qs.length); if (pk >= 100) pk -= 100; var s = score(q, pk, m); sc += s; if (s) ok++; }); D.ans[who] = { p: (picks || []).map(Number), m: (Array.isArray(ms) ? ms : []).map(Number), sc: sc, ok: ok, n: D.qs.length, at: today(), late: D.d !== today() }; return daily(who, D.d); },
       results: function () { var out = []; list().forEach(function (x) { ['sam', 'lewy'].forEach(function (p) { var a = x[p], o = x[p === 'sam' ? 'lewy' : 'sam']; if (a) out.push({ id: 'daily-' + x.d, d: x.d, m: a.late ? 'Daily (catch-up)' : 'Daily', p: p === 'sam' ? 'Sam' : 'Lewy', sc: a.sc, ok: a.ok, n: a.n, res: o ? (a.sc > o.sc ? 'Win' : a.sc < o.sc ? 'Loss' : 'Tie') : '—' }); }); }); return out; } }; })();
+  /* r70: Last.fm demo data (shape of the real proxy) */
+  var LFMU = { sam: 'thebigwhacker', lewy: 'isolaOW' };
+  function lfmDemo(p, per) { var u = LFMU[p]; if (!u) return { user: '' }; var k = { '7day': 1, '1month': 4, '12month': 40, overall: 120 }[per] || 1, s = p === 'sam' ? 0 : 3;
+    var AR = ['The Killers', 'ABBA', 'Queen', 'Fleetwood Mac', 'Hans Zimmer', 'Harry Styles', 'Eminem', 'Lady Gaga', 'Journey', 'Survivor', 'Arctic Monkeys', 'Tame Impala'];
+    var TR = [['Mr. Brightside', 'The Killers'], ['Dancing Queen', 'ABBA'], ['Bohemian Rhapsody', 'Queen'], ['Dreams', 'Fleetwood Mac'], ['Time', 'Hans Zimmer'], ['As It Was', 'Harry Styles'], ['Lose Yourself', 'Eminem'], ['Shallow', 'Lady Gaga'], ["Don't Stop Believin'", 'Journey'], ['Eye of the Tiger', 'Survivor']];
+    var AL = [['Hot Fuss', 'The Killers'], ['Arrival', 'ABBA'], ['A Night at the Opera', 'Queen'], ['Rumours', 'Fleetwood Mac'], ['Inception (OST)', 'Hans Zimmer'], ["Harry's House", 'Harry Styles'], ['The Eminem Show', 'Eminem'], ['A Star Is Born', 'Lady Gaga'], ['Escape', 'Journey'], ['AM', 'Arctic Monkeys']];
+    var rot = function (L) { return L.slice(s).concat(L.slice(0, s)); }, now = Date.now();
+    return { user: u, period: per || '7day', url: 'https://www.last.fm/user/' + u, img: '', since: Date.UTC(p === 'sam' ? 2014 : 2017, 2, 9), plays: p === 'sam' ? 48213 : 31877, artists: p === 'sam' ? 3120 : 2210, tracks: p === 'sam' ? 11873 : 8042, albums: p === 'sam' ? 5410 : 3698,
+      top: { artists: rot(AR).slice(0, 10).map(function (n, i) { return { n: n, c: Math.round((60 - i * 5) * k) }; }), tracks: rot(TR).map(function (t, i) { return { n: t[0], a: t[1], c: Math.round((22 - i * 2) * k) }; }), albums: rot(AL).map(function (t, i) { return { n: t[0], a: t[1], c: Math.round((40 - i * 3) * k), img: '' }; }) },
+      periodTotals: { artists: Math.round(80 * k), tracks: Math.round(260 * k), albums: Math.round(140 * k) },
+      recent: rot(TR).slice(0, 10).map(function (t, i) { return { n: t[0], a: t[1], al: '', img: '', now: i === 0 && p === 'sam', at: i === 0 && p === 'sam' ? 0 : now - (i + 1) * 4.1e5 }; }), weeks: p === 'sam' ? 604 : 447 }; }
   var FRESH68 = D68.fr.map(function (x, i) { return { id: 880000 + i, title: x[0], year: x[1], tv: x[2] === '1', poster: '', overview: '', vote: 7 + (i % 3) / 2 }; });
   var _mock68 = mock; mock = function (fn, args, who) { args = args || [];
     switch (fn) { case 'triviaDaily': return TV.daily(args[0] || who, args[1]); case 'triviaDailyAnswer': return TV.answer(args[0] || who, args[1], args[2], args[3]); case 'triviaDays': return TV.list();
       case 'triviaBoard': case 'triviaStats': return TV.board(); case 'triviaResults': return TV.results(); case 'triviaOpen': return '';
       case 'triviaNew': case 'triviaJoin': return { __err: 'Live trivia needs both phones, so it is off in the demo. Try today\u2019s quiz!' };
+      case 'lfmUsers': return { sam: LFMU.sam, lewy: LFMU.lewy };
+      case 'lfmSetUser': LFMU[args[0]] = String(args[1] || '').trim(); return { user: LFMU[args[0]] };
+      case 'lfmGet': return lfmDemo(args[0], args[1]);
       case 'tmdbFresh': return FRESH68.slice();
       case 'ytFeed': var cat = String((args[0] || {}).cat || ''), V = function (L) { return L.map(function (y) { return { id: y[0], t: y[1], ch: y[2], th: 'https://i.ytimg.com/vi/' + y[0] + '/mqdefault.jpg' }; }); };
         var MUS = D68.yt.filter(function (y) { return !/Blender|Lofi/.test(y[2]); }), FILM = [['aqz-KE-bpKQ', 'Big Buck Bunny 4K', 'Blender'], ['eRsGyueVLvQ', 'Sintel', 'Blender'], ['R6MlUcmOul8', 'Tears of Steel', 'Blender'], ['WhWc3b3KhnY', 'Spring', 'Blender'], ['Y-rmzh0PI3c', 'Cosmos Laundromat', 'Blender']];
@@ -1526,6 +1540,28 @@ nav#nav.nav58 #navLogM.gold58:not(.on){background:#1d1a30;color:#ffcc33;box-shad
 #arch.arc68 .archi.main58{transform:translate(-50%,-50%) scale(1.08)!important}
 #arch.arc68 .archt{bottom:6px}
 #archbd.on{background:rgba(5,4,12,.72)}
+.lf70{margin:18px 0;border:4px solid #000;background:#15132a;box-shadow:4px 4px 0 #000;padding:10px}
+.lf70h{display:flex;flex-direction:column;gap:8px;margin-bottom:8px}.lf70h h3{font:12px var(--pix);color:#d51007;margin:0;text-shadow:2px 2px 0 #000}
+.lf70p{display:flex;gap:4px}.lf70p .ui-btn{flex:1;font:7px var(--pix);padding:8px 2px;min-height:34px}.lf70p .ui-btn.on{background:var(--yel,#ffd84a);color:#000}
+.lf70c{border:3px solid var(--pc);margin:10px 0;padding:8px;background:#0e0c1e;box-shadow:3px 3px 0 #000}
+.lf70c.lfsam{--pc:var(--p1,#4da3ff)}.lf70c.lflewy{--pc:var(--p2,#3ddc84)}
+.lf70c h4{font:10px var(--pix);color:var(--pc);margin:0 0 8px;display:flex;justify-content:space-between;align-items:baseline}.lf70c h4 small{font:7px var(--pix);color:var(--dim,#aaa)}
+.lf70n{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}.lf70n div{background:#000;border:2px solid var(--pc);padding:6px 2px;text-align:center;min-width:0}
+.lf70n b{display:block;font:9px var(--pix);color:#fff;overflow:hidden;text-overflow:ellipsis}.lf70n small{font:5px var(--pix);color:var(--pc)}
+.lf70m{font:6px var(--pix);color:var(--dim,#aaa);margin:6px 0;line-height:1.6}
+.lf70np{display:flex;gap:8px;align-items:center;background:#000;border:2px dashed var(--pc);padding:6px;margin:6px 0}.lf70np small{display:block;font:6px var(--pix);color:var(--pc)}.lf70np b{display:block;font-size:13px;color:#fff}.lf70np em{font-size:11px;color:var(--dim,#aaa);font-style:normal}
+.eq70{display:flex;gap:2px;align-items:flex-end;height:16px}.eq70 i{width:4px;background:var(--pc);animation:eq70 .7s steps(3) infinite}.eq70 i:nth-child(2){animation-delay:.2s}.eq70 i:nth-child(3){animation-delay:.4s}
+@keyframes eq70{0%{height:4px}50%{height:16px}100%{height:8px}}
+.lf70l h5{font:7px var(--pix);color:#fff;margin:10px 0 4px}.lf70l ol{list-style:none;margin:0;padding:0}
+.lf70l li{position:relative;display:flex;align-items:center;justify-content:space-between;gap:6px;padding:4px 6px;border-bottom:2px solid #000;min-height:30px}
+.lf70l li i{position:absolute;left:0;top:0;bottom:0;background:var(--pc);opacity:.18;pointer-events:none}
+.lf70l li span{min-width:0;position:relative}.lf70l li b{display:block;font-size:12px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lf70l li small{display:block;font-size:10px;color:var(--dim,#aaa)}
+.lf70l li em{font:7px var(--pix);color:var(--pc);font-style:normal;position:relative;flex:none}
+.lf70e{font:7px var(--pix);color:var(--dim,#aaa);margin:6px 0}.lf70sk{height:40px;margin:6px 0;background:linear-gradient(90deg,#1d1b33,#2a2748,#1d1b33);background-size:200% 100%;animation:sk70 1s linear infinite}
+@keyframes sk70{to{background-position:-200% 0}}
+.arr70t{margin-left:auto;font:7px var(--pix)}.arr70 > *{outline:2px dashed #555;outline-offset:-2px}
+.arr70c{display:flex;align-items:center;gap:6px;background:#000;padding:4px;margin-bottom:4px}.arr70c span{flex:1;font:6px var(--pix);color:var(--yel,#ffd84a)}.arr70c .ui-btn{min-width:44px;min-height:36px}
+#lfm70u{width:100%;box-sizing:border-box;font-size:15px;padding:10px;background:#000;color:#fff;border:3px solid var(--p1,#4da3ff);margin:4px 0}
 </style></head><body>
 <div id="splash" aria-label="Logged"></div>
 <header><div class="hin">
@@ -6570,5 +6606,61 @@ setInterval(function () { try { var k = document.getElementById('kb'); if (!k ||
   if (lifted && lifted !== host) { lifted.style.paddingBottom = lifted.dataset.pb68 || ''; delete lifted.dataset.pb68; lifted = null; }
   if (host && host !== k) { var h = Math.round(k.getBoundingClientRect().height) + 'px'; if (lifted !== host) { host.dataset.pb68 = host.style.paddingBottom; lifted = host; } if (host.style.paddingBottom !== h) { host.style.boxSizing = 'border-box'; host.style.paddingBottom = h; } }
 } catch (e) {} }, 200); })();
+
+/* ===== R70: Last.fm on Camp › Stats (both players) · every Stats section rearrangeable per user ===== */
+(function () {
+  var LF = { per: localStorage.getItem('lg_lfper70') || '7day', d: {}, busy: {}, users: null };
+  var PER = [['7day', '7 DAYS'], ['1month', '1 MONTH'], ['12month', '12 MONTHS'], ['overall', 'ALL']];
+  var onStats = function () { return view === 'stats' && window.CP59 && CP59.page === 'stats'; };
+  var fmt = function (n) { return Number(n || 0).toLocaleString('en-AU'); };
+  var ago = function (t) { if (!t) return 'NOW'; var m = Math.round((Date.now() - t) / 6e4); return m < 60 ? m + 'M AGO' : m < 1440 ? Math.round(m / 60) + 'H AGO' : Math.round(m / 1440) + 'D AGO'; };
+  function load(p) { var k = p + '|' + LF.per; if (LF.d[k] || LF.busy[k]) return; LF.busy[k] = 1;
+    run('lfmGet', [p, LF.per], function (r) { LF.busy[k] = 0; LF.d[k] = r || { error: 'no data' }; paint(); }, function (e) { LF.busy[k] = 0; LF.d[k] = { error: /NOT_CONFIGURED/.test(String(e && e.message)) ? 'Last.fm isn’t set up yet' : 'Couldn’t reach Last.fm' }; paint(); }); }
+  function list(t, L, f) { var mx = Math.max.apply(null, L.map(function (x) { return x.c || 0; }).concat(1)); return '<div class="lf70l"><h5>' + t + '</h5>' + (L.length ? '<ol>' + L.slice(0, 5).map(function (x) { return '<li><span><b>' + esc(x.n) + '</b>' + (x.a ? '<small>' + esc(x.a) + '</small>' : '') + '</span><i style="width:' + Math.max(6, Math.round(100 * (x.c || 0) / mx)) + '%"></i><em>' + fmt(x.c) + '</em></li>'; }).join('') + '</ol>' : '<p class="lf70e">Nothing in this period</p>') + '</div>'; }
+  function card(p) { var d = LF.d[p + '|' + LF.per], P = p === 'sam' ? '1P SAM' : '2P LEWY';
+    if (!d) { load(p); return '<div class="lf70c lf' + p + '"><h4>' + P + '</h4><div class="lf70sk"></div><div class="lf70sk"></div></div>'; }
+    if (!d.user) return '<div class="lf70c lf' + p + '"><h4>' + P + '</h4><p class="lf70e">No Last.fm username' + (p === me() ? ' — add it in ⚙ Settings' : '') + '</p></div>';
+    if (d.error) return '<div class="lf70c lf' + p + '"><h4>' + P + ' <small>' + esc(d.user) + '</small></h4><p class="lf70e">' + esc(d.error) + '</p></div>';
+    var now = (d.recent || []).filter(function (t) { return t.now; })[0], rec = (d.recent || []).filter(function (t) { return !t.now; }).slice(0, 5), pt = d.periodTotals || {};
+    return '<div class="lf70c lf' + p + '"><h4>' + P + ' <small>' + esc(d.user) + '</small></h4>' +
+      '<div class="lf70n"><div><b>' + fmt(d.plays) + '</b><small>SCROBBLES</small></div><div><b>' + fmt(d.artists) + '</b><small>ARTISTS</small></div><div><b>' + fmt(d.tracks) + '</b><small>TRACKS</small></div><div><b>' + fmt(d.albums) + '</b><small>ALBUMS</small></div></div>' +
+      '<p class="lf70m">' + (d.since ? 'SCROBBLING SINCE ' + new Date(d.since).getFullYear() + ' · ' : '') + fmt(d.weeks) + ' WEEKLY CHARTS' + (d.since ? ' · ~' + fmt(Math.round(d.plays / Math.max(1, (Date.now() - d.since) / 864e5))) + '/DAY' : '') + '</p>' +
+      (now ? '<div class="lf70np"><span class="eq70"><i></i><i></i><i></i></span><span><small>NOW PLAYING</small><b>' + esc(now.n) + '</b><em>' + esc(now.a) + '</em></span></div>' : '') +
+      '<p class="lf70m">THIS PERIOD: ' + fmt(pt.artists) + ' ARTISTS · ' + fmt(pt.tracks) + ' TRACKS · ' + fmt(pt.albums) + ' ALBUMS</p>' +
+      list('TOP ARTISTS', d.top.artists || []) + list('TOP TRACKS', d.top.tracks || []) + list('TOP ALBUMS', d.top.albums || []) +
+      '<div class="lf70l"><h5>RECENT</h5><ol class="lf70r">' + rec.map(function (t) { return '<li><span><b>' + esc(t.n) + '</b><small>' + esc(t.a) + '</small></span><em>' + ago(t.at) + '</em></li>'; }).join('') + '</ol></div></div>'; }
+  function html() { return '<div class="lf70h"><h3>♫ LAST.FM</h3><div class="lf70p">' + PER.map(function (x) { return '<button class="ui-btn' + (x[0] === LF.per ? ' on' : '') + '" data-lfper="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div></div>' + card('sam') + card('lewy'); }
+  function paint() { var b = document.querySelector('#v-stats .lf70'); if (b) b.innerHTML = html(); }
+  /* ---- arrange: every top-level Stats section, order saved per user ---- */
+  var AR = { on: false }, LK = function () { return 'lg_statlay70_' + me(); };
+  function cont() { var s = document.querySelector('#v-stats .sec, #v-stats .panel'); return s && s.parentNode; }
+  function blocks(C) { var B = [], cur = null; [].forEach.call(C.children, function (c) { if (c.classList.contains('arr70b')) return; var h = c.querySelector(':scope > h3, :scope > h4, :scope > .lf70h h3, :scope > .lbl');
+      if (c.classList.contains('lf70')) h = { textContent: 'LASTFM' };
+      if (h || !cur) { var k = String(h ? h.textContent : (c.className || 'X')).toUpperCase().replace(/\b(SAM|LEWY)('S)?\b|[^A-Z]/g, '').slice(0, 24) || 'X'; while (B.some(function (b) { return b.k === k; })) k += '_'; cur = { k: k, els: [c] }; B.push(cur); } else cur.els.push(c); }); return B; }
+  function order(C) { var B = blocks(C), L = []; try { L = JSON.parse(localStorage.getItem(LK()) || '[]'); } catch (e) {}
+    var rank = function (k) { var i = L.indexOf(k); return i < 0 ? 999 : i; }, S = B.slice().sort(function (a, b) { return rank(a.k) - rank(b.k) || B.indexOf(a) - B.indexOf(b); });
+    S.forEach(function (b) { b.els.forEach(function (e) { C.appendChild(e); }); }); return S; }
+  function deco(C) { [].forEach.call(C.querySelectorAll('.arr70c'), function (x) { x.remove(); }); C.classList.toggle('arr70', AR.on); if (!AR.on) return; var S = blocks(C);
+    S.forEach(function (b, i) { b.els[0].insertAdjacentHTML('afterbegin', '<div class="arr70c"><span>' + esc(b.k) + '</span><button class="ui-btn" data-arr70="up:' + b.k + '"' + (i ? '' : ' disabled') + '>▲</button><button class="ui-btn" data-arr70="dn:' + b.k + '"' + (i < S.length - 1 ? '' : ' disabled') + '>▼</button></div>'); }); }
+  function apply() { if (!onStats()) return; var C = cont(); if (!C) return;
+    if (!C.querySelector(':scope > .lf70')) C.insertAdjacentHTML('beforeend', '<div class="lf70">' + html() + '</div>');
+    var h = document.querySelector('#v-stats .cp59h'); if (h && !h.querySelector('[data-arr70t]')) h.insertAdjacentHTML('beforeend', '<button class="ui-btn arr70t" data-arr70t="1">' + (AR.on ? '✓ DONE' : '⇅ ARRANGE') + '</button>');
+    order(C); deco(C); }
+  var _rs = renderStats; renderStats = function () { var r = _rs.apply(this, arguments); try { apply(); } catch (e) {} return r; };
+  window.addEventListener('pointerdown', function (e) { var b = e.target.closest && e.target.closest('[data-arr70]'); if (!b || b.disabled) return; e.preventDefault(); e.stopImmediatePropagation();
+    var C = cont(), s = b.dataset.arr70.split(':'), K = blocks(C).map(function (x) { return x.k; }), i = K.indexOf(s[1]), j = s[0] === 'up' ? i - 1 : i + 1; if (i < 0 || j < 0 || j >= K.length) return;
+    K.splice(j, 0, K.splice(i, 1)[0]); localStorage.setItem(LK(), JSON.stringify(K)); order(C); deco(C); try { SFX.blip && SFX.blip(); } catch (er) {} }, true);
+  window.addEventListener('click', function (e) { var t = e.target.closest && e.target.closest('[data-arr70t],[data-lfper],[data-arr70]'); if (!t) return; e.stopImmediatePropagation();
+    if (t.dataset.arr70t) { AR.on = !AR.on; t.textContent = AR.on ? '✓ DONE' : '⇅ ARRANGE'; deco(cont()); }
+    else if (t.dataset.lfper) { LF.per = t.dataset.lfper; localStorage.setItem('lg_lfper70', LF.per); paint(); } }, true);
+  /* ---- Settings: Last.fm username (8-bit keyboard via the app-wide text-input hook) ---- */
+  var _sh = setHtml58; setHtml58 = function () { var h = _sh.apply(this, arguments), U = LF.users || {}; if (!LF.users) run('lfmUsers', [], function (u) { LF.users = u || {}; try { setRedraw58(); } catch (e) {} }, function () {});
+    var o = me() === 'sam' ? 'lewy' : 'sam';
+    var g = grp58('🎵 LAST.FM', '<div class="st58"><span><b>Your Last.fm username</b><small>Scrobbles show on Camp › Stats</small></span></div><input id="lfm70u" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="last.fm username" value="' + esc(U[me()] || '') + '"><p class="sn58">' + (o === 'sam' ? '1P SAM' : '2P LEWY') + ': ' + esc(U[o] || '—') + '</p>');
+    var i = h.indexOf('<section class="sg58"><h4>🧠 TRIVIA'); return i > 0 ? h.slice(0, i) + g + h.slice(i) : h + g; };
+  var saveU = function (el) { var v = String(el.value || '').trim(); if (LF.users && LF.users[me()] === v) return; run('lfmSetUser', [me(), v], function (r) { LF.users = LF.users || {}; LF.users[me()] = (r && r.user) || ''; Object.keys(LF.d).forEach(function (k) { if (k.indexOf(me() + '|') === 0) delete LF.d[k]; }); try { savedTick('LAST.FM ✓'); } catch (e) {} }, function () { toast('COULDN’T SAVE — CHECK CONNECTION'); }); };
+  document.addEventListener('change', function (e) { if (e.target && e.target.id === 'lfm70u') saveU(e.target); }, true);
+  document.addEventListener('keydown', function (e) { if (e.target && e.target.id === 'lfm70u' && e.key === 'Enter') saveU(e.target); }, true);
+})();
 
 </script></body></html>
