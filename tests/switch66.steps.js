@@ -1,0 +1,13 @@
+(async () => { const out = {}; await p.evaluate(() => { const s = document.getElementById('splash'); s && s.remove(); }); const who = await p.evaluate(() => me()); out.who = who;
+const arc = async (label) => { await p.tap('#nav [data-v=stats]', { timeout: 4000 }); await p.waitForTimeout(500); const ok = await p.evaluate(l => { const b = [...document.querySelectorAll('#arch .archi')].find(x => x.innerText.toUpperCase().includes(l)); if (!b) return false; return true; }, label); if (!ok) return 'no item'; await p.evaluate(l => { [...document.querySelectorAll('#arch .archi')].find(x => x.innerText.toUpperCase().includes(l)).click(); }, label); await p.waitForTimeout(900); };
+const song = (n, a) => JSON.stringify({ n, a, sp: 'sp' + n, art: 'https://i.scdn.co/image/ab67616d00001e02255e131abc1410833be95673', pv: 'https://p.scdn.co/mp3-preview/' + n.toLowerCase().replace(/\W/g, '') });
+S.prof = Object.assign({}, S.prof || {}); S.prof.sam = Object.assign({}, S.prof.sam || {}, { ps: song('Baby Blue', 'Badfinger') }); S.prof.lewy = Object.assign({}, S.prof.lewy || {}, { ps: song('Bones', 'Imagine Dragons') });
+await p.reload(); await p.waitForTimeout(2500); await p.evaluate(() => { const s = document.getElementById('splash'); s && s.remove(); }); await arc('PROFILE'); await p.waitForTimeout(800);
+const st = () => p.evaluate(() => ({ cab: (document.querySelector('#cab') || {}).dataset?.who, chip: (document.querySelector('.ps64 b') || {}).innerText, mode: OXS.mode, src: (OXA && OXA.src || '').split('/').pop(), btns: [...document.querySelectorAll('#v-stats button[data-who]')].map(b => b.dataset.who + (b.classList.contains('on') ? '*' : '')) }));
+out.start = await st(); out.seq = [];
+for (let i = 0; i < 4; i++) { const t = i % 2 ? who : (who === 'sam' ? 'lewy' : 'sam'); const ok = await p.evaluate(t => { const b = document.querySelector('#v-stats button[data-who="' + t + '"]'); if (!b) return false; b.scrollIntoView({ block: 'center' }); return true; }, t);
+  if (!ok) { out.seq.push('nobtn ' + t); continue; } await p.tap('#v-stats button[data-who="' + t + '"]', { timeout: 4000 }).catch(e => out.seq.push('tapErr')); await p.waitForTimeout(700); out.seq.push(Object.assign({ want: t }, await st())); }
+/* other with no song: switching stops the song */
+S.prof.lewy.ps = ''; S.prof.sam.ps = who === 'sam' ? S.prof.sam.ps : ''; await p.evaluate(() => { profiles.lewy = Object.assign({}, profiles.lewy, { ps: '' }); });
+await p.tap('#v-stats button[data-who="lewy"]').catch(() => {}); await p.waitForTimeout(700); out.noSong = await st();
+console.log('SW66 ' + JSON.stringify(out)); console.log('errors', JSON.stringify(errs)); })()

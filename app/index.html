@@ -6011,7 +6011,7 @@ document.addEventListener('click', function (e) { var b = e.target.closest && e.
 setTimeout(askWho, 1500);
 
 /* ---------- 1) Camp: Spin / Trivia / Tonight / Mood live in Explore only ---------- */
-var _rs61 = renderStats; renderStats = function () { if (window.CP59 && CP59.page === 'profile') { try { statWho = me(); } catch (e) {} } var r = _rs61.apply(this, arguments);
+var _rs61 = renderStats; renderStats = function () { /* r66: viewing the other profile is allowed (statWho); identity itself is guarded in setWho */ if (typeof statWho === 'undefined' || !statWho) { try { statWho = me(); } catch (e) {} } var r = _rs61.apply(this, arguments);
   var V = $('v-stats'); if (V) V.querySelectorAll('.spinbar,.trvbar,.moodbar,.wwt,[data-mood],[data-wwt],[data-spin]').forEach(function (x) { if (!x.closest('#arch')) x.remove(); }); try { decorate61(); } catch (e) {} return r; };
 
 /* ---------- 2) shelf entries: a logged title (string) or an outside pick (JSON string, never logged / never Interested) ---------- */
@@ -6223,18 +6223,29 @@ var _cab = cabinetHtml; cabinetHtml = function () { var h = _cab.apply(this, arg
   var secs = [].slice.call(C.children).filter(function (x) { return !/^H3$/.test(x.tagName) && !x.classList.contains('cbdv') && !x.classList.contains('arr64'); });
   var KNOWN = [[/OUR TOP 5/, 'OURTOP5'], [/TOP 5 MOVIES/, 'MOVIES'], [/TOP 5 SHOWS/, 'SHOWS'], [/TOP 5 SOUNDTRACKS/, 'SOUNDTRACKS'], [/TOP 5 YOUTUBE/, 'YOUTUBE']];
   secs.forEach(function (x) { if (x.dataset.sec) return; var h4 = x.querySelector('h4,h3,.lbl'), tx = h4 ? (h4.firstChild && h4.firstChild.nodeType === 3 ? h4.firstChild.textContent : h4.textContent) : ''; var k = KNOWN.filter(function (m) { return m[0].test(tx); })[0]; x.dataset.sec = k ? k[1] : x.classList.contains('cbst') ? 'STATS' : slug(tx.replace(/✎/g, '') || x.className); });
-  var order = (pr.lay || []).slice(), idx = function (k) { var i = order.indexOf(k); return i < 0 ? 1e3 + secs.findIndex(function (s) { return s.dataset.sec === k; }) : i; };
+  var order = (LAY66[p] || pr.lay || []).slice(), idx = function (k) { var i = order.indexOf(k); return i < 0 ? 1e3 + secs.findIndex(function (s) { return s.dataset.sec === k; }) : i; };
   secs.sort(function (a, b) { return idx(a.dataset.sec) - idx(b.dataset.sec); }).forEach(function (s) { C.appendChild(s); });
   if (own(p)) { var lab = C.querySelector('.cbdv'); var bar = '<div class="arr64"><button class="ui-btn' + (ARR ? ' on' : '') + '" data-arr64="toggle">' + (ARR ? '✓ DONE ARRANGING' : '⇅ ARRANGE') + '</button></div>'; if (lab) lab.insertAdjacentHTML('afterend', bar); else C.insertAdjacentHTML('afterbegin', bar); }
   if (ARR && own(p)) { C.classList.add('arranging'); secs.forEach(function (s, i) { s.insertAdjacentHTML('afterbegin', '<div class="arc64"><button class="ui-btn" data-arr64="up:' + s.dataset.sec + '"' + (i ? '' : ' disabled') + ' aria-label="Move section up">▲</button><b>' + esc(s.dataset.sec.replace(/-/g, ' ')) + '</b><button class="ui-btn" data-arr64="dn:' + s.dataset.sec + '"' + (i < secs.length - 1 ? '' : ' disabled') + ' aria-label="Move section down">▼</button></div>'); }); }
   return T.innerHTML; };
-var lt = 0;
-window.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-arr64]'); if (!b) return; e.preventDefault(); e.stopImmediatePropagation(); SFX.tap && SFX.tap(); var a = b.dataset.arr64, p = me();
+var lt = 0, LAY66 = {}, LSEQ66 = {};
+function arrFix66(C) { var L = [].slice.call(C.children).filter(function (x) { return x.dataset && x.dataset.sec; }); L.forEach(function (s, i) { var u = s.querySelector(':scope > .arc64 [data-arr64^="up:"]'), d = s.querySelector(':scope > .arc64 [data-arr64^="dn:"]'); if (u) u.disabled = i === 0; if (d) d.disabled = i === L.length - 1; }); return L.map(function (x) { return x.dataset.sec; }); }
+function arrAct66(b) { var a = b.dataset.arr64, p = me();
   if (a === 'toggle') { ARR = !ARR; return renderStats(); }
-  var C = $('cab'); if (!C) return; var keys = [].slice.call(C.children).filter(function (x) { return x.dataset && x.dataset.sec; }).map(function (x) { return x.dataset.sec; }), s = a.split(':'), i = keys.indexOf(s[1]), j = i + (s[0] === 'up' ? -1 : 1); if (i < 0 || j < 0 || j >= keys.length) return;
-  keys.splice(j, 0, keys.splice(i, 1)[0]); profiles[p] = Object.assign({}, profiles[p] || {}, { lay: keys }); var y = window.scrollY; renderStats(); window.scrollTo(0, y);
-  var nb = document.querySelector('[data-arr64="' + a + '"]'); if (nb) nb.scrollIntoView({ block: 'nearest' });
-  clearTimeout(lt); lt = setTimeout(function () { saveProf(p, { lay: keys }); }, 500); }, true);
+  if (b.disabled) return; var C = b.closest('#cab') || b.closest('.arranging') || $('cab'); if (!C) return;
+  var L = [].slice.call(C.children).filter(function (x) { return x.dataset && x.dataset.sec; }), s = a.split(':'), i = L.findIndex(function (x) { return x.dataset.sec === s[1]; }), j = i + (s[0] === 'up' ? -1 : 1); if (i < 0 || j < 0 || j >= L.length) return;
+  var el = L[i], top = el.getBoundingClientRect().top; if (s[0] === 'up') C.insertBefore(el, L[j]); else C.insertBefore(el, L[j].nextSibling);
+  var keys = arrFix66(C); window.scrollBy(0, el.getBoundingClientRect().top - top); /* keep the moved section under the finger */
+  LAY66[p] = keys; profiles[p] = Object.assign({}, profiles[p] || {}, { lay: keys });
+  clearTimeout(lt); lt = setTimeout(function () { var q = (LSEQ66[p] || 0) + 1; LSEQ66[p] = q; var pr = Object.assign({}, profiles[p] || {}, { lay: LAY66[p] }); busy++;
+    run('saveProfile', [p, pr], function (o) { busy--; if (q !== LSEQ66[p]) return; /* stale */ if (o) profiles[p] = Object.assign({}, o, { lay: LAY66[p] }); }, function () { busy--; toast('COULDN\u2019T SAVE ORDER — CHECK CONNECTION'); }); }, 600); }
+var ag66 = 0;
+['pointerdown', 'click'].forEach(function (ev) { window.addEventListener(ev, function (e) { var b = e.target.closest && e.target.closest('[data-arr64]'); if (!b) return; if (b.dataset.arr64 === 'toggle' && ev !== 'click') return; e.preventDefault(); e.stopImmediatePropagation();
+  if (b.dataset.arr64 === 'toggle') { SFX.tap && SFX.tap(); return arrAct66(b); }
+  if (ev === 'pointerdown') { ag66 = Date.now(); SFX.tap && SFX.tap(); arrAct66(b); } else if (Date.now() - ag66 > 700) { SFX.tap && SFX.tap(); arrAct66(b); } }, true); });
+/* any later profile reload keeps the local order until the server agrees */
+
+
 
 /* ---------- profile song: shown on the profile card; loops softly on the shared element while viewing that Camp profile ---------- */
 var PS = { on: false, src: '' };
@@ -6253,7 +6264,7 @@ function psStart() { var p = who(), s = psSong(p); if (!s || !s.n || psOff() || 
 function chip(p) { var s = psSong(p); if (!s || !s.n) return ''; return '<div class="ps64">' + art61(s.art) + '<span><small>♪ PROFILE SONG</small><b>' + esc(s.n) + '</b><i>' + esc(s.a || '') + '</i></span>' + (psOff() ? '' : '<button class="ui-btn" data-ps64m="1" aria-label="' + (psMuted() ? 'Unmute' : 'Mute') + ' profile song">' + (psMuted() ? '🔇' : '🔊') + '</button>') + '</div>'; }
 var _rs = renderStats; renderStats = function () { var r = _rs.apply(this, arguments); try { var V = $('v-stats'), pg = window.CP59 ? CP59.page : 'profile';
     if (V && pg === 'profile') { var hd = V.querySelector('.lkh2,.lkh'); V.querySelectorAll('.ps64').forEach(function (x) { x.remove(); }); var c = chip(who()); if (hd && c) hd.insertAdjacentHTML('beforeend', c); }
-    if (view === 'stats') { var s = psSong(who()); if (s && s.pv !== PS.src && OXS.mode === 'ps') psStop(); setTimeout(psStart, 0); } } catch (e) {} return r; };
+    if (view === 'stats') { var s = psSong(who()); if (OXS.mode === 'ps' && (!s || !s.pv || s.pv !== PS.src)) psStop(); setTimeout(function () { try { psStart(); } catch (e) {} }, 0); } } catch (e) {} return r; };
 window.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-ps64m]'); if (!b) return; e.preventDefault(); e.stopImmediatePropagation(); var m = !psMuted(); localStorage.setItem('lg_psmute', m ? '1' : '0');
   if (m) psStop(); else { oxEnsure(); var s = psSong(who()); if (s && s.pv) { OXS.mode = 'ps'; OXS.cur = { n: s.n, a: s.a, art: s.art }; if (OXA.src !== s.pv) OXA.src = s.pv; OXA.loop = true; OXA.volume = .35; PS.on = true; PS.src = s.pv; OXA.play().catch(function () {}); } }
   b.textContent = m ? '🔇' : '🔊'; b.setAttribute('aria-label', (m ? 'Unmute' : 'Mute') + ' profile song'); }, true);
@@ -6272,6 +6283,9 @@ window.addEventListener('click', function (e) { var b = e.target.closest && e.ta
 /* when the song editor closes from Settings, refresh the Settings row; when a song is chosen, start it on the profile */
 var _ed = window.edSave61; var watch = setInterval(function () { var E = window.ED61 && ED61(); if (E && E.k === 'ps') { PS.edit = 1; } else if (PS.edit) { PS.edit = 0; try { setRedraw58(); } catch (er) {} if (view === 'stats') { psStop(); psStart(); } } }, 400);
 window.PS64 = PS; window.psStart64 = psStart; window.psStop64 = psStop;
+/* r66: profile switch (1P/2P buttons in Camp) — always works, song errors can never block it */
+window.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('button[data-who]'); if (!b || !$('v-stats') || !$('v-stats').contains(b)) return; e.preventDefault(); e.stopImmediatePropagation(); SFX.tap && SFX.tap();
+  var w = b.dataset.who; if (w !== 'sam' && w !== 'lewy') return; try { psStop(); } catch (er) {} statWho = w; ARR = false; try { renderStats(); } catch (er) { console.error(er); } var Mn = document.querySelector('body>main'); if (Mn) Mn.scrollTop = 0; }, true);
 })();
 
 </script></body></html>
