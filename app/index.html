@@ -1240,6 +1240,11 @@ body.ytfull58 #ytpage,body.ytfull58 body>main{pointer-events:none}
 #v-stats .lkh2.bn59on::after{content:'';position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(10,8,20,.0),rgba(10,8,20,.0) 30%,rgba(10,8,20,.55));pointer-events:none}
 #v-stats .lkh2.bn59on h3,#v-stats .lkh2.bn59on small,#v-stats .lkh2.bn59on b{text-shadow:2px 2px 0 #000,-1px -1px 0 #000}
 #v-stats.view,#v-stats>.lk{overflow:visible!important}
+.cp59h{display:flex;align-items:center;gap:10px;margin:4px 0 12px}.cp59h h2{margin:0;font-size:14px}
+#v-stats[data-cp="badges"] .bdg3{cursor:pointer}
+#wrpage59 .wr h2{display:none}
+.ced59{font-size:9px;padding:4px 7px;margin-left:8px;vertical-align:middle}
+#ytp [data-yint="y"].on{background:#d8323f!important;color:#fff!important}#ytp [data-yint="y"].on i{color:#fff!important}
 </style></head><body>
 <div id="splash" aria-label="Logged"></div>
 <header><div class="hin">
@@ -5719,5 +5724,77 @@ window.banner59 = banner59;
 var _paintAv59 = paintAvatars; paintAvatars = function () { var r = _paintAv59.apply(this, arguments); try { banner59(); } catch (e) {} return r; };
 window.addEventListener('resize', function () { try { banner59(); } catch (e) {} });
 })();
+
+/* ===== R59b: CAMP as separate pages (Profile · Wardrobe · Badges · Stats), Our Top 5 always fresh, owner-editable personal shelves, YT player Interested tile ===== */
+(function () {
+var CP = { page: 'profile' }; window.CP59 = CP;
+function campPage59(pg) { CP.page = pg || 'profile'; if (CP.page === 'profile' && Date.now() - otAt > 1500) setTimeout(function () { otAt = Date.now(); otFetch(); }, 0); if (pg === 'stats' && lockTab === 'faves') lockTab = 'stats'; statWho = me(); show('stats'); r56NavHi(); renderStats(); var Mn = document.querySelector('body>main'); if (Mn) Mn.scrollTop = 0; }
+window.campPage59 = campPage59;
+var TITLES = { profile: '', wardrobe: '👕 WARDROBE', badges: '🎖 BADGES', stats: '📊 STATS' };
+var _rs59 = renderStats; renderStats = function () { var r = _rs59.apply(this, arguments); try { page59(); } catch (e) { console.warn('camp page', e); } return r; };
+function page59() { var V = $('v-stats'); if (!V) return; var pg = CP.page, lk = V.querySelector('.lk'); V.dataset.cp = pg; V.querySelectorAll('.cp59h').forEach(function (x) { x.remove(); });
+  var kill = function (sel) { V.querySelectorAll(sel).forEach(function (x) { x.remove(); }); };
+  if (pg !== 'profile') V.insertAdjacentHTML('afterbegin', '<div class="cp59h"><button class="ui-btn" data-cp59="profile">◀ PROFILE</button><h2 class="ui-h">' + TITLES[pg] + '</h2></div>');
+  if (pg === 'profile') { /* profile + cabinet only: top-5 rows live in the cabinet, nowhere else */ if (lk) [].slice.call(lk.children).forEach(function (c) { if (c.classList.contains('ltabs') || (c.classList.contains('sec') && /TOP 5|FREE PICKS|SOUNDTRACK/.test(c.textContent))) c.remove(); }); kill('#st52, .ywho, .wrb, .bdg, .lbl'); return; }
+  if (pg === 'badges') { if (lk) lk.innerHTML = '<div class="bdg59">' + badgesHtml() + '</div><p class="sn58">Tap a badge for details.</p>'; kill('#st52, .ywho, .avs, .marq, .spinbar, .trvbar'); return; }
+  if (pg === 'wardrobe') { if (lk) lk.innerHTML = '<div id="wrpage59"></div>'; kill('#st52, .ywho, .avs, .marq, .spinbar, .trvbar'); var was = WRP; WRP = me(); try { wrDraw(); } catch (e) {} return; }
+  if (pg === 'stats') { if (lk) [].slice.call(lk.children).forEach(function (c) { if (c.classList.contains('lkh2') || c.classList.contains('lkh') || c.id === 'cab' || c.classList.contains('conn') || c.classList.contains('spinbar') || c.classList.contains('trvbar') || (c.tagName === 'BUTTON' && !c.classList.contains('wrb')) || c.classList.contains('bdg') || c.classList.contains('lbl')) c.remove(); });
+    V.querySelectorAll('[data-ltab="faves"]').forEach(function (b) { b.remove(); }); kill('.marq, .spinbar, .trvbar'); } }
+/* the wardrobe draws into its own page instead of a pop-up while on the Wardrobe page */
+var _m19 = m19; m19 = function (id, html) { var P = $('wrpage59'); if (id === 'wrm' && P && CP.page === 'wardrobe' && $('v-stats').classList.contains('on')) { P.innerHTML = html.replace(/<button class="btn" data-m19x="1">✕<\/button>/, ''); return P; } return _m19.apply(this, arguments); };
+var _wrOpen59 = wrOpen; wrOpen = function (p) { if (p && p !== me()) return _wrOpen59.apply(this, arguments); campPage59('wardrobe'); };
+document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-cp59]'); if (!b) return; e.stopImmediatePropagation(); e.preventDefault(); campPage59(b.dataset.cp59); }, true);
+/* Camp arc → pages */
+campItems58 = function () { return [{ ic: '<span>👕</span>', t: 'WARDROBE', go: function () { campPage59('wardrobe'); } }, { ic: '<span>🎖</span>', t: 'BADGES', go: function () { campPage59('badges'); } },
+  { ic: '<span class="ncamp"></span>', t: 'PROFILE', main: 1, go: function () { campPage59('profile'); } }, { ic: '<span>📊</span>', t: 'STATS', go: function () { campPage59('stats'); } }, { ic: '<span>⚙</span>', t: 'SETTINGS', go: function () { setOpen58(); } }]; };
+campGo58 = function () { campPage59('profile'); };
+/* badge tiles: tap → what it is / how to earn */
+document.addEventListener('click', function (e) { var t = e.target.closest && e.target.closest('#v-stats .bdg3'); if (!t) return; e.stopImmediatePropagation(); SFX.tap && SFX.tap(); var g = function (q) { var x = t.querySelector(q); return x ? x.textContent.trim() : ''; };
+  confirm8(g('i') || '🏅', (t.classList.contains('on') ? '' : '🔒 ') + g('span'), (t.classList.contains('on') ? '✓ ' + g('em') : 'LOCKED') + (t.getAttribute('title') ? ' · ' + t.getAttribute('title') : ''), 'OK', function () {}); }, true);
+
+/* ---- OUR TOP 5: always re-read from the server before showing/editing (same on both phones); edits start from the server copy ---- */
+var otAt = 0; function otFetch(cb) { run('getOurTop', [], function (o) { OT58.o = o && o.list && o.list.length ? o : null; otAt = Date.now(); ourTopPaint58(); cb && cb(); }, function () { cb && cb(); }); }
+window.otFetch59 = otFetch;
+var _rs59b = renderStats; renderStats = function () { var r = _rs59b.apply(this, arguments); if (Date.now() - otAt > 4000) { otAt = Date.now(); otFetch(); } return r; };
+document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('#cab [data-ot="edit"]'); if (!b || OT58.edit) return; e.stopImmediatePropagation(); e.preventDefault(); OT58.edit = true; ourTopPaint58(); otFetch(); }, true);
+setInterval(function () { if (!document.hidden && $('v-stats') && $('v-stats').classList.contains('on') && !OT58.edit) otFetch(); }, 20000);
+
+/* ---- personal shelves: owner can pick/reorder (uses the same saved Top 5 lists as before); saved list wins over auto ---- */
+var _cab59 = cabinetHtml; cabinetHtml = function () { var h = _cab59.apply(this, arguments), p = (typeof statWho !== 'undefined' && statWho) || me(), pr = profiles[p] || {}, mine = p === me();
+  var ed = function (k, attr) { return mine ? ' <button class="ui-btn ced59" ' + attr + ' aria-label="Edit">✎</button>' : ''; };
+  var rt = function (r) { return num(r[p + 'Rating']) || 0; };
+  var tile = function (r, i) { var ps = posters[r.title]; return '<button class="cbt" data-open="' + r.row + '"><span class="cbr">' + (i + 1) + '</span>' + (ps && /^http|^data:/.test(ps) ? '<img loading="lazy" src="' + esc(ps) + '" alt="">' : '<i>' + esc(r.title[0]) + '</i>') + '<b>' + esc(baseTitle(r.title)) + '</b><small>' + (r.type === 'TV Show' ? '📺 ' : '🎞 ') + (rt(r) ? '★' + rt(r) : '') + '</small></button>'; };
+  var swap = function (label, k) { var L = (pr[k] || []).map(byTitle).filter(Boolean); if (!L.length) return; var re = new RegExp('(<div class="cbs"><h4>' + label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')</h4>[\\s\\S]*?</div>(?=<div class="cbs">|<div class="cbst|</section>)'); h = h.replace(re, '$1</h4><div class="cbrow">' + L.slice(0, 5).map(tile).join('') + '</div></div>'); };
+  swap('🎞 TOP 5 MOVIES', 'mv'); swap('📺 TOP 5 SHOWS', 'tv');
+  h = h.replace('🎞 TOP 5 MOVIES</h4>', '🎞 TOP 5 MOVIES' + ed('mv', 'data-fav="mv"') + '</h4>').replace('📺 TOP 5 SHOWS</h4>', '📺 TOP 5 SHOWS' + ed('tv', 'data-fav="tv"') + '</h4>')
+    .replace('♪ TOP 5 SOUNDTRACKS</h4>', '♪ TOP 5 SOUNDTRACKS' + ed('snd', 'data-sndedit="' + p + '"') + '</h4>').replace(/(▶ TOP 5 YOUTUBE)<\/h4>/, '$1' + ed('yt', 'data-fav="yt"') + '</h4>');
+  return h; };
+
+/* ---- YouTube player ♥ INTERESTED tile: trailers mark the movie/show, other videos mark the video; hearts prompt; tile turns on ---- */
+function isTrl59(t) { return /\b(trailer|teaser)\b/i.test(t || ''); }
+function yinPaint59() { var P = $('ytp'), id = YTX && YTX.id; if (!P || !id) return; var b = P.querySelector('[data-yint="y"]'), n = P.querySelector('[data-yint="n"]'), v = intGet('yt:' + id) || (P.dataset.trlk ? intGet(P.dataset.trlk) : ''); if (b) b.classList.toggle('on', (v && v.v || v) === 'y'); if (n) n.classList.toggle('on', (v && v.v || v) === 'n'); }
+window.yinPaint59 = yinPaint59;
+window.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('#ytp [data-yint]'); if (!b) return; e.stopImmediatePropagation(); e.preventDefault(); var id = YTX.id; if (!id || b.disabled) return;
+  var o = YTX.info[id] || {}, v = b.dataset.yint, t = o.t || YTX.t || '', P = $('ytp'); SFX.tap && SFX.tap();
+  var markVideo = function () { var k = 'yt:' + id, cur = intGet(k), cv = cur && cur.v || cur; if (cv === v) { intSet(k, ''); toast(v === 'y' ? '♡ Removed from Interested' : 'Un-hidden'); } else { intSet(k, v, { t: t, ch: o.ch || '', p: 'https://i.ytimg.com/vi/' + id + '/mqdefault.jpg', k: 'yt' }); toast(v === 'y' ? '♥ Video saved to Interested' : '✕ Hidden'); } yinPaint59(); };
+  if (!isTrl59(t)) return markVideo();
+  var lab = b.querySelector('span'), old = lab ? lab.textContent : ''; b.disabled = true; if (lab) lab.textContent = '…';
+  var done = function () { b.disabled = false; if (lab) lab.textContent = old; };
+  run('trailerMatch', [t, o.ch || ''], function (m) { done(); if (!m) return markVideo();
+    var RS = rows.filter(function (x) { return !isYT(x) && ytBase_(x.title) === norm(m.title); }), r = RS.filter(function (x) { return !started(x[me() + 'Watched']); })[0] || RS[0];
+    var mark = function (row) { var k = rKey(row), cur = intGet(k), cv = cur && cur.v || cur; P.dataset.trlk = k; if (cv === v) { intSet(k, ''); toast('Removed'); } else { intSet(k, v, { t: row.title, p: posters[row.title] || m.poster || '', k: m.tv ? 'tv' : 'movie' }); toast(v === 'y' ? '♥ ' + baseTitle(row.title) + ' marked Interested' : '✕ ' + baseTitle(row.title) + ' hidden'); } yinPaint59(); };
+    if (r) return mark(r);
+    if (v !== 'y') return toast(m.title + ' isn\u2019t on your list — nothing to hide');
+    var fl = { suggestedBy: me() === 'lewy' ? 'Lewy' : 'Sam', spesh: 'Optional', samWatched: 'Not yet', lewyWatched: 'Not yet' }, tmp = Object.assign({ row: 1e9, title: m.title, type: m.tv ? 'TV Show' : 'Movie', genres: '', samRating: '', lewyRating: '', samComment: '', lewyComment: '' }, fl); if (m.poster) posters[m.title] = m.poster; rows.push(tmp); busy++; render();
+    run('addFromTmdb', [{ id: m.id, tv: m.tv, title: m.title, season: 0, genres: [], poster: m.poster }, fl], function (res) { finishAdd(tmp, m.title, res); var row = rows.filter(function (x) { return x.title === m.title; })[0] || tmp; mark(row); }, function () { busy--; var i = rows.indexOf(tmp); if (i >= 0) rows.splice(i, 1); render(); toast('⚠ Couldn\u2019t add ' + m.title); }); }, function () { done(); markVideo(); }); }, true);
+var _ytDock59 = ytDockFix; ytDockFix = function () { var r = _ytDock59.apply(this, arguments); try { var P = $('ytp'); if (P) delete P.dataset.trlk; yinPaint59(); } catch (e) {} return r; };
+})();
+/* loadSpot loop fix: a null getSpotify reply left SPOT falsy → render → loadSpot → render… (Camp re-rendered ~20×/s, detaching buttons mid-tap). */
+(function () { var busy = 0; loadSpot = function () { if (busy) return; busy = 1; run('getSpotify', [], function (d) { busy = 0; SPOT = d || { status: {} }; if (view === 'stats') renderStats(); try { connRefresh(); } catch (e) {} }, function () { busy = 0; SPOT = { status: {} }; try { connRefresh(); } catch (e) {} }); try { connLoad(); } catch (e) {} }; })();
+/* one painter for the ♥/✕ tiles (r49's yimPaint only knew matched rows and turned .on back off for plain videos) */
+yimPaint = function () { var id = YTX && YTX.id, P = $('ytp'), d = P && P.querySelector('.ydock'); if (!d || !id) return; var r = yimRow(id), x = intGet('yt:' + id) || (P.dataset.trlk ? intGet(P.dataset.trlk) : '') || (r ? intGet(rKey(r)) : ''), v = x && x.v || x;
+  [['y', 'INTERESTED'], ['n', 'NOT INTERESTED']].forEach(function (a) { var b = d.querySelector('[data-yint="' + a[0] + '"]'); if (!b || b.disabled) return; var on = v === a[0]; b.classList.toggle('on', on); b.classList.remove('act'); var s = b.querySelector('span'); if (s) s.textContent = a[1] + (on ? ' ✓' : ''); b.setAttribute('aria-pressed', on ? 'true' : 'false'); }); };
+yinPaint59 = window.yinPaint59 = function () { yimPaint(); };
+var _ytnOpen59 = ytnOpen; ytnOpen = function () { var P = $('ytp'); if (P) delete P.dataset.trlk; return _ytnOpen59.apply(this, arguments); };
 
 </script></body></html>
