@@ -1245,6 +1245,24 @@ body.ytfull58 #ytpage,body.ytfull58 body>main{pointer-events:none}
 #wrpage59 .wr h2{display:none}
 .ced59{font-size:9px;padding:4px 7px;margin-left:8px;vertical-align:middle}
 #ytp [data-yint="y"].on{background:#d8323f!important;color:#fff!important}#ytp [data-yint="y"].on i{color:#fff!important}
+[data-epp],[data-ostwho]{display:none!important}
+.sa61{flex:0 0 auto;display:inline-block;width:40px;height:40px;border:2px solid #000;background:var(--vinyl61) center/cover #1b1b2e;image-rendering:pixelated;overflow:hidden;vertical-align:middle;margin:0 8px 0 4px}
+.sa61 img{width:100%;height:100%;object-fit:cover;display:block;image-rendering:pixelated}
+.pka.px61{background:var(--vinyl61) center/cover #1b1b2e;image-rendering:pixelated;color:transparent}
+#cab .cbsnd li{display:flex;align-items:center}
+#ed61{position:fixed;inset:0;z-index:1460;background:rgba(0,0,0,.72);display:none;align-items:flex-end}
+#ed61.open{display:flex}
+#ed61 .e61{background:#0b0b14;border-top:3px solid #ffcc33;width:100%;max-height:88vh;overflow:auto;padding:12px 12px calc(14px + env(safe-area-inset-bottom));-webkit-overflow-scrolling:touch}
+#ed61 .e61h{display:flex;justify-content:space-between;align-items:center;color:#ffcc33;margin-bottom:8px;gap:8px}
+#ed61 input{width:100%;box-sizing:border-box;font-size:16px;padding:10px;margin:10px 0;background:#15152a;color:#fff;border:2px solid #ffcc33}
+#ed61 .e61i{display:flex;align-items:center;gap:6px;padding:6px 0;border-bottom:1px solid #222}
+#ed61 .e61i .ui-btn{min-width:40px;min-height:40px;padding:0 8px}
+#ed61 .e61p{flex:0 0 auto;width:34px;height:50px;background:#1b1b2e;border:2px solid #000;overflow:hidden}
+#ed61 .e61p img{width:100%;height:100%;object-fit:cover;image-rendering:pixelated}
+#ed61 .e61t{flex:1;min-width:0}#ed61 .e61t b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#ed61 .e61t small{opacity:.7}
+#who61{position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center}
+#who61 .w61{background:#0b0b14;border:3px solid #ffcc33;padding:20px;text-align:center;max-width:320px;color:#fff}
+#who61 .ui-btn{display:block;width:100%;margin:10px 0;min-height:48px;font-size:18px}
 </style></head><body>
 <div id="splash" aria-label="Logged"></div>
 <header><div class="hin">
@@ -5803,15 +5821,16 @@ var _ytnOpen59 = ytnOpen; ytnOpen = function () { var P = $('ytp'); if (P) delet
    of time, and every player (soundtrack list, picker, mini player, cabinet, trivia) sets it on OXA and plays inside the tap. ===== */
 (function () {
 var DIRECT = /^https:\/\/(p\.scdn\.co\/mp3-preview\/|audio-ssl\.itunes\.apple\.com\/)/, SP = /^https:\/\/p\.scdn\.co\//;
+var ART = {}; try { ART = JSON.parse(localStorage.getItem('lg_art61') || '{}'); } catch (e) {} window.ART61 = ART;
 var PVM = {}; try { PVM = JSON.parse(localStorage.getItem('lg_pv60') || '{}'); } catch (e) {}
 function key(t) { return String(t.sp || t.id || '').replace(/[^\w]/g, '') || (String(t.n || '') + '|' + String(t.a || '')).toLowerCase(); }
-function apply(t) { var u = PVM[key(t)]; if (u && (!SP.test(t.pv || '') || u !== t.pv)) { if (SP.test(u) || !DIRECT.test(t.pv || '')) t.pv = u; } return t; }
+function apply(t) { if (!t.art && ART[key(t)]) t.art = ART[key(t)]; var u = PVM[key(t)]; if (u && (!SP.test(t.pv || '') || u !== t.pv)) { if (SP.test(u) || !DIRECT.test(t.pv || '')) t.pv = u; } return t; }
 var Q = [], qt = 0, busy = 0;
-function pvFix(list) { (list || []).forEach(function (t) { if (!t || !t.n) return; apply(t); if (SP.test(t.pv || '') || t._pv60) return; t._pv60 = 1; Q.push(t); }); if (Q.length && !qt) qt = setTimeout(flush, 60); }
+function pvFix(list) { (list || []).forEach(function (t) { if (!t || !t.n) return; apply(t); if ((SP.test(t.pv || '') && t.art) || t._pv60) return; t._pv60 = 1; Q.push(t); }); if (Q.length && !qt) qt = setTimeout(flush, 60); }
 function flush() { qt = 0; if (busy || !Q.length) return; var B = Q.splice(0, 25); busy = 1;
   run('songPv', [B.map(function (t) { return { id: t.sp || (/^[A-Za-z0-9]{22}$/.test(t.id || '') ? t.id : ''), n: t.n, a: t.a || '' }; })], function (R) { busy = 0;
-    (R || []).forEach(function (r, i) { var t = B[i]; if (!r || !t) return; if (r.id) t.sp = r.id; if (r.u) { PVM[key(t)] = r.u; PVM[(String(t.n) + '|' + String(t.a || '')).toLowerCase()] = r.u; if (SP.test(r.u) || !DIRECT.test(t.pv || '')) t.pv = r.u; } });
-    try { var ks = Object.keys(PVM); if (ks.length > 600) ks.slice(0, ks.length - 600).forEach(function (k) { delete PVM[k]; }); localStorage.setItem('lg_pv60', JSON.stringify(PVM)); } catch (e) {}
+    (R || []).forEach(function (r, i) { var t = B[i]; if (!r || !t) return; if (r.id) t.sp = r.id; if (r.art) { t.art = t.art || r.art; ART[key(t)] = r.art; } if (r.u) { PVM[key(t)] = r.u; PVM[(String(t.n) + '|' + String(t.a || '')).toLowerCase()] = r.u; if (SP.test(r.u) || !DIRECT.test(t.pv || '')) t.pv = r.u; } });
+    try { var ks = Object.keys(PVM); if (ks.length > 600) ks.slice(0, ks.length - 600).forEach(function (k) { delete PVM[k]; }); localStorage.setItem('lg_pv60', JSON.stringify(PVM)); localStorage.setItem('lg_art61', JSON.stringify(ART)); } catch (e) {} try { window.decorate61 && decorate61(); } catch (e) {}
     if (Q.length) flush(); }, function () { busy = 0; B.forEach(function (t) { t._pv60 = 0; }); }); }
 window.pvFix60 = pvFix; window.PVM60 = PVM;
 /* the single play path: direct URL known → set on the shared element and play() synchronously in this tap */
@@ -5843,6 +5862,118 @@ function revive() { try { document.documentElement.classList.remove('lock'); if 
 window.addEventListener('pageshow', function (e) { if (e.persisted) revive(); });
 document.addEventListener('visibilitychange', function () { if (!document.hidden) revive(); });
 window.revive60 = revive;
+})();
+
+/* ===== R61: per-phone identity · Top 5 editors with search (any title/song/video) · song artwork · trivia on the shared audio path · Camp de-dup ===== */
+(function () {
+/* ---------- 0) identity: only "THIS PHONE IS" may change who this phone is. The ⇄ buttons in the episode rater and soundtrack
+   header used to call setWho() and silently turned Lewy's phone into Sam's (his cabinet then showed Sam's tops and his edits saved to Sam). */
+var WHOOK = 0, _setWho = setWho;
+document.addEventListener('click', function (e) { if (e.target.closest && e.target.closest('[data-iam],[data-iam61]')) { WHOOK = 1; setTimeout(function () { WHOOK = 0; }, 0); } }, true);
+setWho = function (w) { if (!WHOOK) return; _setWho(w); try { statWho = me(); } catch (e) {} };
+function askWho() { if (WHO === 'sam' || WHO === 'lewy' || $('who61')) return; document.body.insertAdjacentHTML('beforeend', '<div id="who61"><div class="w61"><h2>WHO\u2019S PHONE IS THIS?</h2><p>Your tops, edits and ratings save to this person.</p><button class="ui-btn" data-iam61="sam">1P SAM</button><button class="ui-btn" data-iam61="lewy">2P LEWY</button></div></div>'); }
+document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-iam61]'); if (!b) return; e.stopImmediatePropagation(); setWho(b.dataset.iam61); var x = $('who61'); if (x) x.remove(); try { statWho = me(); render(); if (view === 'stats') renderStats(); } catch (er) {} }, true);
+setTimeout(askWho, 1500);
+
+/* ---------- 1) Camp: Spin / Trivia / Tonight / Mood live in Explore only ---------- */
+var _rs61 = renderStats; renderStats = function () { if (window.CP59 && CP59.page === 'profile') { try { statWho = me(); } catch (e) {} } var r = _rs61.apply(this, arguments);
+  var V = $('v-stats'); if (V) V.querySelectorAll('.spinbar,.trvbar,.moodbar,.wwt,[data-mood],[data-wwt],[data-spin]').forEach(function (x) { if (!x.closest('#arch')) x.remove(); }); try { decorate61(); } catch (e) {} return r; };
+
+/* ---------- 2) shelf entries: a logged title (string) or an outside pick (JSON string, never logged / never Interested) ---------- */
+function P61(s) { if (s && typeof s === 'object') return s; s = String(s || ''); if (s[0] === '{') { try { return JSON.parse(s); } catch (e) {} } return { t: s, row: byTitle(s) }; }
+function J61(o) { return JSON.stringify(o); }
+window.P61 = P61;
+var VINYL = (function () { try { var c = document.createElement('canvas'); c.width = c.height = 12; var x = c.getContext('2d'), m = ['....kkkk....', '..kkkkkkkk..', '.kkkgkkkkkk.', '.kkgkkkkgkk.', 'kkkkyyyykkkk', 'kkkkyrrykkkk', 'kkkkyrrykkkk', 'kkkkyyyykkkk', '.kkgkkkkgkk.', '.kkkkkkgkkk.', '..kkkkkkkk..', '....kkkk....'], C = { k: '#1b1b2e', g: '#4a4a6e', y: '#ffcc33', r: '#d8323f' };
+  m.forEach(function (row, j) { row.split('').forEach(function (ch, i) { if (C[ch]) { x.fillStyle = C[ch]; x.fillRect(i, j, 1, 1); } }); }); return c.toDataURL(); } catch (e) { return ''; } })();
+document.documentElement.style.setProperty('--vinyl61', 'url(' + VINYL + ')');
+function art61(u) { return '<span class="sa61">' + (u && /^https:/.test(u) ? '<img src="' + esc(u) + '" alt="" loading="lazy" onerror="this.remove()">' : '') + '</span>'; }
+window.art61 = art61;
+/* artwork onto every song list already on screen (soundtrack sheet, cabinet) — DOM only, no re-render */
+window.decorate61 = function () {
+  document.querySelectorAll('#ostx li.tl, li.tl').forEach(function (li) { var b = li.querySelector('[data-tlp]'); if (!b) return; var s = b.dataset.tlp.split(':'), c = ((window.R55 && R55.tl) ? R55.tl[s[0]] || [] : [])[+s[1]]; if (!c) return; var ex = li.querySelector('.sa61');
+    if (!ex) { b.insertAdjacentHTML('afterend', art61(c.art)); } else if (c.art && !ex.querySelector('img')) ex.outerHTML = art61(c.art); });
+  document.querySelectorAll('#cab [data-cbsnd]').forEach(function (b) { var c = (R56.snd || [])[+b.dataset.cbsnd], li = b.parentNode; if (!c || !li) return; var ex = li.querySelector('.sa61'); if (!ex) b.insertAdjacentHTML('afterend', art61(c.art)); else if (c.art && !ex.querySelector('img')) ex.outerHTML = art61(c.art); });
+  document.querySelectorAll('.pka').forEach(function (x) { if (!x.querySelector('img')) x.classList.add('px61'); }); };
+var _oxPaint61 = oxPaint; oxPaint = function () { var r = _oxPaint61.apply(this, arguments); try { decorate61(); } catch (e) {} return r; };
+var _pkDraw61 = pkDraw; pkDraw = function () { var r = _pkDraw61.apply(this, arguments); try { decorate61(); } catch (e) {} return r; };
+
+/* ---------- 3) cabinet: saved shelves (logged or outside picks) render for their owner, songs with artwork ---------- */
+function ptile(o, i, kind) { var r = o.row, t = r ? r.title : o.t, ps = r ? posters[r.title] : o.p, yt = kind === 'yt' && !r;
+  var th = yt ? (o.th || (o.id ? 'https://i.ytimg.com/vi/' + o.id + '/mqdefault.jpg' : '')) : (r && isYT(r) && r.ytm && r.ytm.id ? 'https://i.ytimg.com/vi/' + r.ytm.id + '/mqdefault.jpg' : ps);
+  return '<button class="cbt' + (kind === 'yt' ? ' cby' : '') + '" ' + (r ? 'data-open="' + r.row + '"' : yt ? 'data-ytext61="' + esc(o.id || '') + '"' : 'data-ext61="1"') + '><span class="cbr">' + (i + 1) + '</span>' + (th && /^http|^data:/.test(th) ? '<img loading="lazy" src="' + esc(th) + '" alt="">' : '<i>' + esc(String(t || '?')[0]) + '</i>') + '<b>' + esc(baseTitle(t || '')) + '</b><small>' + (yt ? esc(o.ch || '▶') : kind === 'tv' || (o.tv) ? '📺' : kind === 'yt' ? '▶' : '🎞') + (r ? '' : ' · PICK') + '</small></button>'; }
+function songsHtml(L) { return '<ol class="cbsnd">' + L.map(function (s, i) { return '<li><button class="oxmp" data-cbsnd="' + i + '" aria-label="Play ' + esc(s.n) + '">▶</button>' + art61(s.art) + '<span><b>' + esc(s.n) + '</b> <small>' + esc(s.a || '') + '</small></span></li>'; }).join('') + '</ol>'; }
+var _cab61 = cabinetHtml; cabinetHtml = function () { var h = _cab61.apply(this, arguments), p = (typeof statWho !== 'undefined' && statWho) || me(), pr = profiles[p] || {};
+  var T = document.createElement('div'); T.innerHTML = h; var heads = [].slice.call(T.querySelectorAll('.cbs > h4'));
+  var body = function (lab) { var h4 = heads.filter(function (x) { return x.textContent.indexOf(lab) >= 0; })[0]; if (!h4) return null; var box = h4.parentNode; [].slice.call(box.children).forEach(function (c) { if (c !== h4) c.remove(); }); return box; };
+  [['mv', 'TOP 5 MOVIES'], ['tv', 'TOP 5 SHOWS'], ['yt', 'TOP 5 YOUTUBE']].forEach(function (a) { var L = (pr[a[0]] || []).map(P61).filter(function (o) { return o.row || o.t; }); if (!L.length) return; var box = body(a[1]); if (box) box.insertAdjacentHTML('beforeend', '<div class="cbrow">' + L.slice(0, 5).map(function (o, i) { return ptile(o, i, a[0]); }).join('') + '</div>'); });
+  var S = (pr.snd || []).map(P61).filter(function (o) { return o.n; }); if (S.length) { R56.snd = S.map(function (o) { return { n: o.n, a: o.a || '', pv: o.pv || '', art: o.art || '', sp: o.sp || '' }; }); var sb = body('TOP 5 SOUNDTRACKS'); if (sb) sb.insertAdjacentHTML('beforeend', songsHtml(R56.snd)); }
+  else { var ol = T.querySelector('.cbsnd'); if (ol && R56.snd) ol.outerHTML = songsHtml(R56.snd); }
+  try { pvFix60(R56.snd || []); } catch (e) {}
+  return T.innerHTML; };
+/* Our Top 5 accepts outside picks (movies/TV only) */
+var _otl61 = ourTopList58; ourTopList58 = function () { if (!(OT58.o && OT58.o.list)) return _otl61.apply(this, arguments);
+  return OT58.o.list.map(P61).map(function (o) { if (o.row) return o.row; if (!o.t) return null; if (o.p && !posters[o.t]) posters[o.t] = o.p; return { title: o.t, row: -1, type: o.tv ? 'TV Show' : 'Movie', ext61: 1 }; }).filter(Boolean); };
+document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-ytext61]'); if (!b) return; e.stopImmediatePropagation(); if (b.dataset.ytext61) { YTO.tap = Date.now(); ytnOpen(b.dataset.ytext61, b.querySelector('b') ? b.querySelector('b').textContent : ''); } }, true);
+
+/* ---------- 4) ONE editor for every top shelf: current list (▲▼✕) + search to add anything ---------- */
+var ED = null, KN = { mv: '🎞 TOP 5 MOVIES', tv: '📺 TOP 5 SHOWS', snd: '♪ TOP 5 SOUNDTRACKS', yt: '▶ TOP 5 YOUTUBE', ot: '💛 OUR TOP 5' };
+function curList(k, p) { if (k === 'ot') { var L = (OT58.o && OT58.o.list) ? OT58.o.list.slice() : ourTopList58().map(function (r) { return r.title; }); return L; }
+  var s = ((profiles[p] || {})[k] || []).slice(); if (s.length) return s;
+  /* start from what the shelf shows now (auto), so editing doesn't begin empty */
+  if (k === 'snd') return (R56.snd || []).map(function (c) { return J61({ n: c.n, a: c.a || '', art: c.art || '', pv: c.pv || '', sp: c.sp || '' }); });
+  return []; }
+function label(o, k) { if (k === 'snd') return { t: o.n, s: o.a || '', im: o.art || '' }; var r = o.row; if (r) return { t: baseTitle(r.title), s: r.type === 'TV Show' ? '📺 LOGGED' : isYT(r) ? '▶ LOGGED' : '🎞 LOGGED', im: isYT(r) && r.ytm ? 'https://i.ytimg.com/vi/' + r.ytm.id + '/mqdefault.jpg' : posters[r.title] || '' };
+  return { t: o.t, s: (o.ch || (o.tv ? '📺' : k === 'yt' ? '▶' : '🎞')) + (o.y ? ' · ' + o.y : ''), im: o.p || o.th || '' }; }
+function edOpen(k) { var p = me(); ED = { k: k, p: p, L: curList(k, p), res: [], q: '', seq: 0 }; if (!$('ed61')) document.body.insertAdjacentHTML('beforeend', '<div id="ed61"><div class="e61"><div class="e61h"><b></b><button class="ui-btn" data-e61x="1">✓ DONE</button></div><div class="e61c"></div><input id="ed61q" type="search" autocomplete="off" autocapitalize="off" spellcheck="false"><div class="e61r"></div></div></div>');
+  $('ed61').classList.add('open'); $('ed61q').value = ''; $('ed61q').placeholder = k === 'snd' ? 'Search any song or artist…' : k === 'yt' ? 'Search YouTube…' : k === 'ot' ? 'Search any movie or show…' : 'Search any ' + (k === 'tv' ? 'show' : 'movie') + '…'; edDraw(); edLocal(); }
+window.edOpen61 = edOpen;
+function row(o, k, act, i, extra) { var l = label(o, k); return '<div class="e61i">' + (k === 'snd' ? art61(l.im) : '<span class="e61p">' + (l.im ? '<img src="' + esc(l.im) + '" alt="" loading="lazy" onerror="this.remove()">' : '') + '</span>') + '<span class="e61t"><b>' + esc(l.t || '') + '</b><small>' + esc(l.s || '') + '</small></span>' + extra + '</div>'; }
+function edDraw() { if (!ED) return; var k = ED.k; $('ed61').querySelector('.e61h b').textContent = KN[k] + (k === 'ot' ? ' · SAM & LEWY' : ' · ' + (ED.p === 'sam' ? '1P SAM' : '2P LEWY'));
+  $('ed61').querySelector('.e61c').innerHTML = ED.L.length ? ED.L.map(function (s, i) { return row(P61(s), k, '', i, '<button class="ui-btn" data-e61="up:' + i + '"' + (i ? '' : ' disabled') + ' aria-label="Move up">▲</button><button class="ui-btn" data-e61="dn:' + i + '"' + (i < ED.L.length - 1 ? '' : ' disabled') + ' aria-label="Move down">▼</button><button class="ui-btn" data-e61="rm:' + i + '" aria-label="Remove">✕</button>'); }).join('') : '<p class="sn58">Empty — search below to add up to 5.</p>';
+  $('ed61').querySelector('.e61r').innerHTML = ED.L.length >= 5 ? '<p class="sn58">Full — remove one to add another.</p>' : (ED.busy ? '<p class="sn58">Searching…</p>' : '') + ED.res.map(function (o, i) { return row(o, k, '', i, '<button class="ui-btn y" data-e61="add:' + i + '">＋ ADD</button>'); }).join('') + (ED.err ? '<p class="sn58">' + esc(ED.err) + '</p>' : ''); }
+function has(s) { var o = P61(s), k = ED.k === 'snd' ? (o.n + '|' + o.a).toLowerCase() : norm(o.row ? o.row.title : o.t); return ED.L.some(function (x) { var y = P61(x); return (ED.k === 'snd' ? (y.n + '|' + y.a).toLowerCase() : norm(y.row ? y.row.title : y.t)) === k; }); }
+function edLocal() { var k = ED.k, q = norm(ED.q), p = ED.p; var R;
+  if (k === 'snd') { var S = {}; rows.forEach(function (r) { (((r.themeL || {})[p]) || []).forEach(function (c) { var kk = (c.n + '|' + (c.a || '')).toLowerCase(); if (!S[kk] && (!q || norm(c.n + ' ' + c.a).indexOf(q) >= 0)) S[kk] = { n: c.n, a: c.a || '', art: c.art || '', pv: c.pv || '' }; }); }); R = Object.keys(S).map(function (x) { return S[x]; }); try { pvFix60(R); } catch (e) {} }
+  else R = rows.filter(function (r) { return (k === 'yt' ? isYT(r) : !isYT(r) && (k === 'ot' || r.type === (k === 'tv' ? 'TV Show' : 'Movie'))) && (!q || norm(r.title).indexOf(q) >= 0); }).sort(function (a, b) { return (num(b[p + 'Rating']) || 0) - (num(a[p + 'Rating']) || 0); }).map(function (r) { return { t: r.title, row: r }; });
+  ED.res = R.filter(function (o) { return !has(o.row ? o.row.title : J61(o)); }).slice(0, 8); edDraw(); }
+var qt = 0; document.addEventListener('input', function (e) { if (!e.target || e.target.id !== 'ed61q' || !ED) return; ED.q = e.target.value.trim(); edLocal(); clearTimeout(qt); if (ED.q.length < 2) return; qt = setTimeout(edRemote, 380); }, true);
+function edRemote() { var k = ED.k, q = ED.q, seq = ++ED.seq, ed = ED; ed.busy = 1; ed.err = ''; edDraw();
+  var done = function (L) { if (ED !== ed || seq !== ed.seq) return; ed.busy = 0; var loc = ed.res.filter(function (o) { return o.row; }); ed.res = loc.concat((L || []).filter(function (o) { return !has(o.row ? o.row.title : J61(o)); })).slice(0, 14); edDraw(); };
+  var fail = function () { if (ED !== ed) return; ed.busy = 0; ed.err = 'Search failed — check connection'; edDraw(); };
+  if (k === 'snd') return run('songSearch', [q], function (L) { done((L || []).map(function (x) { return { n: x.n, a: x.a, art: x.art || '', pv: x.pv || '', sp: x.sp || '' }; })); }, function () { itSearch(q, function (R) { done(R.map(function (x) { return { n: x.n, a: x.a, art: x.art || '', pv: x.pv || '' }; })); }); });
+  if (k === 'yt') return run('ytSearch', [q], function (L) { done((L || []).filter(function (v) { return v.k === 'video' || !v.k; }).map(function (v) { var r = rows.filter(function (x) { return isYT(x) && x.ytm && x.ytm.id === v.id; })[0]; return r ? { t: r.title, row: r } : { t: v.t, id: v.id, ch: v.ch || '', th: v.th || '' }; })); }, fail);
+  run('searchTitles', [q], function (o) { done(((o && o.results) || []).filter(function (x) { return k === 'ot' || (k === 'tv' ? x.tv : !x.tv); }).map(function (x) { var r = rows.filter(function (y) { return !isYT(y) && baseTitle(y.title).toLowerCase() === String(x.title).toLowerCase() && (y.type === 'TV Show') === !!x.tv; })[0]; return r ? { t: r.title, row: r } : { t: x.title, p: x.poster || '', id: x.id, tv: !!x.tv, y: x.year || '' }; })); }, fail); }
+function edEntry(o) { if (o.row) return o.row.title; if (ED.k === 'snd') return J61({ n: o.n, a: o.a || '', art: o.art || '', pv: o.pv || '', sp: o.sp || '' }); if (ED.k === 'yt') return J61({ t: o.t, id: o.id, ch: o.ch || '', th: o.th || '' }); return J61({ t: o.t, p: o.p || '', id: o.id, tv: !!o.tv, y: o.y || '' }); }
+var st = 0; function edSave() { var ed = ED; clearTimeout(st); st = setTimeout(function () { var L = ed.L.slice(0, 5);
+  if (ed.k === 'ot') { OT58.o = { list: L, by: me() }; ourTopPaint58 && ourTopPaint58(); run('setOurTop', [L], function (o) { OT58.o = o && o.list && o.list.length ? o : null; if (view === 'stats') renderStats(); }, function () { toast('COULDN\u2019T SAVE — CHECK CONNECTION'); }); return; }
+  var pr = Object.assign({}, profiles[ed.p] || {}); pr[ed.k] = L; profiles[ed.p] = pr; if (view === 'stats') renderStats(); busy++;
+  run('saveProfile', [ed.p, pr], function (o) { busy--; if (o) profiles[ed.p] = o; if (view === 'stats') renderStats(); savedTick && savedTick('SAVED'); }, function () { busy--; toast('COULDN\u2019T SAVE — CHECK CONNECTION'); }); }, 250); }
+window.addEventListener('click', function (e) { var t = e.target; if (!t.closest) return;
+  var b = t.closest('#cab [data-fav], #cab [data-sndedit], #cab [data-ot="edit"]'); if (b) { e.stopImmediatePropagation(); e.preventDefault(); SFX.tap && SFX.tap(); return edOpen(b.dataset.ot ? 'ot' : b.dataset.sndedit ? 'snd' : b.dataset.fav); }
+  if (!ED) return; if (t.closest('[data-e61x]') || t.id === 'ed61') { e.stopImmediatePropagation(); $('ed61').classList.remove('open'); ED = null; if (view === 'stats') renderStats(); return; }
+  var a = t.closest('#ed61 [data-e61]'); if (!a) return; e.stopImmediatePropagation(); e.preventDefault(); var s = a.dataset.e61.split(':'), i = +s[1], L = ED.L;
+  if (s[0] === 'add') { var o = ED.res[i]; if (!o || L.length >= 5) return; L.push(edEntry(o)); ED.res.splice(i, 1); SFX.coin && SFX.coin(); }
+  else if (s[0] === 'rm') { L.splice(i, 1); SFX.back && SFX.back(); }
+  else if (s[0] === 'up' && i > 0) { L.splice(i - 1, 0, L.splice(i, 1)[0]); }
+  else if (s[0] === 'dn' && i < L.length - 1) { L.splice(i + 1, 0, L.splice(i, 1)[0]); }
+  edDraw(); edSave(); }, true);
+
+/* ---------- 5) TRIVIA on the same path as every working player: the shared OXA element, MP3 preview, started inside the tap ---------- */
+function trvSrc(src) { return String(src || '').replace(/^http:/, 'https:'); }
+trvAudio = function (src) { try { TRA.pause(); } catch (e) {} var old = $('trvA'); if (old) { old.pause(); old.remove(); }
+  oxEnsure(); if (!src) { if (OXS.mode === 'trv') { try { OXA.pause(); } catch (e) {} } return; } src = trvSrc(src);
+  if (muted) { setTimeout(function () { trvNeedTap(src, 'APP SOUND OFF · TAP TO PLAY'); }, 50); return; }
+  if (OXS.mode === 'trv' && OXA.src === src && !OXA.paused) return; /* already started inside the answer tap */
+  OXS.mode = 'trv'; OXS.cur = { n: 'trivia' }; if (OXA.src !== src) OXA.src = src; try { OXA.currentTime = 0; } catch (e) {}
+  var p = OXA.play(); if (p && p.catch) p.catch(function () { setTimeout(function () { trvNeedTap(src); }, 50); }); };
+/* the clip button: one tap → OXA.src + play() synchronously */
+window.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-trvsnd]'); if (!b) return; e.preventDefault(); e.stopImmediatePropagation();
+  var q = TRV.daily && TRV.daily.qs ? TRV.daily.qs[TRV.dq] : TRV.st && TRV.st.q, src = trvSrc(b.dataset.src || (q && q.audio)); if (!src) return; oxEnsure(); OXS.mode = 'trv'; OXS.cur = { n: 'trivia' };
+  if (OXA.src !== src) OXA.src = src; try { OXA.currentTime = 0; } catch (x) {} var p = OXA.play(); b.classList.remove('need'); b.innerHTML = '🔊<small>PLAYING · TAP TO REPLAY</small>'; if (p && p.catch) p.catch(function () { b.innerHTML = '✗<small>CLIP UNAVAILABLE</small>'; }); }, true);
+/* every trivia tap blesses the shared element; answering a daily question starts the NEXT question's clip inside that same tap */
+document.addEventListener('click', function (e) { if (e.target.closest && e.target.closest('#trv button,[data-trv],[data-trvday],[data-trvgo],.trvo button')) { try { oxBless(); } catch (x) {} } }, true);
+var _dp61 = trvDPick; trvDPick = function () { var r = _dp61.apply(this, arguments); try { var D = TRV.daily, n = D && D.qs && D.qs[TRV.dq]; if (n && n.audio && !muted) { oxEnsure(); OXS.mode = 'trv'; OXS.cur = { n: 'trivia' }; var s = trvSrc(n.audio); if (OXA.src !== s) OXA.src = s; try { OXA.currentTime = 0; } catch (x) {} var pp = OXA.play(); pp && pp.catch && pp.catch(function () {}); } } catch (x) {} return r; };
+window.trvSrc61 = trvSrc;
 })();
 
 </script></body></html>
