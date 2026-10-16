@@ -49,7 +49,7 @@ function mock(fn, args, who) { if (global.MOCKX) { const x = global.MOCKX(fn, ar
     case 'saveProfile': { S.prof = S.prof || { sam: {}, lewy: {} }; const pp = args[1] || {}, li = x => (Array.isArray(x) ? x : []).map(t => String(t || '').slice(0, 700)).filter(Boolean).slice(0, 5); S.prof[args[0]] = { tv: li(pp.tv), mv: li(pp.mv), picks: li(pp.picks), snd: li(pp.snd), yt: li(pp.yt), bg: pp.bg || '', wr: pp.wr || '', ps: String(pp.ps || '').slice(0, 700), qt: li(pp.qt), lay: (pp.lay || []).slice(0, 30) }; S.calls.push('saveProfile:' + args[0]); return S.prof[args[0]]; }
     case 'songSearch': S.calls.push('songSearch'); return [{ n: 'Baby Blue', a: 'Badfinger', art: 'https://i.scdn.co/image/ab67616d00001e02255e131abc1410833be95673', sp: 'bbid', pv: '', via: 'spotify' }, { n: 'No Art Song', a: 'Nobody', art: '', via: 'itunes' }];
     case 'ytSearch': return [{ k: 'video', id: 'dQw4w9WgXcQ', t: 'Never Gonna Give You Up', ch: 'Rick Astley', th: 'https://i.ytimg.com/vi/dQw4w9WgXcQ/mqdefault.jpg' }];
-    case 'getTrailer': return 'aqz-KE-bpKQ'; case 'songPv': S.calls.push('songPv'); return (args[0] || []).map((c, i) => ({ u: 'https://p.scdn.co/mp3-preview/' + String(c.n || 'x').replace(/\W/g, '').toLowerCase(), id: 'sp' + String(c.n || 'x').replace(/\W/g, '').toLowerCase(), via: 'sp' })); case 'getOurTop': return S.ot || null; case 'setOurTop': S.ot = args[0] && args[0].length ? { list: args[0], by: who } : null; S.calls.push('setOurTop'); return S.ot || { list: [] };
+    case 'getTrailer': return 'aqz-KE-bpKQ'; case 'songPv': S.calls.push('songPv'); return (args[0] || []).map((c, i) => ({ u: '', id: 'sp' + String(c.n || 'x').replace(/\W/g, '').toLowerCase(), via: 'sp' })); case 'getOurTop': return S.ot || null; case 'setOurTop': S.ot = args[0] && args[0].length ? { list: args[0], by: who } : null; S.calls.push('setOurTop'); return S.ot || { list: [] };
     case 'adQuotes': return [{ q: 'Downward is the only way forward.', who: 'Cobb', t: 'Inception' }];
     case 'getInterest': return S.int;
     case 'setInterest': { const [w, k, v, m] = args; const o = S.int[w]; if (!v) delete o[k]; else o[k] = Object.assign({}, o[k] || {}, m || {}, { v, at: Date.now() }); return o; }
@@ -122,6 +122,9 @@ function mock(fn, args, who) { if (global.MOCKX) { const x = global.MOCKX(fn, ar
       top: { artists: rot(AR).slice(0, 10).map(function (n, i) { return { n: n, c: Math.round((60 - i * 5) * k) }; }), tracks: rot(TR).map(function (t, i) { return { n: t[0], a: t[1], c: Math.round((22 - i * 2) * k) }; }), albums: rot(AL).map(function (t, i) { return { n: t[0], a: t[1], c: Math.round((40 - i * 3) * k), img: '' }; }) },
       periodTotals: { artists: Math.round(80 * k), tracks: Math.round(260 * k), albums: Math.round(140 * k) },
       recent: rot(TR).slice(0, 10).map(function (t, i) { return { n: t[0], a: t[1], al: '', img: '', now: i === 0 && p === 'sam', at: i === 0 && p === 'sam' ? 0 : now - (i + 1) * 4.1e5 }; }), weeks: p === 'sam' ? 604 : 447 }; }
+  /* r74: demo trailers so YouTube › Trailers isn't empty */
+  try { var YT74 = { 'Dune': 'n9xhJrPXop4', 'Dune: Part Two': 'Way9Dexny3w', 'Inception': 'YoHD9XEInc0', 'Interstellar': 'zSWdZVtXT7E', 'Oppenheimer': 'uYPbbksJxIg', 'Barbie': 'pBk4NYhWNMM', 'Arrival': 'tFMo3UJ4B4g', 'Past Lives': 'kA244xewjcI', 'Hacks': 'SY0IxCXtz6c', 'Severance': 'xEQP4VVuyrY', 'The Bear': 'y-cqqAJIXhs', 'Sinners': 'bKGxHflevuk' };
+    var M74 = (typeof meta !== 'undefined' && meta) || (S && S.meta); if (M74) Object.keys(YT74).forEach(function (k) { M74[k] = M74[k] || {}; if (!M74[k].yt) M74[k].yt = YT74[k]; }); } catch (e) {}
   var FRESH68 = D68.fr.map(function (x, i) { return { id: 880000 + i, title: x[0], year: x[1], tv: x[2] === '1', poster: '', overview: '', vote: 7 + (i % 3) / 2 }; });
   var _mock68 = mock; mock = function (fn, args, who) { args = args || [];
     switch (fn) { case 'triviaDaily': return TV.daily(args[0] || who, args[1]); case 'triviaDailyAnswer': return TV.answer(args[0] || who, args[1], args[2], args[3]); case 'triviaDays': return TV.list();
@@ -154,7 +157,7 @@ function mock(fn, args, who) { if (global.MOCKX) { const x = global.MOCKX(fn, ar
     return _fetch(u, opt); };
   var sb = navigator.sendBeacon; if (sb) navigator.sendBeacon = function (u) { return /script\.google|ntfy/.test(String(u)) ? true : sb.apply(navigator, arguments); };
   /* small DEMO tag with a 1P/2P switch (no reload: memory would be lost) */
-  var css = '#demo65t{position:fixed;top:calc(4px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:4000;display:flex;gap:4px;align-items:center;background:#d8323f;color:#fff;font:8px var(--pix,monospace);padding:3px 4px 3px 8px;border:2px solid #000;box-shadow:2px 2px 0 #000}#demo65t button{font:8px var(--pix,monospace);min-height:28px;min-width:34px;border:2px solid #000;background:#0b0b14;color:#fff;padding:0 6px}#demo65t button.on{background:#ffcc33;color:#000}';
+  var css = '#demo65t{position:fixed;top:calc(2px + env(safe-area-inset-top));left:2px;transform:none;z-index:4000;opacity:.9;display:flex;gap:4px;align-items:center;background:#d8323f;color:#fff;font:8px var(--pix,monospace);padding:3px 4px 3px 8px;border:2px solid #000;box-shadow:2px 2px 0 #000}#demo65t button{font:8px var(--pix,monospace);min-height:28px;min-width:34px;border:2px solid #000;background:#0b0b14;color:#fff;padding:0 6px}#demo65t button.on{background:#ffcc33;color:#000}';
   var paint = function () { var t = document.getElementById('demo65t'); if (!t) return; var w = (window.me && me()) || L.getItem('lg_who'); t.innerHTML = 'DEMO <button data-iam61="sam" class="' + (w === 'sam' ? 'on' : '') + '">1P</button><button data-iam61="lewy" class="' + (w === 'lewy' ? 'on' : '') + '">2P</button>'; };
   document.addEventListener('DOMContentLoaded', function () { var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st); var t = document.createElement('div'); t.id = 'demo65t'; document.body.appendChild(t); paint(); });
   window.addEventListener('click', function (e) { if (e.target.closest && e.target.closest('#demo65t [data-iam61]')) setTimeout(paint, 50); setTimeout(paint, 600); }, true); setInterval(paint, 2000);
@@ -1605,7 +1608,19 @@ html.rc73 .lkh2 .me canvas,html.rc73 .lkh canvas{border-color:var(--pc)!importan
 .trvlb td.l,.trvlb th.l{color:var(--p2,#3ddc84)!important}
 .trvlb td.w{background:transparent!important;font-weight:700}
 #trvfb{pointer-events:none}
-</style></head><body data-rc="73">
+/* R74 QC fixes */
+body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+input,textarea,[contenteditable],[contenteditable] *{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
+#banner{top:calc(64px + env(safe-area-inset-top))!important;transform:none!important}
+#banner div{animation:none!important}
+[data-ps64m]{min-width:44px!important;min-height:44px!important;display:inline-flex!important;align-items:center;justify-content:center}
+#kb72 button,#kb72 .k,.kb72 button{font-family:var(--pix)!important}
+#detail div:has(> [data-ep]){display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+#detail [data-ep]{flex:none;min-width:40px;white-space:nowrap}
+body:has(#ytdrw.open) #ytpage .ytbk,body:has(#ytdrw.open) #ytpage [data-ytback]{visibility:hidden}
+#demo65t{top:calc(2px + env(safe-area-inset-top))!important;left:2px!important;right:auto!important;flex-direction:row!important;font-size:6px!important;padding:1px 2px 1px 4px!important;gap:2px!important;opacity:.85!important}
+#demo65t button{font-size:6px!important;padding:2px 3px!important;min-height:0!important}
+</style><!--RC74T--><style>#demo65t::after{content:"RC74";margin-left:3px;font-size:5px}</style></head><body>
 <div id="splash" aria-label="Logged"></div>
 <header><div class="hin">
   <h1><span id="logo"></span><span class="lg">LOGGED</span><span class="sp"></span><span id="sync">…</span><button class="icon px" id="mute" aria-label="Sound">🔊</button><button class="icon px" id="refresh" aria-label="Refresh">⟳</button></h1>
@@ -3358,7 +3373,7 @@ function trvDailyIntro() { var d = TRV.daily; trvShow('<div class="trvlob"><div 
 function trvDQ() { var d = TRV.daily, i = TRV.dq, q = d.qs[i]; if (!q) return trvDSubmit(); TRV.t0 = Date.now(); var dur = 15000;
   trvShow('<div class="trvn">Q' + (i + 1) + '/' + d.qs.length + '</div>' + trvCard(q, {})); if (q.img) trvPix(q.img, TRV.t0, dur * .85); trvTimer(TRV.t0, dur); if (q.audio) trvAudio(q.audio);
   clearTimeout(TRV.dt); TRV.dt = setTimeout(function () { if (TRV.dq === i) trvDPick(-1); }, dur); }
-function trvDPick(c) { clearTimeout(TRV.dt); trvAudio(); TRV.picks[TRV.dq] = c; TRV.ms[TRV.dq] = Date.now() - TRV.t0; SFX.blip(); TRV.dq++; setTimeout(trvDQ, 250); }
+function trvDPick(c) { clearTimeout(TRV.dt); trvAudio(); TRV.picks[TRV.dq] = c; TRV.ms[TRV.dq] = Date.now() - TRV.t0; SFX.blip(); TRV.dq++; setTimeout(trvDQ, 1000); }
 function trvDSubmit() { trvShow('<div class="trvlob"><p class="blink">LOCKING IN…</p></div>'); run('triviaDailyAnswer', [me(), TRV.picks, TRV.ms], function (d) { TRV.daily = d; SFX.coin(); trvDailyRes(); }); }
 function trvDailyRes() { var d = TRV.daily, o = me() === 'sam' ? 'lewy' : 'sam', mine = d.mine, oth = d.both ? d.other : null, sc = {}; sc[me()] = mine.sc; sc[o] = oth ? oth.sc : 0;
   var L = d.qs.map(function (q, i) { return '<div class="trvr"><div class="th">' + (q.img ? '<img src="' + esc(q.img) + '" alt="">' : q.quote ? tvi('quote', 30) : q.audio ? tvi('sound', 30) : tvi('trivia', 30)) + '</div><div><small>' + esc(q.q) + '</small><b>' + esc(q.opts[q.a]) + '</b>' +
@@ -5072,7 +5087,7 @@ pkPlay = function (id) { var t = pkItem(id); if (!t) return; oxEnsure(); if (PK.
 /* YouTube: a specific verified video per song (server: YouTube Data API + title check), cached locally; window opened inside the tap so iOS doesn't block it */
 var SV = (function () { try { return JSON.parse(localStorage.lg_songv || '{}'); } catch (e) { return {}; } })();
 function songVid(t, cb) { var k = (t.n + '|' + t.a).toLowerCase(); if (t.yt) return cb({ id: t.yt }); if (SV[k] !== undefined) return cb(SV[k]); run('songVideo', [t.n, t.a], function (v) { SV[k] = v || null; try { localStorage.lg_songv = JSON.stringify(SV); } catch (e) {} cb(v); }, function () { cb(null); }); }
-function songYT(t) { var w = null; try { w = window.open('', '_blank'); } catch (e) {} if (w) try { w.document.write('<body style="background:#0b0b14;color:#ffcc33;font:16px monospace;padding:30px">Finding “' + esc(t.n) + '” on YouTube…<div id="RC73T" style="position:fixed;left:4px;top:42%;z-index:5000;background:#d51007;color:#fff;font:7px monospace;padding:6px 4px;border:2px solid #000;writing-mode:vertical-rl;transform:rotate(180deg);pointer-events:none">RC</div></body>'); } catch (e) {}
+function songYT(t) { var w = null; try { w = window.open('', '_blank'); } catch (e) {} if (w) try { w.document.write('<body style="background:#0b0b14;color:#ffcc33;font:16px monospace;padding:30px">Finding “' + esc(t.n) + '” on YouTube…</body>'); } catch (e) {}
   songVid(t, function (v) { var u = v && v.id ? 'https://www.youtube.com/watch?v=' + v.id : 'https://www.youtube.com/results?search_query=' + encodeURIComponent(t.n + ' ' + t.a); if (v && v.id) t.yt = v.id; if (!v) toast('NO EXACT VIDEO — OPENING A YOUTUBE SEARCH'); if (w && !w.closed) w.location = u; else location.href = u; }); }
 /* SAVE: per person, a LIST of soundtracks; whole-show picks show on every season, season picks only on that season */
 function themeList(r, p) { var L = ((r && r.themeL) || {})[p] || [], m = String(r && r.title || '').match(/\((S\d+)\)\s*$/i), s = m ? m[1].toUpperCase() : ''; return L.filter(function (c) { return c.sc === 'show' || c.sc === s; }); }
@@ -6437,7 +6452,7 @@ var _cab = cabinetHtml; cabinetHtml = function () { var h = _cab.apply(this, arg
   var order = mergeLay67(LAY66[p] || pr.lay || [], secs.map(function (s) { return s.dataset.sec; })), idx = function (k) { var i = order.indexOf(k); return i < 0 ? 1e3 + secs.findIndex(function (s) { return s.dataset.sec === k; }) : i; };
   secs.sort(function (a, b) { return idx(a.dataset.sec) - idx(b.dataset.sec); }).forEach(function (s) { C.appendChild(s); });
   if (own(p)) { var lab = C.querySelector('.cbdv'); var bar = '<div class="arr64"><button class="ui-btn' + (ARR ? ' on' : '') + '" data-arr64="toggle">' + (ARR ? '✓ DONE ARRANGING' : '⇅ ARRANGE') + '</button></div>'; if (lab) lab.insertAdjacentHTML('afterend', bar); else C.insertAdjacentHTML('afterbegin', bar); }
-  if (ARR && own(p)) { C.classList.add('arranging'); secs.forEach(function (s, i) { s.insertAdjacentHTML('afterbegin', '<div class="arc64"><button class="ui-btn" data-arr64="up:' + s.dataset.sec + '"' + (i ? '' : ' disabled') + ' aria-label="Move section up">▲</button><b>' + esc(s.dataset.sec.replace(/-/g, ' ')) + '</b><button class="ui-btn" data-arr64="dn:' + s.dataset.sec + '"' + (i < secs.length - 1 ? '' : ' disabled') + ' aria-label="Move section down">▼</button></div>'); }); }
+  if (ARR && own(p)) { C.classList.add('arranging'); secs.forEach(function (s, i) { s.insertAdjacentHTML('afterbegin', '<div class="arc64"><button class="ui-btn" data-arr64="up:' + s.dataset.sec + '"' + (i ? '' : ' disabled') + ' aria-label="Move section up">▲</button><b>' + esc(({OURTOP5:'OUR TOP 5',MOVIES:'TOP 5 MOVIES',SHOWS:'TOP 5 SHOWS',SOUNDTRACKS:'TOP 5 SOUNDTRACKS',YOUTUBE:'TOP 5 YOUTUBE',QUOTES:'TOP QUOTES',STATS:'STATS'})[s.dataset.sec] || s.dataset.sec.replace(/-/g, ' ')) + '</b><button class="ui-btn" data-arr64="dn:' + s.dataset.sec + '"' + (i < secs.length - 1 ? '' : ' disabled') + ' aria-label="Move section down">▼</button></div>'); }); }
   return T.innerHTML; };
 var lt = 0, LAY66 = window.LAY66 = {}, LSEQ66 = {};
 /* r67: a saved order may be partial (e.g. saved before Our Top 5 had loaded). Keep its relative order and slot every missing section next to its default neighbour. */
@@ -6551,7 +6566,7 @@ var _od68 = openDetail; openDetail = function () { var r = _od68.apply(this, arg
   var _pick = trvDPick; trvDPick = function (c) { try { var d = TRV.daily, q = d && d.qs[TRV.dq]; if (q && c !== -1 && c != null) { var alt = +c >= 100, qq = alt ? q.alt : q, ax = qq && qq.ax != null ? qq.ax / 7 - 3 : null, pk = alt ? +c - 100 : +c;
         if (ax != null) { var B = document.querySelectorAll('#trvB .trvo button'); if (B[pk]) B[pk].classList.add(pk === ax ? 'ok' : 'bad68'); if (pk !== ax && B[ax]) B[ax].classList.add('ok');
           var fb = document.getElementById('trvfb'); if (!fb) { document.body.insertAdjacentHTML('beforeend', '<div id="trvfb" role="status"></div>'); fb = document.getElementById('trvfb'); }
-          fb.className = pk === ax ? 'ok' : 'bad'; fb.innerHTML = pk === ax ? '✓ RIGHT!' : '✕ WRONG<small>' + esc(String((qq.opts || [])[ax] || '')) + '</small>'; clearTimeout(fb.t); fb.t = setTimeout(function () { fb.className = ''; }, 1100); } } } catch (e) {}
+          fb.className = pk === ax ? 'ok' : 'bad'; fb.innerHTML = pk === ax ? '✓ CORRECT!' : '✕ WRONG<small>' + esc(String((qq.opts || [])[ax] || '')) + '</small>'; clearTimeout(fb.t); fb.t = setTimeout(function () { fb.className = ''; }, 1100); } } } catch (e) {}
     return _pick.apply(this, arguments); };
 })();
 /* broken YouTube thumbnails: try the other size once, then a neutral tile (no grey "…" placeholder) */
@@ -6581,7 +6596,7 @@ window.addEventListener('load', function (e) { var i = e.target; if (!i || i.tag
       wasOn = on;
       try { var dr = $('ytdrw'); if (dr && dr.classList.contains('open') && document.querySelector('#arch.open,#set58.open,#detail.open,#trv.open,#ed61.open')) dr.classList.remove('open'); } catch (e) {}
       /* one active state for the hotbar: exactly one tab lit */
-      var N = $('nav'); if (N) { var cur = view === 'stats' ? 'stats' : (document.querySelector('#bpage.open,#ipage.open') ? 'log' : 'home'); [].forEach.call(N.querySelectorAll('button'), function (b) { var k = b.dataset.v === 'stats' ? 'stats' : b.dataset.v === 'home' ? 'home' : b.id === 'navLogM' ? 'log' : ''; if (k) b.classList.toggle('on', k === cur); }); }
+      var N = $('nav'); if (N) { var cur = view === 'stats' ? 'stats' : (document.querySelector('#bpage.open,#ipage.open') || /^(all|int|logging|log)$/.test(view) ? 'log' : 'home'); [].forEach.call(N.querySelectorAll('button'), function (b) { var k = b.dataset.v === 'stats' ? 'stats' : b.dataset.v === 'home' ? 'home' : b.id === 'navLogM' ? 'log' : ''; if (k) b.classList.toggle('on', k === cur); }); }
     } catch (e) {} }
   window.NAV68 = { sync: sync, onProfile: onProfile };
   ['show', 'campPage59', 'archOpen', 'archClose', 'openBrowse', 'openDetail', 'ytnOpen', 'ytnClose', 'renderStats', 'closePage'].forEach(function (f) { if (typeof window[f] !== 'function') return; var o = window[f]; window[f] = function () { var r = o.apply(this, arguments); sync(); return r; }; });
@@ -6676,21 +6691,21 @@ setInterval(function () { try { var k = document.getElementById('kb'); if (!k ||
       '<p class="lf70m">THIS PERIOD: ' + fmt(pt.artists) + ' ARTISTS · ' + fmt(pt.tracks) + ' TRACKS · ' + fmt(pt.albums) + ' ALBUMS</p>' +
       list('TOP ARTISTS', d.top.artists || []) + list('TOP TRACKS', d.top.tracks || []) + list('TOP ALBUMS', d.top.albums || []) +
       '<div class="lf70l"><h5>RECENT</h5><ol class="lf70r">' + rec.map(function (t) { return '<li><span><b>' + esc(t.n) + '</b><small>' + esc(t.a) + '</small></span><em>' + ago(t.at) + '</em></li>'; }).join('') + '</ol></div></div>'; }
-  function html() { return '<div class="lf70h"><h3>♫ LAST.FM</h3><div class="lf70p">' + PER.map(function (x) { return '<button class="ui-btn' + (x[0] === LF.per ? ' on' : '') + '" data-lfper="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div></div>' + card('sam') + card('lewy'); }
+  function html() { return '<div class="lf70h"><h3>♫ LAST.FM</h3><div class="lf70p">' + PER.map(function (x) { return '<button class="ui-btn' + (x[0] === LF.per ? ' on' : '') + '" data-lfper="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div></div>' + card((typeof statWho!=='undefined'&&statWho)||me()); }
   function paint() { var b = document.querySelector('#v-stats .lf70'); if (b) b.innerHTML = html(); }
   /* ---- arrange: every top-level Stats section, order saved per user ---- */
   var AR = { on: false }, LK = function () { return 'lg_statlay70_' + me(); };
   function cont() { var s = document.querySelector('#v-stats .sec, #v-stats .panel'); return s && s.parentNode; }
   function blocks(C) { var B = [], cur = null; [].forEach.call(C.children, function (c) { if (c.classList.contains('arr70b')) return; var h = c.querySelector(':scope > h3, :scope > h4, :scope > .lf70h h3, :scope > .lbl');
       if (c.classList.contains('lf70')) h = { textContent: 'LASTFM' };
-      if (h || !cur) { var k = String(h ? h.textContent : (c.className || 'X')).toUpperCase().replace(/\b(SAM|LEWY)('S)?\b|[^A-Z]/g, '').slice(0, 24) || 'X'; while (B.some(function (b) { return b.k === k; })) k += '_'; cur = { k: k, els: [c] }; B.push(cur); } else cur.els.push(c); }); return B; }
+      if (h || !cur) { var k = String(h ? h.textContent : (c.className || 'X')).toUpperCase().replace(/\b(SAM|LEWY)('S)?\b|[^A-Z]/g, '').slice(0, 24) || 'X'; while (B.some(function (b) { return b.k === k; })) k += '_'; cur = { k: k, lb: String(h ? h.textContent : k).replace(/[^\w\s&'.·-]/g, '').replace(/\s+/g, ' ').trim().toUpperCase().slice(0, 28) || k, els: [c] }; B.push(cur); } else cur.els.push(c); }); return B; }
   function order(C) { var B = blocks(C), L = []; try { L = JSON.parse(localStorage.getItem(LK()) || '[]'); } catch (e) {}
     var rank = function (k) { var i = L.indexOf(k); return i < 0 ? 999 : i; }, S = B.slice().sort(function (a, b) { return rank(a.k) - rank(b.k) || B.indexOf(a) - B.indexOf(b); });
     S.forEach(function (b) { b.els.forEach(function (e) { C.appendChild(e); }); }); return S; }
   function deco(C) { [].forEach.call(C.querySelectorAll('.arr70c'), function (x) { x.remove(); }); C.classList.toggle('arr70', AR.on); if (!AR.on) return; var S = blocks(C);
-    S.forEach(function (b, i) { b.els[0].insertAdjacentHTML('afterbegin', '<div class="arr70c"><span>' + esc(b.k) + '</span><button class="ui-btn" data-arr70="up:' + b.k + '"' + (i ? '' : ' disabled') + '>▲</button><button class="ui-btn" data-arr70="dn:' + b.k + '"' + (i < S.length - 1 ? '' : ' disabled') + '>▼</button></div>'); }); }
+    S.forEach(function (b, i) { b.els[0].insertAdjacentHTML('afterbegin', '<div class="arr70c"><span>' + esc(b.lb || b.k) + '</span><button class="ui-btn" data-arr70="up:' + b.k + '"' + (i ? '' : ' disabled') + '>▲</button><button class="ui-btn" data-arr70="dn:' + b.k + '"' + (i < S.length - 1 ? '' : ' disabled') + '>▼</button></div>'); }); }
   function apply() { if (!onStats()) return; var C = cont(); if (!C) return;
-    if (!C.querySelector(':scope > .lf70')) C.insertAdjacentHTML('beforeend', '<div class="lf70">' + html() + '</div>');
+    var o74 = C.querySelector(':scope > .lf70'); if (o74 && o74.dataset.who !== String((typeof statWho!=='undefined'&&statWho)||me())) { o74.remove(); o74 = null; } if (!o74) C.insertAdjacentHTML('beforeend', '<div class="lf70" data-who="' + ((typeof statWho!=='undefined'&&statWho)||me()) + '">' + html() + '</div>');
     var h = document.querySelector('#v-stats .cp59h'); if (h && !h.querySelector('[data-arr70t]')) h.insertAdjacentHTML('beforeend', '<button class="ui-btn arr70t" data-arr70t="1">' + (AR.on ? '✓ DONE' : '⇅ ARRANGE') + '</button>');
     order(C); deco(C); }
   var _rs = renderStats; renderStats = function () { var r = _rs.apply(this, arguments); try { apply(); } catch (e) {} return r; };
@@ -6874,6 +6889,45 @@ function sndList69(p) { var L = ((profiles[p] || {}).snd || []); return { none: 
 
   /* 11) Trivia from the Explore arc opens straight onto Today's Daily */
   if (typeof exItems58 === 'function') { var _ex = exItems58; exItems58 = function () { return _ex.apply(this, arguments).map(function (it) { if (it && it.t === 'TRIVIA') it.go = function () { trvDaily(); }; return it; }); }; }
+})();
+
+/* ===== R74: QC fixes (RC) ===== */
+(function () {
+  /* toasts: merge bursts into one toast, keep the latest UNDO */
+  var _t = toast, T = { at: 0, L: [], u: null };
+  toast = function (m, undo) { var now = Date.now(), el = $('toast'), vis = el && el.style.display !== 'none' && now - T.at < 1800;
+    if (!vis) { T.L = []; T.u = null; } T.at = now; if (T.L[T.L.length - 1] !== m) T.L.push(String(m)); if (undo) T.u = undo; if (T.L.length > 3) T.L = T.L.slice(-3);
+    return _t.call(this, T.L.join(' · '), T.u); };
+  /* UNLOCKED banners: combine a burst into one summary banner */
+  var _b = banner, B = { q: [], h: 0 };
+  banner = function (t, sub, raw) { if (/UNLOCKED/i.test(String(t))) { B.q.push(String(sub || t).replace(/<[^>]*>/g, '')); clearTimeout(B.h);
+      B.h = setTimeout(function () { var q = B.q.filter(function (x, i, a) { return a.indexOf(x) === i; }); B.q = []; if (!q.length) return;
+        _b.call(window, q.length > 1 ? '🏆 ' + q.length + ' BADGES UNLOCKED' : String(t), q.join(' · ')); }, 450); return; }
+    return _b.apply(this, arguments); };
+  /* "Interested" adds say ADDED TO INTERESTED, not NEW ENTRY LOGGED */
+  function isInt(t) { var o = (window.INT && INT[me()]) || {}; return Object.keys(o).some(function (k) { return o[k] && o[k].v === 'y' && (String(o[k].t || '').trim() === String(t).trim() || k === 'r:' + t); }); }
+  var _fa = finishAdd; finishAdd = function (tmp, t, r) { var ob = banner, ot = toast, Q = []; banner = function () { Q.push(['b', arguments]); }; toast = function () { Q.push(['t', arguments]); };
+    try { return _fa.apply(this, arguments); } finally { banner = ob; toast = ot;
+      setTimeout(function () { var i = isInt(t); Q.forEach(function (x) { var a = [].slice.call(x[1]);
+        if (i && x[0] === 'b' && a[0] === 'NEW ENTRY LOGGED') a[0] = 'ADDED TO INTERESTED'; if (i && x[0] === 't' && /^Logged /.test(a[0])) a[0] = 'Added to Interested · ' + t;
+        (x[0] === 'b' ? banner : toast).apply(window, a); }); }, 350); } };
+  /* HOW KEEN? and other arcs: tapping empty space closes */
+  window.addEventListener('pointerdown', function (e) { var a = $('arch'); if (!a || !a.classList.contains('archh')) return; var t = e.target;
+    if (t.closest && t.closest('button,a,input,[data-ai],.ai,.archi,.arci,li')) return; if (t === a || t.id === 'archbd' || !a.contains(t)) { if (t.closest && t.closest('#nav')) return; e.preventDefault(); archClose(); } }, true);
+  /* profile song: keep 0.35 volume; never (re)start it off the profile */
+  function onProf() { try { return view === 'stats' && (!window.CP59 || CP59.page === 'profile'); } catch (e) { return false; } }
+  setInterval(function () { if (window.OXA && window.OXS && OXS.mode === 'ps' && !OXA.paused && Math.abs(OXA.volume - .35) > .01) OXA.volume = .35; }, 150);
+  function hookA() { if (!window.OXA || OXA._p74) return; OXA._p74 = 1; var pl = OXA.play;
+    OXA.play = function () { if (window.OXS && OXS.mode === 'ps') { OXA.volume = .35; if (!onProf()) return Promise.resolve(); } return pl.apply(this, arguments); }; }
+  setInterval(hookA, 300);
+  /* trivia board marker follows the current player */
+  function mark() { [].forEach.call(document.querySelectorAll('.trvlb th.s,.trvlb th.l'), function (th) { var w = th.classList.contains('s') ? 'sam' : 'lewy', tx = th.textContent.replace(/^[>▶›\s]+/, '');
+      var want = (me() === w ? '▶' : '') + tx; if (th.textContent !== want) th.textContent = want; }); }
+  new MutationObserver(function () { if (document.querySelector('.trvlb')) mark(); }).observe(document.documentElement, { childList: true, subtree: true });
+  /* Top 5 search: tapping the whole result row adds it */
+  document.addEventListener('click', function (e) { var r = e.target.closest && e.target.closest('#ed61 li, #ed61 .res, #ed61 .row, #ed61 [data-r]'); if (!r || e.target.closest('button')) return; var b = r.querySelector('button:not([disabled])'); if (b) b.click(); }, true);
+  /* trailers fetched on demand join the YouTube › Trailers list */
+  if (window.run) { var _r = run; run = function (fn, args, ok, fail) { if (fn === 'getTrailer' && args && args[0]) { var o = ok; ok = function (id) { try { var k = String(args[0]).trim(); if (id && typeof id === 'string') { meta[k] = meta[k] || {}; if (!meta[k].yt) meta[k].yt = id; } } catch (e) {} return o && o.apply(this, arguments); }; } return _r.call(this, fn, args, ok, fail); }; }
 })();
 
 </script></body></html>
