@@ -135,7 +135,7 @@ function mock(fn, args, who) { if (global.MOCKX) { const x = global.MOCKX(fn, ar
       case 'lfmUsers': return { sam: LFMU.sam, lewy: LFMU.lewy };
       case 'lfmSetUser': LFMU[args[0]] = String(args[1] || '').trim(); return { user: LFMU[args[0]] };
       case 'tmdbSeasons': return { seasons: [{ n: 1, eps: 9, year: 2022 }, { n: 2, eps: 10, year: 2025 }] };
-      case 'tmdbSeasonEps': { var EN = ['Good News About Hell', 'Half Loop', 'In Perpetuity', 'The You You Are', 'The Grim Barbarity of Optics and Design', 'Hide and Seek', 'Defiant Jazz', 'What\'s for Dinner?', 'The We We Are', 'Who Is Alive?']; var nE = Number(args[1]) === 2 ? 10 : 9; return { n: Number(args[1]), eps: EN.slice(0, nE).map(function (t, i) { return { n: i + 1, name: t, ov: 'Demo episode ' + (i + 1) + ': a short one-line description from TMDB season data.' }; }) }; }
+      case 'tmdbSeasonEps': { var EN = ['Pilot', 'Chapter Two', 'Chapter Three', 'Chapter Four', 'Chapter Five', 'Chapter Six', 'Chapter Seven', 'Chapter Eight', 'Chapter Nine', 'Finale']; var nE = Number(args[1]) === 2 ? 10 : 9; return { n: Number(args[1]), eps: EN.slice(0, nE).map(function (t, i) { return { n: i + 1, name: t, ov: 'Demo episode ' + (i + 1) + ': a longer description from TMDB season data so the card shows two or three lines and can be tapped to expand. Somebody makes a choice that changes everything for the rest of the season.', rt: 42 + (i % 5) * 3, air: '2022-0' + (2 + (i % 7)) + '-1' + (i % 9) }; }) }; }
       case 'qqAll': return JSON.parse(JSON.stringify(QQ76));
       case 'qqSet': { var qt = String(args[0] || '').trim(); QQ76[qt] = QQ76[qt] || { sam: '', lewy: '' }; QQ76[qt][args[1]] = String(args[2] || '').slice(0, 200); return QQ76[qt]; }
       case 'lfmGet': return lfmDemo(args[0], args[1]);
@@ -1670,7 +1670,7 @@ body:has(#ytdrw.open) .yback{display:none!important}
 .skr{display:flex;gap:10px;align-items:center;width:100%;text-align:left;padding:10px;margin-bottom:5px;background:#151528;border:2px solid #000;color:#fff}
 .skr i{font:9px var(--pix);font-style:normal;color:var(--gold);width:34px}.skr span{flex:1;display:flex;flex-direction:column;gap:3px}.skr b{font:8px var(--pix)}.skr small{font-size:11px;color:var(--dim,#aaa)}.skr.nl{opacity:.7}
 .sh78{display:block;margin:6px 0;font:7px var(--pix);padding:8px 10px}
-</style><!--RC79T--></head><body>
+</style><!--RC80T--></head><body>
 <div id="splash" aria-label="Logged"></div>
 <header><div class="hin">
   <h1><span id="logo"></span><span class="lg">LOGGED</span><span class="sp"></span><span id="sync">…</span><button class="icon px" id="mute" aria-label="Sound">🔊</button><button class="icon px" id="refresh" aria-label="Refresh">⟳</button></h1>
@@ -6553,9 +6553,7 @@ function chip(p) { var s = psSong(p); if (!s || !s.n) return ''; return '<div cl
 var _rs = renderStats; renderStats = function () { var r = _rs.apply(this, arguments); try { var V = $('v-stats'), pg = window.CP59 ? CP59.page : 'profile';
     if (V && pg === 'profile') { var hd = V.querySelector('.lkh2,.lkh'); V.querySelectorAll('.ps64').forEach(function (x) { x.remove(); }); var c = chip(who()); if (hd && c) hd.insertAdjacentHTML('beforeend', c); }
     if (view === 'stats' && pg === 'profile') { var s = psSong(who()); psSync(); /* r75: route machine only */ if (0) { /* r73: re-render only (re)starts the song when the viewed profile changed — never after the user paused/closed it */ } } } catch (e) {} return r; };
-window.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-ps64m]'); if (!b) return; e.preventDefault(); e.stopImmediatePropagation(); var m = !psMuted(); localStorage.setItem('lg_psmute', m ? '1' : '0');
-  psSync();
-  b.textContent = m ? '🔇' : '🔊'; b.setAttribute('aria-label', (m ? 'Unmute' : 'Mute') + ' profile song'); }, true);
+window.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-ps64m]'); if (!b) return; e.preventDefault(); e.stopImmediatePropagation(); /* r80: toggled once on pointerup (r80 psMute80) */ }, true);
 /* leaving Camp, or any other song starting, stops it */
 var _show = show; show = function (v) { if (v !== 'stats') psStop(); return _show.apply(this, arguments); };
 var _ox = oxStart; oxStart = function () { if (OXS.mode === 'ps') { OXA.loop = false; OXA.volume = 1; PS.on = false; } return _ox.apply(this, arguments); };
@@ -6659,9 +6657,7 @@ window.addEventListener('load', function (e) { var i = e.target; if (!i || i.tag
   new MutationObserver(function (M) { for (var i = 0; i < M.length; i++) { var t = M[i].target; if (t.nodeType === 1 && t.closest && t.closest('#nav,#oxmini,#mini,.oxm,#kb')) continue; if (t.nodeType === 1 && (t.id || /page|sheet|modal|arch/.test(t.className))) { sync(); return; } } }).observe(document.body, { attributes: true, attributeFilter: ['class', 'hidden'], subtree: true, childList: false });
   document.addEventListener('visibilitychange', sync);
   /* profile-song mute: instant, on touch-down, remembered per person */
-  var mg = 0; window.addEventListener('pointerdown', function (e) { var b = e.target.closest && e.target.closest('[data-ps64m]'); if (!b) return; e.preventDefault(); e.stopImmediatePropagation(); mg = Date.now();
-    var m = localStorage.getItem('lg_psmute') !== '1'; localStorage.setItem('lg_psmute', m ? '1' : '0'); try { psSync64(); } catch (er) {}
-    b.textContent = m ? '🔇' : '🔊'; b.setAttribute('aria-label', (m ? 'Unmute' : 'Mute') + ' profile song'); }, true);
+  var mg = 0; window.addEventListener('pointerdown', function (e) { var b = e.target.closest && e.target.closest('[data-ps64m]'); if (!b) return; e.preventDefault(); e.stopImmediatePropagation(); mg = Date.now(); window.MP80 = { x: e.clientX, y: e.clientY, t: mg }; }, true);
   window.addEventListener('click', function (e) { if (e.target.closest && e.target.closest('[data-ps64m]') && Date.now() - mg < 800) { e.preventDefault(); e.stopImmediatePropagation(); } }, true);
 })();
 /* rows never repeat the same title: CONTINUE wins over LOGGING; RECOMMENDED wins over TRENDING (YouTube) */
@@ -6987,8 +6983,8 @@ function sndList69(p) { var L = ((profiles[p] || {}).snd || []); return { none: 
   function hideAll() { var b = $('banner'); if (b) b.style.display = 'none'; var t = $('toast'); if (t) t.style.display = 'none'; var s = $('svtk'); if (s) s.classList.remove('on'); }
   function render() { var E = M.ev, bn = E.filter(function (e) { return e.k === 'b'; }), ts = E.filter(function (e) { return e.k === 't'; }), sv = E.filter(function (e) { return e.k === 's'; }), undo = null;
     ts.forEach(function (e) { if (e.u) undo = e.u; }); hideAll(); M.shown++;
-    if (undo || (ts.length && !bn.length)) { var parts = uniq(bn.map(function (e) { return strip(e.t) + (e.s ? ' · ' + strip(e.s) : ''); }).concat(ts.map(function (e) { return String(e.m); }))).slice(-3); M.log.push('t:' + parts.join(' · ')); return tC.call(window, parts.join(' · '), undo); }
-    if (bn.length) { var last = bn[bn.length - 1], subs = uniq(bn.map(function (e) { return strip(e.s); }).concat(ts.map(function (e) { return String(e.m); }))); M.log.push('b:' + last.t); return bC.call(window, strip(last.t), subs.join(' · ')); }
+    if (undo || (ts.length && !bn.length)) { var parts = uniq(bn.map(function (e) { return strip(e.t) + (e.s ? ' · ' + strip(e.s) : ''); }).concat(ts.map(function (e) { return String(e.m); }))).slice(-3); M.log.push('t:' + parts.join(' · ')); parts = window.tidy80 ? tidy80(parts) : parts; return tC.call(window, parts.join(' · '), undo); }
+    if (bn.length) { var last = bn[bn.length - 1], subs = uniq(bn.map(function (e) { return strip(e.s); }).concat(ts.map(function (e) { return String(e.m); }))); M.log.push('b:' + last.t); if (window.tidy80) { var LT = strip(last.t).toLowerCase(); subs = tidy80(subs).filter(function (x) { return LT.indexOf(String(x).toLowerCase()) < 0; }); } return bC.call(window, strip(last.t), subs.join(' · ')); }
     if (sv.length && sC) { M.log.push('s'); return sC.call(window, sv[sv.length - 1].m); } }
   function push(e) { var now = Date.now(); if (now - M.at > 600) { M.ev = []; M.at = now; } M.ev.push(e); render(); }
   toast = function (m, u) { push({ k: 't', m: m, u: u }); };
@@ -7011,7 +7007,7 @@ function sndList69(p) { var L = ((profiles[p] || {}).snd || []); return { none: 
   window.addEventListener('click', function (e) { var r = e.target.closest && e.target.closest('#ed61 .e61r .e61i'); if (!r || e.target.closest('button')) return; e.stopImmediatePropagation(); e.preventDefault(); if (Date.now() - (window.__rt75 || 0) < 900) return; var b = r.querySelector('button[data-e61^="add:"]:not([disabled])'); b && b.click(); }, true);
   /* demo switch lives in Settings (demo builds only) */
   function demoRow() { var S = $('set58'); if (!S || !$('demo65t') || S.querySelector('.demo75')) return; var w = (window.me && me()) || '';
-    var h = '<div class="demo75"><b>DEMO MODE</b><small>PLAYING AS</small><button class="ui-btn' + (w === 'sam' ? ' on' : '') + '" data-iam61="sam">1P SAM</button><button class="ui-btn' + (w === 'lewy' ? ' on' : '') + '" data-iam61="lewy">2P LEWY</button><i>RC75</i></div>';
+    var h = '<div class="demo75"><b>DEMO MODE</b><small>SAMPLE DATA · NOTHING IS SAVED · SWITCH PLAYER WITH "THIS PHONE IS" BELOW</small></div>';
     var hd = S.querySelector('h2,h3,.ui-h'); if (hd && hd.parentElement !== S) hd.parentElement.insertAdjacentHTML('afterend', h); else S.insertAdjacentHTML('afterbegin', h); }
   new MutationObserver(function () { demoRow(); }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
 })();
@@ -7063,7 +7059,7 @@ function sndList69(p) { var L = ((profiles[p] || {}).snd || []); return { none: 
   function hardClose() { [window.OXA, window.THA, window.TRA].concat([].slice.call(document.querySelectorAll('audio'))).forEach(function (a) { try { a && a.pause && a.pause(); } catch (e) {} });
     try { if (window.OXS) { OXS.mode = ''; OXS.cur = null; } } catch (e) {} var x = $('thm'); if (x) x.remove(); try { window.oxPaint && oxPaint(); } catch (e) {} }
   window.miniClose77 = hardClose;
-  var t0 = Date.now(), lg = setInterval(function () { var x = $('thm'); if (x && !anyPlaying()) x.remove(); if (Date.now() - t0 > 10000) clearInterval(lg); }, 250);
+  var t0 = Date.now(), lg = setInterval(function () { var x = $('thm'); if (x && !anyPlaying() && !window.__ug80) x.remove(); if (Date.now() - t0 > 10000) clearInterval(lg); }, 250);
   ['lg_thm', 'lg_np', 'lg_ox', 'lg_oxs', 'lg_mini'].forEach(function (k) { try { localStorage.removeItem(k); } catch (e) {} });
   window.addEventListener('pointerup', function (e) { var b = e.target.closest && e.target.closest('#thm [data-spc="stop"], #thm .spx, #thm [aria-label="Close"]'); if (!b) return; setTimeout(function () { if ($('thm')) hardClose(); }, 60); }, true);
   window.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('#thm [data-spc="stop"], #thm .spx, #thm [aria-label="Close"]'); if (!b) return; setTimeout(function () { if ($('thm')) hardClose(); }, 60); }, true);
@@ -7083,7 +7079,7 @@ function sndList69(p) { var L = ((profiles[p] || {}).snd || []); return { none: 
   function epsOf(id, sn, cb) { var k = 'e' + id + '_' + sn; if (EPK.cache[k]) return cb(EPK.cache[k]); run('tmdbSeasonEps', [id, sn], function (o) { var L = (o && o.eps) || []; EPK.cache[k] = L; cb(L); }, function () { cb(null); }); }
   function sheet(r, p) { var x = $('epk77'); if (!x) { document.body.insertAdjacentHTML('beforeend', '<div id="epk77" role="dialog" aria-modal="true" aria-label="Pick episode"><div class="ek"></div></div>'); x = $('epk77'); }
     var id = M(r).tmdb, cur = epOf(r, p); x.classList.add('open'); x.dataset.row = r.row; x.dataset.p = p;
-    var head = '<div class="ekh"><b class="' + (p === 'sam' ? 's' : 'l') + '">' + (p === 'sam' ? '1P SAM' : '2P LEWY') + ' · PICK EPISODE</b><button class="ui-btn" data-ekx="1" aria-label="Close">✕</button></div>';
+    var sm80 = /\(S(\d+)\)\s*$/.exec(r.title); var head = '<div class="ekh"><b class="' + (p === 'sam' ? 's' : 'l') + '">' + (p === 'sam' ? '1P SAM' : '2P LEWY') + ' · PICK EPISODE' + (sm80 ? '<small class="only80">SEASON ' + sm80[1] + ' · OTHER SEASONS: 📺 ALL SEASONS</small>' : '') + '</b><button class="ui-btn" data-ekx="1" aria-label="Close">✕</button></div>';
     x.firstChild.innerHTML = head + uiState('load', 'LOADING SEASONS…');
     seasonsOf(r, function (S) { if (!S || !S.length) { x.firstChild.innerHTML = head + uiState('err', 'NO SEASON DATA', 'Use −/+1 instead'); return; }
       var off = 0, offs = S.map(function (s) { var o = off; off += s.eps || 0; return o; }); var si = 0; for (var i = 0; i < S.length; i++) if (cur > offs[i]) si = i; if (EPK.s[r.row] != null) si = Math.min(EPK.s[r.row], S.length - 1);
@@ -7091,7 +7087,7 @@ function sndList69(p) { var L = ((profiles[p] || {}).snd || []); return { none: 
         epsOf(id, s.n, function (E) { var L = x.querySelector('.ekl'); if (!L) return; if (!E || !E.length) E = Array.apply(null, Array(s.eps || 0)).map(function (_, i) { return { n: i + 1, name: 'Episode ' + (i + 1), ov: '' }; });
           L.innerHTML = E.map(function (ep) { var abs = (s.only ? 0 : offs[si]) + ep.n; return '<button class="ekr' + (abs === cur ? ' on' : abs < cur ? ' seen' : '') + '" data-eka="' + abs + '"><i>' + (s.only ? '' : 'S' + s.n) + 'E' + ep.n + '</i><span><b>' + esc(ep.name) + '</b>' + (ep.ov ? '<small>' + esc(ep.ov) + '</small>' : '') + '</span></button>'; }).join('') || uiState('err', 'NO EPISODES'); var on = L.querySelector('.on'); on && on.scrollIntoView({ block: 'center' }); }); };
       x.onclick = function (e) { var b = e.target.closest('[data-eks]'); if (b) { si = Number(b.dataset.eks); EPK.s[r.row] = si; draw(); } }; draw(); }); }
-  function setEp(r, p, n) { var tot = epTot(r); n = Math.max(0, n); if (tot) n = Math.min(n, tot); r.ep = r.ep || {}; if (n) r.ep[p] = Object.assign(r.ep[p] || {}, { e: n }); else delete r.ep[p]; var ex = $('epx'); if (ex) ex.outerHTML = epHtml(r); SFX.coin && SFX.coin(); run('setEpisode', [r.title, p, n], function (o) { r.ep = o || r.ep; }); }
+  function setEp(r, p, n) { var tot = epTot(r); n = Math.max(0, n); if (tot) n = Math.min(n, tot); var k = String(r.title).trim() + '|' + p, q = EPQ[k] = EPQ[k] || {}; q.want = n; q.seq = Date.now() * 10 + ((q.c = ((q.c || 0) + 1) % 10)); var ex = $('epx'); if (ex) ex.outerHTML = epHtml(r); SFX.coin && SFX.coin(); epSend(r, p); }
   document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-ekx],[data-eka],#epk77'); if (!b) return; var x = $('epk77');
     if (b.dataset.ekx || b === x) { e.stopPropagation(); x.classList.remove('open'); return; }
     if (b.dataset.eka) { e.stopPropagation(); var r = byId(Number(x.dataset.row)); if (r) setEp(r, x.dataset.p, Number(b.dataset.eka)); x.classList.remove('open'); toast('✓ ' + (x.dataset.p === 'sam' ? 'SAM' : 'LEWY') + ' → EP ' + b.dataset.eka); } }, true);
@@ -7133,7 +7129,7 @@ function sndList69(p) { var L = ((profiles[p] || {}).snd || []); return { none: 
     x.dataset.k = k; x.dataset.bt = bt; x.dataset.id = m.tmdb || ''; }
   document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-ssx],[data-ssn],#ssn78'); if (!b) return; var x = $('ssn78'); e.stopPropagation();
     if (b.dataset.ssx || b === x) { x.classList.remove('open'); return; }
-    x.classList.remove('open'); if (b.dataset.ssr) { var r = byId(Number(b.dataset.ssr)); if (r) openDetail(r); return; }
+    x.classList.remove('open'); var sn80 = Number(b.dataset.ssn), r80r = b.dataset.ssr ? byId(Number(b.dataset.ssr)) : null; if (window.epList80) return epList80(x.dataset.id, sn80, r80r, x.dataset.bt); if (r80r) { openDetail(r80r); return; }
     try { openAddWith({ id: Number(x.dataset.id) || 0, tv: true, title: x.dataset.bt, year: '' }); } catch (er) { toast('Log it from ＋ LOG'); } }, true);
   /* details of a season: a quick hop back to the whole show */
   var _od = openDetail; openDetail = function (r) { var o = _od.apply(this, arguments); try { if (isSeason(r) && multi(key(r))) { var t = $('detailBody').querySelector('.dt'); if (t && !$('detailBody').querySelector('.sh78')) t.insertAdjacentHTML('beforebegin', '<button class="ui-btn sh78" data-sh78="' + esc(key(r)) + '">📺 ALL SEASONS · ' + esc(baseTitle(r.title)) + '</button>'); } } catch (e) {} return o; };
@@ -7175,6 +7171,106 @@ function sndList69(p) { var L = ((profiles[p] || {}).snd || []); return { none: 
   window.lf79inject = function (h) { try { var x = sec(who()); var m = /<\/(section|div)>\s*$/.exec(h); return m ? h.slice(0, m.index) + x + h.slice(m.index) : h + x; } catch (e) { return h; } };
   function paint() { [].forEach.call(document.querySelectorAll('.lf79'), function (x) { var p = x.dataset.lf79who; if (p !== who()) return; var b = x.querySelector('.lf79b'); if (b) b.innerHTML = body(p); }); }
   window.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-lf79per]'); if (!b) return; e.stopImmediatePropagation(); e.preventDefault(); localStorage.setItem('lg_lfper79', b.dataset.lf79per); SFX.blip && SFX.blip(); paint(); }, true);
+})();
+</script>
+<style id="r80css">/* R80 */
+#ipdet{z-index:400!important}
+#epk77{z-index:3600}
+.ps64 [data-ps64m]{width:44px!important;min-width:44px!important;flex:none;padding:0!important}
+.ps64 span{min-width:0;overflow:hidden}.ps64 small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#ytdrw aside{box-sizing:border-box;max-height:calc(100% - var(--nav58,70px) - env(safe-area-inset-bottom))!important;overflow-y:auto!important;padding-bottom:16px!important}
+body.kbo #add #aTm,body.kbo #add #aSug{max-height:calc(100vh - var(--kbh,291px) - 190px);overflow-y:auto}
+.had80{display:inline-block;margin-left:6px;font:6px var(--pix);color:#000;background:var(--p2,#3ddc84);padding:1px 4px}
+.ekh small.only80{display:block;font:6px var(--pix);color:var(--dim,#aaa);margin-top:3px}
+
+#epl80{position:fixed;inset:0;z-index:3450;background:rgba(0,0,0,.6);display:none;align-items:flex-end}#epl80.open{display:flex}
+#epl80 .el{width:100%;max-height:86vh;overflow:auto;background:#1d1d33;border-top:3px solid #000;padding:10px 10px calc(18px + env(safe-area-inset-bottom))}
+.elh{display:flex;gap:8px;align-items:center;margin-bottom:8px}.elh b{font:8px var(--pix);color:var(--gold)}.elh button{min-height:44px;font:7px var(--pix);flex:none}
+.elo{display:block;width:100%;min-height:44px;margin-bottom:10px;font:7px var(--pix)}
+.ell{display:flex;flex-direction:column;gap:8px}
+.elr{background:#151528;border:3px solid #000;box-shadow:3px 3px 0 #000;padding:10px 10px 8px}
+.elt{display:flex;gap:8px;align-items:baseline}.elt i{font:8px var(--pix);font-style:normal;color:var(--gold);flex:none;min-width:34px}.elt b{font-size:14px;line-height:1.3}
+.elm{font:6px var(--pix);color:var(--dim,#aaa);margin:6px 0 0 42px}
+.elo2{font-size:12px;line-height:1.4;color:#d8d4f0;margin:6px 0 0 42px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer}.elo2.open{-webkit-line-clamp:unset;display:block}
+.elw{display:flex;gap:6px;margin:8px 0 0 42px;flex-wrap:wrap}.elw span{font:6px var(--pix);padding:4px 6px;border:2px solid #000;background:#0f0f1e;color:var(--dim,#aaa)}
+.elw span.s.on{color:#000;background:var(--p1,#4da3ff)}.elw span.l.on{color:#000;background:var(--p2,#3ddc84)}.elw span.s{color:var(--p1,#4da3ff)}.elw span.l{color:var(--p2,#3ddc84)}
+
+#arch.arc80 .archi{min-height:48px!important;min-width:44px;padding:4px 3px!important}
+#arch.arc80 .archi.main58{transform:translate(-50%,-50%) scale(1.06)!important}
+#arch.arc80 .archt{display:none}
+/* arcade-button ribbon: chunky raised edge + bevel + drop shadow; press = translate down + edge shrinks */
+#arch.arc80 .archi{border:3px solid #000!important;background:#2a2648;box-shadow:inset -3px -3px 0 rgba(0,0,0,.38),inset 3px 3px 0 rgba(255,255,255,.2),0 6px 0 #0a0814,4px 9px 0 rgba(0,0,0,.45)!important;translate:0 0;transition:translate 60ms steps(2),box-shadow 60ms steps(2);-webkit-tap-highlight-color:transparent;will-change:translate}
+#arch.arc80 .archi.main58{background:#ffcc33!important;box-shadow:inset -3px -3px 0 #c99a00,inset 3px 3px 0 #fff2a8,0 6px 0 #7a5c00,4px 9px 0 rgba(0,0,0,.45)!important}
+#arch.arc80 .archi.pr80{translate:0 5px;box-shadow:inset -2px -2px 0 rgba(0,0,0,.45),inset 2px 2px 0 rgba(255,255,255,.12),0 1px 0 #0a0814,2px 3px 0 rgba(0,0,0,.45)!important}
+#arch.arc80 .archi.main58.pr80{box-shadow:inset -2px -2px 0 #c99a00,inset 2px 2px 0 #fff2a8,0 1px 0 #7a5c00,2px 3px 0 rgba(0,0,0,.45)!important}
+#arch.arc80 .archi.main58::after{content:'';position:absolute;inset:-6px;pointer-events:none;box-shadow:0 0 12px 3px rgba(255,204,51,.55);opacity:.35;animation:glow80 1.6s steps(3) infinite alternate}
+@keyframes glow80{to{opacity:1}}
+@media (prefers-reduced-motion:reduce){#arch.arc80 .archi.main58::after{animation:none;opacity:.6}}
+</style><script id="r80">/* ===== R80: QC fixes for 25a42cd ===== */
+(function () {
+  /* toasts: flatten parts, drop repeats and pieces already contained in a longer piece */
+  window.tidy80 = function (parts) { var L = []; parts.forEach(function (p) { String(p || '').split(' · ').forEach(function (x) { x = x.trim(); if (x) L.push(x); }); });
+    var low = L.map(function (x) { return x.toLowerCase(); });
+    var keep = L.filter(function (x, i) { var a = low[i]; if (low.indexOf(a) !== i) return false; return !low.some(function (b, j) { return j !== i && b.length > a.length && b.indexOf(a) >= 0; }); });
+    return keep.slice(-3); };
+  /* user gesture seen on this device (launch guard must not remove a player the user started) */
+  window.addEventListener('pointerdown', function () { window.__ug80 = 1; }, true);
+  /* banners never linger: hard cap 3.5s */
+  var bt = 0; setInterval(function () { var b = $('banner'); if (!b) return; var on = b.style.display === 'block'; if (on && !bt) bt = Date.now(); if (!on) bt = 0; if (on && Date.now() - bt > 3500) { b.style.display = 'none'; bt = 0; } }, 250);
+  /* + LOG: picking a TV result sets TYPE = TV Show */
+  var _lt = logTm; logTm = function (x) { try { if (x && x.tv) { var seg = $('aType'); if (seg) { var tvb = [].filter.call(seg.querySelectorAll('button'), function (b) { return /TV/.test(b.textContent); })[0]; if (tvb && !tvb.classList.contains('on')) tvb.click(); } } } catch (e) {} return _lt.apply(this, arguments); };
+  /* search results flip to IN LOG after logging */
+  function flip() { ['qTm', 'aTm'].forEach(function (id) { var el = $(id); if (!el) return; [].forEach.call(el.querySelectorAll('[data-tm]'), function (b) { var x = TM.res[b.dataset.tm]; if (!x || !inLog(x) || b.querySelector('.il')) return; var ty = b.querySelector('.ty'); (ty ? ty.insertAdjacentHTML.bind(ty, 'beforebegin') : b.insertAdjacentHTML.bind(b, 'beforeend'))('<span class="il">IN LOG</span>'); }); }); }
+  window.flip80 = flip; var _fa = finishAdd; finishAdd = function () { var r = _fa.apply(this, arguments); setTimeout(flip, 50); setTimeout(flip, 500); return r; };
+  /* LOG IT sheet: typing never scrolls the title field/results off screen */
+  var _ko = kbOpen; kbOpen = function (el) { var r = _ko.apply(this, arguments); if (el && el.closest && el.closest('#add')) { var fix = function () { var A = $('add'); [A, A && A.querySelector('.sheet,.box,.inner')].forEach(function (c) { if (c) c.scrollTop = 0; }); try { window.scrollTo(0, 0); } catch (e) {} }; setTimeout(fix, 0); setTimeout(fix, 120); } return r; };
+  document.addEventListener('input', function (e) { if (e.target && e.target.id === 'aTitle') { var A = $('add'); if (A) { A.scrollTop = 0; var s = A.querySelector('.sheet,.box,.inner'); if (s) s.scrollTop = 0; } } }, true);
+  /* profile-song MUTE: exactly one toggle per tap (pointerup), 44px target, no double fire */
+  var lastT = 0; function psMute80() { var n = Date.now(); if (n - lastT < 350) return; lastT = n; var m = localStorage.getItem('lg_psmute') !== '1'; localStorage.setItem('lg_psmute', m ? '1' : '0'); try { psSync64(); } catch (er) {}
+    [].forEach.call(document.querySelectorAll('[data-ps64m]'), function (b) { b.textContent = m ? '🔇' : '🔊'; b.setAttribute('aria-label', (m ? 'Unmute' : 'Mute') + ' profile song'); }); SFX.blip && SFX.blip(); }
+  window.psMute80 = psMute80;
+  window.addEventListener('pointerup', function (e) { var D = window.MP80; window.MP80 = null; if (!D || Date.now() - D.t > 1500 || Math.abs(e.clientX - D.x) > 14 || Math.abs(e.clientY - D.y) > 14) return; e.preventDefault(); psMute80(); }, true);
+  window.addEventListener('pointercancel', function () { window.MP80 = null; }, true);
+  window.addEventListener('keydown', function (e) { if ((e.key === 'Enter' || e.key === ' ') && e.target.closest && e.target.closest('[data-ps64m]')) { e.preventDefault(); psMute80(); } }, true);
+  /* SEASONS → pick a season → full episode list (read-only: never writes anyone's progress) */
+  var EC = {};
+  function epl(id, sn, r, bt) { var x = $('epl80'); if (!x) { document.body.insertAdjacentHTML('beforeend', '<div id="epl80" role="dialog" aria-modal="true" aria-label="Episodes"><div class="el"></div></div>'); x = $('epl80'); }
+    x.classList.add('open'); x.dataset.row = r ? r.row : ''; x.dataset.bt = bt; x.dataset.id = id || ''; x.dataset.sn = sn;
+    var head = '<div class="elh"><button class="ui-btn" data-elx="1">◀ SEASONS</button><b>📺 ' + esc(bt) + ' · SEASON ' + sn + '</b></div>' +
+      (r ? '<button class="ui-btn y elo" data-elo="1">OPEN SEASON ' + sn + ' LOG · RATE · PROGRESS ›</button>' : '<button class="ui-btn y elo" data-ela="1">＋ LOG SEASON ' + sn + '</button>');
+    var draw = function (E) { var off = 0; /* whole-show rows count episodes across seasons; season rows count within the season */
+      var row = function (e) { var n = e.n + off; return '<div class="elr"><div class="elt"><i>E' + e.n + '</i><b>' + esc(e.name || ('Episode ' + e.n)) + '</b></div>' +
+        ((e.rt || e.air) ? '<div class="elm">' + [e.rt ? e.rt + ' MIN' : '', e.air ? new Date(e.air + 'T12:00:00').toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' }).toUpperCase() : ''].filter(Boolean).join(' · ') + '</div>' : '') +
+        (e.ov ? '<p class="elo2" data-elx2="1">' + esc(e.ov) + '</p>' : '') +
+        (r ? '<div class="elw">' + ['sam', 'lewy'].map(function (p) { var seen = epOf(r, p) >= n, rt = typeof epR === 'function' ? epR(r, p, n) : 0; return '<span class="' + (p === 'sam' ? 's' : 'l') + (seen ? ' on' : '') + '">' + (p === 'sam' ? '1P' : '2P') + ' ' + (seen ? '✓ SEEN' : '· NOT YET') + (rt ? ' · ★' + rt : '') + '</span>'; }).join('') + '</div>' : '') + '</div>'; };
+      x.firstChild.innerHTML = head + '<div class="ell">' + (E && E.length ? E.map(row).join('') : uiState(E ? 'empty' : 'err', E ? 'NO EPISODES LISTED' : 'COULDN\u2019T LOAD EPISODES')) + '</div>'; };
+    x.firstChild.innerHTML = head + uiState('load', 'LOADING EPISODES…');
+    var k = id + '_' + sn; if (EC[k]) return draw(EC[k]); if (!id) return draw(null);
+    run('tmdbSeasonEps', [Number(id), Number(sn)], function (o) { EC[k] = (o && o.eps) || []; if (x.dataset.sn == sn) draw(EC[k]); }, function () { draw(null); }); }
+  window.epList80 = epl;
+  document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('#epl80 [data-elx],#epl80 [data-elo],#epl80 [data-ela],#epl80 [data-elx2],#epl80'); if (!b) return; var x = $('epl80'); e.stopPropagation();
+    if (b.dataset.elx2) { b.classList.toggle('open'); return; }
+    if (b.dataset.elx || b === x) { x.classList.remove('open'); var s = $('ssn78'); if (s) s.classList.add('open'); return; }
+    x.classList.remove('open'); if (b.dataset.elo) { var r = byId(Number(x.dataset.row)); if (r) openDetail(r); return; }
+    if (b.dataset.ela) { try { openAddWith({ id: Number(x.dataset.id) || 0, tv: true, title: x.dataset.bt, year: '' }); } catch (er) {} } }, true);
+  /* LOG tab arc: smaller (~65% height), LOG IT centre, INTERESTED under it, LOGGING left / LOGGED right */
+  function lay80() { var a = $('arch'); if (!a || !a.classList.contains('open')) return; var B = [].slice.call(a.querySelectorAll('.archi')); if (B.length !== 4) return;
+    var lab = function (b) { return (b.textContent || '').replace(/\s+/g, ' ').trim().toUpperCase(); }, f = function (re) { return B.filter(function (b) { return re.test(lab(b)); })[0]; };
+    var M = f(/LOG IT/), I = f(/INTERESTED/), G = f(/LOGGING/), D = B.filter(function (b) { return /LOGGED/.test(lab(b)) && b !== M; })[0]; if (!M || !I || !G || !D) return;
+    var W = Math.min(380, window.innerWidth - 12), H = Math.round((W / 2 + 26) * 0.66), cx = W / 2, iw = 82;
+    a.classList.add('arc80'); a.style.width = W + 'px'; a.style.height = H + 'px'; a.style.borderRadius = (W / 2) + 'px ' + (W / 2) + 'px 0 0 / ' + H + 'px ' + H + 'px 0 0';
+    var put = function (b, x, y) { b.style.setProperty('left', x.toFixed(1) + 'px', 'important'); b.style.setProperty('top', y.toFixed(1) + 'px', 'important'); b.style.setProperty('width', iw + 'px', 'important'); b.style.setProperty('transform', 'translate(-50%,-50%)', 'important'); };
+    put(M, cx, 33); put(I, cx, H - 30); put(G, cx - 98, H / 2 + 8); put(D, cx + 98, H / 2 + 8); }
+  window.lay80 = lay80;
+  var _ao80 = archOpen; archOpen = function () { var r = _ao80.apply(this, arguments); requestAnimationFrame(function () { lay80(); requestAnimationFrame(lay80); }); setTimeout(lay80, 0); setTimeout(lay80, 70); return r; };
+  window.addEventListener('resize', function () { setTimeout(lay80, 80); });
+  /* arcade press on ribbon buttons (visual only; the button's own tap handler + SFX still fire once) */
+  var PR = null;
+  window.addEventListener('pointerdown', function (e) { var b = e.target.closest && e.target.closest('#arch.arc80 .archi'); if (!b) return; PR = { b: b, t: Date.now() }; b.classList.add('pr80'); }, true);
+  var up = function () { var P = PR; PR = null; if (!P) return; setTimeout(function () { P.b.classList.remove('pr80'); }, Math.max(0, 90 - (Date.now() - P.t))); };
+  window.addEventListener('pointerup', up, true); window.addEventListener('pointercancel', up, true);
+  /* one tap = one blip (arc taps fired two in the same frame) */
+  if (window.SFX && SFX.blip) { var bl = SFX.blip, bt80 = 0; SFX.blip = function () { var n = Date.now(); if (n - bt80 < 60) return; bt80 = n; return bl.apply(this, arguments); }; }
 })();
 </script>
 </body></html>
