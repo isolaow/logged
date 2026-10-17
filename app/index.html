@@ -2370,7 +2370,7 @@ function close(id) { $(id).classList.remove('open'); if (id === 'add' || id === 
 document.addEventListener('click', function (e) { var c = e.target.closest('[data-close]'); if (c) close(c.dataset.close); else if (e.target.classList && e.target.classList.contains('modal')) close(e.target.id); });
 
 /* ---------- 8-bit on-screen keyboard (replaces the phone keyboard for search) ---------- */
-var KB = { target: null, touch: (window.matchMedia && matchMedia('(pointer: coarse)').matches) || ('ontouchstart' in window) };
+var KB = { target: null, touch: false, off: true }; /* R84 kill switch: native iPhone keyboard everywhere, 8-bit keyboard bypassed */
 (function () {
   var rowsK = ['1234567890', 'QWERTYUIOP', 'ASDFGHJKL'], h = rowsK.map(function (r, i) { return '<div class="kr">' + r.split('').map(function (c) { return '<button data-k="' + c + '"' + (i === 0 ? ' class="n"' : '') + ' data-nosfx="1">' + c + '</button>'; }).join('') + '</div>'; }).join('');
   h += '<div class="kr">' + 'ZXCVBNM'.split('').map(function (c) { return '<button data-k="' + c + '" data-nosfx="1">' + c + '</button>'; }).join('') + '<button data-k="BS" class="bk" aria-label="Backspace" data-nosfx="1">⌫</button></div>';
@@ -7294,6 +7294,19 @@ body.kbo #fb83 .sheet{margin:0!important;padding-top:calc(10px + env(safe-area-i
 body.kbo #fb83 .hd83{margin-bottom:6px}body.kbo #fb83 .tb83{margin-bottom:6px}body.kbo #fbt83{min-height:112px}
 body:has(#fbt83.kon) .car72{display:none!important}
 #fbt83.kon{background-image:linear-gradient(var(--gold),var(--gold));background-size:0 0}
+
+/* R84: native keyboard — the 8-bit keyboard and everything it padded/lifted are off */
+#kb,.kb72,.car72,.clr72{display:none!important}
+body.kbo,.kbo .sheet,body.addopen.kbo #add .sheet{padding-bottom:revert-layer}
+body.kbo{padding-bottom:0!important}
+input.kbt.kon,#fbt83.kon{outline:none}
+input,textarea{-webkit-user-select:text!important;user-select:text!important;caret-color:var(--gold,#ffcc33)}
+input[type=search]::-webkit-search-cancel-button{-webkit-appearance:none}
+body.nkb84 .modal.open,body.nkb84 #fb83.open{top:var(--vvt,0)!important;bottom:auto!important;height:var(--vvh,100vh)!important}
+body.nkb84 .modal.open .sheet{max-height:calc(var(--vvh,100vh) - 6px)!important;overflow-y:auto!important;padding-bottom:12px!important}
+body.nkb84 #sp82.open{top:var(--vvt,0)!important;bottom:auto!important;height:var(--vvh,100vh)!important}
+body.nkb84 #set58.open{top:var(--vvt,0)!important;bottom:auto!important;height:var(--vvh,100vh)!important;max-height:var(--vvh,100vh)!important}
+body.nkb84 #nav,body.nkb84 #thm{visibility:hidden}
 </style><script id="r80">/* ===== R80: QC fixes for 25a42cd ===== */
 (function () {
   /* toasts: flatten parts, drop repeats and pieces already contained in a longer piece */
@@ -7530,7 +7543,7 @@ body:has(#fbt83.kon) .car72{display:none!important}
   function paint() { var X = $('fb83'); if (!X || !X.classList.contains('open')) return; var t = T();
     X.querySelector('.sheet').innerHTML = '<div class="hd83"><button class="ui-btn" data-fbx="1">◀ BACK</button><h2>' + t.ic + ' ' + t.t + '</h2></div>' +
       '<div class="tb83">' + [['new', '✎ NEW'], ['past', t.past]].map(function (b) { return '<button data-fbtab="' + b[0] + '" class="' + (F.tab === b[0] ? 'on' : '') + '">' + b[1] + '</button>'; }).join('') + '</div>' +
-      (F.tab === 'new' ? '<textarea id="fbt83" class="f kbt" rows="6" maxlength="2000" readonly inputmode="none" data-kb68="1" placeholder="' + t.ph + '">' + esc(F.txt[F.type]) + '</textarea><div class="ct83"><span id="fbc83">' + F.txt[F.type].length + '/2000</span></div>' +
+      (F.tab === 'new' ? '<textarea id="fbt83" class="f" rows="6" maxlength="2000" enterkeyhint="enter" placeholder="' + t.ph + '">' + esc(F.txt[F.type]) + '</textarea><div class="ct83"><span id="fbc83">' + F.txt[F.type].length + '/2000</span></div>' +
         '<button class="ui-btn y sb83" id="fbs83" data-fbsub="1"' + (F.txt[F.type].trim() && !F.busy ? '' : ' disabled') + '>' + (F.busy ? 'SENDING…' : 'SUBMIT') + '</button><p class="nt83">' + (me() === 'sam' ? '1P SAM' : '2P LEWY') + ' · BOTH PLAYERS CAN SEE THIS</p>'
         : '<div class="ls83">' + list() + '</div>'); }
   function open(type) { F.type = type; F.tab = 'new'; var X = $('fb83'); if (!X) { document.body.insertAdjacentHTML('beforeend', '<div class="modal" id="fb83"><div class="sheet"></div></div>'); X = $('fb83'); } X.classList.add('open'); paint(); load(); }
@@ -7546,7 +7559,7 @@ body:has(#fbt83.kon) .car72{display:none!important}
     var X = $('fb83'); if (!X || !X.classList.contains('open') || !X.contains(t)) return;
     if (t === X) { e.stopImmediatePropagation(); return close(); }
     var c = t.closest('button'), d = c ? c.dataset : {}; if (!c && t.id !== 'fbt83') return;
-    if (t.id === 'fbt83') { e.stopImmediatePropagation(); if (KB.target !== t) try { kbOpen(t); } catch (er) {} setTimeout(showSub, 60); return; }
+    if (t.id === 'fbt83') { e.stopImmediatePropagation(); return; }
     e.stopImmediatePropagation(); e.preventDefault();
     if (d.fbx) { SFX.blip && SFX.blip(); return close(); }
     if (d.fbtab) { SFX.blip && SFX.blip(); try { kbClose(); } catch (er) {} F.tab = d.fbtab; return paint(); }
@@ -7562,10 +7575,42 @@ body:has(#fbt83.kon) .car72{display:none!important}
     el.__p72 = el.value.length; el.scrollTop = el.scrollHeight; sync(); showSub(); };
   window.addEventListener('pointerup', function () { var el = KB.target; if (el && el.id === 'fbt83') setTimeout(function () { el.__p72 = el.value.length; }, 0); }, true);
   document.addEventListener('input', function (e) { if (e.target && e.target.id === 'fbt83') sync(); }, true);
-  window.addEventListener('pointerdown', function (e) { var t = e.target; if (KB.target && KB.target.id === 'fbt83') setTimeout(function () { var el = KB.target; if (el && el.id === 'fbt83') el.__p72 = el.value.length; }, 0); if (t && t.id === 'fbt83') { e.preventDefault(); if (KB.target !== t) { try { kbOpen(t); } catch (er) {} } setTimeout(showSub, 60); } }, true);
-  document.addEventListener('focusin', function (e) { if (e.target && e.target.id === 'fbt83') { e.target.blur(); if (KB.target !== e.target) try { kbOpen(e.target); } catch (er) {} } }, true);
+  window.addEventListener('pointerdown', function (e) { var t = e.target; if (KB.target && KB.target.id === 'fbt83') setTimeout(function () { var el = KB.target; if (el && el.id === 'fbt83') el.__p72 = el.value.length; }, 0); if (t && t.id === 'fbt83' && !KB.off) { e.preventDefault(); if (KB.target !== t) { try { kbOpen(t); } catch (er) {} } setTimeout(showSub, 60); } }, true);
+  
   function showSub() { var b = $('fbs83'), S = b && b.closest('.sheet'); if (!S) return; var kb = $('kb'), top = kb && kb.classList.contains('on') ? kb.getBoundingClientRect().top : innerHeight, r = b.getBoundingClientRect(); if (r.bottom > top - 8) S.scrollTop += r.bottom - top + 16; }
   window.fb83showSub = showSub;
+})();
+
+
+/* ===== R84: native iPhone keyboard everywhere — ONE kill switch for the 8-bit keyboard (r58/r68/r72/r83 KB code stays but is bypassed) ===== */
+(function () {
+  KB.off = true; KB.touch = false; KB.target = null;
+  var TXT = function (el) { if (!el) return false; if (el.tagName === 'TEXTAREA') return true; if (el.tagName !== 'INPUT') return false; var t = (el.getAttribute('type') || 'text').toLowerCase(); return ['text', 'search', 'url', 'email', 'tel', 'number', ''].indexOf(t) >= 0; };
+  /* undo the old readonly / inputmode="none" tricks and give each field the right iOS keyboard */
+  function fix(el) { if (!TXT(el) || el.__n84 === el.outerHTML.length) return;
+    if (el.readOnly && (el.classList.contains('kbt') || el.dataset.kb68 || el.getAttribute('inputmode') === 'none')) el.readOnly = false;
+    el.removeAttribute('readonly');
+    var t = (el.getAttribute('type') || '').toLowerCase(), search = t === 'search' || /search|filter|🔍/i.test(el.placeholder || '') || ['q', 'aTitle', 'fq', 'sq82', 'ytQ', 'pkq', 'lggq', 'ed61q'].indexOf(el.id) >= 0;
+    if (el.getAttribute('inputmode') === 'none') el.removeAttribute('inputmode');
+    if (!el.getAttribute('inputmode')) el.setAttribute('inputmode', el.tagName === 'TEXTAREA' ? 'text' : t === 'url' ? 'url' : search ? 'search' : 'text');
+    if (!el.getAttribute('enterkeyhint')) el.setAttribute('enterkeyhint', el.tagName === 'TEXTAREA' ? 'enter' : search ? 'search' : el.name === 't' ? 'send' : 'done');
+    el.classList.remove('kon'); el.__n84 = el.outerHTML.length; }
+  var all = function (root) { [].forEach.call((root || document).querySelectorAll('input,textarea'), fix); };
+  all(); new MutationObserver(function (M) { M.forEach(function (m) { if (m.type === 'attributes') fix(m.target); else [].forEach.call(m.addedNodes, function (n) { if (n.nodeType !== 1) return; if (TXT(n)) fix(n); else if (n.querySelectorAll) all(n); }); }); })
+    .observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['readonly', 'inputmode'] });
+  /* kbOpen = native focus (no-op outside a user gesture on iOS); kbClose = hide the native keyboard */
+  kbOpen = function (el) { if (!el) return; fix(el); try { if (document.activeElement !== el) el.focus({ preventScroll: true }); } catch (e) {} };
+  kbClose = function () { var a = document.activeElement; if (a && TXT(a)) try { a.blur(); } catch (e) {} };
+  kbKey = function () {};
+  document.body.classList.remove('kbo'); var K = $('kb'); if (K) K.classList.remove('on');
+  /* return on a single-line field hides the keyboard (like the old OK key); chat keeps it up */
+  document.addEventListener('keydown', function (e) { var el = e.target; if (e.key !== 'Enter' || !TXT(el) || el.tagName === 'TEXTAREA' || el.name === 't') return; setTimeout(function () { try { el.dispatchEvent(new Event('change', { bubbles: true })); el.blur(); } catch (er) {} }, 0); });
+  /* keep the focused field's sheet above the native keyboard (iOS shrinks visualViewport, fixed sheets don't move) */
+  var V = window.visualViewport, R = document.documentElement;
+  window.vv84 = function (h, top) { var ih = window.innerHeight, kb = Math.max(0, ih - h - top), on = kb > 120 && TXT(document.activeElement);
+    R.style.setProperty('--vvh', Math.round(h) + 'px'); R.style.setProperty('--vvt', Math.round(top) + 'px'); document.body.classList.toggle('nkb84', on);
+    if (on) { var a = document.activeElement; setTimeout(function () { try { a.scrollIntoView({ block: 'nearest' }); var b = a.closest('.sheet,#sp82 .bd82,#set58'); var s = b && b.querySelector('#fbs83,.acts,[data-fbsub]'); if (s) s.scrollIntoView({ block: 'nearest' }); a.scrollIntoView({ block: 'nearest' }); } catch (e) {} }, 60); } };
+  if (V) { var up = function () { vv84(V.height, V.offsetTop); }; V.addEventListener('resize', up); V.addEventListener('scroll', up); document.addEventListener('focusin', function () { setTimeout(up, 300); }); document.addEventListener('focusout', function () { setTimeout(up, 300); }); }
 })();
 
 </script>
