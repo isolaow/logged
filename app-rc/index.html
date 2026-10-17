@@ -7322,6 +7322,62 @@ body.nkb84 #nav,body.nkb84 #thm{visibility:hidden}
 .ci85 .pv85{color:#7dffb0}.ci85 .pv85.no{color:#a9a4cc}
 .ci85.ld span{color:#6c6890}
 #ipc .ipi .ci85 span{background:rgba(10,9,20,.85)}
+
+/* R86: MENU navigation */
+#nav,#nav.nav58,#arch,#fab{display:none!important}
+body{--nav58:0px!important}
+#sync{display:none!important}
+.ab86{font:8px/1 var(--pix);color:#fff;background:linear-gradient(#3a3566,#24204a);border:3px solid #000;border-radius:4px;box-shadow:inset 0 2px 0 rgba(255,255,255,.25),inset 0 -3px 0 rgba(0,0,0,.35),0 4px 0 #000;cursor:pointer;min-height:36px;padding:0 10px;position:relative;-webkit-tap-highlight-color:transparent}
+.ab86:active{transform:translateY(3px);box-shadow:inset 0 2px 0 rgba(255,255,255,.2),0 1px 0 #000}
+.ab86.y{background:linear-gradient(#ffd84a,#e8a800);color:#1a1000;text-shadow:none}
+#mb86{margin:0 2px 0 auto;flex:0 0 auto;padding:0 7px;font-size:7px;min-height:34px;letter-spacing:0}
+header h1{gap:4px!important}header h1 .lg{letter-spacing:1px!important}
+#mb86.p2{border-color:#000}
+#sd86{position:absolute;top:-4px;right:-4px;width:9px;height:9px;border:2px solid #000;background:#3ddc84}
+#sd86.busy{background:#ffcc33;animation:sd86b 1s steps(2) infinite}#sd86.bad{background:#ff4d6d}
+@keyframes sd86b{50%{opacity:.35}}
+@media (prefers-reduced-motion:reduce){#sd86.busy{animation:none}}
+#si86{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;margin-left:3px;font-size:16px;flex:0 0 auto}
+#si86 svg,#bi86 svg,.mic86 svg,.shh86 svg{width:18px;height:18px;image-rendering:pixelated}
+.av86{display:inline-flex;width:20px;height:20px;overflow:hidden;border:2px solid var(--p1,#4da3ff)}.av86 > *{width:100%!important;height:100%!important;max-width:none}
+.av86 img,.av86 canvas,.av86 svg{width:100%!important;height:100%!important}
+#bar86{display:flex;align-items:center;gap:8px;padding:6px 10px 8px}
+#sb86{display:inline-flex;align-items:center;gap:7px;min-height:40px;font-size:9px}
+#sb86 .hb86{font-size:15px;line-height:1}#bi86{display:inline-flex;width:18px;height:18px;align-items:center;justify-content:center;font-size:14px}
+#lg86{margin-left:auto;min-height:40px;font-size:9px;display:none}
+body.s86-cinema #lg86{display:inline-flex;align-items:center}
+/* menu pop-out */
+#mn86{position:fixed;inset:0;z-index:1475}
+#mn86 .bg86{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+#mn86 .pop86{position:absolute;display:flex;flex-direction:column;gap:9px;width:min(250px,80vw);padding:10px;background:#141228;border:3px solid #000;box-shadow:4px 4px 0 #000;transform-origin:top right;transform:scale(.9);opacity:0;transition:transform .12s steps(3),opacity .12s}
+#mn86.open .pop86{transform:none;opacity:1}
+.mi86{display:grid;grid-template-columns:30px 1fr;grid-template-rows:auto auto;align-items:center;text-align:left;min-height:48px;padding:6px 10px}
+.mi86 .mic86{grid-row:1/3;font-size:18px;display:flex;align-items:center;justify-content:center}
+.mi86 b{font-size:9px}.mi86 small{font:6px/1.3 var(--pix);color:#a9a4cc}
+.mi86.on{outline:3px solid var(--gold,#ffcc33);outline-offset:-1px}
+/* section sheet */
+#sh86{position:fixed;inset:0;z-index:1470}
+#sh86 .bg86{position:absolute;inset:0;background:rgba(0,0,0,.55)}
+#sh86 aside{position:absolute;left:0;top:var(--top86,100px);bottom:0;width:min(84vw,320px);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;background:#0f0d1f;border-right:3px solid #000;box-shadow:4px 0 0 rgba(0,0,0,.4);padding:10px 10px calc(16px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:8px;transform:translateX(-102%);transition:transform .16s steps(5)}
+#sh86.open aside{transform:none}
+.shh86{display:flex;align-items:center;gap:8px;font:10px var(--pix);color:var(--gold,#ffcc33);padding:2px 0 6px}.shh86 button{margin-left:auto;min-height:36px}
+.si86{display:grid;grid-template-columns:30px 1fr;align-items:center;text-align:left;min-height:46px;padding:5px 10px;flex:0 0 auto}
+.si86 i{font-style:normal;font-size:15px;grid-row:1/3;text-align:center}.si86 b{font-size:8px}.si86 small{font:6px/1.3 var(--pix);color:#a9a4cc}
+.si86.p1{border-color:#000;background:linear-gradient(#4da3ff,#2a6fd0)}.si86.p2{background:linear-gradient(#3ddc84,#1f9a55)}.si86.p1 small,.si86.p2 small{color:#e8f4ff}
+.si86.y small{color:#4a3500}
+/* sections sit under the header; reclaimed bottom */
+body:not(.nkb84) #ytpage.open,body:not(.nkb84) #sp82.open,body:not(.nkb84) #set58.open{top:var(--top86,0px)!important;bottom:0!important;height:auto!important}
+#ytpage{padding-bottom:calc(16px + env(safe-area-inset-bottom))!important}
+#sp82.open{bottom:0!important;padding-bottom:env(safe-area-inset-bottom)}
+#set58{padding-top:10px!important}
+body>main{bottom:0!important;padding-bottom:calc(10px + env(safe-area-inset-bottom))}
+#thm{bottom:calc(12px + env(safe-area-inset-bottom))!important}
+#toast{bottom:calc(74px + env(safe-area-inset-bottom))!important}
+/* Cinema = movies & TV only */
+body.s86-cinema #ytTile,body.s86-cinema #v-stats .ywho,body.s86-cinema #v-stats .lf70,body.s86-cinema #v-stats [class^="lf79"],body.s86-cinema #types [data-t="YouTube"],body.s86-cinema #ltype [data-lt="YouTube"]{display:none!important}
+body.nkb84 #bar86{display:none}
+.av86.p2{border-color:var(--p2,#3ddc84)}
+header h1 > .icon.px,header h1 > #avPin{flex:0 0 30px!important;width:30px!important;height:30px!important;min-width:0}
 </style><script id="r80">/* ===== R80: QC fixes for 25a42cd ===== */
 (function () {
   /* toasts: flatten parts, drop repeats and pieces already contained in a longer piece */
@@ -7665,6 +7721,108 @@ body.nkb84 #nav,body.nkb84 #thm{visibility:hidden}
   var raf = 0; new MutationObserver(function () { if (raf) return; raf = requestAnimationFrame(function () { raf = 0; paint(); }); }).observe(document.body, { childList: true, subtree: true });
 })();
 
+
+/* ===== R86: MENU navigation — bottom nav removed; header MENU (sync dot) → CINEMA / YOUTUBE / SPOTIFY / PROFILE / SETTINGS; each section has its own ☰ ===== */
+(function () {
+  var SECS = [['cinema', '🎬', 'CINEMA', 'Movies & TV'], ['youtube', '▶', 'YOUTUBE', 'Videos'], ['spotify', '🎧', 'SPOTIFY', 'Music'], ['profile', '👤', 'PROFILE', 'Both players · badges · wardrobe'], ['settings', '⚙', 'SETTINGS', 'Settings · feedback']];
+  var SPI = '<svg viewBox="0 0 10 10" shape-rendering="crispEdges" aria-hidden="true"><path fill="#1ed760" d="M3 0h4v1h2v2h1v4h-1v2h-2v1H3V9H1V7H0V3h1V1h2z"/><path fill="#000" d="M2 3h6v1H2zM3 5h4v1H3zM3 7h3v1H3z"/></svg>';
+  var S86 = window.S86 = { s: 'cinema', prev: 'cinema' };
+  var LS = 'lg_sec86';
+  var isOpen = function (id) { var x = $(id); return !!(x && x.classList.contains('open')); };
+  var icon = function (s) { if (s === 'youtube') return typeof ytI === 'function' ? ytI(16) : '▶'; if (s === 'spotify') return SPI; if (s === 'profile') { var a = $('avPin'), c = a && a.querySelector('canvas'), u = ''; try { u = c ? c.toDataURL() : ((a && a.querySelector('img')) || {}).src || ''; } catch (e) {} return u ? '<span class="av86' + (me() === 'lewy' ? ' p2' : '') + '"><img src="' + u + '" alt=""></span>' : '👤'; } return s === 'cinema' ? '🎬' : '⚙'; };
+  var name = function (s) { return (SECS.filter(function (x) { return x[0] === s; })[0] || SECS[0])[2]; };
+  /* ---- header + bar ---- */
+  function build() { var h1 = document.querySelector('header h1'), sy = $('sync'); if (!h1 || $('mb86')) return;
+    var lg = h1.querySelector('.lg'); lg && lg.insertAdjacentHTML('afterend', '<span id="si86" aria-hidden="true"></span>');
+    (sy || h1.lastChild).insertAdjacentHTML('beforebegin', '<button id="mb86" class="ab86" aria-haspopup="menu" aria-expanded="false" aria-label="Menu">MENU<i id="sd86" class="ok" title="Sync"></i></button>');
+    h1.insertAdjacentHTML('afterend', '<div id="bar86"><button id="sb86" class="ab86" aria-label="Section menu"><span class="hb86">☰</span><span id="bi86"></span><b id="bn86">CINEMA</b></button><button id="lg86" class="ab86 y" aria-label="Log it">＋ LOG IT</button></div>');
+    if (sy) new MutationObserver(dot).observe(sy, { childList: true, characterData: true, subtree: true }); dot(); }
+  function dot() { var t = (($('sync') || {}).textContent || '').trim().toUpperCase(), d = $('sd86'); if (!d) return; d.className = /SYNCED/.test(t) ? 'ok' : /SAVING|…|SYNCING|LOAD/.test(t) || !t ? 'busy' : 'bad'; d.title = 'Sync: ' + (t || '…'); $('mb86').setAttribute('aria-label', 'Menu · ' + (t || 'syncing').toLowerCase()); }
+  function top() { var b = $('bar86'); if (b) document.body.style.setProperty('--top86', Math.round(b.getBoundingClientRect().bottom) + 'px'); }
+  function paint() { var s = S86.s, bc = document.body.className.replace(/\bs86(-\w+)?\b/g, '').replace(/\s+/g, ' ').trim() + ' s86 s86-' + s; if (document.body.className !== bc) document.body.className = bc; var si = $('si86'); if (si) si.innerHTML = icon(s); var bi = $('bi86'); if (bi) bi.innerHTML = icon(s); var bn = $('bn86'); if (bn) bn.textContent = name(s);
+    var mb = $('mb86'); if (mb) mb.classList.toggle('p2', me() === 'lewy'); var bk = document.querySelector('#sp82 [data-sp82x]'); if (bk && /CAMP/.test(bk.textContent)) bk.textContent = '◀ PROFILE'; top(); }
+  /* ---- switching ---- */
+  function closeOthers(s) { try { archClose(); } catch (e) {} closeSheet(); closeMenu(true);
+    if (s !== 'youtube' && isOpen('ytpage')) { var x = document.querySelector('#ytpage .ythd [data-ytx],#ytpage [data-ytx]'); x && x.click(); }
+    if (s !== 'spotify' && isOpen('sp82')) { var b = document.querySelector('#sp82 [data-sp82x]'); b && b.click(); }
+    if (s !== 'settings' && isOpen('set58')) { $('set58').classList.remove('open', 'yt58'); }
+    ['ipage', 'bpage', 'gpage', 'detail'].forEach(function (id) { var p = $(id); p && p.classList.remove('open'); }); }
+  function go(s, o) { o = o || {}; if (!SECS.some(function (x) { return x[0] === s; })) s = 'cinema'; closeOthers(s); if (S86.s !== 'settings') S86.prev = S86.s; S86.s = s; try { localStorage[LS] = s; } catch (e) {}
+    if (s === 'cinema') { if (!o.keep || view === 'stats') { show('home'); var Mn = document.querySelector('body>main'); if (Mn) Mn.scrollTop = 0; } }
+    else if (s === 'youtube') { if (!isOpen('ytpage')) navTap('navYT'); }
+    else if (s === 'spotify') { if (!isOpen('sp82')) { var it = campItems58().filter(function (x) { return /SPOTIFY/.test(x.t); })[0]; it && it.go(); } }
+    else if (s === 'profile') { campPage59('profile'); }
+    else if (s === 'settings') { setOpen58(); }
+    try { r56NavHi(); } catch (e) {} paint(); if (!o.quiet) SFX.tap && SFX.tap(); }
+  window.go86 = go;
+  /* keep S86 honest when a section is closed/opened by its own buttons */
+  function sync() { var s = S86.s, n = s;
+    if (isOpen('set58')) n = 'settings'; else if (isOpen('sp82')) n = 'spotify'; else if (isOpen('ytpage')) n = 'youtube';
+    else if (s === 'settings') n = S86.prev === 'settings' ? 'cinema' : S86.prev; else if (s === 'youtube' || s === 'spotify') n = view === 'stats' ? 'profile' : 'cinema';
+    if (n !== s) { if (s !== 'settings') S86.prev = s; S86.s = n; try { localStorage[LS] = n; } catch (e) {} } paint(); }
+  var st = 0; var later = function () { clearTimeout(st); st = setTimeout(sync, 60); };
+  window.addEventListener('popstate', later); new MutationObserver(function (L) { for (var i = 0; i < L.length; i++) { var t = L[i].target; if (t !== document.body && (t.id === 'ytpage' || t.id === 'sp82' || t.id === 'set58')) return later(); } }).observe(document.body, { attributes: true, attributeFilter: ['class'], subtree: true });
+  /* ---- MENU pop-out ---- */
+  var mPushed = false;
+  function openMenu() { closeSheet(); var b = $('mb86'), r = b.getBoundingClientRect(), m = $('mn86'); if (m) m.remove();
+    document.body.insertAdjacentHTML('beforeend', '<div id="mn86" role="menu" aria-label="Sections"><div class="bg86" data-m86x="1"></div><div class="pop86" style="top:' + Math.round(r.bottom + 6) + 'px;right:' + Math.max(6, Math.round(innerWidth - r.right)) + 'px">' +
+      SECS.map(function (x) { return '<button role="menuitem" class="ab86 mi86' + (S86.s === x[0] ? ' on' : '') + '" data-m86="' + x[0] + '"><span class="mic86">' + icon(x[0]) + '</span><b>' + x[2] + '</b><small>' + x[3] + '</small></button>'; }).join('') + '</div></div>');
+    b.setAttribute('aria-expanded', 'true'); requestAnimationFrame(function () { var m = $('mn86'); m && m.classList.add('open'); });
+    try { history.pushState({ m86: 1 }, ''); mPushed = true; } catch (e) {} SFX.tap && SFX.tap(); }
+  function closeMenu(skipBack) { var m = $('mn86'); if (!m) return false; m.remove(); var b = $('mb86'); b && b.setAttribute('aria-expanded', 'false');
+    if (mPushed) { mPushed = false; if (!skipBack && history.state && history.state.m86) { if (window.HB) HB.skip = 1; history.back(); } else if (skipBack && history.state && history.state.m86) { try { history.replaceState(null, ''); } catch (e) {} } } return true; }
+  window.addEventListener('popstate', function () { if ($('mn86')) { mPushed = false; closeMenu(true); } if ($('sh86')) closeSheet(); });
+  /* ---- section ☰ sheet ---- */
+  var home = function (sel) { return function () { if (view !== 'home') show('home'); setTimeout(function () { var b = document.querySelector('#v-home ' + sel) || document.querySelector(sel); b && b.click(); }, 30); }; };
+  var camp = function (re) { return function () { var it = campItems58().filter(function (x) { return re.test(x.t); })[0]; it && it.go(); }; };
+  var setJump = function (sel) { return function () { if (!isOpen('set58')) setOpen58(); setTimeout(function () { var b = document.querySelector('#set58 ' + sel), X = $('set58'); if (b && X) X.scrollTop = Math.max(0, b.getBoundingClientRect().top - X.getBoundingClientRect().top + X.scrollTop - 50); }, 60); }; };
+  var setClick = function (a) { return function () { if (!isOpen('set58')) setOpen58(); setTimeout(function () { var b = document.querySelector('#set58 [data-seta="' + a + '"]'); b && b.click(); }, 60); }; };
+  var spClick = function (sel) { return function () { if (!isOpen('sp82')) go('spotify', { quiet: 1 }); setTimeout(function () { var b = document.querySelector('#sp82 ' + sel); b && b.click(); }, 60); }; };
+  function items(s) {
+    if (s === 'cinema') return [['✓', 'LOGGED', 'Fully watched', function () { navTap('all'); }], ['⏯', 'LOGGING', 'In progress', function () { navTap('navLog'); }], ['♥', 'INTERESTED', 'Want to watch', function () { navTap('navInt'); }], ['＋', 'LOG IT', 'New movie or show', function () { $('fab').onclick(); }, 'y'],
+      ['🧭', 'EXPLORE', 'Browse home', function () { show('home'); document.querySelector('body>main').scrollTop = 0; }], ['🔍', 'SEARCH', 'Find a title', function () { show('home'); setTimeout(function () { var q = $('q'); q && q.focus(); }, 60); }],
+      ['🎭', 'MOOD PICK', 'Answer a few questions', home('[data-xmood]')], ['✦', 'SWIPE', 'Interested / not for me', function () { IP.tab = 'new'; renderInterest(); $('ipage').classList.add('open'); $('ipage').scrollTop = 0; }], ['◎', 'SPIN THE WHEEL', 'Let fate pick', home('[data-xspin]')], ['🌙', 'TONIGHT', 'What to watch tonight', home('[data-tonight]')],
+      ['🧠', 'TRIVIA', 'Daily · live 1v1', function () { trvHub58(); }], ['📺', 'TV', 'Browse shows', home('[data-browse="tv"]')], ['🎞', 'FILMS', 'Browse movies', home('[data-browse="mv"]')], ['🏷', 'GENRES', 'By genre', home('[data-genres]')], ['🍃', 'SPESH', 'Mandatory list', home('[data-browse="spesh"]')], ['📋', 'WATCHLIST', 'Full list', home('[data-browse="watchlist"]')], ['★', 'TOP RATED', 'Best of both', home('[data-browse="top"]')],
+      ['📊', 'STATS & CRITICS', 'Movie & TV stats', function () { campPage59('stats'); }]];
+    if (s === 'spotify') return [['🏠', 'HOME', 'Your music', spClick('[data-sp82t="home"]')], ['♥', 'FAVOURITES', 'Your logged songs', spClick('[data-sp82t="fav"]')], ['🕘', 'LISTENING', 'Recent history', spClick('[data-sp82j="HIST"]')], ['🔍', 'SEARCH', 'Find & add songs', spClick('[data-sp82t="search"]')],
+      ['🎬', 'TOP SOUNDTRACKS', '', spClick('[data-sp82j="SOUND"]')], ['🎸', 'GENRE STATS', '', spClick('[data-sp82j="GENRE"]')], ['💡', 'FUN FACTS', 'Incl. Sam vs Lewy', spClick('[data-sp82j="FUN"]')], ['🧬', 'PERSONALITY', '', spClick('[data-sp82j="PERS"]')], ['📼', 'MUSIC AGE', '', spClick('[data-sp82j="AGE"]')], ['♫', 'LAST.FM STATS', 'Full stats', spClick('[data-sp82j="LFM"]')], ['⇅', 'ARRANGE', 'Reorder sections', spClick('[data-sp82a]')],
+      ['1P', 'SAM', 'Switch to Sam', spClick('[data-sp82w="sam"]'), 'p1'], ['2P', 'LEWY', 'Switch to Lewy', spClick('[data-sp82w="lewy"]'), 'p2']];
+    if (s === 'profile') return [['👤', 'PROFILE', 'Both players', camp(/PROFILE/)], ['1P', 'SAM', 'Sam\u2019s profile', function () { campPage59('profile'); setTimeout(function () { var b = document.querySelector('#v-stats [data-who="sam"]'); b && b.click(); }, 60); }, 'p1'], ['2P', 'LEWY', 'Lewy\u2019s profile', function () { campPage59('profile'); setTimeout(function () { var b = document.querySelector('#v-stats [data-who="lewy"]'); b && b.click(); }, 60); }, 'p2'],
+      ['🎖', 'BADGES', 'Trophy cabinet', camp(/BADGES/)], ['👕', 'WARDROBE', 'Outfits', camp(/WARDROBE/)], ['📊', 'ALL STATS', 'Movies, YouTube & music', camp(/STATS/)], ['🎨', 'BACKGROUND', 'Your camp background', function () { campPage59('profile'); setTimeout(function () { var b = document.querySelector('[data-bgpick]'); b && b.click(); }, 80); }]];
+    if (s === 'youtube') return null;
+    return [['⚙', 'ALL SETTINGS', '', setJump('[data-seta="close"]')], ['🎮', 'THIS PHONE IS', '1P / 2P', setJump('[data-iam61]')], ['🔗', 'CONNECTIONS', 'YouTube · Spotify · Last.fm', setJump('[data-cnc]')], ['🧹', 'HISTORY & DATA', 'Clear · export', setJump('[data-seta="ythclr"]')],
+      ['▶', 'YOUTUBE SETTINGS', '', function () { ytSetOpen58(); }], ['🐞', 'REPORT A BUG', '', setClick('fb83bug')], ['💡', 'SUGGEST A FEATURE', '', setClick('fb83idea')], ['✨', 'WHAT\u2019S NEW', '', setClick('new')]]; }
+  var CUR = null;
+  function openSheet() { closeMenu(); var s = S86.s;
+    if (s === 'youtube') { if (!isOpen('ytpage')) go('youtube', { quiet: 1 }); setTimeout(function () { ytDrawerOpen(); }, 30); return; }
+    CUR = items(s); closeSheet();
+    document.body.insertAdjacentHTML('beforeend', '<div id="sh86" role="dialog" aria-label="' + name(s) + ' menu"><div class="bg86" data-sh86x="1"></div><aside><div class="shh86"><span>' + icon(s) + '</span><b>' + name(s) + '</b><button class="ab86" data-sh86x="1" aria-label="Close">✕</button></div>' +
+      CUR.map(function (x, i) { return '<button class="ab86 si86' + (x[4] ? ' ' + x[4] : '') + '" data-sh86="' + i + '"><i>' + x[0] + '</i><b>' + x[1] + '</b>' + (x[2] ? '<small>' + x[2] + '</small>' : '') + '</button>'; }).join('') + '</aside></div>');
+    requestAnimationFrame(function () { var x = $('sh86'); x && x.classList.add('open'); }); SFX.tap && SFX.tap(); }
+  function closeSheet() { var x = $('sh86'); if (x) x.remove(); }
+  window.addEventListener('click', function (e) { var t = e.target; if (!t.closest) return;
+    var b = t.closest('#mb86'); if (b) { e.stopImmediatePropagation(); e.preventDefault(); return $('mn86') ? closeMenu() : openMenu(); }
+    var m = t.closest('[data-m86]'); if (m) { e.stopImmediatePropagation(); e.preventDefault(); var s = m.dataset.m86; closeMenu(true); return go(s); }
+    if (t.closest('[data-m86x]')) { e.stopImmediatePropagation(); e.preventDefault(); return closeMenu(); }
+    if (t.closest('#sb86')) { e.stopImmediatePropagation(); e.preventDefault(); return $('sh86') ? closeSheet() : openSheet(); }
+    if (t.closest('#lg86')) { e.stopImmediatePropagation(); e.preventDefault(); SFX.tap && SFX.tap(); return $('fab').onclick(); }
+    if (t.closest('[data-sh86x]')) { e.stopImmediatePropagation(); e.preventDefault(); return closeSheet(); }
+    var it = t.closest('[data-sh86]'); if (it) { e.stopImmediatePropagation(); e.preventDefault(); var f = CUR && CUR[+it.dataset.sh86]; closeSheet(); SFX.tap && SFX.tap();
+      if (f) { var s = S86.s; if (s === 'cinema' || s === 'profile') { if (isOpen('set58')) $('set58').classList.remove('open'); ['ipage', 'bpage', 'detail'].forEach(function (id) { var p = $(id); p && p.classList.remove('open'); }); } f[3](); setTimeout(function () { S86.s = s; paint(); }, 0); } return; } }, true);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { closeMenu(); closeSheet(); } });
+  /* ---- categories never mix: Cinema renders see Movies/TV only ---- */
+  ['render', 'renderHome', 'renderList', 'renderLogged', 'renderLogging', 'renderLgg', 'renderInt', 'renderIntView', 'renderInterest', 'renderBrowse', 'renderGenres', 'renderStats', 'renderWheelPick', 'renderTm', 'ipDeck', 'tonightPicks'].forEach(function (n) { var f = window[n]; if (typeof f !== 'function') return;
+    window[n] = function () { if (S86.s !== 'cinema' || !Array.isArray(rows)) return f.apply(this, arguments); var keep = rows; rows = keep.filter(function (r) { return !isYT(r); }); try { return f.apply(this, arguments); } finally { rows = keep; } }; });
+  if (typeof typeF !== 'undefined') { var _ty = $('types'); if (_ty) new MutationObserver(function () { if (S86.s === 'cinema') [].forEach.call(_ty.querySelectorAll('[data-t="YouTube"]'), function (x) { x.style.display = 'none'; }); }).observe(_ty, { childList: true }); }
+  /* ---- boot: remember last section per device; deep link ?sec= / #s= ---- */
+  build(); paint();
+  var want = (location.search.match(/[?&]sec=(\w+)/) || location.hash.match(/[#&]s=(\w+)/) || [])[1]; var saved = ''; try { saved = localStorage[LS] || ''; } catch (e) {}
+  setTimeout(function () { window.dispatchEvent(new Event('resize')); var s = want || saved || 'cinema'; if (s === 'cinema') { S86.s = 'cinema'; if (view !== 'home') show('home'); paint(); } else go(s, { quiet: 1 }); }, 300);
+  window.addEventListener('resize', function () { setTimeout(top, 50); });
+  var A = $('avPin'); if (A) new MutationObserver(function () { if (S86.s === 'profile') paint(); }).observe(A, { childList: true, subtree: true });
+})();
+
 </script>
 </body></html>
 <!--RC85T-->
+<!--RC86T-->
