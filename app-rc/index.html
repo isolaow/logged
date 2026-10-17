@@ -148,6 +148,8 @@ function mock(fn, args, who) { if (global.MOCKX) { const x = global.MOCKX(fn, ar
       case 'favAll': return JSON.parse(JSON.stringify(FAV82));
       case 'fbAll': return FB83();
       case 'tmdbMood': var pz = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 2 3\'><rect width=\'2\' height=\'3\' fill=\'%233a2f6b\'/></svg>'); return [{ id: 496243, tv: false, title: 'Parasite', year: '2019', poster: pz, vote: 8.5, overview: 'A poor family schemes to become employed by a wealthy household. Things spiral.' }, { id: 93405, tv: true, title: 'Squid Game', year: '2021', poster: pz, vote: 7.8, overview: 'Cash-strapped players accept an invitation to compete in deadly games.' }, { id: 70000, tv: false, title: 'Sky Heist', year: '2023', poster: pz, vote: 6.4, overview: 'A small indie caper nobody streams.' }];
+      case 'omdbAwards': var A87 = { 'Parasite': 'Won 4 Oscars. 309 wins & 270 nominations total', 'Breaking Bad': 'Won 16 Primetime Emmys. 168 wins & 267 nominations total', 'The Dark Knight': 'Won 2 Oscars. 164 wins & 165 nominations total', 'Severance': 'Won 8 Primetime Emmys. 34 wins & 133 nominations total', 'Weapons': 'Nominated for 1 BAFTA Award. 12 wins & 48 nominations total' }, t87 = String((args[0] || {}).t || ''), h87 = 0; for (var j87 = 0; j87 < t87.length; j87++) h87 = (h87 * 31 + t87.charCodeAt(j87)) | 0;
+        return A87[t87] ? { a: A87[t87] } : Math.abs(h87) % 3 === 0 ? null : { a: Math.abs(h87) % 3 === 1 ? 'Nominated for 1 Oscar. 6 wins & 31 nominations total' : '3 wins & 12 nominations' };
       case 'cardInfo': return (args[0] || []).map(function (it, i) { var t = String(it.t || ''), h = 0; for (var j = 0; j < t.length; j++) h = (h * 31 + t.charCodeAt(j)) | 0; h = Math.abs(h); var L = { Parasite: 'ko', 'Squid Game': 'ko', 'Past Lives': 'ko', Amelie: 'fr', 'Money Heist': 'es', Dark: 'de', Shogun: 'ja' }, P = [['Netflix'], ['Stan'], ['Disney Plus'], ['Binge', 'Foxtel Now'], ['Amazon Prime Video'], []][h % 6];
         var o = { id: it.id || 1000 + h % 9000, tv: !!it.tv, lang: L[t] || (h % 7 === 3 ? 'ja' : 'en'), prov: P.map(function (n) { return { n: n, l: '' }; }) };
         if (t === 'Sky Heist') o.prov = [];
@@ -7378,6 +7380,12 @@ body.s86-cinema #ytTile,body.s86-cinema #v-stats .ywho,body.s86-cinema #v-stats 
 body.nkb84 #bar86{display:none}
 .av86.p2{border-color:var(--p2,#3ddc84)}
 header h1 > .icon.px,header h1 > #avPin{flex:0 0 30px!important;width:30px!important;height:30px!important;min-width:0}
+
+/* R87: awards line */
+.aw87{display:flex;align-items:baseline;gap:6px;margin:6px 0 4px;padding:5px 8px;background:#1a1530;border:2px solid #000;box-shadow:2px 2px 0 #000;font:7px/1.5 var(--pix);color:#fff;max-width:100%}
+.aw87 b{flex:0 0 auto;color:var(--gold,#ffcc33);font-weight:normal;white-space:nowrap}
+.aw87 span{min-width:0;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.aw87.ip{margin:6px 0 2px}
 </style><script id="r80">/* ===== R80: QC fixes for 25a42cd ===== */
 (function () {
   /* toasts: flatten parts, drop repeats and pieces already contained in a longer piece */
@@ -7822,7 +7830,32 @@ header h1 > .icon.px,header h1 > #avPin{flex:0 0 30px!important;width:30px!impor
   var A = $('avPin'); if (A) new MutationObserver(function () { if (S86.s === 'profile') paint(); }).observe(A, { childList: true, subtree: true });
 })();
 
+
+/* ===== R87: 🏆 AWARDS line (OMDb) on the details page and the Explore / +Log title details ===== */
+(function () {
+  var AW = window.AW87 = { c: {}, cur: null };
+  var bt = function (t) { return String(t || '').replace(/\s*\((S\d+|Season \d+|\d{4})\)\s*$/i, '').trim(); };
+  var key = function (it) { return (it.tv ? 'tv' : 'mv') + '|' + (it.id || '') + '|' + bt(it.t).toLowerCase() + '|' + (it.y || ''); };
+  var _ipd = ipDetails; ipDetails = function (cc) { try { AW.cur = cc ? { id: (cc.f && cc.f.id) || 0, tv: cc.f ? !!cc.f.tv : cc.kind === 'SHOW', t: cc.t, y: String(cc.y || '').slice(0, 4), at: Date.now() } : null; } catch (e) {} return _ipd.apply(this, arguments); };
+  function line(host, it, where) { var k = key(it), v = AW.c[k], cur = host.parentNode.querySelector(':scope > .aw87');
+    if (cur && cur.dataset.k === k && cur.dataset.v === String(v !== undefined)) return;
+    if (cur) cur.remove(); if (v === undefined) { AW.c[k] = 'busy'; v = 'busy';
+      run('omdbAwards', [{ id: it.id || 0, tv: !!it.tv, t: bt(it.t), y: it.y || '' }], function (R) { AW.c[k] = R && R.a ? String(R.a) : ''; paint(); }, function () { AW.c[k] = ''; paint(); }); }
+    if (!v || v === 'busy') return;
+    host.insertAdjacentHTML('afterend', '<div class="aw87 ' + where + '" data-k="' + esc(k) + '" data-v="true" title="Awards (OMDb)"><b>🏆 AWARDS</b><span>' + esc(v) + '</span></div>'); }
+  function paint() {
+    var D = $('detail'); if (D && D.classList.contains('open')) { var m = D.querySelector('.meta'), h = D.querySelector('h2.dt');
+      if (m && h) { var tt = h.textContent.trim(), r = rows.filter(function (x) { return !isYT(x) && (x.title === tt || bt(x.title) === bt(tt)); })[0];
+        if (r) { var mm = M(r) || {}; line(m, { id: Number(mm.tmdb) || 0, tv: r.type === 'TV Show', t: r.title, y: String(mm.year || '').slice(0, 4) }, 'dp'); } } }
+    var I = $('ipdet'); if (AW.cur && !(I && I.classList.contains('open')) && Date.now() - AW.cur.at > 3000) AW.cur = null; if (I && I.classList.contains('open')) { var hd = I.querySelector('.ipdh'), h2 = hd && hd.querySelector('h2');
+      if (hd && h2) { var c = AW.cur, t = h2.textContent.trim(); if (!c) { var sm = (hd.textContent.match(/\b(19|20)\d{2}\b/) || [''])[0]; c = { id: 0, tv: /SHOW|TV/.test(hd.textContent), t: t, y: sm }; }
+        line(hd, c, 'ip'); } } }
+  window.aw87paint = paint;
+  var raf = 0; new MutationObserver(function () { if (raf) return; raf = requestAnimationFrame(function () { raf = 0; paint(); }); }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
+})();
+
 </script>
 </body></html>
 <!--RC85T-->
 <!--RC86T-->
+<!--RC87T-->
