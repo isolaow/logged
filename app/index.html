@@ -6491,7 +6491,7 @@ function quotesHtml(p) { var L = ((profiles[p] || {}).qt || []).map(P61).filter(
   return '<div class="cbs qt64" data-sec="QUOTES"><h4>❝ TOP QUOTES' + (mine ? ' <button class="ui-btn ced59" data-fav="qt" aria-label="Edit">✎</button>' : '') + '</h4>' + (L.length ? '<ol class="qtl64">' + L.map(function (o) { var ps = o.p || (o.t && posters[o.t]) || '';
     return '<li><span class="qtp64">' + (ps ? '<img src="' + esc(ps) + '" alt="" loading="lazy">' : '<i>❝</i>') + '</span><span><q>' + esc(o.q) + '</q><small>' + esc([o.who, o.t ? baseTitle(o.t) : ''].filter(Boolean).join(' · ')) + '</small></span></li>'; }).join('') + '</ol>' : uiState('empty', mine ? 'TAP ✎ TO PIN YOUR FAVOURITE LINES' : 'NO QUOTES YET')) + '</div>'; }
 var ARR = false;
-var _cab = cabinetHtml; cabinetHtml = function () { var h = _cab.apply(this, arguments), p = who(), pr = profiles[p] || {};
+var _cab = cabinetHtml; cabinetHtml = function () { var h = _cab.apply(this, arguments), p = who(), pr = profiles[p] || {}; try { if (window.lf79inject) h = lf79inject(h); } catch (e) {}
   var T = document.createElement('div'); T.innerHTML = h; var C = T.querySelector('#cab') || T.firstElementChild; if (!C) return h;
   /* quotes after TOP 5 YOUTUBE */
   var yt = [].slice.call(C.querySelectorAll('.cbs > h4')).filter(function (x) { return x.textContent.indexOf('TOP 5 YOUTUBE') >= 0; })[0];
@@ -6503,7 +6503,7 @@ var _cab = cabinetHtml; cabinetHtml = function () { var h = _cab.apply(this, arg
   var order = mergeLay67(LAY66[p] || pr.lay || [], secs.map(function (s) { return s.dataset.sec; })), idx = function (k) { var i = order.indexOf(k); return i < 0 ? 1e3 + secs.findIndex(function (s) { return s.dataset.sec === k; }) : i; };
   secs.sort(function (a, b) { return idx(a.dataset.sec) - idx(b.dataset.sec); }).forEach(function (s) { C.appendChild(s); });
   if (own(p)) { var lab = C.querySelector('.cbdv'); var bar = '<div class="arr64"><button class="ui-btn' + (ARR ? ' on' : '') + '" data-arr64="toggle">' + (ARR ? '✓ DONE ARRANGING' : '⇅ ARRANGE') + '</button></div>'; if (lab) lab.insertAdjacentHTML('afterend', bar); else C.insertAdjacentHTML('afterbegin', bar); }
-  if (ARR && own(p)) { C.classList.add('arranging'); secs.forEach(function (s, i) { s.insertAdjacentHTML('afterbegin', '<div class="arc64"><button class="ui-btn" data-arr64="up:' + s.dataset.sec + '"' + (i ? '' : ' disabled') + ' aria-label="Move section up">▲</button><b>' + esc(({OURTOP5:'OUR TOP 5',MOVIES:'TOP 5 MOVIES',SHOWS:'TOP 5 SHOWS',SOUNDTRACKS:'TOP 5 SOUNDTRACKS',YOUTUBE:'TOP 5 YOUTUBE',QUOTES:'TOP QUOTES',STATS:'STATS'})[s.dataset.sec] || s.dataset.sec.replace(/-/g, ' ')) + '</b><button class="ui-btn" data-arr64="dn:' + s.dataset.sec + '"' + (i < secs.length - 1 ? '' : ' disabled') + ' aria-label="Move section down">▼</button></div>'); }); }
+  if (ARR && own(p)) { C.classList.add('arranging'); secs.forEach(function (s, i) { s.insertAdjacentHTML('afterbegin', '<div class="arc64"><button class="ui-btn" data-arr64="up:' + s.dataset.sec + '"' + (i ? '' : ' disabled') + ' aria-label="Move section up">▲</button><b>' + esc(({OURTOP5:'OUR TOP 5',MOVIES:'TOP 5 MOVIES',SHOWS:'TOP 5 SHOWS',SOUNDTRACKS:'TOP 5 SOUNDTRACKS',YOUTUBE:'TOP 5 YOUTUBE',QUOTES:'TOP QUOTES',STATS:'STATS',LASTFM:'LAST.FM'})[s.dataset.sec] || s.dataset.sec.replace(/-/g, ' ')) + '</b><button class="ui-btn" data-arr64="dn:' + s.dataset.sec + '"' + (i < secs.length - 1 ? '' : ' disabled') + ' aria-label="Move section down">▼</button></div>'); }); }
   return T.innerHTML; };
 var lt = 0, LAY66 = window.LAY66 = {}, LSEQ66 = {};
 /* r67: a saved order may be partial (e.g. saved before Our Top 5 had loaded). Keep its relative order and slot every missing section next to its default neighbour. */
@@ -6727,7 +6727,7 @@ setInterval(function () { try { var k = document.getElementById('kb'); if (!k ||
 
 /* ===== R70: Last.fm on Camp › Stats (both players) · every Stats section rearrangeable per user ===== */
 (function () {
-  var LF = { per: localStorage.getItem('lg_lfper70') || '7day', d: {}, busy: {}, users: null };
+  var LF = { per: localStorage.getItem('lg_lfper70') || '7day', d: {}, busy: {}, users: null }; window.LF70 = LF;
   var PER = [['7day', '7 DAYS'], ['1month', '1 MONTH'], ['12month', '12 MONTHS'], ['overall', 'ALL']];
   var onStats = function () { return view === 'stats' && window.CP59 && CP59.page === 'stats'; };
   var fmt = function (n) { return Number(n || 0).toLocaleString('en-AU'); };
@@ -7140,4 +7140,41 @@ function sndList69(p) { var L = ((profiles[p] || {}).snd || []); return { none: 
   document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-sh78]'); if (!b) return; e.stopPropagation(); seasonList(b.dataset.sh78); }, true);
 })();
 
-</script></body></html>
+</script><style id="r79css">.lf79 .lf79p{display:flex;gap:4px;margin:4px 0 8px}.lf79 .lf79p button{font:7px var(--pix);padding:6px 8px;min-height:32px}.lf79 .lf79p button.on{background:var(--lf79c);color:#000}
+.lf79{--lf79c:var(--p1,#4da3ff)}.lf79.lf79lewy{--lf79c:var(--p2,#3ddc84)}
+.lf79 h4{color:var(--lf79c)!important}
+.lf79n{display:grid;grid-template-columns:1fr 1.3fr 1.3fr;gap:4px}
+.lf79n div{background:#151528;border:2px solid #000;padding:6px 5px;min-width:0}
+.lf79n b{display:block;font:8px var(--pix);color:var(--lf79c);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.4}
+.lf79n small{display:block;font:6px var(--pix);color:var(--dim,#aaa);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lf79np{display:flex;gap:8px;align-items:center;margin-top:6px;padding:6px;background:#151528;border:2px solid #000}
+.lf79np.on{border-color:var(--lf79c)}.lf79np span:last-child{display:flex;flex-direction:column;min-width:0}
+.lf79np small{font:6px var(--pix);color:var(--lf79c)}.lf79np b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lf79np em{font-size:11px;font-style:normal;color:var(--dim,#aaa)}
+.lf79u{font:6px var(--pix);color:var(--dim,#aaa);margin-top:6px}.lf79e{font-size:12px;color:var(--dim,#aaa);padding:6px 0}
+.lf79sk{height:46px;background:repeating-linear-gradient(90deg,#151528 0 12px,#1d1d33 12px 24px);animation:lf79s 1s steps(2) infinite}@keyframes lf79s{50%{opacity:.6}}
+</style><script id="r79">/* ===== R79: compact LAST.FM section on each Camp PROFILE (viewed person only, arrangeable) ===== */
+(function () {
+  var LF = window.LF70 || { d: {}, busy: {} }, PER = [['7day', '7D'], ['1month', '1M'], ['overall', 'ALL']], busy = {};
+  var per = function () { return localStorage.getItem('lg_lfper79') || '7day'; };
+  var who = function () { return (typeof statWho !== 'undefined' && statWho) || me(); };
+  var fmt = function (n) { return Number(n || 0).toLocaleString('en-AU'); };
+  var ago = function (t) { if (!t) return 'NOW'; var m = Math.round((Date.now() - t) / 6e4); return m < 60 ? m + 'M AGO' : m < 1440 ? Math.round(m / 60) + 'H AGO' : Math.round(m / 1440) + 'D AGO'; };
+  function get(p, pr) { var k = p + '|' + pr; if (LF.d[k]) return LF.d[k]; if (busy[k] || (LF.busy && LF.busy[k])) return null; busy[k] = 1;
+    var hint = (LF.users && LF.users[p]) || ''; run('lfmGet', [p, pr, hint], function (r) { busy[k] = 0; LF.d[k] = r || { error: 'no data' }; paint(); }, function (e) { busy[k] = 0; LF.d[k] = { error: /NOT_CONFIGURED/.test(String(e && e.message)) ? 'NOT_CONFIGURED' : 'Couldn’t reach Last.fm' }; paint(); }); return null; }
+  function body(p) { var pr = per(), d = get(p, pr), P = p === 'sam' ? '1P' : '2P';
+    var tabs = '<div class="lf79p">' + PER.map(function (x) { return '<button class="ui-btn' + (x[0] === pr ? ' on' : '') + '" data-lf79per="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div>';
+    if (!d) return tabs + '<div class="lf79sk"></div>';
+    var err = d.error ? String(d.error) : ''; if (/NOT_CONFIGURED|LAST\.FM KEY/i.test(err)) return tabs + '<p class="lf79e">Last.fm key missing</p>';
+    if (!d.user) return tabs + '<p class="lf79e">' + (p === me() ? 'Connect Last.fm in ⚙ Settings › Connections' : 'Not connected to Last.fm') + '</p>';
+    if (err) return tabs + '<p class="lf79e"><b>' + esc(d.user) + '</b> · ' + esc(err) + '</p>';
+    var T = d.top || {}, ta = (T.artists || [])[0], tt = (T.tracks || [])[0], R = d.recent || [], np = R.filter(function (t) { return t.now; })[0], last = np || R[0];
+    return tabs + '<div class="lf79n"><div><b>' + fmt(d.plays) + '</b><small>SCROBBLES</small></div><div><b>' + esc(ta ? ta.n : '—') + '</b><small>TOP ARTIST</small></div><div><b>' + esc(tt ? tt.n : '—') + '</b><small>TOP TRACK' + (tt && tt.a ? ' · ' + esc(tt.a) : '') + '</small></div></div>' +
+      (last ? '<div class="lf79np' + (np ? ' on' : '') + '">' + (np ? '<span class="eq70"><i></i><i></i><i></i></span>' : '') + '<span><small>' + (np ? 'NOW PLAYING' : 'LAST PLAYED · ' + ago(last.at)) + '</small><b>' + esc(last.n) + '</b><em>' + esc(last.a || '') + '</em></span></div>' : '') +
+      '<p class="lf79u">' + P + ' · ' + esc(d.user) + '</p>'; }
+  function sec(p) { return '<div class="cbs lf79 lf79' + p + '" data-sec="LASTFM" data-lf79who="' + p + '"><h4>♫ LAST.FM</h4><div class="lf79b">' + body(p) + '</div></div>'; }
+  window.lf79inject = function (h) { try { var x = sec(who()); var m = /<\/(section|div)>\s*$/.exec(h); return m ? h.slice(0, m.index) + x + h.slice(m.index) : h + x; } catch (e) { return h; } };
+  function paint() { [].forEach.call(document.querySelectorAll('.lf79'), function (x) { var p = x.dataset.lf79who; if (p !== who()) return; var b = x.querySelector('.lf79b'); if (b) b.innerHTML = body(p); }); }
+  window.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-lf79per]'); if (!b) return; e.stopImmediatePropagation(); e.preventDefault(); localStorage.setItem('lg_lfper79', b.dataset.lf79per); SFX.blip && SFX.blip(); paint(); }, true);
+})();
+</script>
+</body></html>
