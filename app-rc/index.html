@@ -147,6 +147,12 @@ function mock(fn, args, who) { if (global.MOCKX) { const x = global.MOCKX(fn, ar
           recent: b.recent.concat(b.recent.map(function (r, i) { return { n: r.n, a: r.a, al: '', now: false, at: Date.now() - 864e5 * (1 + i % 4) - i * 3e5 }; })), tags: Object.keys(tg).map(function (k) { return { n: k, w: tg[k] }; }).sort(function (x, y) { return y.w - x.w; }) }; })();
       case 'favAll': return JSON.parse(JSON.stringify(FAV82));
       case 'fbAll': return FB83();
+      case 'tmdbMood': var pz = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 2 3\'><rect width=\'2\' height=\'3\' fill=\'%233a2f6b\'/></svg>'); return [{ id: 496243, tv: false, title: 'Parasite', year: '2019', poster: pz, vote: 8.5, overview: 'A poor family schemes to become employed by a wealthy household. Things spiral.' }, { id: 93405, tv: true, title: 'Squid Game', year: '2021', poster: pz, vote: 7.8, overview: 'Cash-strapped players accept an invitation to compete in deadly games.' }, { id: 70000, tv: false, title: 'Sky Heist', year: '2023', poster: pz, vote: 6.4, overview: 'A small indie caper nobody streams.' }];
+      case 'cardInfo': return (args[0] || []).map(function (it, i) { var t = String(it.t || ''), h = 0; for (var j = 0; j < t.length; j++) h = (h * 31 + t.charCodeAt(j)) | 0; h = Math.abs(h); var L = { Parasite: 'ko', 'Squid Game': 'ko', 'Past Lives': 'ko', Amelie: 'fr', 'Money Heist': 'es', Dark: 'de', Shogun: 'ja' }, P = [['Netflix'], ['Stan'], ['Disney Plus'], ['Binge', 'Foxtel Now'], ['Amazon Prime Video'], []][h % 6];
+        var o = { id: it.id || 1000 + h % 9000, tv: !!it.tv, lang: L[t] || (h % 7 === 3 ? 'ja' : 'en'), prov: P.map(function (n) { return { n: n, l: '' }; }) };
+        if (t === 'Sky Heist') o.prov = [];
+        if (it.tv) { o.net = ['HBO', 'Netflix', 'Apple TV+', 'BBC One', 'FX'][h % 5]; o.seas = 1 + h % 5; o.eps = o.seas * (8 + h % 3); o.status = h % 2 ? 'Ended' : 'Returning Series'; o.y0 = String(2010 + h % 12); o.y1 = String(2010 + h % 12 + o.seas); } else { o.rev = [0, 2.9e9, 1.2e9, 350e6, 48e6, 7.5e5][h % 6]; o.bud = h % 3 ? [0, 200e6, 160e6, 40e6, 12e6, 3e6][h % 6] : 0; }
+        return o; });
       case 'fbAdd': { var fb = FB83(), fe = { id: 'd' + Date.now().toString(36), type: args[0] === 'idea' ? 'idea' : 'bug', who: args[1], text: String(args[2] || '').slice(0, 2000), at: new Date().toISOString(), ver: (args[3] || {}).ver || '', view: (args[3] || {}).view || '', status: 'open' }; fb.unshift(fe); localStorage.setItem('lg_fb83demo', JSON.stringify(fb.slice(0, 300))); return fe; }
       case 'fbDel': { var fd = FB83(); localStorage.setItem('lg_fb83demo', JSON.stringify(fd.filter(function (x) { return !(x.id === args[0] && x.who === args[1]); }))); return { ok: true }; }
       case 'favSet': FAV82[args[0]] = (args[1] || []).slice(0, 60); return FAV82[args[0]];
@@ -7307,6 +7313,15 @@ body.nkb84 .modal.open .sheet{max-height:calc(var(--vvh,100vh) - 6px)!important;
 body.nkb84 #sp82.open{top:var(--vvt,0)!important;bottom:auto!important;height:var(--vvh,100vh)!important}
 body.nkb84 #set58.open{top:var(--vvt,0)!important;bottom:auto!important;height:var(--vvh,100vh)!important;max-height:var(--vvh,100vh)!important}
 body.nkb84 #nav,body.nkb84 #thm{visibility:hidden}
+
+/* R85: card info strip */
+.ci85{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0 2px;max-height:52px;overflow:hidden}
+.ci85 span{display:inline-flex;align-items:center;gap:3px;font:6px/1.3 var(--pix);color:#fff;background:#15132a;border:2px solid #000;box-shadow:1px 1px 0 #000;padding:2px 4px;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.ci85 span i{font-style:normal;color:#a9a4cc}
+.ci85 .pv85 img{width:12px;height:12px;image-rendering:pixelated;border:1px solid #000}
+.ci85 .pv85{color:#7dffb0}.ci85 .pv85.no{color:#a9a4cc}
+.ci85.ld span{color:#6c6890}
+#ipc .ipi .ci85 span{background:rgba(10,9,20,.85)}
 </style><script id="r80">/* ===== R80: QC fixes for 25a42cd ===== */
 (function () {
   /* toasts: flatten parts, drop repeats and pieces already contained in a longer piece */
@@ -7613,5 +7628,43 @@ body.nkb84 #nav,body.nkb84 #thm{visibility:hidden}
   if (V) { var up = function () { vv84(V.height, V.offsetTop); }; V.addEventListener('resize', up); V.addEventListener('scroll', up); document.addEventListener('focusin', function () { setTimeout(up, 300); }); document.addEventListener('focusout', function () { setTimeout(up, 300); }); }
 })();
 
+
+/* ===== R85: info strip on MOOD PICK + SWIPE cards — 🌐 language · 📺 AU streaming · 💰 box office (movies) / network·seasons·status·years (TV) ===== */
+(function () {
+  var CI = {}, Q = [], qt = 0, LN = null;
+  try { LN = new Intl.DisplayNames(['en'], { type: 'language' }); } catch (e) {}
+  var lang = function (c) { if (!c) return ''; if (c === 'cn') return 'Cantonese'; if (c === 'xx') return 'No language'; try { return (LN && LN.of(c)) || c.toUpperCase(); } catch (e) { return c.toUpperCase(); } };
+  var money = function (n) { n = Number(n) || 0; if (!n) return '—'; return '$' + (n >= 1e9 ? (n / 1e9).toFixed(1).replace(/\.0$/, '') + 'B' : n >= 1e6 ? Math.round(n / 1e6) + 'M' : n >= 1e3 ? Math.round(n / 1e3) + 'K' : n); };
+  var ST = { 'Returning Series': 'RETURNING', 'Ended': 'ENDED', 'Canceled': 'CANCELLED', 'In Production': 'IN PRODUCTION', 'Planned': 'PLANNED', 'Pilot': 'PILOT' };
+  var key = function (it) { return (it.tv ? 'tv' : 'mv') + '|' + (it.id || ('t:' + String(it.t || '').toLowerCase() + '|' + (it.y || ''))); };
+  function strip(it) { var o = CI[key(it)];
+    if (o === undefined) return '<div class="ci85 ld"><span>🌐 …</span><span>📺 …</span><span>' + (it.tv ? '📡 …' : '💰 …') + '</span></div>';
+    if (!o) return '<div class="ci85"><span class="pv85">📺 NOT STREAMING</span></div>';
+    var c = [];
+    if (o.lang) c.push('<span title="Original language">🌐 ' + esc(lang(o.lang)) + '</span>');
+    c.push(o.prov && o.prov.length ? '<span class="pv85" title="Where to watch in Australia">' + o.prov.slice(0, 3).map(function (p) { return p.l ? '<img src="' + esc(p.l) + '" alt="' + esc(p.n) + '">' : ''; }).join('') + esc(o.prov.slice(0, 2).map(function (p) { return p.n.replace(/ (Plus|Amazon Channel|Standard with Ads)$/i, '+').replace(/^Amazon Prime Video$/i, 'Prime Video'); }).join(' · ')) + (o.prov.length > 2 ? ' +' + (o.prov.length - 2) : '') + '</span>' : '<span class="pv85 no">📺 NOT STREAMING</span>');
+    if (o.tv) { var tv = [o.net, o.seas ? o.seas + 'S' + (o.eps ? '/' + o.eps + 'EP' : '') : '', ST[o.status] || (o.status || '').toUpperCase(), o.y0 ? o.y0 + (o.y1 && o.y1 !== o.y0 ? '–' + (o.status === 'Returning Series' ? '' : o.y1) : '') : ''].filter(Boolean);
+      if (tv.length) c.push('<span title="Network · seasons/episodes · status · years">📡 ' + esc(tv.join(' · ')) + '</span>'); }
+    else c.push('<span title="Box office' + (o.bud ? ' / budget' : '') + '">💰 ' + money(o.rev) + (o.bud ? ' <i>/ ' + money(o.bud) + ' BUDGET</i>' : '') + '</span>');
+    return '<div class="ci85">' + c.join('') + '</div>'; }
+  function want(it) { var k = key(it); if (CI[k] !== undefined || Q.some(function (x) { return key(x) === k; })) return; Q.push(it); clearTimeout(qt); qt = setTimeout(flush, 40); }
+  function flush() { var B = Q.splice(0, 8); if (!B.length) return; var done = function (R) { B.forEach(function (it, i) { CI[key(it)] = (R && R[i]) || null; }); paint(); if (Q.length) flush(); };
+    run('cardInfo', [B.map(function (it) { return { id: it.id || 0, tv: !!it.tv, t: it.t || '', y: it.y || '' }; })], done, function () { done(null); }); }
+  function itemFor(el) {
+    if (el.id === 'ipc') { var L = []; try { L = ipDeck() || []; } catch (e) {} var c = L[0], b = el.querySelector('.ipi b'); if (!c || !b || b.textContent !== c.t) return null; return { id: (c.f && c.f.id) || 0, tv: c.f ? !!c.f.tv : c.kind === 'SHOW', t: c.t, y: c.y || '' }; }
+    var o = el.querySelector('[data-mpopen]'), a = el.querySelector('[data-mpadd]');
+    if (o) { var r = byId(Number(o.dataset.mpopen)); if (!r) return null; var m = M(r) || {}; return { id: Number(m.tmdb) || 0, tv: r.type === 'TV Show', t: String(r.title).replace(/\s*\((S\d+)\)\s*$/i, ''), y: m.year || '' }; }
+    if (a) { var x = ((window.MP && MP.res && MP.res.fresh) || [])[Number(a.dataset.mpadd)]; if (!x) return null; return { id: x.id || 0, tv: !!x.tv, t: x.title, y: x.year || '' }; }
+    return null; }
+  function paint() { [].forEach.call(document.querySelectorAll('#ipc, .mpc'), function (el) { var it = itemFor(el); if (!it) return; var k = key(it), host = el.id === 'ipc' ? el.querySelector('.ipi') : el.querySelector('.mpx'); if (!host) return;
+    var cur = host.querySelector(':scope > .ci85'), html = strip(it);
+    if (cur && cur.dataset.k === k && cur.dataset.h === String(CI[k] !== undefined)) return;
+    if (cur) cur.remove(); var sm = host.querySelector(':scope > small'); (sm || host.firstChild || host).insertAdjacentHTML(sm ? 'afterend' : 'beforebegin', html); var n = host.querySelector(':scope > .ci85'); n.dataset.k = k; n.dataset.h = String(CI[k] !== undefined);
+    if (CI[k] === undefined) want(it); }); }
+  window.ci85paint = paint; window.CI85 = CI;
+  var raf = 0; new MutationObserver(function () { if (raf) return; raf = requestAnimationFrame(function () { raf = 0; paint(); }); }).observe(document.body, { childList: true, subtree: true });
+})();
+
 </script>
 </body></html>
+<!--RC85T-->
