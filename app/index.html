@@ -127,6 +127,7 @@ function mock(fn, args, who) { if (global.MOCKX) { const x = global.MOCKX(fn, ar
   try { var YT74 = { 'Dune': 'n9xhJrPXop4', 'Dune: Part Two': 'Way9Dexny3w', 'Inception': 'YoHD9XEInc0', 'Interstellar': 'zSWdZVtXT7E', 'Oppenheimer': 'uYPbbksJxIg', 'Barbie': 'pBk4NYhWNMM', 'Arrival': 'tFMo3UJ4B4g', 'Past Lives': 'kA244xewjcI', 'Hacks': 'SY0IxCXtz6c', 'Severance': 'xEQP4VVuyrY', 'The Bear': 'y-cqqAJIXhs', 'Sinners': 'bKGxHflevuk' };
     var M74 = (typeof meta !== 'undefined' && meta) || (S && S.meta); if (M74) Object.keys(YT74).forEach(function (k) { M74[k] = M74[k] || {}; if (!M74[k].yt) M74[k].yt = YT74[k]; }); } catch (e) {}
   try { rows.forEach(function (r, i) { if (r.type === 'TV Show') { var k = r.title.trim(); meta[k] = meta[k] || {}; if (!meta[k].tmdb) meta[k].tmdb = 95396 + i; if (!meta[k].eps) meta[k].eps = /\(S1\)/.test(k) ? 9 : 13; } }); } catch (e) {}
+  var FAV82 = { sam: [{ n: 'Time', a: 'Hans Zimmer', art: '', sp: '', at: 1 }, { n: 'Mr. Brightside', a: 'The Killers', art: '', sp: '', at: 2 }], lewy: [{ n: 'Shallow', a: 'Lady Gaga', art: '', sp: '', at: 3 }] };
   var FRESH68 = D68.fr.map(function (x, i) { return { id: 880000 + i, title: x[0], year: x[1], tv: x[2] === '1', poster: '', overview: '', vote: 7 + (i % 3) / 2 }; });
   var _mock68 = mock; mock = function (fn, args, who) { args = args || [];
     switch (fn) { case 'triviaDaily': return TV.daily(args[0] || who, args[1]); case 'triviaDailyAnswer': return TV.answer(args[0] || who, args[1], args[2], args[3]); case 'triviaDays': return TV.list();
@@ -139,6 +140,13 @@ function mock(fn, args, who) { if (global.MOCKX) { const x = global.MOCKX(fn, ar
       case 'qqAll': return JSON.parse(JSON.stringify(QQ76));
       case 'qqSet': { var qt = String(args[0] || '').trim(); QQ76[qt] = QQ76[qt] || { sam: '', lewy: '' }; QQ76[qt][args[1]] = String(args[2] || '').slice(0, 200); return QQ76[qt]; }
       case 'lfmGet': return lfmDemo(args[0], args[1]);
+      case 'lfmMore': return (function () { var b = lfmDemo(args[0], args[1]); if (!b.user) return { user: '' }; var Y = { 'Mr. Brightside': '2004', 'Dancing Queen': '1976', 'Bohemian Rhapsody': '1975', 'Dreams': '1977', 'Time': '2010', 'As It Was': '2022', 'Lose Yourself': '2002', 'Shallow': '2018', "Don't Stop Believin'": '1981', 'Eye of the Tiger': '1982' }, TG = { 'The Killers': ['indie', 'rock'], 'ABBA': ['pop', 'disco'], 'Queen': ['rock', 'classic rock'], 'Fleetwood Mac': ['classic rock', 'soft rock'], 'Hans Zimmer': ['soundtrack', 'score'], 'Harry Styles': ['pop'], 'Eminem': ['hip hop', 'rap'], 'Lady Gaga': ['pop', 'dance'], 'Journey': ['rock', '80s'], 'Survivor': ['rock', '80s'] }, tg = {};
+        b.top.artists.forEach(function (a) { (TG[a.n] || ['alternative']).forEach(function (t, i) { tg[t] = (tg[t] || 0) + a.c * (5 - i); }); });
+        return { user: b.user, period: b.period, artists: b.top.artists, tracks: b.top.tracks.map(function (t) { return { n: t.n, a: t.a, c: t.c, y: Y[t.n] || '' }; }), albums: b.top.albums.concat([{ n: 'Interstellar (Original Motion Picture Soundtrack)', a: 'Hans Zimmer', c: Math.round(b.top.albums[0].c / 2), img: '' }]),
+          recent: b.recent.concat(b.recent.map(function (r, i) { return { n: r.n, a: r.a, al: '', now: false, at: Date.now() - 864e5 * (1 + i % 4) - i * 3e5 }; })), tags: Object.keys(tg).map(function (k) { return { n: k, w: tg[k] }; }).sort(function (x, y) { return y.w - x.w; }) }; })();
+      case 'favAll': return JSON.parse(JSON.stringify(FAV82));
+      case 'favSet': FAV82[args[0]] = (args[1] || []).slice(0, 60); return FAV82[args[0]];
+      case 'songPv': return (args[0] || []).map(function (c) { return { u: 'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/e0/1d/a4/e01da4a2-a75f-7ebf-9971-3d49e17efc57/mzaf_10500078769097048384.plus.aac.p.m4a', id: '', via: 'it' }; });
       case 'searchTitles': return (function () { var q = String(args[0] || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim(), toks = q.split(/\s+/).filter(Boolean);
         if (!toks.length) return { results: [] };
         var score = function (t) { t = String(t || '').toLowerCase(); if (t === q) return 100; if (t.indexOf(q) === 0) return 90; if (t.indexOf(q) >= 0) return 70;
@@ -7214,6 +7222,53 @@ body.addopen.kbo:has(#aTitle.kon) #add .sheet > h2{margin:0 0 6px!important;font
 #add #aTitle{font-size:18px!important;min-height:54px!important;padding:12px!important;border-width:3px!important;box-sizing:border-box}
 body.addopen.kbo #add #aTitle.kon{outline:3px solid #ffcc33;outline-offset:0;box-shadow:0 0 0 6px rgba(255,204,51,.25)}
 body.addopen.kbo #add #aTm,body.addopen.kbo #add #aSug{max-height:none!important;overflow:visible!important}
+
+/* R82: 🎧 SPOTIFY tab */
+#sp82{display:none}
+#sp82.open{display:flex;flex-direction:column;position:fixed;left:0;right:0;top:0;bottom:calc(var(--nav58,70px) + env(safe-area-inset-bottom));z-index:900;background:#0d0c1a;--acc:var(--p1,#4da3ff)}
+#sp82.sp82l{--acc:var(--p2,#3ddc84)}
+#sp82 .hd82{flex:none;padding:calc(8px + env(safe-area-inset-top)) 10px 6px;background:#15132a;border-bottom:3px solid #000;box-shadow:0 3px 0 var(--acc);display:grid;grid-template-columns:auto 1fr auto;gap:6px 8px;align-items:center}
+#sp82 .hd82>b{font:11px var(--pix);color:var(--acc);text-align:center;text-shadow:2px 2px 0 #000}
+#sp82 .hd82 .ui-btn{min-height:44px;min-width:44px;font:7px var(--pix)}
+#sp82 .pw82,#sp82 .tb82,#sp82 .pr82{grid-column:1/-1;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+#sp82 .pw82 button,#sp82 .tb82 button,#sp82 .pr82 button,#sp82 .ch82 button{flex:1;min-height:40px;min-width:44px;font:7px var(--pix);color:#fff;background:#24213f;border:3px solid #000;box-shadow:inset -2px -2px 0 rgba(0,0,0,.4),inset 2px 2px 0 rgba(255,255,255,.12),2px 2px 0 #000;padding:4px 8px;white-space:nowrap}
+#sp82 .pw82 button.s{color:var(--p1,#4da3ff)}#sp82 .pw82 button.l{color:var(--p2,#3ddc84)}
+#sp82 .pw82 button.s.on{background:var(--p1,#4da3ff);color:#000}#sp82 .pw82 button.l.on{background:var(--p2,#3ddc84);color:#000}
+#sp82 .tb82 button.on,#sp82 .pr82 button.on,#sp82 .ch82 button.on{background:#ffcc33;color:#000}
+#sp82 .pr82 .arr{flex:1.4}
+#sp82 .bd82{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:10px 10px 30px}
+.sec82{background:#15132a;border:3px solid #000;box-shadow:3px 3px 0 #000,inset 0 3px 0 var(--acc);margin:0 0 12px;padding:10px}
+.sec82 h4{display:flex;align-items:center;justify-content:space-between;margin:0 0 8px;font:8px var(--pix);color:var(--acc)}
+.ar82{display:flex;gap:6px}.ar82 button{width:44px;height:44px;font:10px var(--pix);background:#ffcc33;color:#000;border:3px solid #000;box-shadow:2px 2px 0 #000}
+.ch82{display:flex;gap:6px;margin:0 0 8px}
+.flt82,#sq82{width:100%;box-sizing:border-box;min-height:44px;margin:0 0 8px;font-size:15px}
+.l82{display:flex;flex-direction:column;gap:6px}
+.r82{display:flex;align-items:center;gap:8px;min-height:48px;background:#0f0e1f;border:2px solid #000;padding:4px 6px;box-shadow:2px 2px 0 #000}
+.r82 img{width:40px;height:40px;object-fit:cover;image-rendering:pixelated;border:2px solid #000;flex:none}
+.r82 .ic82{width:40px;height:40px;display:grid;place-items:center;flex:none;font-style:normal;font:9px var(--pix);color:var(--acc);background:#1d1b36;border:2px solid #000}
+.r82>span{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.r82>span b{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.r82>span small{font-size:11px;color:#a9a4cc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.s82{cursor:pointer}
+.pl82,.fv82{flex:none;width:44px;height:44px;font:12px var(--pix);background:#24213f;color:#fff;border:3px solid #000;box-shadow:inset -2px -2px 0 rgba(0,0,0,.4),2px 2px 0 #000}
+.pl82{color:var(--acc)}.fv82.on{background:#ff4f8b;color:#fff}
+.g82 span{flex:0 0 38%}.bar82{flex:1;height:12px;background:#000;border:2px solid #000;display:block}.bar82 em{display:block;height:100%;background:var(--acc);box-shadow:inset 0 -3px 0 rgba(0,0,0,.3)}
+.g82 small{flex:none;width:34px;text-align:right;font:7px var(--pix);color:#fff}
+.f82 span b{white-space:normal;font-size:12px;font-family:var(--pix);line-height:1.5}
+.dh82{font:7px var(--pix);color:#ffcc33;margin:6px 0 0}
+.em82{font:7px var(--pix);line-height:1.8;color:#a9a4cc;padding:10px;text-align:center;border:2px dashed #3a3660}
+.sk82{height:48px;margin:0 0 6px;background:linear-gradient(90deg,#1b1934 0 40%,#26234a 50%,#1b1934 60%);background-size:300% 100%;animation:sk82 1.2s steps(6) infinite}
+@keyframes sk82{to{background-position:-150% 0}}
+.ps82>b{display:block;font:11px var(--pix);color:#ffcc33;margin:4px 0 6px;text-shadow:2px 2px 0 #000}.ps82 p,.ag82 p{font-size:13px;line-height:1.45;color:#d8d4f0;margin:0 0 10px}
+.ag82>b{display:block;font:28px var(--pix);color:var(--acc);text-shadow:3px 3px 0 #000}.ag82>small{font:7px var(--pix);color:#a9a4cc}.ag82 em{font-style:normal;color:#ffcc33}
+.gr82{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:0 0 10px}.gr82 div{background:#0f0e1f;border:2px solid #000;padding:8px 4px;text-align:center}.gr82 b{display:block;font:10px var(--pix);color:var(--acc)}.gr82 small{font:6px var(--pix);color:#a9a4cc}
+.lk82{display:block;text-align:center;margin:10px 0 0;font:7px var(--pix);color:var(--acc);min-height:44px;line-height:44px}
+#sp82 .dr82{position:absolute;inset:0;background:rgba(0,0,0,.55);display:none;z-index:5}#sp82 .dr82.on{display:block}
+#sp82 .dr82 aside{position:absolute;top:0;bottom:0;right:0;width:min(78vw,300px);background:#15132a;border-left:3px solid #000;padding:calc(12px + env(safe-area-inset-top)) 10px 16px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;box-sizing:border-box}
+#sp82 .dr82 aside b{font:8px var(--pix);color:var(--acc);margin:0 0 6px}
+#sp82 .dr82 aside button{min-height:44px;text-align:left;font:7px var(--pix);color:#fff;background:#24213f;border:3px solid #000;box-shadow:2px 2px 0 #000;padding:6px 10px}
+#arch.arc82 .archi{min-height:46px!important}
+.lf70 .lf70l li,.lf79np,.lf79n>div{cursor:pointer}
 </style><script id="r80">/* ===== R80: QC fixes for 25a42cd ===== */
 (function () {
   /* toasts: flatten parts, drop repeats and pieces already contained in a longer piece */
@@ -7280,5 +7335,159 @@ body.addopen.kbo #add #aTm,body.addopen.kbo #add #aSug{max-height:none!important
   /* one tap = one blip (arc taps fired two in the same frame) */
   if (window.SFX && SFX.blip) { var bl = SFX.blip, bt80 = 0; SFX.blip = function () { var n = Date.now(); if (n - bt80 < 60) return; bt80 = n; return bl.apply(this, arguments); }; }
 })();
+
+/* ===== R82: 🎧 SPOTIFY tab in Camp — per player music stats from Last.fm, SEARCH + FAVOURITES, arrangeable per person, previews on tap ===== */
+(function () {
+  var PER = [['7day', '7D'], ['1month', '1M'], ['12month', '12M'], ['overall', 'ALL']];
+  var SECS = [['FAV', '♥ FAVOURITES'], ['SOUND', '🎬 TOP SOUNDTRACKS'], ['GENRE', '🎸 GENRE STATS'], ['FUN', '💡 FUN FACTS'], ['HIST', '🕘 HISTORY'], ['PERS', '🧬 PERSONALITY TYPE'], ['AGE', '📼 MUSIC AGE'], ['LFM', '♫ FULL LAST.FM STATS']];
+  var S = window.SP82 = { open: 0, who: null, tab: 'home', arr: 0, base: {}, more: {}, busy: {}, fav: null, f: {}, ch: {}, sr: null, sq: '' };
+  var per = function () { return localStorage.getItem('lg_sp82per') || '7day'; };
+  var who = function () { return S.who || me(); };
+  var nm = function (p) { return p === 'sam' ? 'SAM' : 'LEWY'; }, tag = function (p) { return p === 'sam' ? '1P' : '2P'; };
+  var fmt = function (n) { n = Number(n) || 0; return n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : n >= 1e4 ? Math.round(n / 1e3) + 'K' : n.toLocaleString('en-AU'); };
+  var hint = function (p) { var L = window.LF70; return (L && L.users && L.users[p]) || ''; };
+  function order(p) { var o = []; try { o = JSON.parse(localStorage.getItem('lg_sp82ord_' + p) || '[]'); } catch (e) {} var ids = SECS.map(function (s) { return s[0]; }); o = o.filter(function (x) { return ids.indexOf(x) >= 0; }); ids.forEach(function (x) { if (o.indexOf(x) < 0) o.push(x); }); return o; }
+  function load(p, pr, cb) { var k = p + '|' + pr; if ((S.base[k] && S.more[k]) || S.busy[k]) return cb && cb();
+    S.busy[k] = 1; var n = 2, done = function () { if (--n) return; S.busy[k] = 0; paint(); cb && cb(); };
+    run('lfmGet', [p, pr, hint(p)], function (o) { S.base[k] = o || { user: '' }; done(); }, function (e) { S.base[k] = { error: String(e && e.message || e) }; done(); });
+    run('lfmMore', [p, pr, hint(p)], function (o) { S.more[k] = o || { user: '' }; done(); }, function (e) { S.more[k] = { error: String(e && e.message || e) }; done(); }); }
+  function favLoad() { if (S.fav) return; S.fav = { sam: [], lewy: [] }; run('favAll', [], function (o) { if (o && typeof o === 'object') { S.fav.sam = o.sam || []; S.fav.lewy = o.lewy || []; paint(); } }, function () {}); }
+  function isFav(n, a) { var k = (n + '|' + a).toLowerCase(); return (S.fav && S.fav[me()] || []).some(function (x) { return (x.n + '|' + x.a).toLowerCase() === k; }); }
+  function favToggle(x) { var p = me(), L = (S.fav[p] || []).slice(), k = (x.n + '|' + x.a).toLowerCase(), i = -1;
+    L.forEach(function (y, j) { if ((y.n + '|' + y.a).toLowerCase() === k) i = j; });
+    if (i >= 0) L.splice(i, 1); else L.unshift({ n: x.n, a: x.a || '', art: x.art || '', sp: x.sp || '', at: Date.now() });
+    S.fav[p] = L; paint(); toast(i >= 0 ? 'Removed from FAVOURITES' : '♥ Added to FAVOURITES · ' + x.n);
+    run('favSet', [p, L], function (o) { if (Array.isArray(o)) S.fav[p] = o; }, function () {}); } /* only ever writes THIS player's list */
+  /* previews: the same per-device clip player as soundtracks (#thm mini player, ✕ always closes) */
+  var PV = {};
+  window.play82 = function (x) { if (!x || !x.n) return; var k = (x.n + '|' + (x.a || '')).toLowerCase(), label = x.n + (x.a ? ' — ' + x.a : '');
+    var go = function (u) { if (!u) return toast('NO PREVIEW FOR ' + x.n); var t = $('thm'); t && t.remove(); if (typeof CLIPSTOP !== 'undefined' && CLIPSTOP) try { CLIPSTOP(); } catch (e) {} try { CLIPSTOP = null; } catch (e) {}
+      document.body.insertAdjacentHTML('beforeend', '<div id="thm"><div class="thh"></div><span>♪ ' + esc(label) + ' · 30s</span><button data-thoff="1" aria-label="Stop">■</button></div>');
+      clipMount($('thm').querySelector('.thh'), { src: 'sp', pv: u, st: 0, n: x.n }, { vol: 90 }); try { GP.pin = true; } catch (e) {} };
+    if (x.pv) return go(x.pv); if (PV[k] !== undefined) return go(PV[k]); toast('♪ ' + x.n + ' …');
+    run('songPv', [[{ id: x.sp || '', n: x.n, a: x.a || '' }]], function (R) { PV[k] = (R && R[0] && R[0].u) || ''; go(PV[k]); }, function () { go(''); }); };
+  var song = function (x, extra) { return '<div class="r82 s82" data-pn="' + esc(x.n) + '" data-pa="' + esc(x.a || '') + '"' + (x.pv ? ' data-pv="' + esc(x.pv) + '"' : '') + (x.sp ? ' data-sp="' + esc(x.sp) + '"' : '') + (x.art ? ' data-art="' + esc(x.art) + '"' : '') + '>' +
+    (x.art ? '<img src="' + esc(x.art) + '" alt="">' : '<i class="ic82">♪</i>') + '<span><b>' + esc(x.n) + '</b><small>' + esc(x.a || '') + (extra ? ' · ' + extra : '') + '</small></span>' +
+    '<button class="pl82" data-pl82="1" aria-label="Play preview">▶</button><button class="fv82' + (isFav(x.n, x.a || '') ? ' on' : '') + '" data-fv82="1" aria-label="Favourite">♥</button></div>'; };
+  var flt = function (sec, ph) { return '<input class="f flt82" type="search" data-flt82="' + sec + '" placeholder="🔍 ' + (ph || 'FILTER') + '…" value="' + esc(S.f[sec] || '') + '" autocomplete="off">'; };
+  var chips = function (sec, L, def) { var v = S.ch[sec] || def; return '<div class="ch82">' + L.map(function (c) { return '<button data-ch82="' + sec + ':' + c[0] + '" class="' + (v === c[0] ? 'on' : '') + '">' + c[1] + '</button>'; }).join('') + '</div>'; };
+  var empty = function (t) { return '<div class="em82">' + t + '</div>'; };
+  var SNDRE = /soundtrack|motion picture|original score|\bost\b|music from|from the (film|movie|series|netflix|hbo|amazon)|\(score\)|film score/i, COMP = /hans zimmer|john williams|ludwig g|howard shore|ennio morricone|max richter|j[óo]hann j[óo]hannsson|trent reznor|atticus ross|hildur|michael giacchino|alexandre desplat|ramin djawadi|nicholas britell|justin hurwitz|danny elfman|james horner|thomas newman|mica levi|bear mccreary/i;
+  function secHtml(id, p, B, M) { var t = (SECS.filter(function (s) { return s[0] === id; })[0] || [])[1];
+    var h = '<section class="sec82" data-sec82="' + id + '"><h4>' + t + (S.arr ? '<span class="ar82"><button data-mv82="' + id + ':-1" aria-label="Move up">▲</button><button data-mv82="' + id + ':1" aria-label="Move down">▼</button></span>' : '') + '</h4>', x = '';
+    var ok = M && !M.error && M.user, top = (M && M.tracks) || [];
+    if (id === 'FAV') { var F = (S.fav && S.fav[p]) || []; x = flt(id) + (F.length ? '<div class="l82">' + F.map(function (y) { return song(y); }).join('') + '</div>' : empty(p === me() ? 'NO FAVOURITES YET — TAP ♥ ON ANY SONG OR USE SEARCH' : nm(p) + ' HAS NO FAVOURITES YET')); }
+    else if (!B || !M) x = '<div class="sk82"></div><div class="sk82"></div>';
+    else if (!ok) x = empty(M.error ? 'LAST.FM IS UNAVAILABLE RIGHT NOW · ' + esc(String(M.error).slice(0, 40)) : 'NO LAST.FM USERNAME FOR ' + nm(p) + ' — ADD IT IN SETTINGS › CONNECTIONS');
+    else if (id === 'SOUND') { var al = (M.albums || []).filter(function (a) { return SNDRE.test(a.n) || COMP.test(a.a); }), tr = top.filter(function (s) { return COMP.test(s.a) || SNDRE.test(s.n); });
+      x = chips(id, [['all', 'ALL'], ['alb', 'ALBUMS'], ['trk', 'TRACKS']], 'all') + flt(id);
+      var v = S.ch[id] || 'all', L = (v !== 'trk' ? al.map(function (a) { return '<div class="r82 s82" data-pn="' + esc(a.n) + '" data-pa="' + esc(a.a) + '">' + (a.img ? '<img src="' + esc(a.img) + '" alt="">' : '<i class="ic82">🎬</i>') + '<span><b>' + esc(a.n) + '</b><small>' + esc(a.a) + ' · ' + fmt(a.c) + ' PLAYS</small></span><button class="pl82" data-pl82="1" aria-label="Play preview">▶</button></div>'; }) : []).concat(v !== 'alb' ? tr.map(function (s) { return song(s, fmt(s.c) + ' PLAYS'); }) : []);
+      x += L.length ? '<div class="l82">' + L.join('') + '</div>' : empty('NO SOUNDTRACKS IN THIS PERIOD — TRY 12M OR ALL'); }
+    else if (id === 'GENRE') { var G = M.tags || [], mx = G.length ? G[0].w : 1, v2 = S.ch[id] || '5';
+      x = chips(id, [['5', 'TOP 5'], ['12', 'TOP 12']], '5') + flt(id, 'FILTER GENRES') + (G.length ? '<div class="l82">' + G.slice(0, Number(v2)).map(function (g, i) { return '<div class="r82 g82"><span><b>' + (i + 1) + '. ' + esc(g.n.toUpperCase()) + '</b></span><i class="bar82"><em style="width:' + Math.max(6, Math.round(g.w / mx * 100)) + '%"></em></i><small>' + Math.round(g.w / G.reduce(function (s, y) { return s + y.w; }, 0) * 100) + '%</small></div>'; }).join('') + '</div>' : empty('NO GENRE TAGS YET')); }
+    else if (id === 'FUN') { var o = p === 'sam' ? 'lewy' : 'sam', k2 = o + '|' + per(), OB = S.base[k2], OM = S.more[k2], F2 = [];
+      var days = B.since ? Math.max(1, (Date.now() - B.since) / 864e5) : 0; if (days) F2.push(['📅', Math.round(B.plays / days) + ' SCROBBLES A DAY', 'since ' + new Date(B.since).getFullYear()]);
+      var sum = top.reduce(function (s, y) { return s + y.c; }, 0); if (top[0] && sum) F2.push(['🔁', esc(top[0].n) + ' IS ' + Math.round(top[0].c / sum * 100) + '% OF TOP-25 PLAYS', esc(top[0].a)]);
+      var mins = Math.round(sum * 3.5); if (mins) F2.push(['⏱', fmt(mins) + ' MINUTES ON TOP-25 SONGS', 'about ' + (mins / 60).toFixed(1) + ' hours this period']);
+      var ars = (M.artists || []).length; if (ars) F2.push(['🎤', ars + ' ARTISTS IN THE TOP LIST', 'top: ' + esc(M.artists[0].n)]);
+      if (OB && OM && OM.artists && !OM.error) { var mine = (M.artists || []).map(function (a) { return a.n.toLowerCase(); }), sh = (OM.artists || []).filter(function (a) { return mine.indexOf(a.n.toLowerCase()) >= 0; });
+        F2.push(['⚔', 'SAM VS LEWY: ' + (p === 'sam' ? fmt(B.plays) + ' VS ' + fmt(OB.plays) : fmt(OB.plays) + ' VS ' + fmt(B.plays)) + ' SCROBBLES', (B.plays >= OB.plays ? nm(p) : nm(o)) + ' LEADS']);
+        F2.push(['🤝', sh.length + ' SHARED TOP ARTISTS', sh.slice(0, 3).map(function (a) { return esc(a.n); }).join(' · ') || 'no overlap yet']);
+        var ma = mage(M), mo = mage(OM); if (ma && mo) F2.push(['📼', ma.year === mo.year ? 'SAME MUSIC AGE' : (ma.year < mo.year ? nm(p) : nm(o)) + ' HAS THE OLDER TASTE', nm(p) + ' ~' + ma.year + ' · ' + nm(o) + ' ~' + mo.year]); }
+      else F2.push(['⚔', 'SAM VS LEWY', 'loading ' + nm(o) + '…']);
+      x = flt(id) + '<div class="l82">' + F2.map(function (f) { return '<div class="r82 f82"><i class="ic82">' + f[0] + '</i><span><b>' + f[1] + '</b><small>' + f[2] + '</small></span></div>'; }).join('') + '</div>'; }
+    else if (id === 'HIST') { var R = M.recent || [], v3 = S.ch[id] || 'all', now = Date.now(), lim = { today: 864e5, week: 7 * 864e5 }[v3];
+      R = R.filter(function (r) { return !lim || r.now || now - r.at < lim; }); var day = '', L2 = [];
+      R.forEach(function (r) { var d = r.now ? 'NOW PLAYING' : new Date(r.at).toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' }).toUpperCase(); if (d !== day) { day = d; L2.push('<div class="dh82">' + d + '</div>'); } L2.push(song(r, r.now ? 'NOW' : new Date(r.at).toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit' }))); });
+      x = chips(id, [['today', 'TODAY'], ['week', 'WEEK'], ['all', 'ALL']], 'all') + flt(id) + (R.length ? '<div class="l82">' + L2.join('') + '</div>' : empty('NOTHING PLAYED IN THIS RANGE')); }
+    else if (id === 'PERS') { var P = pers(M, B); x = '<div class="ps82"><b>' + P.t + '</b><p>' + P.d + '</p>' + P.bars.map(function (b) { return '<div class="r82 g82"><span><b>' + b[0] + '</b></span><i class="bar82"><em style="width:' + b[1] + '%"></em></i><small>' + b[1] + '</small></div>'; }).join('') + '</div>'; }
+    else if (id === 'AGE') { var A = mage(M); x = A ? '<div class="ag82"><b>' + A.age + '</b><small>MUSIC AGE</small><p>Your top songs average <em>' + A.year + '</em> — you listen like someone who was a teen around then.</p>' +
+        '<div class="l82">' + A.dec.map(function (d) { return '<div class="r82 g82"><span><b>' + d[0] + 's</b></span><i class="bar82"><em style="width:' + d[2] + '%"></em></i><small>' + d[1] + '</small></div>'; }).join('') + '</div></div>' : empty('NOT ENOUGH RELEASE YEARS YET'); }
+    else if (id === 'LFM') { var v4 = S.ch[id] || 'trk', LL = v4 === 'art' ? (M.artists || []).map(function (a, i) { return '<div class="r82"><i class="ic82">' + (i + 1) + '</i><span><b>' + esc(a.n) + '</b><small>' + fmt(a.c) + ' PLAYS</small></span></div>'; })
+        : v4 === 'alb' ? (M.albums || []).slice(0, 25).map(function (a) { return '<div class="r82 s82" data-pn="' + esc(a.n) + '" data-pa="' + esc(a.a) + '">' + (a.img ? '<img src="' + esc(a.img) + '" alt="">' : '<i class="ic82">💿</i>') + '<span><b>' + esc(a.n) + '</b><small>' + esc(a.a) + ' · ' + fmt(a.c) + '</small></span><button class="pl82" data-pl82="1" aria-label="Play preview">▶</button></div>'; })
+        : top.map(function (s) { return song(s, fmt(s.c) + ' PLAYS'); });
+      x = '<div class="gr82">' + [[fmt(B.plays), 'SCROBBLES'], [fmt(B.artists), 'ARTISTS'], [fmt(B.tracks), 'TRACKS'], [fmt(B.albums), 'ALBUMS'], [B.since ? new Date(B.since).getFullYear() : '—', 'SINCE'], [B.weeks || '—', 'WEEKS']].map(function (g) { return '<div><b>' + g[0] + '</b><small>' + g[1] + '</small></div>'; }).join('') + '</div>' +
+        chips(id, [['trk', 'TRACKS'], ['art', 'ARTISTS'], ['alb', 'ALBUMS']], 'trk') + flt(id) + (LL.length ? '<div class="l82">' + LL.join('') + '</div>' : empty('NOTHING IN THIS PERIOD')) + (B.url ? '<a class="lk82" href="' + esc(B.url) + '" target="_blank" rel="noopener">OPEN LAST.FM PROFILE ›</a>' : ''); }
+    return h + '<div class="b82">' + x + '</div></section>'; }
+  function mage(M) { var Y = ((M && M.tracks) || []).map(function (t) { return Number(t.y); }).filter(function (y) { return y > 1900; }); if (Y.length < 2) return null;
+    var avg = Math.round(Y.reduce(function (s, y) { return s + y; }, 0) / Y.length), D = {}; Y.forEach(function (y) { var d = Math.floor(y / 10) * 10; D[d] = (D[d] || 0) + 1; });
+    var mx = Math.max.apply(null, Object.keys(D).map(function (k) { return D[k]; }));
+    return { year: avg, age: Math.max(8, new Date().getFullYear() - avg + 16), dec: Object.keys(D).sort().map(function (k) { return [k, D[k], Math.round(D[k] / mx * 100)]; }) }; }
+  function pers(M, B) { var T = (M.tags || []).map(function (t) { return t.n; }).join(' '), top = M.tracks || [], sum = top.reduce(function (s, y) { return s + y.c; }, 0) || 1;
+    var loyal = Math.min(100, Math.round(((M.artists || [])[0] || { c: 0 }).c / Math.max(1, (M.artists || []).reduce(function (s, a) { return s + a.c; }, 0)) * 250)),
+      variety = Math.min(100, Math.round((M.artists || []).length / 25 * 60 + (M.tags || []).length / 12 * 40)), A = mage(M), nost = A ? Math.min(100, Math.max(0, Math.round((new Date().getFullYear() - A.year) * 2.5))) : 0,
+      reps = Math.min(100, Math.round((top[0] ? top[0].c : 0) / sum * 400));
+    var t = /soundtrack|score|classical|instrumental/.test(T) ? ['🎬 THE SCORE NERD', 'Big swelling strings and movie moments — your life has a soundtrack, literally.'] : loyal > 60 ? ['⭐ THE SUPERFAN', 'One artist rules your rotation. Loyalty level: maximum.'] : nost > 60 ? ['📼 THE TIME TRAVELLER', 'Older classics beat new releases every time.'] : /hip hop|rap/.test(T) ? ['🎤 THE MC', 'Bars first, everything else second.'] : /electronic|house|dance|edm/.test(T) ? ['🕺 THE RAVER', 'BPM is your love language.'] : /indie|alternative/.test(T) ? ['🎧 THE INDIE KID', 'Guitars, feelings and bands nobody else has heard of yet.'] : /rock|metal|punk/.test(T) ? ['🎸 THE ROCKER', 'Turn it up to eleven.'] : /pop/.test(T) ? ['✨ THE POP STAR', 'Hooks, choruses, and a song for every mood.'] : variety > 60 ? ['🧭 THE EXPLORER', 'A different artist every day — you never stand still.'] : ['🎲 THE WILDCARD', 'Impossible to pin down.'];
+    return { t: t[0], d: t[1], bars: [['LOYALTY', loyal], ['VARIETY', variety], ['NOSTALGIA', nost], ['ON REPEAT', reps]] }; }
+  function homeHtml(p) { var k = p + '|' + per(), B = S.base[k], M = S.more[k]; return order(p).map(function (id) { return secHtml(id, p, B, M); }).join(''); }
+  function searchHtml() { var R = S.sr; return '<section class="sec82" data-sec82="SEARCH"><h4>🔍 SEARCH ANY SONG</h4><div class="b82"><input class="f" id="sq82" type="search" placeholder="🔍 SONG OR ARTIST…" value="' + esc(S.sq) + '" autocomplete="off">' +
+    '<div class="l82" id="sr82">' + (R === null ? empty('TYPE A SONG OR ARTIST · TAP ▶ TO PREVIEW · ♥ TO ADD TO YOUR FAVOURITES') : R === 'busy' ? '<div class="sk82"></div><div class="sk82"></div>' : R.length ? R.map(function (x) { return song(x); }).join('') : empty('NO SONGS FOUND')) + '</div></div></section>'; }
+  function paint() { var X = $('sp82'); if (!X || !S.open) return; var p = who(), body = X.querySelector('.bd82');
+    X.className = 'open sp82' + (p === 'sam' ? 's' : 'l');
+    X.querySelector('.hd82').innerHTML = '<button class="ui-btn bk82" data-sp82x="1">◀ CAMP</button><b>🎧 SPOTIFY</b><button class="ui-btn mn82" data-sp82m="1" aria-label="Sections">☰</button>' +
+      '<div class="pw82">' + ['sam', 'lewy'].map(function (q) { return '<button data-sp82w="' + q + '" class="' + (q === 'sam' ? 's' : 'l') + (q === p ? ' on' : '') + '">' + tag(q) + ' ' + nm(q) + '</button>'; }).join('') + '</div>' +
+      '<div class="tb82">' + [['home', '🏠 HOME'], ['search', '🔍 SEARCH'], ['fav', '♥ FAVOURITES']].map(function (t) { return '<button data-sp82t="' + t[0] + '" class="' + (S.tab === t[0] ? 'on' : '') + '">' + t[1] + '</button>'; }).join('') + '</div>' +
+      (S.tab === 'home' ? '<div class="pr82">' + PER.map(function (q) { return '<button data-sp82p="' + q[0] + '" class="' + (per() === q[0] ? 'on' : '') + '">' + q[1] + '</button>'; }).join('') + '<button data-sp82a="1" class="arr' + (S.arr ? ' on' : '') + '">⇅ ' + (S.arr ? 'DONE' : 'ARRANGE') + '</button></div>' : '');
+    var keep = body.scrollTop, fo = document.activeElement && document.activeElement.dataset && document.activeElement.dataset.flt82;
+    body.innerHTML = S.tab === 'search' ? searchHtml() : S.tab === 'fav' ? secHtml('FAV', p) : homeHtml(p);
+    [].forEach.call(body.querySelectorAll('[data-flt82]'), applyF); body.scrollTop = keep;
+    if (S.tab === 'home') { load(p, per()); load(p === 'sam' ? 'lewy' : 'sam', per()); } }
+  function applyF(inp) { var q = String(inp.value || '').toLowerCase().trim(), sec = inp.closest('.sec82'); S.f[inp.dataset.flt82] = inp.value; if (!sec) return;
+    [].forEach.call(sec.querySelectorAll('.l82 > .r82'), function (r) { r.style.display = !q || r.textContent.toLowerCase().indexOf(q) >= 0 ? '' : 'none'; });
+    [].forEach.call(sec.querySelectorAll('.l82 > .dh82'), function (d) { var n = d.nextElementSibling, vis = false; while (n && !n.classList.contains('dh82')) { if (n.style.display !== 'none') vis = true; n = n.nextElementSibling; } d.style.display = vis ? '' : 'none'; }); }
+  function openSp(p) { var X = $('sp82'); if (!X) { document.body.insertAdjacentHTML('beforeend', '<div id="sp82" role="dialog" aria-label="Spotify"><div class="hd82"></div><div class="bd82"></div><div class="dr82"></div></div>'); X = $('sp82'); }
+    S.open = 1; S.who = p || me(); favLoad(); try { archClose(); } catch (e) {} paint(); }
+  function closeSp() { S.open = 0; S.arr = 0; var X = $('sp82'); if (X) X.className = ''; try { kbClose(); } catch (e) {} }
+  window.sp82open = openSp; window.sp82close = closeSp;
+  function drawer(on) { var D = $('sp82').querySelector('.dr82'); if (!on) { D.classList.remove('on'); return; }
+    D.innerHTML = '<aside><b>SECTIONS · ' + nm(who()) + '</b>' + order(who()).map(function (id) { var t = SECS.filter(function (s) { return s[0] === id; })[0][1]; return '<button data-sp82j="' + id + '">' + t + '</button>'; }).join('') + '<button data-sp82j="SEARCH">🔍 SEARCH</button></aside>'; D.classList.add('on'); }
+  document.addEventListener('click', function (e) { var t = e.target, X = $('sp82'); if (!X || !S.open || !X.contains(t)) return; var b = t.closest('button,[data-pn],.dr82'); if (!b) return; var d = b.dataset || {};
+    var stop = function () { e.stopPropagation(); e.preventDefault(); SFX.blip && SFX.blip(); };
+    if (d.sp82x) { stop(); return closeSp(); }
+    if (d.sp82m) { stop(); return drawer(!X.querySelector('.dr82').classList.contains('on')); }
+    if (b.classList.contains('dr82')) { stop(); return drawer(0); }
+    if (d.sp82j) { stop(); drawer(0); if (d.sp82j === 'SEARCH') { S.tab = 'search'; return paint(); } if (d.sp82j === 'FAV' && S.tab === 'fav') return; if (S.tab !== 'home') { S.tab = 'home'; paint(); } var s = X.querySelector('[data-sec82="' + d.sp82j + '"]'); if (s) X.querySelector('.bd82').scrollTop = s.offsetTop - 4; return; }
+    if (d.sp82w) { stop(); S.who = d.sp82w; return paint(); }
+    if (d.sp82t) { stop(); S.tab = d.sp82t; return paint(); }
+    if (d.sp82p) { stop(); localStorage.setItem('lg_sp82per', d.sp82p); return paint(); }
+    if (d.sp82a) { stop(); S.arr = !S.arr; return paint(); }
+    if (d.mv82) { stop(); var a = d.mv82.split(':'), p = who(), o = order(p), i = o.indexOf(a[0]), j = i + Number(a[1]); if (j < 0 || j >= o.length) return; o.splice(j, 0, o.splice(i, 1)[0]); localStorage.setItem('lg_sp82ord_' + p, JSON.stringify(o)); return paint(); }
+    if (d.ch82) { stop(); var c = d.ch82.split(':'); S.ch[c[0]] = c[1]; return paint(); }
+    var r = t.closest('[data-pn]'); if (!r) return; var x = rowX(r);
+    if (d.fv82) { stop(); return favToggle(x); }
+    stop(); if (Date.now() - (window.__tp82 || 0) < 900) return; play82(x); }, true);
+  function rowX(r) { return { n: r.dataset.pn, a: r.dataset.pa || '', pv: r.dataset.pv || '', sp: r.dataset.sp || '', art: r.dataset.art || '' }; }
+  /* iOS can swallow the click on a plain row after a scroll: treat a still, short touch as the tap (one play per tap) */
+  var TP = null;
+  window.addEventListener('pointerdown', function (e) { TP = null; var t = e.target; if (!t.closest || t.closest('button,input,a')) return; var r = t.closest('#sp82 [data-pn]'), x = null;
+    if (r) x = rowX(r); else x = lfX(t); if (x) TP = { x: x, cx: e.clientX, cy: e.clientY, t: Date.now() }; }, true);
+  window.addEventListener('pointerup', function (e) { var P = TP; TP = null; if (!P || Date.now() - P.t > 1000 || Math.abs(e.clientX - P.cx) > 12 || Math.abs(e.clientY - P.cy) > 12) return; window.__tp82 = Date.now(); SFX.blip && SFX.blip(); play82(P.x); }, true);
+  window.addEventListener('pointercancel', function () { TP = null; }, true);
+  var sqT = 0;
+  document.addEventListener('input', function (e) { var t = e.target; if (!t || !t.closest || !t.closest('#sp82')) return;
+    if (t.dataset.flt82) return applyF(t);
+    if (t.id === 'sq82') { S.sq = t.value; clearTimeout(sqT); var q = t.value.trim(); if (q.length < 2) { S.sr = null; return srPaint(); } sqT = setTimeout(function () { S.sr = 'busy'; srPaint(); run('songSearch', [q], function (R) { if (S.sq.trim() !== q) return; S.sr = Array.isArray(R) ? R : []; srPaint(); }, function () { S.sr = []; srPaint(); }); }, 450); } }, true);
+  function srPaint() { var L = $('sr82'); if (!L) return; var R = S.sr; L.innerHTML = R === null ? empty('TYPE A SONG OR ARTIST · TAP ▶ TO PREVIEW · ♥ TO ADD TO YOUR FAVOURITES') : R === 'busy' ? '<div class="sk82"></div><div class="sk82"></div>' : R.length ? R.map(function (x) { return song(x); }).join('') : empty('NO SONGS FOUND'); }
+  /* leaving: any nav tap / Camp arc item closes the Spotify page */
+  window.addEventListener('click', function (e) { if (S.open && e.target.closest && e.target.closest('#nav')) closeSp(); }, true);
+  /* Camp arc: add 🎧 SPOTIFY, 3 rows (PROFILE top · STATS / SPOTIFY · WARDROBE / BADGES / SETTINGS) */
+  var _ci = campItems58; campItems58 = function () { var L = _ci.apply(this, arguments); if (!L.some(function (x) { return /SPOTIFY/.test(x.t); })) L.push({ ic: '<span>🎧</span>', t: 'SPOTIFY', go: function () { campPage59('profile'); openSp(me()); } }); return L; };
+  function layCamp() { var a = $('arch'); if (!a || !a.classList.contains('open')) return; var B = [].slice.call(a.querySelectorAll('.archi')); if (B.length !== 6) return;
+    var f = function (re) { return B.filter(function (b) { return re.test((b.textContent || '').toUpperCase()); })[0]; }, I = { P: f(/PROFILE/), S: f(/STATS/), Y: f(/SPOTIFY/), W: f(/WARDROBE/), B: f(/BADGES/), G: f(/SETTINGS/) };
+    if (Object.keys(I).some(function (k) { return !I[k]; })) return;
+    var W = Math.min(380, window.innerWidth - 12), H = 178, cx = W / 2, iw = 76;
+    a.classList.add('arc80', 'arc82'); a.style.width = W + 'px'; a.style.height = H + 'px'; a.style.borderRadius = (W / 2) + 'px ' + (W / 2) + 'px 0 0 / ' + H + 'px ' + H + 'px 0 0';
+    var put = function (b, x, y) { b.style.setProperty('left', x.toFixed(1) + 'px', 'important'); b.style.setProperty('top', y.toFixed(1) + 'px', 'important'); b.style.setProperty('width', iw + 'px', 'important'); b.style.setProperty('transform', 'translate(-50%,-50%)', 'important'); };
+    put(I.P, cx, 34); put(I.S, cx - 96, 86); put(I.Y, cx + 96, 86); put(I.W, cx - 118, 140); put(I.B, cx, 140); put(I.G, cx + 118, 140); }
+  var _ao = archOpen; archOpen = function () { var r = _ao.apply(this, arguments); requestAnimationFrame(function () { layCamp(); requestAnimationFrame(layCamp); }); setTimeout(layCamp, 0); setTimeout(layCamp, 80); return r; };
+  /* Last.fm songs anywhere (Stats + profile Last.fm sections) play a preview on tap */
+  function lfX(t) { if (!t.closest || t.closest('#sp82')) return null; var n = '', a = '';
+    var li = t.closest('.lf70 li'); if (li) { var h = li.closest('.lf70l'), hh = h && h.querySelector('h5'); if (hh && !/TRACK|RECENT/i.test(hh.textContent)) return null; var b = li.querySelector('b'), s = li.querySelector('small'); if (!b || !s) return null; n = b.textContent; a = s.textContent; }
+    var np = !li && t.closest('.lf79np'); if (np) { n = (np.querySelector('b') || {}).textContent || ''; a = (np.querySelector('em') || {}).textContent || ''; }
+    var tt = !li && !np && t.closest('.lf79n > div'); if (tt) { var sm = tt.querySelector('small'); if (!sm || !/TOP TRACK/.test(sm.textContent)) return null; n = (tt.querySelector('b') || {}).textContent || ''; a = sm.textContent.replace(/^TOP TRACK\s*·?\s*/, ''); }
+    n = String(n || '').trim(); return n && n !== '—' ? { n: n, a: String(a || '').trim() } : null; }
+  window.addEventListener('click', function (e) { var t = e.target; if (!t.closest || t.closest('button,a')) return; var x = lfX(t); if (!x) return; e.stopPropagation(); if (Date.now() - (window.__tp82 || 0) < 900) return; SFX.blip && SFX.blip(); play82(x); }, true);
+})();
+
 </script>
 </body></html>
