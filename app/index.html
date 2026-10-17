@@ -7386,6 +7386,8 @@ header h1 > .icon.px,header h1 > #avPin{flex:0 0 30px!important;width:30px!impor
 .aw87 b{flex:0 0 auto;color:var(--gold,#ffcc33);font-weight:normal;white-space:nowrap}
 .aw87 span{min-width:0;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .aw87.ip{margin:6px 0 2px}
+.ipdh .aw87.ip{margin:5px 0 0;padding:3px 6px;font-size:6px;box-shadow:1px 1px 0 #000}
+.ipdh .aw87.ip b{font-size:6px}
 </style><script id="r80">/* ===== R80: QC fixes for 25a42cd ===== */
 (function () {
   /* toasts: flatten parts, drop repeats and pieces already contained in a longer piece */
@@ -7837,12 +7839,12 @@ header h1 > .icon.px,header h1 > #avPin{flex:0 0 30px!important;width:30px!impor
   var bt = function (t) { return String(t || '').replace(/\s*\((S\d+|Season \d+|\d{4})\)\s*$/i, '').trim(); };
   var key = function (it) { return (it.tv ? 'tv' : 'mv') + '|' + (it.id || '') + '|' + bt(it.t).toLowerCase() + '|' + (it.y || ''); };
   var _ipd = ipDetails; ipDetails = function (cc) { try { AW.cur = cc ? { id: (cc.f && cc.f.id) || 0, tv: cc.f ? !!cc.f.tv : cc.kind === 'SHOW', t: cc.t, y: String(cc.y || '').slice(0, 4), at: Date.now() } : null; } catch (e) {} return _ipd.apply(this, arguments); };
-  function line(host, it, where) { var k = key(it), v = AW.c[k], cur = host.parentNode.querySelector(':scope > .aw87');
+  function line(host, it, where) { var k = key(it), v = AW.c[k], cur = host.parentNode.querySelector(':scope > .aw87') || host.querySelector('.aw87');
     if (cur && cur.dataset.k === k && cur.dataset.v === String(v !== undefined)) return;
-    if (cur) cur.remove(); if (v === undefined) { AW.c[k] = 'busy'; v = 'busy';
-      run('omdbAwards', [{ id: it.id || 0, tv: !!it.tv, t: bt(it.t), y: it.y || '' }], function (R) { AW.c[k] = R && R.a ? String(R.a) : ''; paint(); }, function () { AW.c[k] = ''; paint(); }); }
+    if (cur) cur.remove(); if (v === undefined && AW.miss && Date.now() - (AW.miss[k] || 0) < 60000) return; if (v === undefined) { AW.c[k] = 'busy'; v = 'busy';
+      run('omdbAwards', [{ id: it.id || 0, tv: !!it.tv, t: bt(it.t), y: it.y || '' }], function (R) { var w = R && R.why; if (w) try { console.info('[awards] ' + bt(it.t) + ': ' + w); } catch (e) {} if (w && /^(http|limit|badkey|nokey)/.test(w)) { delete AW.c[k]; AW.miss = AW.miss || {}; AW.miss[k] = Date.now(); } else AW.c[k] = R && R.a ? String(R.a) : ''; paint(); }, function () { delete AW.c[k]; AW.miss = AW.miss || {}; AW.miss[k] = Date.now(); paint(); }); }
     if (!v || v === 'busy') return;
-    host.insertAdjacentHTML('afterend', '<div class="aw87 ' + where + '" data-k="' + esc(k) + '" data-v="true" title="Awards (OMDb)"><b>🏆 AWARDS</b><span>' + esc(v) + '</span></div>'); }
+    (where === 'ip' && host.querySelector(':scope > div') ? (function (c) { var L = c.querySelectorAll(':scope > p, :scope > small'); return L[L.length - 1] || c.lastElementChild; })(host.querySelector(':scope > div')) : host).insertAdjacentHTML('afterend', '<div class="aw87 ' + where + '" data-k="' + esc(k) + '" data-v="true" title="Awards (OMDb)"><b>🏆 AWARDS</b><span>' + esc(v) + '</span></div>'); }
   function paint() {
     var D = $('detail'); if (D && D.classList.contains('open')) { var m = D.querySelector('.meta'), h = D.querySelector('h2.dt');
       if (m && h) { var tt = h.textContent.trim(), r = rows.filter(function (x) { return !isYT(x) && (x.title === tt || bt(x.title) === bt(tt)); })[0];
