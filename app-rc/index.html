@@ -127,6 +127,7 @@ function mock(fn, args, who) { if (global.MOCKX) { const x = global.MOCKX(fn, ar
   try { var YT74 = { 'Dune': 'n9xhJrPXop4', 'Dune: Part Two': 'Way9Dexny3w', 'Inception': 'YoHD9XEInc0', 'Interstellar': 'zSWdZVtXT7E', 'Oppenheimer': 'uYPbbksJxIg', 'Barbie': 'pBk4NYhWNMM', 'Arrival': 'tFMo3UJ4B4g', 'Past Lives': 'kA244xewjcI', 'Hacks': 'SY0IxCXtz6c', 'Severance': 'xEQP4VVuyrY', 'The Bear': 'y-cqqAJIXhs', 'Sinners': 'bKGxHflevuk' };
     var M74 = (typeof meta !== 'undefined' && meta) || (S && S.meta); if (M74) Object.keys(YT74).forEach(function (k) { M74[k] = M74[k] || {}; if (!M74[k].yt) M74[k].yt = YT74[k]; }); } catch (e) {}
   try { rows.forEach(function (r, i) { if (r.type === 'TV Show') { var k = r.title.trim(); meta[k] = meta[k] || {}; if (!meta[k].tmdb) meta[k].tmdb = 95396 + i; if (!meta[k].eps) meta[k].eps = /\(S1\)/.test(k) ? 9 : 13; } }); } catch (e) {}
+  var FB83 = function () { try { var v = JSON.parse(localStorage.getItem('lg_fb83demo') || 'null'); if (Array.isArray(v)) return v; } catch (e) {} return [{ id: 'd1', type: 'bug', who: 'lewy', text: 'Trailer kept playing after I closed the details page.', at: '2026-10-15T09:12:00.000Z', ver: 'r79', view: 'all', status: 'open' }, { id: 'd2', type: 'idea', who: 'sam', text: 'A watch-party countdown on the Tonight tile!', at: '2026-10-16T10:30:00.000Z', ver: 'r80', view: 'explore', status: 'open' }]; };
   var FAV82 = { sam: [{ n: 'Time', a: 'Hans Zimmer', art: '', sp: '', at: 1 }, { n: 'Mr. Brightside', a: 'The Killers', art: '', sp: '', at: 2 }], lewy: [{ n: 'Shallow', a: 'Lady Gaga', art: '', sp: '', at: 3 }] };
   var FRESH68 = D68.fr.map(function (x, i) { return { id: 880000 + i, title: x[0], year: x[1], tv: x[2] === '1', poster: '', overview: '', vote: 7 + (i % 3) / 2 }; });
   var _mock68 = mock; mock = function (fn, args, who) { args = args || [];
@@ -145,6 +146,9 @@ function mock(fn, args, who) { if (global.MOCKX) { const x = global.MOCKX(fn, ar
         return { user: b.user, period: b.period, artists: b.top.artists, tracks: b.top.tracks.map(function (t) { return { n: t.n, a: t.a, c: t.c, y: Y[t.n] || '' }; }), albums: b.top.albums.concat([{ n: 'Interstellar (Original Motion Picture Soundtrack)', a: 'Hans Zimmer', c: Math.round(b.top.albums[0].c / 2), img: '' }]),
           recent: b.recent.concat(b.recent.map(function (r, i) { return { n: r.n, a: r.a, al: '', now: false, at: Date.now() - 864e5 * (1 + i % 4) - i * 3e5 }; })), tags: Object.keys(tg).map(function (k) { return { n: k, w: tg[k] }; }).sort(function (x, y) { return y.w - x.w; }) }; })();
       case 'favAll': return JSON.parse(JSON.stringify(FAV82));
+      case 'fbAll': return FB83();
+      case 'fbAdd': { var fb = FB83(), fe = { id: 'd' + Date.now().toString(36), type: args[0] === 'idea' ? 'idea' : 'bug', who: args[1], text: String(args[2] || '').slice(0, 2000), at: new Date().toISOString(), ver: (args[3] || {}).ver || '', view: (args[3] || {}).view || '', status: 'open' }; fb.unshift(fe); localStorage.setItem('lg_fb83demo', JSON.stringify(fb.slice(0, 300))); return fe; }
+      case 'fbDel': { var fd = FB83(); localStorage.setItem('lg_fb83demo', JSON.stringify(fd.filter(function (x) { return !(x.id === args[0] && x.who === args[1]); }))); return { ok: true }; }
       case 'favSet': FAV82[args[0]] = (args[1] || []).slice(0, 60); return FAV82[args[0]];
       case 'songPv': return (args[0] || []).map(function (c) { return { u: 'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/e0/1d/a4/e01da4a2-a75f-7ebf-9971-3d49e17efc57/mzaf_10500078769097048384.plus.aac.p.m4a', id: '', via: 'it' }; });
       case 'searchTitles': return (function () { var q = String(args[0] || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim(), toks = q.split(/\s+/).filter(Boolean);
@@ -1678,7 +1682,7 @@ body:has(#ytdrw.open) .yback{display:none!important}
 .skr{display:flex;gap:10px;align-items:center;width:100%;text-align:left;padding:10px;margin-bottom:5px;background:#151528;border:2px solid #000;color:#fff}
 .skr i{font:9px var(--pix);font-style:normal;color:var(--gold);width:34px}.skr span{flex:1;display:flex;flex-direction:column;gap:3px}.skr b{font:8px var(--pix)}.skr small{font-size:11px;color:var(--dim,#aaa)}.skr.nl{opacity:.7}
 .sh78{display:block;margin:6px 0;font:7px var(--pix);padding:8px 10px}
-</style><!--RC82T--></head><body>
+</style><!--RC83T--></head><body>
 <div id="splash" aria-label="Logged"></div>
 <header><div class="hin">
   <h1><span id="logo"></span><span class="lg">LOGGED</span><span class="sp"></span><span id="sync">…</span><button class="icon px" id="mute" aria-label="Sound">🔊</button><button class="icon px" id="refresh" aria-label="Refresh">⟳</button></h1>
@@ -6827,7 +6831,7 @@ setInterval(function () { try { var k = document.getElementById('kb'); if (!k ||
   setInterval(paintCaret, 250); window.addEventListener('resize', paintCaret); document.addEventListener('scroll', paintCaret, true);
   var fire = function (el) { if (el.oninput) el.oninput(); else el.dispatchEvent(new Event('input', { bubbles: true })); };
   var autoCap = function (el) { if (S.caps || S.page !== 'abc') return; var b = (el.value || '').slice(0, pos(el)); var on = !b.length || /[.!?]\s+$/.test(b); if (on !== S.shift) { S.shift = on; draw(); } };
-  function ins(el, ch) { var v = el.value || '', p = pos(el); if (v.length >= 120) return; el.value = v.slice(0, p) + ch + v.slice(p); el.__p72 = p + ch.length; fire(el); }
+  function ins(el, ch) { var v = el.value || '', p = pos(el); if (v.length >= (el.maxLength > 0 ? el.maxLength : 120)) return; el.value = v.slice(0, p) + ch + v.slice(p); el.__p72 = p + ch.length; fire(el); }
   function del(el) { var v = el.value || '', p = pos(el); if (!p) return false; el.value = v.slice(0, p - 1) + v.slice(p); el.__p72 = p - 1; fire(el); return true; }
   var tick = function (hi) { try { if (!muted && typeof tone === 'function') tone(hi ? 1400 : 900, .018, 'square', .012); } catch (e) {} try { navigator.vibrate && navigator.vibrate(6); } catch (e) {} };
   /* kbKey: physical keys + any caller still use it; OK keeps the existing chain (change/Enter/close) */
@@ -7269,6 +7273,27 @@ body.addopen.kbo #add #aTm,body.addopen.kbo #add #aSug{max-height:none!important
 #sp82 .dr82 aside button{min-height:44px;text-align:left;font:7px var(--pix);color:#fff;background:#24213f;border:3px solid #000;box-shadow:2px 2px 0 #000;padding:6px 10px}
 #arch.arc82 .archi{min-height:46px!important}
 .lf70 .lf70l li,.lf79np,.lf79n>div{cursor:pointer}
+
+/* R83: bug reports / feature ideas */
+#fb83{z-index:1480!important}
+body:has(#fb83.open) #dlg{z-index:1500!important}#fb83 .sheet{max-height:92vh;overflow-y:auto}
+body.kbo #fb83 .sheet{max-height:calc(100vh - var(--kbh,291px) - 6px);max-height:calc(100dvh - var(--kbh,291px) - 6px)}
+.hd83{display:flex;align-items:center;gap:8px;margin:0 0 10px}.hd83 h2{font:10px var(--pix);color:#ffcc33;margin:0}.hd83 .ui-btn{min-height:44px;font:7px var(--pix)}
+.tb83{display:flex;gap:6px;margin:0 0 10px}.tb83 button{flex:1;min-height:44px;font:7px var(--pix);color:#fff;background:#24213f;border:3px solid #000;box-shadow:inset -2px -2px 0 rgba(0,0,0,.4),inset 2px 2px 0 rgba(255,255,255,.12),2px 2px 0 #000}.tb83 button.on{background:#ffcc33;color:#000}
+#fbt83{width:100%;box-sizing:border-box;min-height:130px;resize:none;font-size:15px;line-height:1.4;caret-color:var(--gold)}#fbt83.kon{outline:3px solid var(--gold);outline-offset:-3px}
+.ct83{text-align:right;font:6px var(--pix);color:#a9a4cc;margin:4px 0 8px}
+.sb83{display:block;width:100%;min-height:48px;font:9px var(--pix)}.sb83:disabled{opacity:.45;filter:grayscale(1)}
+.nt83{font:6px var(--pix);color:#a9a4cc;text-align:center;margin:8px 0 0}
+.ls83{display:flex;flex-direction:column;gap:8px}
+.it83{background:#0f0e1f;border:3px solid #000;box-shadow:3px 3px 0 #000,inset 4px 0 0 var(--p1,#4da3ff);padding:8px 10px 8px 14px}.it83.l{box-shadow:3px 3px 0 #000,inset 4px 0 0 var(--p2,#3ddc84)}
+.ih83{display:flex;align-items:center;gap:8px}.ih83 b{font:7px var(--pix);color:var(--p1,#4da3ff)}.it83.l .ih83 b{color:var(--p2,#3ddc84)}.ih83 small{flex:1;font:6px var(--pix);color:#a9a4cc}
+.dl83{min-width:44px;min-height:44px;padding:0}
+.it83 p{margin:6px 0 0;font-size:14px;line-height:1.45;white-space:pre-wrap;word-break:break-word}
+body.kbo #fb83{align-items:flex-start!important}
+body.kbo #fb83 .sheet{margin:0!important;padding-top:calc(10px + env(safe-area-inset-top))!important;padding-bottom:12px!important;border-radius:0}
+body.kbo #fb83 .hd83{margin-bottom:6px}body.kbo #fb83 .tb83{margin-bottom:6px}body.kbo #fbt83{min-height:112px}
+body:has(#fbt83.kon) .car72{display:none!important}
+#fbt83.kon{background-image:linear-gradient(var(--gold),var(--gold));background-size:0 0}
 </style><script id="r80">/* ===== R80: QC fixes for 25a42cd ===== */
 (function () {
   /* toasts: flatten parts, drop repeats and pieces already contained in a longer piece */
@@ -7487,6 +7512,60 @@ body.addopen.kbo #add #aTm,body.addopen.kbo #add #aSug{max-height:none!important
     var tt = !li && !np && t.closest('.lf79n > div'); if (tt) { var sm = tt.querySelector('small'); if (!sm || !/TOP TRACK/.test(sm.textContent)) return null; n = (tt.querySelector('b') || {}).textContent || ''; a = sm.textContent.replace(/^TOP TRACK\s*·?\s*/, ''); }
     n = String(n || '').trim(); return n && n !== '—' ? { n: n, a: String(a || '').trim() } : null; }
   window.addEventListener('click', function (e) { var t = e.target; if (!t.closest || t.closest('button,a')) return; var x = lfX(t); if (!x) return; e.stopPropagation(); if (Date.now() - (window.__tp82 || 0) < 900) return; SFX.blip && SFX.blip(); play82(x); }, true);
+})();
+
+
+/* ===== R83: 🐞 REPORT A BUG / 💡 SUGGEST A FEATURE (Settings) — NEW + PAST tabs, stored server-side (fbAdd / fbAll / fbDel) ===== */
+(function () {
+  window.APPV58 = 'r83';
+  var F = { type: 'bug', tab: 'new', L: null, busy: 0, txt: { bug: '', idea: '' } };
+  var T = function () { return F.type === 'bug' ? { ic: '🐞', t: 'REPORT A BUG', past: 'PAST REPORTS', ph: 'WHAT WENT WRONG? WHAT DID YOU TAP, WHAT DID YOU EXPECT?', ok: '🐞 Bug report sent — thanks!' } : { ic: '💡', t: 'SUGGEST A FEATURE', past: 'PAST IDEAS', ph: 'WHAT SHOULD LOGGED DO NEXT?', ok: '💡 Idea sent — thanks!' }; };
+  var curView = function () { try { return (typeof view !== 'undefined' ? view : '') + (typeof CP !== 'undefined' && view === 'stats' ? ':' + CP.page : '') + ($('set58') && $('set58').classList.contains('open') ? '+settings' : ''); } catch (e) { return ''; } };
+  function load() { run('fbAll', [], function (L) { F.L = Array.isArray(L) ? L : []; paint(); }, function () { F.L = F.L || []; paint(); }); }
+  function list() { var L = (F.L || []).filter(function (x) { return x.type === F.type; }).sort(function (a, b) { return String(b.at).localeCompare(String(a.at)); });
+    if (F.L === null) return '<div class="sk82"></div><div class="sk82"></div>';
+    if (!L.length) return '<div class="em82">NOTHING HERE YET</div>';
+    return L.map(function (x) { var p = x.who === 'lewy' ? 'lewy' : 'sam'; return '<div class="it83 ' + (p === 'sam' ? 's' : 'l') + '"><div class="ih83"><b>' + (p === 'sam' ? '1P SAM' : '2P LEWY') + '</b><small>' + esc(new Date(x.at).toLocaleString('en-AU', { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit' }).toUpperCase()) + (x.status && x.status !== 'open' ? ' · ' + esc(String(x.status).toUpperCase()) : '') + '</small>' +
+      (p === me() ? '<button class="ui-btn dl83" data-fbdel="' + esc(x.id) + '" aria-label="Delete">🗑</button>' : '') + '</div><p>' + esc(x.text) + '</p></div>'; }).join(''); }
+  function paint() { var X = $('fb83'); if (!X || !X.classList.contains('open')) return; var t = T();
+    X.querySelector('.sheet').innerHTML = '<div class="hd83"><button class="ui-btn" data-fbx="1">◀ BACK</button><h2>' + t.ic + ' ' + t.t + '</h2></div>' +
+      '<div class="tb83">' + [['new', '✎ NEW'], ['past', t.past]].map(function (b) { return '<button data-fbtab="' + b[0] + '" class="' + (F.tab === b[0] ? 'on' : '') + '">' + b[1] + '</button>'; }).join('') + '</div>' +
+      (F.tab === 'new' ? '<textarea id="fbt83" class="f kbt" rows="6" maxlength="2000" readonly inputmode="none" data-kb68="1" placeholder="' + t.ph + '">' + esc(F.txt[F.type]) + '</textarea><div class="ct83"><span id="fbc83">' + F.txt[F.type].length + '/2000</span></div>' +
+        '<button class="ui-btn y sb83" id="fbs83" data-fbsub="1"' + (F.txt[F.type].trim() && !F.busy ? '' : ' disabled') + '>' + (F.busy ? 'SENDING…' : 'SUBMIT') + '</button><p class="nt83">' + (me() === 'sam' ? '1P SAM' : '2P LEWY') + ' · BOTH PLAYERS CAN SEE THIS</p>'
+        : '<div class="ls83">' + list() + '</div>'); }
+  function open(type) { F.type = type; F.tab = 'new'; var X = $('fb83'); if (!X) { document.body.insertAdjacentHTML('beforeend', '<div class="modal" id="fb83"><div class="sheet"></div></div>'); X = $('fb83'); } X.classList.add('open'); paint(); load(); }
+  function close() { var X = $('fb83'); if (X) X.classList.remove('open'); try { kbClose(); } catch (e) {} }
+  window.fb83open = open;
+  function sync() { var ta = $('fbt83'); if (!ta) return; F.txt[F.type] = ta.value.slice(0, 2000); var c = $('fbc83'); if (c) c.textContent = F.txt[F.type].length + '/2000'; var b = $('fbs83'); if (b) b.disabled = !F.txt[F.type].trim() || !!F.busy; }
+  /* Settings rows (replaces the old GitHub "Report a bug" link) */
+  var _sh = setHtml58; setHtml58 = function () { var h = _sh.apply(this, arguments).replace(btn58('bug', 'Report a bug', 'Opens a GitHub issue'), '');
+    var g = grp58('💬 FEEDBACK', btn58('fb83bug', '🐞 REPORT A BUG', 'Something broken? Tell us') + btn58('fb83idea', '💡 SUGGEST A FEATURE', 'Got an idea? Pitch it'));
+    var i = h.lastIndexOf('<section class="sg58"><h4>ℹ ABOUT'); return i > 0 ? h.slice(0, i) + g + h.slice(i) : h + g; };
+  window.addEventListener('click', function (e) { var t = e.target; if (!t.closest) return; var b = t.closest('[data-seta="fb83bug"],[data-seta="fb83idea"]');
+    if (b) { e.stopImmediatePropagation(); e.preventDefault(); SFX.blip && SFX.blip(); return open(b.dataset.seta === 'fb83bug' ? 'bug' : 'idea'); }
+    var X = $('fb83'); if (!X || !X.classList.contains('open') || !X.contains(t)) return;
+    if (t === X) { e.stopImmediatePropagation(); return close(); }
+    var c = t.closest('button'), d = c ? c.dataset : {}; if (!c && t.id !== 'fbt83') return;
+    if (t.id === 'fbt83') { e.stopImmediatePropagation(); if (KB.target !== t) try { kbOpen(t); } catch (er) {} setTimeout(showSub, 60); return; }
+    e.stopImmediatePropagation(); e.preventDefault();
+    if (d.fbx) { SFX.blip && SFX.blip(); return close(); }
+    if (d.fbtab) { SFX.blip && SFX.blip(); try { kbClose(); } catch (er) {} F.tab = d.fbtab; return paint(); }
+    if (d.fbsub) { sync(); var txt = F.txt[F.type].trim(); if (!txt || F.busy) return; F.busy = 1; try { kbClose(); } catch (er) {} paint(); var ty = F.type;
+      run('fbAdd', [ty, me(), txt, { ver: window.APPV58 || '', view: curView() }], function (x) { F.busy = 0; F.txt[ty] = ''; if (x && F.L) F.L.unshift(x); SFX.save && SFX.save(); toast(T().ok); paint(); }, function () { F.busy = 0; paint(); }); return; }
+    if (d.fbdel) { var id = d.fbdel; confirm8('🗑', 'DELETE THIS ' + (F.type === 'bug' ? 'REPORT' : 'IDEA') + '?', 'This can\u2019t be undone.', 'DELETE', function () {
+      run('fbDel', [id, me()], function () { F.L = (F.L || []).filter(function (x) { return x.id !== id; }); toast('Deleted'); paint(); }, function () {}); }); } }, true);
+  /* textarea + 8-bit keyboard: return = new line; typing always goes at the end (no single-line caret maths); 2000-char cap via maxlength */
+  var _kk = kbKey; kbKey = function (k, raw) { var el = KB.target; if (!el || el.id !== 'fbt83') return _kk.apply(this, arguments);
+    el.__p72 = el.value.length;
+    if (k === 'OK') { if (el.value.length < 2000) { el.value += '\n'; el.__p72 = el.value.length; el.dispatchEvent(new Event('input', { bubbles: true })); } try { SFX.key && SFX.key(); } catch (e) {} }
+    else _kk.apply(this, arguments);
+    el.__p72 = el.value.length; el.scrollTop = el.scrollHeight; sync(); showSub(); };
+  window.addEventListener('pointerup', function () { var el = KB.target; if (el && el.id === 'fbt83') setTimeout(function () { el.__p72 = el.value.length; }, 0); }, true);
+  document.addEventListener('input', function (e) { if (e.target && e.target.id === 'fbt83') sync(); }, true);
+  window.addEventListener('pointerdown', function (e) { var t = e.target; if (KB.target && KB.target.id === 'fbt83') setTimeout(function () { var el = KB.target; if (el && el.id === 'fbt83') el.__p72 = el.value.length; }, 0); if (t && t.id === 'fbt83') { e.preventDefault(); if (KB.target !== t) { try { kbOpen(t); } catch (er) {} } setTimeout(showSub, 60); } }, true);
+  document.addEventListener('focusin', function (e) { if (e.target && e.target.id === 'fbt83') { e.target.blur(); if (KB.target !== e.target) try { kbOpen(e.target); } catch (er) {} } }, true);
+  function showSub() { var b = $('fbs83'), S = b && b.closest('.sheet'); if (!S) return; var kb = $('kb'), top = kb && kb.classList.contains('on') ? kb.getBoundingClientRect().top : innerHeight, r = b.getBoundingClientRect(); if (r.bottom > top - 8) S.scrollTop += r.bottom - top + 16; }
+  window.fb83showSub = showSub;
 })();
 
 </script>
