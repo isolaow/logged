@@ -5986,7 +5986,7 @@ document.addEventListener('click', function (e) { var b = e.target.closest && e.
   if (a === 'rsclr') return confirm8('🗑', 'CLEAR SEARCHES?', 'App + YouTube recent searches', 'CLEAR', function () { RS = []; localStorage.lg_recentq = '[]'; try { YRS = []; localStorage.lg_ytrs = '[]'; } catch (x) {} savedTick('CLEARED'); });
   if (a === 'mhclr') return confirm8('🗑', 'CLEAR MOOD HISTORY?', 'Your past Mood Pick answers', 'CLEAR', function () { run('clearMoodHist', [], function () { savedTick('CLEARED'); }); });
   if (a === 'export') { var d = { exported: new Date().toISOString(), who: p, rows: rows, interested: INT[p] || {}, notForMe: NFM[p] || [], settings: SETL, ytHistory: ytLS('lg_ythist') }, bl = new Blob([JSON.stringify(d, null, 1)], { type: 'application/json' }), u = URL.createObjectURL(bl), l = document.createElement('a'); l.href = u; l.download = 'logged-' + p + '-' + new Date().toISOString().slice(0, 10) + '.json'; document.body.appendChild(l); l.click(); setTimeout(function () { l.remove(); URL.revokeObjectURL(u); }, 1000); return; }
-  if (a === 'new') return confirm8('✨', 'WHAT\u2019S NEW', 'Explore / Log / Camp menus · Settings · Group Watch · YouTube menu & descriptions · trivia sound fix on iPhone · your own trophy cabinet', 'NICE', function () {});
+  if (a === 'pat93' || a === 'new') { try { if (window.PN93 && PN93.open) PN93.open(); } catch (e) {} return; }
   if (a === 'bug') return window.open('https://github.com/isolaow/logged/issues/new?title=' + encodeURIComponent('Bug: ') + '&body=' + encodeURIComponent('Who: ' + p + '\nDevice: ' + navigator.userAgent + '\n\nWhat happened:\n'), '_blank'); }, true);
 /* ---------- r58: search results — no 3-cap; TITLES section (all pages) + PERSON · FILMOGRAPHY section, scrollable ---------- */
 var _renderTm58 = renderTm; renderTm = function (el, r, n, box) { if (!r || r.v !== 2 || !r.results || !r.results.length) return _renderTm58.apply(this, arguments);
@@ -7539,7 +7539,7 @@ header h1{gap:2px!important}
 header h1 > #lg88,header h1 > #ly91{
   flex:0 0 auto!important;width:auto!important;min-width:44px!important;height:44px!important;min-height:44px!important;
   padding:0 8px!important;background:var(--gold,#ffcc33)!important;color:#111!important;border:2px solid #000;
-  box-shadow:2px 2px 0 #000;font:7px/1 var(--pix)!important;letter-spacing:0;display:inline-flex!important;align-items:center;justify-content:center;gap:3px
+  box-shadow:2px 2px 0 #000;font:7px/1 var(--pix)!important;letter-spacing:0;align-items:center;justify-content:center;gap:3px
 }
 header h1 > #lg88::after,header h1 > #ly91::after{content:'LOG IT';font:6px var(--pix)}
 header h1 > #sb88,header h1 > #st91,header h1 > #avPin,header h1 > #mute,header h1 > #refresh{
@@ -7555,6 +7555,63 @@ header h1 > #inboxB{flex:0 0 36px!important;width:36px!important;height:36px!imp
 #lf90m .lfa{position:sticky;bottom:0;background:#0f0d1f;padding:10px 0 6px;margin-top:8px;z-index:2;box-shadow:0 -6px 0 #0f0d1f}
 /* LOG IT row at top of drawers */
 #sh86 .log96,#ytdrw .log96{width:100%;min-height:48px;margin:0 0 8px;background:var(--gold,#ffcc33);color:#111;font:9px var(--pix);border:3px solid #000;box-shadow:3px 3px 0 #000}
+/* R97 / v3.05 hotfix — restore header, one LOG IT, no overlap */
+header h1{
+  display:flex!important;align-items:center!important;flex-wrap:nowrap!important;
+  gap:3px!important;min-width:0!important;overflow:hidden!important
+}
+/* Logo + LOGGED wordmark menu button — never crushed by icons */
+#lb88{
+  display:flex!important;flex:1 1 auto!important;min-width:0!important;max-width:none!important;
+  align-items:center!important;gap:4px!important;overflow:hidden!important;
+  position:relative!important;z-index:2!important;order:0!important
+}
+#lb88 .lw88{flex:0 0 auto!important}
+#lb88 .lt88{flex:1 1 auto!important;min-width:0!important;overflow:hidden!important}
+#lb88 .lg{
+  display:block!important;font:10px/1.1 var(--pix)!important;color:var(--gold,#ffcc33)!important;
+  text-shadow:2px 2px 0 var(--red,#ff4f8b),3px 3px 0 #000!important;
+  white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important
+}
+#ss88{display:inline-flex!important;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+/* Section ☰ — after logo cluster, not overlapping it */
+#sb88{
+  order:1!important;margin-left:0!important;position:relative!important;z-index:1!important;
+  flex:0 0 32px!important;width:32px!important;height:32px!important;min-width:32px!important;
+  background:#1c1c33!important;color:#cfc9f5!important;display:inline-flex!important;
+  align-items:center;justify-content:center;padding:0!important
+}
+/* Exactly one labelled LOG IT — default hidden; body class reveals the right one (no !important display on both) */
+header h1 > #lg88,header h1 > #ly91{
+  order:2!important;
+  flex:0 0 auto!important;width:auto!important;min-width:44px!important;max-width:88px!important;
+  height:44px!important;min-height:44px!important;padding:0 7px!important;
+  background:var(--gold,#ffcc33)!important;color:#111!important;border:2px solid #000!important;
+  box-shadow:2px 2px 0 #000!important;font:7px/1 var(--pix)!important;
+  align-items:center;justify-content:center;gap:2px;
+  display:none; /* NOT !important — body.s86-* wins */
+}
+header h1 > #lg88::after,header h1 > #ly91::after{content:'LOG IT';font:6px var(--pix);letter-spacing:0}
+body.s86-cinema header h1 > #lg88,
+body.s86-spotify header h1 > #lg88,
+body.s86-profile header h1 > #lg88,
+body.s86-settings header h1 > #lg88{display:inline-flex!important}
+body.s86-youtube header h1 > #ly91{display:inline-flex!important}
+body.s86-youtube header h1 > #lg88{display:none!important}
+body:not(.s86-youtube) header h1 > #ly91{display:none!important}
+/* Trailing icons — compact so 375/390 fit */
+header h1 > #avPin,header h1 > #inboxB,header h1 > #mute,header h1 > #refresh,header h1 > #st91{
+  order:3!important;flex:0 0 30px!important;width:30px!important;height:30px!important;
+  min-width:30px!important;padding:0!important;display:inline-flex!important;
+  align-items:center;justify-content:center
+}
+header h1 > #avPin{order:3!important}
+header h1 > #inboxB{order:4!important;background:#2a1848!important;color:#ff9ad5!important}
+header h1 > #mute{order:5!important;background:#1c1c33!important;color:#cfc9f5!important}
+header h1 > #refresh{order:6!important;background:#1c1c33!important;color:#cfc9f5!important}
+header h1 > #st91{order:7!important;background:#1c1c33!important;color:#cfc9f5!important}
+/* Kill any duplicate LOG IT nodes without ids (ensureLogBtn leftovers) */
+header h1 > button.icon.px.log97dup{display:none!important}
 </style><script id="r80">/* ===== R80: QC fixes for 25a42cd ===== */
 (function () {
   /* toasts: flatten parts, drop repeats and pieces already contained in a longer piece */
@@ -8051,7 +8108,7 @@ window.APPV58 = 'r91';
   var _od = openDetail; openDetail = function () { var r = _od.apply(this, arguments); mv(); setTimeout(mv, 0); setTimeout(mv, 400); setTimeout(mv, 2000); return r; };
   ['ostRedraw', 'ostxDraw'].forEach(function (n) { var f = window[n]; if (typeof f === 'function') window[n] = function () { var r = f.apply(this, arguments); mv(); return r; }; });
   /* stale-build guard: a home-screen app resumed from the background keeps old code; reload once when sw.js has a newer build */
-  var BUILD = 'logged-202610200103', busy = function () { var a = document.activeElement; return (a && /INPUT|TEXTAREA/.test(a.tagName)) || (window.OXA && !OXA.paused) || document.querySelector('#add.open,#fb83.open,#trv.open,#ytpage.open .yv'); };
+  var BUILD = 'logged-202610200114', busy = function () { var a = document.activeElement; return (a && /INPUT|TEXTAREA/.test(a.tagName)) || (window.OXA && !OXA.paused) || document.querySelector('#add.open,#fb83.open,#trv.open,#ytpage.open .yv'); };
   var last = 0; function check() { if (/demo=1/.test(location.search) || BUILD.indexOf('__') === 0 || Date.now() - last < 60000) return; last = Date.now();
     fetch('sw.js?b=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.ok ? r.text() : ''; }).then(function (t) { var m = t.match(/var V = '([^']+)'/); if (!m || m[1] === BUILD || busy()) return;
       try { if (sessionStorage.lg_rl89 === m[1]) return; sessionStorage.lg_rl89 = m[1]; } catch (e) {} try { toast('⟳ UPDATING LOGGED…'); } catch (e) {}
@@ -8163,7 +8220,7 @@ window.APPV58 = 'r91';
     if (t.closest('#ly91')) { e.stopImmediatePropagation(); e.preventDefault(); try { SFX.tap && SFX.tap(); } catch (x) {} YTA = { q: '', res: null, pick: null, w: {} }; openYTAdd(); setTimeout(function () { var q = $('ytQ'); q && q.focus(); }, 80); } }, true);
 })();
 /* ===== R92: bug fixes — iOS taps on posters/backdrops, HOW KEEN? picker, LOG IT season title + confirm + auto TV, mini player pause, drawers close outside/Back, ONE back stack, back-to-where-you-came-from, details info never stuck ===== */
-window.APPV58='3.04';
+window.APPV58='3.05';
 (function () {
   var $q = function (s) { return document.querySelector(s); };
 
@@ -8813,6 +8870,165 @@ window.APPV58 = '3.04';
     setInterval(fixYtHdr, 1500);
   } catch (e) {}
 })();
+/* R97 / v3.05 hotfix — header restore, one LOG IT, patch notes tap, upgrade popup */
+window.APPV58 = '3.05';
+(function () {
+  var KEY = 'lg_pn_seen', CUR = '3.05';
+
+  try {
+    if (window.PN93 && PN93.prepend) {
+      PN93.prepend({
+        v: '3.05', d: '20 Oct 2026', lines: [
+          'Header fixed: LOGGED logo menu is back, only one ＋ LOG IT, and ☰ no longer sits on the logo.',
+          'Settings → 📜 Patch notes opens reliably on tap.',
+          'What’s new pop-up shows once when you update (not only on a brand-new empty install).'
+        ]
+      });
+      PN93.v = CUR;
+    }
+  } catch (e) {}
+
+  /* --- 1) Header: idempotent single LOG IT; restore logo cluster --- */
+  function dedupeLogBtns() {
+    var h = document.querySelector('header h1'); if (!h) return;
+    /* keep first #lg88 / #ly91 only */
+    [].forEach.call(h.querySelectorAll('#lg88'), function (el, i) { if (i) el.remove(); });
+    [].forEach.call(h.querySelectorAll('#ly91'), function (el, i) { if (i) el.remove(); });
+    /* strip inline display hacks from 3.04 that fought !important */
+    var lg = $('lg88'), ly = $('ly91');
+    if (lg) { lg.style.removeProperty('display'); lg.style.removeProperty('width'); lg.style.removeProperty('min-width'); lg.style.removeProperty('height'); }
+    if (ly) { ly.style.removeProperty('display'); ly.style.removeProperty('width'); ly.style.removeProperty('min-width'); ly.style.removeProperty('height'); }
+    /* ensure lb88 still holds logo + LOGGED */
+    var lb = $('lb88');
+    if (lb) {
+      lb.style.removeProperty('display');
+      lb.style.removeProperty('width');
+      lb.style.removeProperty('max-width');
+      if (!$('logo') && lb.querySelector('.lw88') && !lb.querySelector('.lw88').children.length) {
+        /* logo node missing — leave; paint86 may refill */
+      }
+      if (!lb.querySelector('.lg')) {
+        var orphan = document.querySelector('header h1 > .lg');
+        if (orphan && lb.querySelector('.lt88')) lb.querySelector('.lt88').insertBefore(orphan, lb.querySelector('#ss88'));
+      }
+    }
+    var sb = $('sb88');
+    if (sb) { sb.style.removeProperty('margin-left'); sb.style.position = 'relative'; }
+  }
+
+  function ensureOneLog() {
+    dedupeLogBtns();
+    var h = document.querySelector('header h1'); if (!h) return;
+    var s = (window.S86 || {}).s || 'cinema';
+    if (!$('lg88')) {
+      var after = $('sb88') || $('lb88');
+      if (after) after.insertAdjacentHTML('afterend', '<button id="lg88" class="icon px" type="button" aria-label="Log it" title="＋ LOG IT">＋</button>');
+    }
+    if (!$('ly91')) {
+      var after2 = $('lg88') || $('sb88');
+      if (after2) after2.insertAdjacentHTML('afterend', '<button id="ly91" class="icon px" type="button" aria-label="Log a YouTube video" title="＋ LOG IT">＋</button>');
+    }
+    dedupeLogBtns();
+    /* body class drives visibility via CSS — do not set display:!important inline */
+    try {
+      if (window.S86 && S86.s) document.body.classList.add('s86-' + S86.s);
+    } catch (e) {}
+  }
+
+  /* Disable the 3.04 ensureLogBtn interval side-effects by replacing it */
+  try {
+    if (window.openLog96) {
+      /* keep openLog96; replace ensure path */
+    }
+  } catch (e) {}
+  ensureOneLog();
+  setInterval(ensureOneLog, 1500);
+  setTimeout(ensureOneLog, 200);
+  setTimeout(ensureOneLog, 800);
+
+  /* --- 2) Patch notes: reliable open on real iPhone taps --- */
+  function openNotes() {
+    try {
+      if (window.PN93 && typeof PN93.open === 'function') return PN93.open();
+    } catch (e) {}
+  }
+  function onPat(e) {
+    var b = e.target.closest && e.target.closest('#set58 [data-seta="pat93"], #set58 [data-seta="new"], #set58 [data-pn97]');
+    if (!b) return;
+    e.preventDefault(); e.stopImmediatePropagation();
+    try { SFX.tap && SFX.tap(); } catch (x) {}
+    openNotes();
+  }
+  document.addEventListener('click', onPat, true);
+  document.addEventListener('pointerup', function (e) {
+    if (e.pointerType === 'mouse') return;
+    onPat(e);
+  }, true);
+
+  /* Keep Settings button labelled after every redraw */
+  try {
+    var _sh = setHtml58;
+    setHtml58 = function () {
+      var h = _sh.apply(this, arguments);
+      if (h.indexOf('data-seta="pat93"') < 0 && h.indexOf('data-seta="new"') >= 0) {
+        h = h.replace(/data-seta="new"/g, 'data-seta="pat93"');
+      }
+      if (h.indexOf('Patch notes') < 0 && h.indexOf('data-seta="pat93"') >= 0) {
+        h = h.replace(/(data-seta="pat93"[^>]*>)([\s\S]*?)(<\/button>)/, function (m, a, mid, z) {
+          mid = mid.replace(/<b>[^<]*<\/b>/, '<b>📜 Patch notes</b>');
+          return a + mid + z;
+        });
+      }
+      return h;
+    };
+  } catch (e) {}
+
+  /* --- 3) What's new: existing users without lg_pn_seen = UPDATE --- */
+  function hasPriorUse() {
+    try {
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i) || '';
+        if (k === KEY) continue;
+        if (/^lg_|^wl_|^sp_|^yt|^OST|^SF|^MP|^WHO|^demo/i.test(k)) return true;
+        if (k === 'lg_who' || k === 'lg_token' || k === 'lg_who62') return true;
+      }
+    } catch (e) {}
+    return false;
+  }
+  function latestNote() {
+    try {
+      var L = (window.PN93 && PN93.notes) || [];
+      return L.filter(function (n) { return n.v === CUR; })[0] || L[0];
+    } catch (e) { return null; }
+  }
+  function maybePop97() {
+    var seen = null; try { seen = localStorage.getItem(KEY); } catch (e) {}
+    var note = latestNote();
+    if (seen === CUR) return;
+    if (seen == null && !hasPriorUse()) {
+      /* true fresh install */
+      try { localStorage.setItem(KEY, CUR); } catch (e) {}
+      return;
+    }
+    /* update path (including 3.00→3.05 with no lg_pn_seen, or seen older than CUR) */
+    try {
+      if (window.PN93 && PN93.popup) PN93.popup(note);
+      else if (note && window.PN93) PN93.popup(note);
+    } catch (e) {}
+    try { localStorage.setItem(KEY, CUR); } catch (e) {}
+  }
+  setTimeout(maybePop97, 1400);
+  setTimeout(maybePop97, 2800);
+
+  /* Keep H92 aware */
+  try {
+    if (window.H92 && H92.ov) {
+      if (!H92.ov.some(function (x) { return String(x[0]).indexOf('pn93') >= 0; })) {
+        H92.ov.unshift(['#pn93pop.open', function () { var p = $('pn93pop'); p && p.classList.remove('open'); }], ['#pn93.open', function () { var p = $('pn93'); p && p.classList.remove('open'); }]);
+      }
+    }
+  } catch (e) {}
+})();
 </script>
 </body></html>
-<!--RC304T-->
+<!--RC305T-->
