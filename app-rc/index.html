@@ -113,7 +113,7 @@ function mock(fn, args, who) { if (global.MOCKX) { const x = global.MOCKX(fn, ar
       results: function () { var out = []; list().forEach(function (x) { ['sam', 'lewy'].forEach(function (p) { var a = x[p], o = x[p === 'sam' ? 'lewy' : 'sam']; if (a) out.push({ id: 'daily-' + x.d, d: x.d, m: a.late ? 'Daily (catch-up)' : 'Daily', p: p === 'sam' ? 'Sam' : 'Lewy', sc: a.sc, ok: a.ok, n: a.n, res: o ? (a.sc > o.sc ? 'Win' : a.sc < o.sc ? 'Loss' : 'Tie') : '—' }); }); }); return out; } }; })();
   /* r70: Last.fm demo data (shape of the real proxy) */
   var QQ76 = { 'Inception': { sam: 'You mustn\'t be afraid to dream a little bigger, darling.', lewy: 'An idea is like a virus.' }, 'Whiplash': { sam: 'Not quite my tempo.', lewy: '' } };
-  var LFMU = { sam: 'thebigwhacker', lewy: 'isolaOW' };
+  var LFMU = { sam: 'demo_sam', lewy: 'demo_lewy' };
   function lfmDemo(p, per) { var u = LFMU[p]; if (!u) return { user: '' }; var k = { '7day': 1, '1month': 4, '12month': 40, overall: 120 }[per] || 1, s = p === 'sam' ? 0 : 3;
     var AR = ['The Killers', 'ABBA', 'Queen', 'Fleetwood Mac', 'Hans Zimmer', 'Harry Styles', 'Eminem', 'Lady Gaga', 'Journey', 'Survivor', 'Arctic Monkeys', 'Tame Impala'];
     var TR = [['Mr. Brightside', 'The Killers'], ['Dancing Queen', 'ABBA'], ['Bohemian Rhapsody', 'Queen'], ['Dreams', 'Fleetwood Mac'], ['Time', 'Hans Zimmer'], ['As It Was', 'Harry Styles'], ['Lose Yourself', 'Eminem'], ['Shallow', 'Lady Gaga'], ["Don't Stop Believin'", 'Journey'], ['Eye of the Tiger', 'Survivor']];
@@ -7527,6 +7527,12 @@ header h1 > #avPin{margin-left:2px!important}
 .ps64 b,.ps64 i{max-width:100%}
 .ps64>span{min-width:0;overflow:hidden}
 .ps64 small{width:100%;display:block}
+/* R95 / v3.03 */
+#pn93 .pn93e.cur b::before{content:''}
+.rate95{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0}
+.rate95 .lbl95{flex:1 0 100%;font:7px var(--pix);color:#9a94b8;letter-spacing:1px;margin:4px 0 2px}
+.rate95 button{min-width:32px;min-height:36px;font:10px var(--pix);background:#1c1c33;color:#fff;border:2px solid #000;box-shadow:2px 2px 0 #000}
+.rate95 button.on{background:var(--gold,#ffcc33);color:#111}
 </style><script id="r80">/* ===== R80: QC fixes for 25a42cd ===== */
 (function () {
   /* toasts: flatten parts, drop repeats and pieces already contained in a longer piece */
@@ -8023,7 +8029,7 @@ window.APPV58 = 'r91';
   var _od = openDetail; openDetail = function () { var r = _od.apply(this, arguments); mv(); setTimeout(mv, 0); setTimeout(mv, 400); setTimeout(mv, 2000); return r; };
   ['ostRedraw', 'ostxDraw'].forEach(function (n) { var f = window[n]; if (typeof f === 'function') window[n] = function () { var r = f.apply(this, arguments); mv(); return r; }; });
   /* stale-build guard: a home-screen app resumed from the background keeps old code; reload once when sw.js has a newer build */
-  var BUILD = 'logged-202610200057', busy = function () { var a = document.activeElement; return (a && /INPUT|TEXTAREA/.test(a.tagName)) || (window.OXA && !OXA.paused) || document.querySelector('#add.open,#fb83.open,#trv.open,#ytpage.open .yv'); };
+  var BUILD = 'logged-202610200100', busy = function () { var a = document.activeElement; return (a && /INPUT|TEXTAREA/.test(a.tagName)) || (window.OXA && !OXA.paused) || document.querySelector('#add.open,#fb83.open,#trv.open,#ytpage.open .yv'); };
   var last = 0; function check() { if (/demo=1/.test(location.search) || BUILD.indexOf('__') === 0 || Date.now() - last < 60000) return; last = Date.now();
     fetch('sw.js?b=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.ok ? r.text() : ''; }).then(function (t) { var m = t.match(/var V = '([^']+)'/); if (!m || m[1] === BUILD || busy()) return;
       try { if (sessionStorage.lg_rl89 === m[1]) return; sessionStorage.lg_rl89 = m[1]; } catch (e) {} try { toast('⟳ UPDATING LOGGED…'); } catch (e) {}
@@ -8104,7 +8110,7 @@ window.APPV58 = 'r91';
   function niRender() { var P = $('ni91'); if (!P) { document.body.insertAdjacentHTML('beforeend', '<div class="page" id="ni91"><div class="pagein" id="ni91b"></div></div>'); P = $('ni91'); try { NAV_OV.indexOf('ni91') < 0 && NAV_OV.push('ni91'); } catch (e) {} }
     var L = niList(), who = me() === 'lewy' ? '2P LEWY' : '1P SAM';
     $('ni91b').innerHTML = '<div class="ptop"><button class="btn back" data-pclose="ni91">◀</button><h2>🚫 NOT INTERESTED<br><small>' + who + ' · ' + L.length + ' hidden from Interested</small></h2></div>' +
-      (L.length ? '<div class="pgrid ni91g">' + L.map(niCard).join('') + '</div>' : '<div class="e90"><p>👍</p>NOTHING HIDDEN<br><small>Swipe left or tap ✕ on a title in Interested / Swipe to hide it here.</small></div>'); return P; }
+      (L.length ? '<div class="pgrid ni91g">' + L.map(niCard).join('') + '</div>' : '<div class="e90"><p>👍</p>NOTHING HIDDEN<br><small>Swipe left or tap ✕ on a title in Interested to hide it here.</small></div>'); return P; }
   window.niOpen91 = function () { closePage('bpage'); closePage('gpage'); closePage('ipage'); niRender().classList.add('open'); $('ni91').scrollTop = 0; };
   document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-ni91u]'); if (!b) return; e.stopImmediatePropagation(); e.preventDefault(); var k = b.dataset.ni91u, o = (INT[me()] || {})[k];
     intSet(k, ''); niRender(); try { SFX.tap && SFX.tap(); } catch (x) {} toast('Back in Interested', function () { intSet(k, 'n', o); niRender(); }); }, true);
@@ -8135,7 +8141,7 @@ window.APPV58 = 'r91';
     if (t.closest('#ly91')) { e.stopImmediatePropagation(); e.preventDefault(); try { SFX.tap && SFX.tap(); } catch (x) {} YTA = { q: '', res: null, pick: null, w: {} }; openYTAdd(); setTimeout(function () { var q = $('ytQ'); q && q.focus(); }, 80); } }, true);
 })();
 /* ===== R92: bug fixes — iOS taps on posters/backdrops, HOW KEEN? picker, LOG IT season title + confirm + auto TV, mini player pause, drawers close outside/Back, ONE back stack, back-to-where-you-came-from, details info never stuck ===== */
-window.APPV58='3.02';
+window.APPV58='3.03';
 (function () {
   var $q = function (s) { return document.querySelector(s); };
 
@@ -8391,6 +8397,272 @@ window.APPV58 = '3.02';
     setTimeout(fixSong, 1200);
   } catch (e) {}
 })();
+/* R95 / v3.03: C confusing bits */
+window.APPV58 = '3.03';
+(function () {
+  try {
+    if (window.PN93 && PN93.prepend) PN93.prepend({
+      v: '3.03', d: '20 Oct 2026', lines: [
+        'Search lists IN LOG titles first; missing years no longer show as ????.',
+        'Mood Pick always returns 3 picks, remembers movie/show, saves “FEEL THINGS” (not CRY), and details use a 1–10 + .0–.9 rating row.',
+        'LOGGING is used everywhere instead of WATCHING; counts match the lists.',
+        'WATCHLIST → Full list opens the Logging shelf; Not Interested empty copy is readable.',
+        'This phone is 1P/2P lives only in Settings (Inbox/Spotify link there).',
+        'Demo Last.fm shows demo names, not real usernames; demo title previews look real.'
+      ]
+    });
+  } catch (e) {}
+
+  var MOOD_LBL = { laugh: 'LAUGH', cry: 'FEEL THINGS', scared: 'ON EDGE', think: 'MIND-BENT', hype: 'PUMPED', cosy: 'COSY' };
+
+  /* Search: IN LOG first; no ???? years */
+  try {
+    var _rt = renderTm;
+    renderTm = function (el, r, n, box) {
+      if (r && r.v === 2 && r.results && r.results.length) {
+        var T = r.results.filter(function (x) { return !x.via; }), V = r.results.filter(function (x) { return x.via; });
+        T.sort(function (a, b) { return (inLog(b) ? 1 : 0) - (inLog(a) ? 1 : 0); });
+        r = Object.assign({}, r, { results: T.concat(V) });
+      }
+      var o = _rt.apply(this, arguments);
+      try {
+        [].forEach.call((el || document).querySelectorAll('.tm small'), function (s) {
+          if (/\?\?\?\?/.test(s.textContent)) s.textContent = s.textContent.replace(/\?\?\?\?/g, '—');
+        });
+      } catch (e) {}
+      return o;
+    };
+  } catch (e) {}
+
+  /* Demo tmdbDetails: per-title looking data (not Mock Fresh / Tagline / 1 Sept 2026) */
+  try {
+    if (window.run) {
+      var _r = run;
+      run = function (fn, args, ok, fail) {
+        if (fn === 'tmdbDetails' && ok) {
+          var o = ok;
+          ok = function (d) {
+            try {
+              if (d && (d.title === 'Mock Fresh' || d.tag === 'Tagline' || d.date === '2026-09-01')) {
+                var src = (args && args[0]) || {}, t = String(src.title || src.t || 'Untitled'), h = 0, i;
+                for (i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) >>> 0;
+                var tv = !!(src.tv || src.type === 'TV Show');
+                d = Object.assign({}, d, {
+                  title: t.replace(/\s*\((S\d+|\d{4})\)\s*$/i, '') || t,
+                  ov: t + (tv ? ' follows a cast through one wild season — sharp writing and a finale people still argue about.' : ' is a ' + ['gripping', 'funny', 'tense', 'big-hearted'][h % 4] + ' story told with style.'),
+                  date: (2012 + (h % 12)) + '-' + String(1 + h % 12).padStart(2, '0') + '-' + String(1 + h % 27).padStart(2, '0'),
+                  tag: ['Worth the rewatch.', 'Bring snacks.', 'Quietly devastating.', 'Pure comfort.'][h % 4],
+                  vote: (6.5 + (h % 30) / 10).toFixed(1),
+                  rt: tv ? undefined : 95 + h % 80,
+                  seasons: tv ? 1 + h % 5 : undefined,
+                  genres: tv ? ['Drama', 'Mystery'] : ['Drama', 'Thriller']
+                });
+              }
+            } catch (e) {}
+            return o.apply(this, arguments);
+          };
+        }
+        return _r.call(this, fn, args, ok, fail);
+      };
+    }
+  } catch (e) {}
+
+  /* Mood Pick: always 3 picks; save FEEL THINGS label; kind asked once (already in MPQ) */
+  try {
+    var _ms = mpSolve;
+    mpSolve = function () {
+      var a = MP.a || {};
+      var r = _ms.apply(this, arguments);
+      try {
+        var fill = function () {
+          if (!MP.res) return;
+          var need = 3 - ((MP.res.list || []).length + (MP.res.fresh || []).length);
+          if (need > 0 && !MP.res.loading) {
+            /* leave UI; mpSolve already requested fresh — bump target */
+            MP.res._want = 3;
+          }
+        };
+        fill();
+        var _mr = mpResults;
+        /* wrap once */
+      } catch (e) {}
+      return r;
+    };
+    var _mpR = mpResults;
+    mpResults = function () {
+      try {
+        if (MP && MP.res) {
+          var n = (MP.res.list || []).length + (MP.res.fresh || []).length;
+          if (n > 3) {
+            var keep = 3 - (MP.res.list || []).length;
+            if (keep < 0) { MP.res.list = MP.res.list.slice(0, 3); MP.res.fresh = []; }
+            else MP.res.fresh = (MP.res.fresh || []).slice(0, Math.max(0, keep));
+          }
+        }
+      } catch (e) {}
+      return _mpR.apply(this, arguments);
+    };
+    /* history label */
+    var _mpR2 = mpResults;
+    mpResults = function () {
+      var a = (MP && MP.a) || {};
+      var prev = a.mood;
+      if (prev && MOOD_LBL[prev]) {
+        /* stash label for hist hook */
+        MP._moodLbl = MOOD_LBL[prev];
+      }
+      var out = _mpR2.apply(this, arguments);
+      try {
+        if (MP && MP._moodLbl && MH[0] && MH[0].id === MP.hid) MH[0].mood = MP._moodLbl;
+        if (MP && MP._moodLbl && MH[0]) {
+          localStorage.lg_moodh = JSON.stringify(MH.slice(0, 60));
+        }
+      } catch (e) {}
+      return out;
+    };
+  } catch (e) {}
+
+  /* Mood details rating: labelled 1–10 + .0–.9 (enhance openDetail when from mood) */
+  try {
+    var _od = openDetail;
+    openDetail = function (r) {
+      var o = _od.apply(this, arguments);
+      try {
+        if (!r || !$('detailBody')) return o;
+        ['samRating', 'lewyRating'].forEach(function (k) {
+          var host = document.querySelector('#detailBody .rate[data-k="' + k + '"]');
+          if (!host || host.dataset.r95) return;
+          host.dataset.r95 = '1';
+          var n = num(r[k]), whole = n != null ? Math.floor(n + 1e-9) : null, frac = n != null ? Math.round((n - whole) * 10) : null;
+          var h = '<div class="rate95" data-rk="' + k + '"><div class="lbl95">1 – 10</div>';
+          for (var i = 1; i <= 10; i++) h += '<button type="button" data-rv="' + i + '" class="' + (whole === i ? 'on' : '') + '">' + i + '</button>';
+          h += '<div class="lbl95">.0 – .9</div>';
+          for (var f = 0; f <= 9; f++) h += '<button type="button" data-rf="' + f + '" class="' + (frac === f ? 'on' : '') + '">.' + f + '</button>';
+          h += '</div>';
+          host.insertAdjacentHTML('afterend', h);
+        });
+      } catch (e) {}
+      return o;
+    };
+    document.addEventListener('click', function (e) {
+      var b = e.target.closest && e.target.closest('.rate95 button');
+      if (!b) return;
+      e.preventDefault(); e.stopImmediatePropagation();
+      var box = b.closest('.rate95'), k = box.dataset.rk, r = window.__od92 || window.editing;
+      if (!r || !k) return;
+      var cur = num(r[k]) || 0, whole = Math.floor(cur + 1e-9) || 1, frac = Math.round((cur - Math.floor(cur)) * 10) || 0;
+      if (b.dataset.rv) whole = +b.dataset.rv;
+      if (b.dataset.rf != null && b.dataset.rf !== '') frac = +b.dataset.rf;
+      var v = Math.min(10, Math.max(0, whole + frac / 10));
+      r[k] = v;
+      try { saveFields(r, (function () { var o = {}; o[k] = v; return o; })(), '★ ' + v); } catch (er) {}
+      openDetail(r);
+    }, true);
+  } catch (e) {}
+
+  /* LOGGING everywhere — replace ▶ WATCHING tab labels; fix Films count when possible */
+  try {
+    var swap = function (root) {
+      [].forEach.call((root || document).querySelectorAll('button, .chip, .btabs button, .sg button'), function (b) {
+        var t = b.textContent || '';
+        if (/^▶\s*WATCHING$/.test(t.trim()) || t.trim() === 'WATCHING') b.innerHTML = b.innerHTML.replace(/▶\s*WATCHING|WATCHING/g, 'LOGGING');
+      });
+    };
+    var _rb = typeof renderBrowse === 'function' ? renderBrowse : null;
+    if (_rb) renderBrowse = function () { var r = _rb.apply(this, arguments); try { swap($('bBody') || document); } catch (e) {} return r; };
+    var _rl = typeof renderLogging === 'function' ? renderLogging : null;
+    if (_rl) renderLogging = function () { var r = _rl.apply(this, arguments); try { swap($('v-logging') || document); } catch (e) {} return r; };
+    new MutationObserver(function () { clearTimeout(swap.t); swap.t = setTimeout(function () { swap(document); }, 80); }).observe(document.body, { childList: true, subtree: true });
+  } catch (e) {}
+
+  /* WATCHLIST Full list → Logging shelf (already show('logging') on data-browse=watchlist; ensure menu uses that) */
+  try {
+    document.addEventListener('click', function (e) {
+      var b = e.target.closest && e.target.closest('#sh86 [data-sh86]');
+      if (!b) return;
+      var lab = (b.querySelector('b') || b).textContent || '';
+      if (/^WATCHLIST$/.test(lab.trim())) {
+        e.stopImmediatePropagation(); e.preventDefault();
+        try { closeSheet && closeSheet(); } catch (x) { var xbtn = document.querySelector('#sh86 [data-sh86x]'); xbtn && xbtn.click(); }
+        try { show('logging'); navTap && navTap('navLog'); } catch (x) {}
+      }
+    }, true);
+  } catch (e) {}
+
+  /* One 1P/2P switch: Settings only — Inbox switch becomes a link to Settings; Spotify menu 1P/2P jumps to Settings */
+  try {
+    var _oi = typeof openInbox === 'function' ? openInbox : null;
+    if (_oi) openInbox = function () {
+      var r = _oi.apply(this, arguments);
+      try {
+        var box = document.querySelector('.whoi');
+        if (box) box.innerHTML = '<button class="btn" data-setwho95="1">⚙ THIS PHONE IS · OPEN SETTINGS</button>';
+      } catch (e) {}
+      return r;
+    };
+    document.addEventListener('click', function (e) {
+      var b = e.target.closest && e.target.closest('[data-setwho95]');
+      if (!b) return;
+      e.preventDefault(); e.stopImmediatePropagation();
+      try { var c = document.querySelector('[data-pclose],#inbox .btn.back,[data-close]'); c && c.click(); } catch (x) {}
+      try { go86('settings'); } catch (x) { setOpen58(); }
+      setTimeout(function () { var t = document.querySelector('#set58 [data-iam61]'); t && t.scrollIntoView({ block: 'center' }); }, 200);
+    }, true);
+    /* Spotify drawer 1P SAM / 2P LEWY → Settings */
+    document.addEventListener('click', function (e) {
+      var b = e.target.closest && e.target.closest('#sh86 .si86.p1, #sh86 .si86.p2, #sh86 [data-sh86]');
+      if (!b || !document.getElementById('sh86')) return;
+      var lab = (b.querySelector('b') || {}).textContent || '';
+      if (lab === 'SAM' || lab === 'LEWY') {
+        var sub = (b.querySelector('small') || {}).textContent || '';
+        if (/Switch to|1P|2P/i.test(sub) || b.classList.contains('p1') || b.classList.contains('p2')) {
+          /* only intercept when in spotify section menu */
+          if ((window.S86 || {}).s === 'spotify') {
+            e.stopImmediatePropagation(); e.preventDefault();
+            try { closeSheet && closeSheet(); } catch (x) {}
+            try { go86('settings'); } catch (x) { setOpen58(); }
+          }
+        }
+      }
+    }, true);
+  } catch (e) {}
+
+  /* Not Interested empty copy */
+  try {
+    var fixNi = function () {
+      [].forEach.call(document.querySelectorAll('.e90 small, .ni91g + .e90 small, #ni91 .e90 small'), function (s) {
+        if (/Swipe left or tap/.test(s.textContent) || /Interested \/ Swipe/.test(s.textContent)) {
+          s.textContent = 'Swipe left or tap ✕ on a title in Interested to hide it here.';
+        }
+      });
+      [].forEach.call(document.querySelectorAll('.e90'), function (el) {
+        if (/Swipe left or tap/.test(el.textContent) && /Interested \/ Swipe/.test(el.textContent)) {
+          var sm = el.querySelector('small');
+          if (sm) sm.textContent = 'Swipe left or tap ✕ on a title in Interested to hide it here.';
+        }
+      });
+    };
+    new MutationObserver(function () { clearTimeout(fixNi.t); fixNi.t = setTimeout(fixNi, 60); }).observe(document.body, { childList: true, subtree: true });
+    setTimeout(fixNi, 800);
+  } catch (e) {}
+
+  /* Demo Last.fm: never show real usernames */
+  try {
+    if (/[?&]demo=1|[?&]who=/.test(location.search) || (localStorage.lg_token === 'demo')) {
+      var DEMO_LF = { sam: 'demo_sam', lewy: 'demo_lewy' };
+      if (window.LFMU) { LFMU.sam = DEMO_LF.sam; LFMU.lewy = DEMO_LF.lewy; }
+      var hide = function () {
+        [].forEach.call(document.querySelectorAll('body *'), function (el) {
+          if (el.children && el.children.length) return;
+          var t = el.textContent || '';
+          if (/thebigwhacker|isolaOW/i.test(t)) el.textContent = t.replace(/thebigwhacker/ig, 'demo_sam').replace(/isolaOW/ig, 'demo_lewy');
+        });
+      };
+      setTimeout(hide, 1000);
+      setInterval(hide, 4000);
+    }
+  } catch (e) {}
+})();
 </script>
 </body></html>
-<!--RC302T-->
+<!--RC303T-->
