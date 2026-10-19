@@ -7472,6 +7472,29 @@ header h1 > #avPin{margin-left:2px!important}
 #arch.archh.open{display:block!important}
 #detailBody .tm92{font-size:12px;letter-spacing:1px;color:#cfc9f5;margin:4px 0 0}
 #ytdrw .ytdrwbg,#ytdrw aside{pointer-events:auto}
+/* R93 */
+#pn93{position:fixed;inset:0;z-index:1600;background:#0b0b14;display:none;flex-direction:column;padding:calc(10px + env(safe-area-inset-top)) 12px calc(18px + env(safe-area-inset-bottom));overflow:hidden}
+#pn93.open{display:flex}
+#pn93 .pn93h{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex:none}
+#pn93 .pn93h h2{margin:0;font:11px var(--pix);color:var(--gold,#ffcc33);letter-spacing:1px;flex:1}
+#pn93 .pn93h h2 small{display:block;font:7px var(--pix);color:#9a94b8;margin-top:4px;letter-spacing:0}
+#pn93 .pn93sc{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding-bottom:8px}
+#pn93 .pn93e{background:#16162a;border:3px solid #000;box-shadow:4px 4px 0 #000;margin:0 0 12px;padding:10px 12px}
+#pn93 .pn93e.cur{border-color:var(--gold,#ffcc33);box-shadow:4px 4px 0 #000,0 0 0 2px rgba(255,204,51,.35)}
+#pn93 .pn93e b{display:block;font:10px var(--pix);color:var(--gold,#ffcc33);letter-spacing:1px}
+#pn93 .pn93e b em{font-style:normal;color:#9a94b8;font-size:7px;margin-left:8px;letter-spacing:0}
+#pn93 .pn93e ul{margin:8px 0 0;padding:0 0 0 14px;list-style:square}
+#pn93 .pn93e li{font:17px/1.35 var(--body,'VT323',monospace);color:#e8e6ff;margin:0 0 4px}
+#pn93pop{position:fixed;inset:0;z-index:1700;background:rgba(0,0,0,.72);display:none;align-items:flex-end;justify-content:center;padding:12px 12px calc(18px + env(safe-area-inset-bottom))}
+#pn93pop.open{display:flex}
+#pn93pop .pn93box{width:100%;max-width:420px;max-height:78vh;background:#0f0d1f;border:4px solid #000;box-shadow:0 0 0 3px var(--gold,#ffcc33),8px 8px 0 #000;display:flex;flex-direction:column;overflow:hidden}
+#pn93pop .pn93box h2{margin:0;padding:12px 14px 8px;font:11px var(--pix);color:var(--gold,#ffcc33);letter-spacing:1px;border-bottom:3px solid #000;background:#16162a}
+#pn93pop .pn93box h2 small{display:block;font:7px var(--pix);color:#cfc9f5;margin-top:5px;letter-spacing:0}
+#pn93pop .pn93box .pn93sc{flex:1;min-height:0;overflow-y:auto;padding:10px 14px;overscroll-behavior:contain}
+#pn93pop .pn93box .pn93e{margin:0;border:0;box-shadow:none;background:transparent;padding:0}
+#pn93pop .pn93acts{display:flex;gap:8px;padding:10px 12px;border-top:3px solid #000;background:#16162a;flex:none}
+#pn93pop .pn93acts .ui-btn,#pn93 .pn93h .ui-btn{min-height:44px;flex:1;font:9px var(--pix)}
+#pn93pop .pn93acts .save{background:var(--gold,#ffcc33);color:#111}
 </style><script id="r80">/* ===== R80: QC fixes for 25a42cd ===== */
 (function () {
   /* toasts: flatten parts, drop repeats and pieces already contained in a longer piece */
@@ -7968,7 +7991,7 @@ window.APPV58 = 'r91';
   var _od = openDetail; openDetail = function () { var r = _od.apply(this, arguments); mv(); setTimeout(mv, 0); setTimeout(mv, 400); setTimeout(mv, 2000); return r; };
   ['ostRedraw', 'ostxDraw'].forEach(function (n) { var f = window[n]; if (typeof f === 'function') window[n] = function () { var r = f.apply(this, arguments); mv(); return r; }; });
   /* stale-build guard: a home-screen app resumed from the background keeps old code; reload once when sw.js has a newer build */
-  var BUILD = 'logged-202610200019', busy = function () { var a = document.activeElement; return (a && /INPUT|TEXTAREA/.test(a.tagName)) || (window.OXA && !OXA.paused) || document.querySelector('#add.open,#fb83.open,#trv.open,#ytpage.open .yv'); };
+  var BUILD = 'logged-202610200051', busy = function () { var a = document.activeElement; return (a && /INPUT|TEXTAREA/.test(a.tagName)) || (window.OXA && !OXA.paused) || document.querySelector('#add.open,#fb83.open,#trv.open,#ytpage.open .yv'); };
   var last = 0; function check() { if (/demo=1/.test(location.search) || BUILD.indexOf('__') === 0 || Date.now() - last < 60000) return; last = Date.now();
     fetch('sw.js?b=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.ok ? r.text() : ''; }).then(function (t) { var m = t.match(/var V = '([^']+)'/); if (!m || m[1] === BUILD || busy()) return;
       try { if (sessionStorage.lg_rl89 === m[1]) return; sessionStorage.lg_rl89 = m[1]; } catch (e) {} try { toast('⟳ UPDATING LOGGED…'); } catch (e) {}
@@ -8080,7 +8103,7 @@ window.APPV58 = 'r91';
     if (t.closest('#ly91')) { e.stopImmediatePropagation(); e.preventDefault(); try { SFX.tap && SFX.tap(); } catch (x) {} YTA = { q: '', res: null, pick: null, w: {} }; openYTAdd(); setTimeout(function () { var q = $('ytQ'); q && q.focus(); }, 80); } }, true);
 })();
 /* ===== R92: bug fixes — iOS taps on posters/backdrops, HOW KEEN? picker, LOG IT season title + confirm + auto TV, mini player pause, drawers close outside/Back, ONE back stack, back-to-where-you-came-from, details info never stuck ===== */
-window.APPV58 = 'r92';
+window.APPV58='3.01';
 (function () {
   var $q = function (s) { return document.querySelector(s); };
 
@@ -8147,6 +8170,133 @@ window.APPV58 = 'r92';
     [].forEach.call(document.querySelectorAll('#sp82 [data-sp82x], [data-cp59="profile"]'), function (b) { var t = '◀ ' + nm; if (b.textContent !== t) b.textContent = t; }); }
   new MutationObserver(function () { if (relabel.t) return; relabel.t = setTimeout(function () { relabel.t = 0; relabel(); }, 90); }).observe(document.body, { childList: true, subtree: true });
 })();
+/* R93: 📜 PATCH NOTES (user-facing v3.01) — Settings list + once-per-version pop-up */
+window.APPV58 = '3.01';
+(function () {
+  var CUR = '3.01', KEY = 'lg_pn_seen';
+  var NOTES = [
+    { v: '3.01', d: '20 Oct 2026', lines: [
+      '📜 Patch notes — open from Settings, newest first.',
+      'A one-time pop-up shows what changed after each update (not on a brand-new install).'
+    ]},
+    { v: '3.00', d: '20 Oct 2026', lines: [
+      'Interested posters open on a touch tap; HOW KEEN? picker actually shows.',
+      'Logging a TV season no longer doubles the (S2) suffix, and asks you to confirm first.',
+      'LOG IT switches to TV when you pick a show; mini player pause keeps it on screen.',
+      '☰ drawers close on an outside tap or Back; Back walks one history stack.',
+      'Spotify / Stats back goes to where you came from; details never stick on “Loading info…”.',
+      'Demo titles get real-looking synopsis + TMDB ★ · seasons line.'
+    ]},
+    { v: '2.99', d: '19 Oct 2026', lines: [
+      'Cinema ☰ → NOT INTERESTED list (moved out of Settings).',
+      'Section menus use collapsible groups; ⚙ Settings button in the header.',
+      '＋ LOG IT on YouTube (+ demo addYouTube mock).'
+    ]},
+    { v: '2.98', d: '19 Oct 2026', lines: [
+      'Logging tab filter bar: type, who’s watching, genres, where to watch, TV progress, Spesh.',
+      'Sort: recently updated, A–Z, rating, year, runtime left — remembered on this phone.',
+      'Details genre-chip gap fixed (no huge empty strip under genres).'
+    ]},
+    { v: '2.97', d: '18 Oct 2026', lines: [
+      'Soundtrack block sits at the bottom of details.',
+      'App auto-updates more reliably when a new build is live.'
+    ]},
+    { v: '2.96', d: '18 Oct 2026', lines: [
+      'Soundtrack improvements on title details.',
+      'Smaller polish around play + save flows.'
+    ]},
+    { v: '2.95', d: '17 Oct 2026', lines: [
+      'Logo opens the section menu (Cinema / YouTube / Spotify / Profile / Settings).'
+    ]},
+    { v: '2.94', d: '17 Oct 2026', lines: [
+      'Awards layout tweaks on details.'
+    ]},
+    { v: '2.93', d: '16 Oct 2026', lines: [
+      'Awards show on title details.'
+    ]},
+    { v: '2.92', d: '16 Oct 2026', lines: [
+      'Menu navigation: header MENU → Cinema / YouTube / Spotify / Profile / Settings.',
+      'Each section has its own ☰ drawer.'
+    ]}
+  ];
+
+  var PN = window.PN93 = {
+    v: CUR,
+    notes: NOTES,
+    prepend: function (e) { if (e && e.v) NOTES.unshift(e); },
+    open: openList,
+    popup: openPop
+  };
+
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function entryHtml(e, cur) {
+    return '<article class="pn93e' + (cur ? ' cur' : '') + '"><b>v' + esc(e.v) + '<em>' + esc(e.d) + ' AEDT</em></b><ul>' +
+      (e.lines || []).map(function (l) { return '<li>' + esc(l) + '</li>'; }).join('') + '</ul></article>';
+  }
+  function listHtml() { return NOTES.map(function (e, i) { return entryHtml(e, i === 0); }).join(''); }
+
+  function ensure() {
+    if (document.getElementById('pn93')) return;
+    document.body.insertAdjacentHTML('beforeend',
+      '<div id="pn93" role="dialog" aria-label="Patch notes"><div class="pn93h"><button type="button" class="ui-btn" data-pn93x="1">◀ BACK</button><h2>📜 PATCH NOTES <small>newest first · this phone</small></h2></div><div class="pn93sc"></div></div>' +
+      '<div id="pn93pop" role="dialog" aria-label="What\'s new"><div class="pn93box"><h2>✨ WHAT\'S NEW <small></small></h2><div class="pn93sc"></div><div class="pn93acts"><button type="button" class="ui-btn save" data-pn93c="1">CLOSE</button></div></div></div>');
+  }
+  function openList() {
+    ensure(); var x = document.getElementById('pn93'); x.querySelector('.pn93sc').innerHTML = listHtml(); x.classList.add('open'); x.querySelector('.pn93sc').scrollTop = 0;
+    try { SFX.tap && SFX.tap(); } catch (e) {}
+  }
+  function closeList() { var x = document.getElementById('pn93'); if (x) x.classList.remove('open'); }
+  function openPop(e) {
+    ensure(); e = e || NOTES[0]; if (!e) return;
+    var p = document.getElementById('pn93pop'); p.querySelector('h2 small').textContent = 'v' + e.v + ' · ' + e.d + ' AEDT';
+    p.querySelector('.pn93sc').innerHTML = entryHtml(e, true); p.classList.add('open');
+    try { SFX.coin && SFX.coin(); } catch (er) {}
+  }
+  function closePop() {
+    var p = document.getElementById('pn93pop'); if (p) p.classList.remove('open');
+    try { localStorage.setItem(KEY, CUR); } catch (e) {}
+  }
+
+  window.addEventListener('click', function (e) {
+    var t = e.target; if (!t.closest) return;
+    if (t.closest('[data-pn93x]')) { e.preventDefault(); e.stopImmediatePropagation(); closeList(); try { SFX.back && SFX.back(); } catch (x) {} return; }
+    if (t.closest('[data-pn93c]')) { e.preventDefault(); e.stopImmediatePropagation(); closePop(); try { SFX.tap && SFX.tap(); } catch (x) {} return; }
+    if (t.closest('#pn93pop') && !t.closest('.pn93box')) { e.preventDefault(); closePop(); }
+  }, true);
+
+  /* Settings: rewrite What’s new → 📜 Patch notes in the rendered HTML */
+  var _sh = setHtml58;
+  setHtml58 = function () {
+    var h = _sh.apply(this, arguments);
+    h = h.replace(/data-seta="new"/g, 'data-seta="pat93"');
+    h = h.replace(/(data-seta="pat93"[^>]*>)([\s\S]*?)(<\/button>)/, function (m, a, mid, z) {
+      mid = mid.replace(/<b>[^<]*<\/b>/, '<b>📜 Patch notes</b>');
+      if (/<small>/.test(mid)) mid = mid.replace(/<small>[^<]*<\/small>/, '<small>What changed, newest first</small>');
+      else mid = mid.replace(/<\/span>/, '<small>What changed, newest first</small></span>');
+      return a + mid + z;
+    });
+    return h;
+  };
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('#set58 [data-seta="pat93"], #set58 [data-seta="new"]');
+    if (!b) return; e.stopImmediatePropagation(); e.preventDefault(); try { SFX.tap && SFX.tap(); } catch (x) {} openList();
+  }, true);
+
+  function maybePop() {
+    var seen = null; try { seen = localStorage.getItem(KEY); } catch (e) {}
+    if (seen == null) { try { localStorage.setItem(KEY, CUR); } catch (e) {} return; }
+    if (seen === CUR) return;
+    openPop(NOTES.filter(function (n) { return n.v === CUR; })[0] || NOTES[0]);
+    try { localStorage.setItem(KEY, CUR); } catch (e) {}
+  }
+  setTimeout(maybePop, 1200);
+
+  try {
+    if (window.H92 && H92.ov) {
+      H92.ov.unshift(['#pn93pop.open', function () { closePop(); }], ['#pn93.open', function () { closeList(); }]);
+    }
+  } catch (e) {}
+})();
 </script>
 </body></html>
-<!--RC92T-->
+<!--RC301T-->
