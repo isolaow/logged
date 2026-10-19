@@ -7421,6 +7421,9 @@ header h1 > .icon.px,header h1 > #avPin{flex:0 0 30px!important;width:30px!impor
 body.s86-cinema #lg88{display:inline-flex;align-items:center;justify-content:center}
 header h1 > #sb88,header h1 > #lg88{flex:0 0 30px!important;width:30px!important;height:30px!important;padding:0}
 #mn86 .pop86{transform-origin:top left}
+
+/* R89 */ #detailBody .st89{margin-top:14px}
+body:has(#thm) #detailBody{padding-bottom:calc(100px + env(safe-area-inset-bottom))!important}
 </style><script id="r80">/* ===== R80: QC fixes for 25a42cd ===== */
 (function () {
   /* toasts: flatten parts, drop repeats and pieces already contained in a longer piece */
@@ -7900,9 +7903,18 @@ header h1 > #sb88,header h1 > #lg88{flex:0 0 30px!important;width:30px!important
   var bk = function () { try { window.dispatchEvent(new Event('resize')); } catch (e) {} }; setTimeout(bk, 60); setTimeout(bk, 400);
 })();
 
+
+/* ===== R89: details page — all soundtrack bits live at the bottom, just above 🗑 / ✓ DONE ===== */
+(function () { var D = $('detail'); if (!D) return;
+  function mv() { var B = $('detailBody'), acts = B && B.querySelector('.acts'); if (!acts) return; var L = ['ostx', 'ost'].map(function (id) { var e = $(id); return e && B.contains(e) ? e : null; }).filter(Boolean);
+    var ok = L.every(function (e, i) { return (i < L.length - 1 ? e.nextElementSibling === L[i + 1] : e.nextElementSibling === acts); }); if (ok) return;
+    L.forEach(function (e) { acts.parentNode.insertBefore(e, acts); e.classList.add('st89'); }); }
+  window.mv89 = mv; var raf = 0; new MutationObserver(function () { if (raf) return; raf = requestAnimationFrame(function () { raf = 0; mv(); }); }).observe(D, { childList: true, subtree: true }); mv(); })();
+
 </script>
 </body></html>
 <!--RC85T-->
 <!--RC86T-->
 <!--RC87bT-->
 <!--RC88T-->
+<!--RC89T-->
