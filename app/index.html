@@ -7555,43 +7555,56 @@ header h1 > #inboxB{flex:0 0 36px!important;width:36px!important;height:36px!imp
 #lf90m .lfa{position:sticky;bottom:0;background:#0f0d1f;padding:10px 0 6px;margin-top:8px;z-index:2;box-shadow:0 -6px 0 #0f0d1f}
 /* LOG IT row at top of drawers */
 #sh86 .log96,#ytdrw .log96{width:100%;min-height:48px;margin:0 0 8px;background:var(--gold,#ffcc33);color:#111;font:9px var(--pix);border:3px solid #000;box-shadow:3px 3px 0 #000}
-/* R97 / v3.05 hotfix — restore header, one LOG IT, no overlap */
+/* R97 / v3.05 hotfix — restore header, one LOG IT, no overlap / no clip */
 header h1{
   display:flex!important;align-items:center!important;flex-wrap:nowrap!important;
-  gap:3px!important;min-width:0!important;overflow:hidden!important
+  gap:2px!important;min-width:0!important;overflow:visible!important
 }
-/* Logo + LOGGED wordmark menu button — never crushed by icons */
+/* Logo + LOGGED wordmark — fixed size, never shrink/clip */
 #lb88{
-  display:flex!important;flex:1 1 auto!important;min-width:0!important;max-width:none!important;
-  align-items:center!important;gap:4px!important;overflow:hidden!important;
+  display:flex!important;flex:0 0 auto!important;min-width:auto!important;max-width:none!important;
+  align-items:center!important;gap:3px!important;overflow:visible!important;
   position:relative!important;z-index:2!important;order:0!important
 }
 #lb88 .lw88{flex:0 0 auto!important}
-#lb88 .lt88{flex:1 1 auto!important;min-width:0!important;overflow:hidden!important}
-#lb88 .lg{
-  display:block!important;font:10px/1.1 var(--pix)!important;color:var(--gold,#ffcc33)!important;
-  text-shadow:2px 2px 0 var(--red,#ff4f8b),3px 3px 0 #000!important;
-  white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important
+#lb88 #logo img,#lb88 .ltv,#lb88 img.ltv{
+  height:28px!important;width:auto!important;max-width:34px!important;
+  image-rendering:pixelated!important
 }
-#ss88{display:inline-flex!important;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+#lb88 .lt88{flex:0 0 auto!important;min-width:auto!important;overflow:visible!important;max-width:none!important}
+#lb88 .lg{
+  display:block!important;font:9px/1.1 var(--pix)!important;color:var(--gold,#ffcc33)!important;
+  text-shadow:2px 2px 0 var(--red,#ff4f8b),3px 3px 0 #000!important;
+  white-space:nowrap!important;overflow:visible!important;text-overflow:clip!important;
+  letter-spacing:0!important;max-width:none!important
+}
+#ss88{
+  display:inline-flex!important;align-items:center!important;gap:2px!important;
+  margin-top:3px!important;font:6px/1 var(--pix)!important;color:#cfc9f5!important;
+  text-shadow:1px 1px 0 #000!important;letter-spacing:0!important;
+  white-space:nowrap!important;max-width:none!important;overflow:visible!important;
+  text-overflow:clip!important
+}
+#ss88 i{width:10px!important;height:10px!important;font-size:9px!important}
+#ss88 svg,#ss88 img{width:10px!important;height:10px!important}
 /* Section ☰ — after logo cluster, not overlapping it */
 #sb88{
   order:1!important;margin-left:0!important;position:relative!important;z-index:1!important;
-  flex:0 0 32px!important;width:32px!important;height:32px!important;min-width:32px!important;
+  flex:0 0 28px!important;width:28px!important;height:28px!important;min-width:28px!important;
   background:#1c1c33!important;color:#cfc9f5!important;display:inline-flex!important;
-  align-items:center;justify-content:center;padding:0!important
+  align-items:center;justify-content:center;padding:0!important;font-size:14px!important
 }
-/* Exactly one labelled LOG IT — default hidden; body class reveals the right one (no !important display on both) */
+/* Exactly one labelled LOG IT — narrower width, still ≥44px tall */
 header h1 > #lg88,header h1 > #ly91{
   order:2!important;
-  flex:0 0 auto!important;width:auto!important;min-width:44px!important;max-width:88px!important;
-  height:44px!important;min-height:44px!important;padding:0 7px!important;
+  flex:0 0 auto!important;width:auto!important;min-width:44px!important;max-width:64px!important;
+  height:44px!important;min-height:44px!important;padding:0 4px!important;
   background:var(--gold,#ffcc33)!important;color:#111!important;border:2px solid #000!important;
   box-shadow:2px 2px 0 #000!important;font:7px/1 var(--pix)!important;
-  align-items:center;justify-content:center;gap:2px;
+  align-items:center;justify-content:center;gap:1px;
   display:none; /* NOT !important — body.s86-* wins */
 }
-header h1 > #lg88::after,header h1 > #ly91::after{content:'LOG IT';font:6px var(--pix);letter-spacing:0}
+header h1 > #lg88::after,header h1 > #ly91::after{content:'LOG IT';font:5px var(--pix);letter-spacing:0}
 body.s86-cinema header h1 > #lg88,
 body.s86-spotify header h1 > #lg88,
 body.s86-profile header h1 > #lg88,
@@ -7599,11 +7612,11 @@ body.s86-settings header h1 > #lg88{display:inline-flex!important}
 body.s86-youtube header h1 > #ly91{display:inline-flex!important}
 body.s86-youtube header h1 > #lg88{display:none!important}
 body:not(.s86-youtube) header h1 > #ly91{display:none!important}
-/* Trailing icons — compact so 375/390 fit */
+/* Trailing icons — tighter so full LOGGED + section names fit at 375 */
 header h1 > #avPin,header h1 > #inboxB,header h1 > #mute,header h1 > #refresh,header h1 > #st91{
-  order:3!important;flex:0 0 30px!important;width:30px!important;height:30px!important;
-  min-width:30px!important;padding:0!important;display:inline-flex!important;
-  align-items:center;justify-content:center
+  order:3!important;flex:0 0 26px!important;width:26px!important;height:26px!important;
+  min-width:26px!important;padding:0!important;display:inline-flex!important;
+  align-items:center;justify-content:center;font-size:12px!important
 }
 header h1 > #avPin{order:3!important}
 header h1 > #inboxB{order:4!important;background:#2a1848!important;color:#ff9ad5!important}
@@ -8879,7 +8892,7 @@ window.APPV58 = '3.05';
     if (window.PN93 && PN93.prepend) {
       PN93.prepend({
         v: '3.05', d: '20 Oct 2026', lines: [
-          'Header fixed: LOGGED logo menu is back, only one ＋ LOG IT, and ☰ no longer sits on the logo.',
+          'Header fixed: full LOGGED wordmark and section name, only one ＋ LOG IT, ☰ no longer on the logo.',
           'Settings → 📜 Patch notes opens reliably on tap.',
           'What’s new pop-up shows once when you update (not only on a brand-new empty install).'
         ]
