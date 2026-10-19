@@ -7424,6 +7424,30 @@ header h1 > #sb88,header h1 > #lg88{flex:0 0 30px!important;width:30px!important
 
 /* R89 */ #detailBody .st89{margin-top:14px}
 body:has(#thm) #detailBody{padding-bottom:calc(100px + env(safe-area-inset-bottom))!important}
+/* R90 */
+.gch:not(:has(.col)),#detailBody .gch,#ipdet .gch{height:auto!important;align-items:center!important;padding:0!important;border-bottom:0!important;overflow:visible!important;flex-wrap:wrap}
+#detailBody .aw87:empty{display:none}
+.fb90{display:flex;flex-direction:column;gap:6px;margin:8px 0 10px}
+.fb90 .r1{display:flex;gap:6px;align-items:stretch}
+.fb90 .r1 button,.fb90 .q button,.fb90 .ac button{font:inherit;font-size:12px;letter-spacing:1px;color:#e8e8ff;background:#1c1c34;border:2px solid #000;box-shadow:2px 2px 0 #000;padding:6px 8px;white-space:nowrap;cursor:pointer}
+.fb90 .r1 .fl{flex:1;text-align:left;background:#26264a}
+.fb90 .r1 .fl.on{background:#f5c518;color:#111}
+.fb90 .r1 .fl b{display:inline-block;min-width:16px;margin-left:4px;background:#111;color:#f5c518;text-align:center;padding:0 3px}
+.fb90 .r1 .cl{background:#4a1c2a;color:#ffb3c1}
+.fb90 .q{display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;padding-bottom:3px}
+.fb90 .q::-webkit-scrollbar{display:none}
+.fb90 .q button.on{background:#f5c518;color:#111}
+.fb90 .q i{width:2px;flex:0 0 2px;background:#33335a;margin:2px 1px}
+.fb90 .ac{display:flex;gap:5px;flex-wrap:wrap}
+.fb90 .ac button{font-size:11px;padding:3px 6px;background:#2a2a48;color:#f5c518}
+.fb90 .ct{font-size:11px;letter-spacing:1px;color:#9a9ac8}
+.e90{text-align:center;padding:28px 12px;border:2px dashed #33335a;margin:8px 0;line-height:1.6}
+.e90 p{font-size:22px;margin:0 0 6px}
+.e90 button{margin-top:10px}
+.sh90 h5{margin:12px 0 6px}
+.sh90 h5 small{color:#9a9ac8;font-size:10px;margin-left:6px}
+.fb90 .r1 button{height:34px;min-height:0;line-height:1;display:inline-flex;align-items:center;gap:4px}
+.fb90 .r1 .fl b{display:inline-block!important;width:auto!important;height:auto!important;flex:0 0 auto;margin:0 0 0 4px!important;padding:3px 5px!important;font-size:11px!important;line-height:1!important}
 </style><script id="r80">/* ===== R80: QC fixes for 25a42cd ===== */
 (function () {
   /* toasts: flatten parts, drop repeats and pieces already contained in a longer piece */
@@ -7913,7 +7937,7 @@ body:has(#thm) #detailBody{padding-bottom:calc(100px + env(safe-area-inset-botto
 
 
 /* ===== R89b: soundtrack stays at the bottom on every details open (sync, no rAF race) + phones pick up new builds when the app comes back to the foreground ===== */
-window.APPV58 = 'r89b';
+window.APPV58 = 'r90';
 (function () {
   var mv = function () { try { window.mv89 && mv89(); } catch (e) {} };
   /* r50's oxPlace() pinned #ostx under the title after every async soundtrack draw — make it pin to the bottom instead */
@@ -7921,7 +7945,7 @@ window.APPV58 = 'r89b';
   var _od = openDetail; openDetail = function () { var r = _od.apply(this, arguments); mv(); setTimeout(mv, 0); setTimeout(mv, 400); setTimeout(mv, 2000); return r; };
   ['ostRedraw', 'ostxDraw'].forEach(function (n) { var f = window[n]; if (typeof f === 'function') window[n] = function () { var r = f.apply(this, arguments); mv(); return r; }; });
   /* stale-build guard: a home-screen app resumed from the background keeps old code; reload once when sw.js has a newer build */
-  var BUILD = 'logged-202610192006', busy = function () { var a = document.activeElement; return (a && /INPUT|TEXTAREA/.test(a.tagName)) || (window.OXA && !OXA.paused) || document.querySelector('#add.open,#fb83.open,#trv.open,#ytpage.open .yv'); };
+  var BUILD = 'logged-202610192027', busy = function () { var a = document.activeElement; return (a && /INPUT|TEXTAREA/.test(a.tagName)) || (window.OXA && !OXA.paused) || document.querySelector('#add.open,#fb83.open,#trv.open,#ytpage.open .yv'); };
   var last = 0; function check() { if (/demo=1/.test(location.search) || BUILD.indexOf('__') === 0 || Date.now() - last < 60000) return; last = Date.now();
     fetch('sw.js?b=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.ok ? r.text() : ''; }).then(function (t) { var m = t.match(/var V = '([^']+)'/); if (!m || m[1] === BUILD || busy()) return;
       try { if (sessionStorage.lg_rl89 === m[1]) return; sessionStorage.lg_rl89 = m[1]; } catch (e) {} try { toast('⟳ UPDATING LOGGED…'); } catch (e) {}
@@ -7929,5 +7953,66 @@ window.APPV58 = 'r89b';
   document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') check(); }); window.addEventListener('pageshow', check); setTimeout(check, 5000);
 })();
 
+/* ===== R90: LOGGING filter bar — compact quick chips + FILTERS sheet (type · who · genre · where · TV progress · progress · last watched · spesh) + sort; persisted per device; multi-season shows once; Cinema never shows YouTube ===== */
+(function () {
+  var DEF = function () { return { type: '', who: '', g: [], svc: [], tvp: '', prog: [], last: '', sp: '', sort: 'recent' }; };
+  var F = (function () { var d = DEF(); try { var s = localStorage.lg_f90; if (s) return Object.assign(d, JSON.parse(s)); var o = JSON.parse(localStorage.lg_lgf || '{}');
+    var ty = (o.type || []).filter(function (x) { return x !== 'yt'; }); if (ty.length === 1) d.type = ty[0]; if ((o.who || []).length === 1) d.who = o.who[0];
+    d.g = o.g || []; d.svc = o.svc || []; d.prog = o.prog || []; d.last = o.last || ''; d.sort = { az: 'az', left: 'left' }[o.sort] || 'recent'; } catch (e) {} return d; })();
+  window.F90 = F; delete F.B; delete F.L; delete F.sh;
+  var save = function () { try { var o = {}; Object.keys(DEF()).forEach(function (k) { o[k] = F[k]; }); localStorage.lg_f90 = JSON.stringify(o); } catch (e) {} };
+  var on = function (r, p) { try { return lfOn(r, p); } catch (e) { return false; } };
+  var watcher = function () { return F.who === 'lewy' ? 'lewy' : F.who === 'sam' ? 'sam' : me(); };
+  var eW = function (r, p) { try { return epWatched(r, p) || 0; } catch (e) { return epOf(r, p) || 0; } };
+  function tvp(r) { if (r.type !== 'TV Show') return ''; var p = watcher(), t = epTot(r), w = eW(r, p); if (isY(r[p + 'Watched']) || (t && w >= t)) return 'upto'; if (!w && r[p + 'Watched'] !== 'As we speak') return 'ns'; return 'left'; }
+  function svcs(r) { var o = [], w = String(M(r).where || '').trim(); if (w && !/aired on/i.test(w)) w.split(/[,·]/).forEach(function (x) { x = x.trim(); x && o.push(x); });
+    try { var C = window.CI85, m = M(r), c = C && m.tmdb && C[(r.type === 'TV Show' ? 'tv' : 'mv') + '|' + m.tmdb]; if (c && c.prov) c.prov.forEach(function (p) { o.indexOf(p.n) < 0 && o.push(p.n); }); } catch (e) {} return o; }
+  var K = { type: function (r) { return r.type === 'TV Show' ? 'tv' : 'movie'; }, who: function (r) { var s = on(r, 'sam'), l = on(r, 'lewy'); return F.who === 'both' ? (s && l ? 'both' : '') : F.who === 'sam' ? (s ? 'sam' : '') : (l ? 'lewy' : ''); },
+    g: function (r) { return genresOf(r); }, svc: svcs, tvp: tvp, prog: function (r) { return lfProg(r); }, last: function (r) { return lfLastK(r); }, sp: function (r) { return r.spesh === 'Mandatory' ? 'y' : ''; } };
+  function pass(r, skip) { for (var k in K) { if (k === skip) continue; var want = F[k]; if (!want || (Array.isArray(want) && !want.length)) continue; var v = K[k](r);
+      if (Array.isArray(want)) { if (!(Array.isArray(v) ? v : [v]).some(function (x) { return want.indexOf(x) >= 0; })) return false; } else if (v !== want) return false; } return true; }
+  function base() { var seen = {}; return logList().filter(function (r) { if (isYT(r)) return false; var k = r.type + '|' + baseTitle(r.title).toLowerCase(); if (seen[k]) return false; seen[k] = 1; return true; }); }
+  var yr = function (r) { return +M(r).year || +String(r.year || '').slice(0, 4) || 0; };
+  var minsLeft = function (r) { var m = M(r); if (r.type !== 'TV Show') return m.runtime || 1e5; var t = epTot(r); if (!t) return 1e6; return Math.max(0, t - eW(r, watcher())) * (m.epRuntime || m.runtime || 30); };
+  var CMP = { recent: function (a, b) { return lfLast(b) - lfLast(a) || b.row - a.row; }, az: function (a, b) { return a.title.localeCompare(b.title, undefined, { sensitivity: 'base' }); },
+    rating: function (a, b) { return score(b) - score(a) || CMP.az(a, b); }, year: function (a, b) { return yr(b) - yr(a) || CMP.az(a, b); }, left: function (a, b) { return minsLeft(a) - minsLeft(b) || CMP.az(a, b); } };
+  var SORTS = [['recent', 'RECENTLY UPDATED'], ['az', 'A–Z'], ['rating', 'RATING'], ['year', 'YEAR'], ['left', 'TIME / EPS LEFT']];
+  var LAB = { movie: '🎞 MOVIES', tv: '📺 TV', sam: 'SAM', lewy: 'LEWY', both: 'BOTH', left: 'EPISODES TO WATCH', upto: 'UP TO DATE', ns: 'NOT STARTED', start: 'JUST STARTED', mid: 'MIDWAY', near: 'NEARLY DONE', recent: 'LAST 2 WEEKS', stale: '30+ DAYS AGO', y: '🍃 SPESH' };
+  function count() { var n = 0; for (var k in K) { var v = F[k]; if (Array.isArray(v) ? v.length : v) n += Array.isArray(v) ? v.length : 1; } return n; }
+  var _bs = browseSpec; browseSpec = function (key) { var S = _bs.apply(this, arguments); if (key !== 'watchlist') return S; var B = base(), L = B.filter(function (r) { return pass(r); }).sort(CMP[F.sort] || CMP.recent);
+    F90.B = B; F90.L = L; S.tabs = [['ALL', L]]; return S; };
+  var q = function (k, v, l) { return '<button data-f90="' + k + '" data-v="' + esc(v) + '" class="' + (F[k] === v ? 'on' : '') + '">' + l + '</button>'; };
+  function bar() { var n = count(), sl = SORTS.filter(function (s) { return s[0] === F.sort; })[0] || SORTS[0], B = F90.B || [], L = F90.L || [], ac = [];
+    F.g.forEach(function (g) { ac.push(['g', g, g.toUpperCase()]); }); F.svc.forEach(function (s) { ac.push(['svc', s, '📺 ' + s.toUpperCase()]); }); if (F.tvp) ac.push(['tvp', F.tvp, LAB[F.tvp]]); F.prog.forEach(function (p) { ac.push(['prog', p, LAB[p]]); }); if (F.last) ac.push(['last', F.last, LAB[F.last]]); if (F.sp) ac.push(['sp', 'y', LAB.y]);
+    return '<div class="fb90" id="fb90"><div class="r1"><button class="fl' + (n ? ' on' : '') + '" data-f90open="1" aria-label="Filters, ' + n + ' active">▼ FILTERS' + (n ? '<b>' + n + '</b>' : '') + '</button><button data-f90open="sort" aria-label="Sort">↕ ' + sl[1] + '</button>' + (n ? '<button class="cl" data-f90clr="1">✕ CLEAR</button>' : '') + '</div>' +
+      '<div class="q">' + q('type', '', 'ALL') + q('type', 'movie', '🎞 MOVIES') + q('type', 'tv', '📺 TV') + '<i></i>' + q('who', 'sam', 'SAM') + q('who', 'lewy', 'LEWY') + q('who', 'both', 'BOTH') + '</div>' +
+      (ac.length ? '<div class="ac">' + ac.map(function (a) { return '<button data-f90x="' + a[0] + '" data-v="' + esc(a[1]) + '">' + esc(a[2]) + ' ✕</button>'; }).join('') + '</div>' : '') +
+      '<div class="ct">SHOWING ' + L.length + ' OF ' + B.length + '</div></div>'; }
+  var _rl = renderLogging; renderLogging = function () { LGV.tab = 0; var r = _rl.apply(this, arguments), V = $('v-logging'); if (!V) return r;
+    ['.btabs', '.lfch', '.sfcl', '#lfLog', '#lsf'].forEach(function (s) { V.querySelectorAll(s).forEach(function (x) { x.remove(); }); });
+    var t = V.querySelector('.lgt'); if (t) { var sm = t.querySelector('small'); if (sm) sm.textContent = (F90.B || []).length + ' ON THE GO · IN PROGRESS'; t.insertAdjacentHTML('afterend', bar()); }
+    var em = V.querySelector('.empty'); if (em && count()) em.outerHTML = '<div class="e90"><p>👾</p>NO TITLES MATCH THESE FILTERS<br><small>' + (F90.B || []).length + ' in Logging · try removing one</small><br><button class="ui-btn y" data-f90clr="1">✕ CLEAR FILTERS</button></div>';
+    return r; };
+  function sheet(only) { var B = F90.B || base(), cnt = function (k, v) { var keep = F[k]; F[k] = Array.isArray(keep) ? [v] : v; var n = B.filter(function (r) { return pass(r); }).length; F[k] = keep; return n; };
+    var G = {}, SV = {}; B.forEach(function (r) { genresOf(r).forEach(function (g) { G[g] = 1; }); svcs(r).forEach(function (s) { SV[s] = 1; }); });
+    var grp = function (title, k, opts, note) { return '<h5>' + title + (note ? '<small>' + note + '</small>' : '') + '</h5><div class="xif">' + opts.map(function (o) { var v = F[k], isOn = Array.isArray(v) ? v.indexOf(o[0]) >= 0 : v === o[0];
+      return '<button class="chip' + (isOn ? ' on' : '') + '" data-f90="' + k + '" data-v="' + esc(o[0]) + '"' + (Array.isArray(v) ? ' data-m="1"' : '') + '>' + esc(o[1]) + (k === 'sort' ? '' : ' <small>' + cnt(k, o[0]) + '</small>') + '</button>'; }).join('') + '</div>'; };
+    var sp = B.some(function (r) { return r.spesh === 'Mandatory'; }), tv = B.some(function (r) { return r.type === 'TV Show'; }), total = (F90.L || []).length;
+    var h = only === 'sort' ? grp('SORT BY', 'sort', SORTS) : grp('TYPE', 'type', [['movie', '🎞 MOVIES'], ['tv', '📺 TV']]) + grp('WHO\u2019S WATCHING', 'who', [['sam', 'SAM'], ['lewy', 'LEWY'], ['both', 'BOTH']]) +
+      (tv ? grp('TV PROGRESS', 'tvp', [['left', '📺 EPISODES TO WATCH'], ['upto', '✓ UP TO DATE'], ['ns', '○ NOT STARTED']], F.who === 'lewy' || F.who === 'sam' ? F.who.toUpperCase() + '\u2019S EPISODES' : 'YOUR EPISODES') : '') +
+      (Object.keys(G).length ? grp('GENRE', 'g', Object.keys(G).sort().map(function (g) { return [g, g.toUpperCase()]; }), 'ANY OF') : '') +
+      (Object.keys(SV).length ? grp('WHERE TO WATCH (AU)', 'svc', Object.keys(SV).sort().map(function (s) { return [s, s.toUpperCase()]; }), 'ANY OF') : '') +
+      grp('PROGRESS', 'prog', [['start', '🌱 JUST STARTED'], ['mid', '◐ MIDWAY'], ['near', '🏁 NEARLY DONE']]) + grp('LAST WATCHED', 'last', [['recent', 'LAST 2 WEEKS'], ['stale', '30+ DAYS AGO']]) + (sp ? grp('SPESH', 'sp', [['y', '🍃 SPESH ONLY']]) : '');
+    m19('lf90m', '<div class="sfp lfp sh90"><h2><span>' + (only === 'sort' ? '↕ SORT LOGGING' : '▼ FILTER LOGGING') + '</span><button class="ui-btn" data-m19x="1">✕</button></h2>' + h +
+      '<div class="lfa"><button class="ui-btn" data-f90clr="1">CLEAR</button><button class="ui-btn y" data-m19x="1">SHOW ' + total + ' TITLE' + (total === 1 ? '' : 'S') + '</button></div></div>'); F90.sh = only || 'f'; }
+  function redraw() { save(); if (view === 'logging') renderLogging(); var m = $('lf90m'); if (m && m.classList.contains('open') && F90.sh) sheet(F90.sh === 'sort' ? 'sort' : ''); }
+  document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-f90],[data-f90open],[data-f90clr],[data-f90x]'); if (!b) return; e.stopImmediatePropagation(); e.preventDefault(); try { SFX.tap && SFX.tap(); } catch (x) {}
+    var d = b.dataset; if (d.f90open) { if (view === 'logging') renderLogging(); return sheet(d.f90open === 'sort' ? 'sort' : ''); }
+    if (d.f90clr) { var keep = JSON.stringify(F); var n = DEF(); n.sort = F.sort; Object.keys(n).forEach(function (k) { F[k] = n[k]; }); redraw(); toast('Filters cleared', function () { var o = JSON.parse(keep); Object.keys(o).forEach(function (k) { F[k] = o[k]; }); redraw(); }); return; }
+    if (d.f90x) { var k0 = d.f90x; F[k0] = Array.isArray(F[k0]) ? F[k0].filter(function (x) { return x !== d.v; }) : ''; return redraw(); }
+    var k = d.f90, v = d.v; if (k === 'sort') { F.sort = v; var mm = $('lf90m'); mm && mm.classList.remove('open'); return redraw(); }
+    if (Array.isArray(F[k])) F[k] = F[k].indexOf(v) >= 0 ? F[k].filter(function (x) { return x !== v; }) : F[k].concat([v]); else F[k] = F[k] === v ? '' : v; redraw(); }, true);
+  try { if (window.NAV_OV && NAV_OV.indexOf('lf90m') < 0) NAV_OV.push('lf90m'); } catch (e) {}
+})();
 </script>
 </body></html>
