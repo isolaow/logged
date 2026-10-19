@@ -7911,6 +7911,24 @@ body:has(#thm) #detailBody{padding-bottom:calc(100px + env(safe-area-inset-botto
     L.forEach(function (e) { acts.parentNode.insertBefore(e, acts); e.classList.add('st89'); }); }
   window.mv89 = mv; var raf = 0; new MutationObserver(function () { if (raf) return; raf = requestAnimationFrame(function () { raf = 0; mv(); }); }).observe(D, { childList: true, subtree: true }); mv(); })();
 
+
+/* ===== R89b: soundtrack stays at the bottom on every details open (sync, no rAF race) + phones pick up new builds when the app comes back to the foreground ===== */
+window.APPV58 = 'r89b';
+(function () {
+  var mv = function () { try { window.mv89 && mv89(); } catch (e) {} };
+  /* r50's oxPlace() pinned #ostx under the title after every async soundtrack draw — make it pin to the bottom instead */
+  if (typeof oxPlace === 'function') oxPlace = function () { var o = $('ost'); if (o && !o.classList.contains('manual')) o.classList.add('oxhide'); mv(); };
+  var _od = openDetail; openDetail = function () { var r = _od.apply(this, arguments); mv(); setTimeout(mv, 0); setTimeout(mv, 400); setTimeout(mv, 2000); return r; };
+  ['ostRedraw', 'ostxDraw'].forEach(function (n) { var f = window[n]; if (typeof f === 'function') window[n] = function () { var r = f.apply(this, arguments); mv(); return r; }; });
+  /* stale-build guard: a home-screen app resumed from the background keeps old code; reload once when sw.js has a newer build */
+  var BUILD = 'logged-202610192006', busy = function () { var a = document.activeElement; return (a && /INPUT|TEXTAREA/.test(a.tagName)) || (window.OXA && !OXA.paused) || document.querySelector('#add.open,#fb83.open,#trv.open,#ytpage.open .yv'); };
+  var last = 0; function check() { if (/demo=1/.test(location.search) || BUILD.indexOf('__') === 0 || Date.now() - last < 60000) return; last = Date.now();
+    fetch('sw.js?b=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.ok ? r.text() : ''; }).then(function (t) { var m = t.match(/var V = '([^']+)'/); if (!m || m[1] === BUILD || busy()) return;
+      try { if (sessionStorage.lg_rl89 === m[1]) return; sessionStorage.lg_rl89 = m[1]; } catch (e) {} try { toast('⟳ UPDATING LOGGED…'); } catch (e) {}
+      try { navigator.serviceWorker && navigator.serviceWorker.getRegistration().then(function (g) { g && g.update(); }); } catch (e) {} setTimeout(function () { location.reload(); }, 700); }).catch(function () {}); }
+  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') check(); }); window.addEventListener('pageshow', check); setTimeout(check, 5000);
+})();
+
 </script>
 </body></html>
 <!--RC85T-->
@@ -7918,3 +7936,4 @@ body:has(#thm) #detailBody{padding-bottom:calc(100px + env(safe-area-inset-botto
 <!--RC87bT-->
 <!--RC88T-->
 <!--RC89T-->
+<!--RC89bT-->
