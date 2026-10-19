@@ -1946,7 +1946,7 @@ function specialOrder(a, b) { return (b.spesh === 'Mandatory') - (a.spesh === 'M
 function spinBar() { return '<div class="spinbar px"><span>🎡 SPIN THE WHEEL</span><button class="btn y" data-spin="Movie" data-nosfx="1">🎞 MOVIE</button><button class="btn b" data-spin="TV Show" data-nosfx="1">📺 TV</button></div>'; }
 function renderHome() {
   var q = $('q').value.trim(), L = rows.filter(pass), h = '';
-  if (q) { $('v-home').innerHTML = L.length ? '<div class="sec"><h3>🔍 IN YOUR LOG <small>' + L.length + '</small></h3><div class="pgrid">' + L.map(pcard).join('') + '</div></div>' : '<div class="empty">Not in your log — pick from the database above to LOG IT 🍿</div>'; return; }
+  if (q) { $('v-home').innerHTML = L.length ? '<div class="sec"><h3>🔍 IN YOUR LOG <small>' + L.length + '</small></h3><div class="pgrid">' + L.map(pcard).join('') + '</div></div>' : '<div class="empty">Not in your log 🍿<br><button type="button" class="btn-log98" data-log98="1">+ LOG IT</button></div>'; return; }
   h += '<div class="qt"><button data-browse="tv"><span>📺</span>TV</button><button data-browse="mv"><span>🎞</span>FILMS</button><button data-genres="1"><span class="lgi"><img src="' + GENRES_ICON + '" alt=""></span>GENRES</button><button data-browse="spesh"><span>🍃</span>SPESH</button></div>';
   var wl = L.filter(isWatchlist).sort(specialOrder), cont = L.filter(prog);
   var top = L.filter(function (r) { return score(r) > 0; }).sort(function (a, b) { return score(b) - score(a); }).slice(0, 20);
@@ -1970,7 +1970,7 @@ function renderHome() {
 /* ---------- full-screen browse pages (shared by TV / Movies / Watchlist / Archive / Spesh / Genre) ---------- */
 var BR = { fn: null, tab: 0 };
 function browseSpec(key) {
-  var tabsWT = function (L) { return [['ALL', L], ['' + lgI() + 'LOGGING', L.filter(isWatchlist)], ['▶ WATCHING', L.filter(prog)], [lgdI() + 'LOGGED', L.filter(isWatched)]]; };
+  var tabsWT = function (L) { return [['ALL', L], ['' + lgI() + 'LOGGING', L.filter(function (r) { return prog(r) && intGet(rKey(r)) !== 'n'; })], [lgdI() + 'LOGGED', L.filter(isWatched)]]; };
   var az = function (a, b) { return a.title.localeCompare(b.title, undefined, { numeric: true, sensitivity: 'base' }); };
   if (key === 'tv') return { t: '📺 TV SHOWS', tabs: tabsWT(rows.filter(function (r) { return r.type === 'TV Show'; }).sort(az)) };
   if (key === 'mv') return { t: '🎞 MOVIES', tabs: tabsWT(rows.filter(function (r) { return r.type === 'Movie'; }).sort(az)) };
@@ -1979,7 +1979,7 @@ function browseSpec(key) {
   if (key === 'spesh') { var S = rows.filter(function (r) { return r.spesh === 'Mandatory'; }).sort(az); return { t: '🍃 SPESH MOVIES', sub: 'mandatory spesh nights', tabs: [['ALL', S], ['' + lgI() + 'LOGGING', S.filter(function (r) { return !(isY(r.samWatched) && isY(r.lewyWatched)); })], [lgdI() + 'LOGGED', S.filter(function (r) { return isY(r.samWatched) && isY(r.lewyWatched); })]] }; }
   if (key === 'top') { var T = rows.filter(function (r) { return score(r) > 0; }).sort(function (a, b) { return score(b) - score(a); }); return { t: '♛ TOP RATED', tabs: [['ALL', T], ['🎞 MOVIES', T.filter(function (r) { return r.type === 'Movie'; })], ['📺 TV', T.filter(function (r) { return r.type === 'TV Show'; })]] }; }
   if (key.indexOf('genre:') === 0) { var g = key.slice(6), G = rows.filter(function (r) { return genresOf(r).indexOf(g) >= 0; }).sort(function (a, b) { return score(b) - score(a) || az(a, b); });
-    return { t: '▦ ' + esc(g.toUpperCase()), tabs: [['ALL', G], ['🎞 MOVIES', G.filter(function (r) { return r.type === 'Movie'; })], ['📺 TV', G.filter(function (r) { return r.type === 'TV Show'; })], ['' + lgI() + 'LOGGING', G.filter(isWatchlist)]] }; }
+    return { t: '▦ ' + esc(g.toUpperCase()), tabs: [['ALL', G], ['🎞 MOVIES', G.filter(function (r) { return r.type === 'Movie'; })], ['📺 TV', G.filter(function (r) { return r.type === 'TV Show'; })], ['' + lgI() + 'LOGGING', G.filter(function (r) { return prog(r) && intGet(rKey(r)) !== 'n'; })]] }; }
   return { t: key, tabs: [['ALL', []]] };
 }
 function openBrowse(key) { kbClose(); BR.fn = key; BR.tab = 0; renderBrowse(); $('bpage').classList.add('open'); $('bpage').scrollTop = 0; }
@@ -3251,7 +3251,7 @@ document.addEventListener('click', function (e) { var b = e.target.closest('[dat
 var _renderHome2 = renderHome; renderHome = function () { _renderHome2(); var q = $('v-home').querySelector('.qt'); if (q && !q.querySelector('[data-browse=yt]')) q.insertAdjacentHTML('beforeend', '<button data-browse="yt"><span>▶</span>YOUTUBE</button>');
   var Y = rows.filter(function (r) { return isYT(r) && pass(r); }); if (Y.length && !$('v-home').querySelector('.secyt')) { var s = $('v-home').querySelector('.sec'), h = sec('▶ YOUTUBE', Y, 'secyt', '', 'yt'); if (s && h) s.insertAdjacentHTML('beforebegin', h); } };
 var _browseSpec = browseSpec; browseSpec = function (key) { if (key !== 'yt') return _browseSpec(key); var Y = rows.filter(isYT).sort(function (a, b) { return b.row - a.row; });
-  return { t: '▶ YOUTUBE', sub: 'videos · playlists · channels', tabs: [['ALL', Y], [lgI() + 'LOGGING', Y.filter(isWatchlist)], ['▶ WATCHING', Y.filter(prog)], [lgdI() + 'LOGGED', Y.filter(isWatched)], ['👤 CHANNELS', Y.filter(function (r) { return r.ytm && r.ytm.k === 'channel'; })]] }; };
+  return { t: '▶ YOUTUBE', sub: 'videos · playlists · channels', tabs: [['ALL', Y], [lgI() + 'LOGGING', Y.filter(function (r) { return prog(r) && intGet(rKey(r)) !== 'n'; })], [lgdI() + 'LOGGED', Y.filter(isWatched)], ['👤 CHANNELS', Y.filter(function (r) { return r.ytm && r.ytm.k === 'channel'; })]] }; };
 var _timelineHtml2 = timelineHtml; timelineHtml = function () { var h = _timelineHtml2(), c = {}; rows.forEach(function (r) { if (!isYT(r)) return; var ch = (r.ytm && r.ytm.ch) || r.title, n = 0; ['sam', 'lewy'].forEach(function (p) { n += Object.keys((r.ytw || {})[p] || {}).length; }); if (n) c[ch] = (c[ch] || 0) + n; });
   var L = Object.keys(c).sort(function (a, b) { return c[b] - c[a]; }); if (!L.length) return h;
   return h.replace(/<\/div>$/, '<div class="panel px fsl"><h4><span class="ic">▶</span>TOP CREATORS · WATCHED IN LOGGED</h4>' + L.slice(0, 5).map(function (k) { return '<div><b>' + c[k] + '▶</b>' + esc(k) + '</div>'; }).join('') + '</div></div>'); };
@@ -7625,6 +7625,46 @@ header h1 > #refresh{order:6!important;background:#1c1c33!important;color:#cfc9f
 header h1 > #st91{order:7!important;background:#1c1c33!important;color:#cfc9f5!important}
 /* Kill any duplicate LOG IT nodes without ids (ensureLogBtn leftovers) */
 header h1 > button.icon.px.log97dup{display:none!important}
+/* R98 / v3.06 — counts match lists · YT header = Cinema · + LOG IT on empty/not-in-log */
+/* Keep 3.05 header fit; ensure YT ly91 matches lg88 */
+body.s86-youtube header h1 > #ly91,
+body.s86-cinema header h1 > #lg88,
+body.s86-spotify header h1 > #lg88,
+body.s86-profile header h1 > #lg88{
+  /* shared look already from r97; reinforce */
+}
+/* YouTube in-page bar: no second burger/wordmark fighting the 3.05 header */
+.ythd98{
+  display:flex!important;align-items:center!important;gap:8px!important;
+  margin:0 0 8px!important;min-height:36px!important
+}
+.ythd98 #ytBurg,.ythd98 [data-ytx]{display:none!important}
+.ythd98 .ytlg{
+  flex:1!important;display:flex!important;align-items:center!important;gap:6px!important;
+  font:8px/1.2 var(--pix)!important;color:#cfc9f5!important;letter-spacing:1px!important;
+  text-shadow:1px 1px 0 #000!important
+}
+.ythd98 .ytlg .yti{height:16px!important;width:auto!important}
+.ythd98 .ytns{
+  flex:0 0 auto!important;font:7px var(--pix)!important;padding:6px 8px!important;
+  background:#1c1c33!important;border:2px solid #000!important;box-shadow:2px 2px 0 #000!important;
+  color:#ffcc33!important
+}
+/* + LOG IT affordances */
+.btn-log98,button.btn-log98,[data-log98]{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  gap:4px!important;min-height:44px!important;padding:0 12px!important;margin-top:10px!important;
+  background:var(--gold,#ffcc33)!important;color:#111!important;border:2px solid #000!important;
+  box-shadow:2px 2px 0 #000!important;font:8px/1 var(--pix)!important;letter-spacing:0!important;
+  cursor:pointer!important
+}
+.tm .btn-log98,button.tm-log98{
+  flex:none!important;margin:0 0 0 6px!important;min-height:36px!important;padding:0 8px!important;
+  font:6px var(--pix)!important;align-self:center!important
+}
+.empty .btn-log98,.ui-empty .btn-log98,.e90 .btn-log98{margin-top:12px!important}
+.d-log98{margin:12px 0!important;width:100%!important}
+.tm{display:flex!important;align-items:center!important;flex-wrap:nowrap!important}
 </style><script id="r80">/* ===== R80: QC fixes for 25a42cd ===== */
 (function () {
   /* toasts: flatten parts, drop repeats and pieces already contained in a longer piece */
@@ -8233,7 +8273,7 @@ window.APPV58 = 'r91';
     if (t.closest('#ly91')) { e.stopImmediatePropagation(); e.preventDefault(); try { SFX.tap && SFX.tap(); } catch (x) {} YTA = { q: '', res: null, pick: null, w: {} }; openYTAdd(); setTimeout(function () { var q = $('ytQ'); q && q.focus(); }, 80); } }, true);
 })();
 /* ===== R92: bug fixes — iOS taps on posters/backdrops, HOW KEEN? picker, LOG IT season title + confirm + auto TV, mini player pause, drawers close outside/Back, ONE back stack, back-to-where-you-came-from, details info never stuck ===== */
-window.APPV58='3.05';
+window.APPV58='3.06';
 (function () {
   var $q = function (s) { return document.querySelector(s); };
 
@@ -9040,6 +9080,315 @@ window.APPV58 = '3.05';
         H92.ov.unshift(['#pn93pop.open', function () { var p = $('pn93pop'); p && p.classList.remove('open'); }], ['#pn93.open', function () { var p = $('pn93'); p && p.classList.remove('open'); }]);
       }
     }
+  } catch (e) {}
+})();
+/* R98 / v3.06 — logging counts · YT header · + LOG IT on not-in-log / empty */
+window.APPV58 = '3.06';
+(function () {
+  var CUR = '3.06';
+  try {
+    if (window.PN93 && PN93.prepend) {
+      PN93.prepend({
+        v: '3.06', d: '20 Oct 2026', lines: [
+          'Film & TV tab numbers now match the list you see (LOGGING no longer disagrees with the Logging shelf).',
+          'YouTube uses the same header as Cinema — LOGGED menu, section label, ☰, one + LOG IT, avatar kept.',
+          'Empty lists and titles not in your log show a clear + LOG IT that opens logging with the title ready.'
+        ]
+      });
+      try { if (window.PN93) PN93.v = CUR; } catch (e) {}
+    }
+  } catch (e) {}
+
+  /* Same membership as logList() (r49 override): currently watching, not hidden */
+  function isLoggingRow(r) {
+    try { return prog(r) && intGet(rKey(r)) !== 'n'; } catch (e) { return prog(r); }
+  }
+
+  /* --- 1) Counts: tabsWT + YT/genre LOGGING use the same list the tab renders --- */
+  try {
+    var _bs = browseSpec;
+    browseSpec = function (key) {
+      var S = _bs.apply(this, arguments);
+      try {
+        if (!S || !S.tabs) return S;
+        if (key === 'mv' || key === 'tv') {
+          var all = (S.tabs[0] && S.tabs[0][1]) || [];
+          S.tabs = [
+            ['ALL', all],
+            ['' + lgI() + 'LOGGING', all.filter(isLoggingRow)],
+            [lgdI() + 'LOGGED', all.filter(isWatched)]
+          ];
+        } else if (key === 'yt') {
+          var Y = (S.tabs[0] && S.tabs[0][1]) || [];
+          var rest = S.tabs.filter(function (t) { return /CHANNEL/i.test(String(t[0])); });
+          S.tabs = [
+            ['ALL', Y],
+            [lgI() + 'LOGGING', Y.filter(isLoggingRow)],
+            [lgdI() + 'LOGGED', Y.filter(isWatched)]
+          ].concat(rest);
+        } else if (key && String(key).indexOf('genre:') === 0) {
+          S.tabs = S.tabs.map(function (t) {
+            if (/LOGGING/i.test(String(t[0])) && !/LOGGED/i.test(String(t[0]))) {
+              var base = (S.tabs[0] && S.tabs[0][1]) || t[1];
+              return [t[0], base.filter(isLoggingRow)];
+            }
+            return t;
+          });
+        }
+      } catch (e) {}
+      return S;
+    };
+  } catch (e) {}
+
+  /* After render, force tab labels to use the rendered list length (belt + braces) */
+  try {
+    var syncTabCounts = function (root, tabSel, lists) {
+      if (!root || !lists) return;
+      var btns = root.querySelectorAll(tabSel);
+      [].forEach.call(btns, function (b, i) {
+        if (!lists[i]) return;
+        var lab = String(lists[i][0]).replace(/<[^>]+>/g, '').replace(/\s+\d+\s*$/, '').trim();
+        /* keep icon html from original if present */
+        var icon = '';
+        var img = b.querySelector('img');
+        if (img) icon = img.outerHTML;
+        else {
+          var m = String(lists[i][0]).match(/^[^A-Z🎞📺▶♛]*[🎞📺▶♛]/);
+        }
+        var raw = lists[i][0];
+        var prefix = typeof raw === 'string' && raw.indexOf('<') >= 0 ? raw.replace(/\s*$/, '') : raw;
+        /* Prefer rebuilding from spec label + length */
+        var labelHtml = typeof lists[i][0] === 'string' ? lists[i][0] : String(lists[i][0]);
+        b.innerHTML = labelHtml + ' ' + lists[i][1].length;
+      });
+    };
+    var _rb = renderBrowse;
+    renderBrowse = function () {
+      var r = _rb.apply(this, arguments);
+      try {
+        var S = browseSpec(BR.fn);
+        var box = $('bBody');
+        if (box && S && S.tabs) {
+          var btns = box.querySelectorAll('.btabs button');
+          [].forEach.call(btns, function (b, i) {
+            if (!S.tabs[i]) return;
+            var n = S.tabs[i][1].length;
+            var cards = box.querySelectorAll('.pgrid > *, .pgrid .pc').length;
+            /* label = original label without trailing count + fresh n */
+            var t0 = S.tabs[i][0];
+            b.innerHTML = t0 + ' ' + n;
+            if (b.classList.contains('on') && cards && cards !== n) {
+              /* if grid filtered oddly, show grid count */
+              b.innerHTML = t0 + ' ' + cards;
+            }
+          });
+        }
+      } catch (e) {}
+      return r;
+    };
+    var _rl = typeof renderLogging === 'function' ? renderLogging : null;
+    if (_rl) renderLogging = function () {
+      var r = _rl.apply(this, arguments);
+      try {
+        var S = browseSpec('watchlist');
+        var box = $('v-logging');
+        if (!box || !S) return r;
+        var n = (S.tabs[0] && S.tabs[0][1] && S.tabs[0][1].length) || 0;
+        var cards = box.querySelectorAll('.pgrid > *, .pgrid .pc, .lggr > *').length;
+        var sm = box.querySelector('.lgt small');
+        if (sm) {
+          var use = cards || n;
+          sm.textContent = use + ' ON THE GO · ' + String(S.sub || 'in progress').toUpperCase();
+        }
+        var btns = box.querySelectorAll('.btabs button');
+        [].forEach.call(btns, function (b, i) {
+          if (!S.tabs[i]) return;
+          b.innerHTML = S.tabs[i][0] + ' ' + S.tabs[i][1].length;
+        });
+      } catch (e) {}
+      return r;
+    };
+  } catch (e) {}
+
+  /* --- 2) YouTube header: rebuild in-page bar; keep main 3.05 header + avatar --- */
+  function rebuildYtHead() {
+    var B = $('ytBody'); if (!B) return;
+    var hd = B.querySelector('.ythd'); if (!hd) return;
+    if (hd.dataset.r98) return;
+    hd.dataset.r98 = '1';
+    hd.classList.add('ythd98');
+    /* keep SHORTS + logo mark, drop competing burger/back (CSS hides); ensure main avPin */
+    var a = $('avPin'); if (a) { a.style.display = ''; a.style.visibility = 'visible'; }
+  }
+  try {
+    var _ytDraw = typeof ytDraw57 === 'function' ? ytDraw57 : (typeof drawYt === 'function' ? drawYt : null);
+    /* hook common yt render entry points */
+    ['ytDraw57', 'ytHome', 'renderYtHome'].forEach(function (name) {
+      try {
+        if (typeof window[name] === 'function') {
+          var _f = window[name];
+          window[name] = function () {
+            var r = _f.apply(this, arguments);
+            try { rebuildYtHead(); } catch (e) {}
+            return r;
+          };
+        }
+      } catch (e) {}
+    });
+    /* MutationObserver on ytBody */
+    var ytBoot = function () {
+      var B = $('ytBody'); if (!B || B._r98obs) return;
+      B._r98obs = 1;
+      new MutationObserver(function () { clearTimeout(rebuildYtHead.t); rebuildYtHead.t = setTimeout(rebuildYtHead, 40); }).observe(B, { childList: true, subtree: true });
+      rebuildYtHead();
+    };
+    setTimeout(ytBoot, 600);
+    setInterval(function () {
+      if ((window.S86 || {}).s === 'youtube') {
+        ytBoot();
+        var a = $('avPin'); if (a) a.style.display = '';
+        /* one LOG IT only — ly91 visible, lg88 hidden via CSS */
+      }
+    }, 2000);
+  } catch (e) {}
+
+  /* --- 3) + LOG IT on not-in-log / empty --- */
+  function openLogPrefill(title, tv) {
+    try {
+      if (title && typeof openAddWith === 'function') {
+        openAddWith({ title: String(title), tv: !!tv, poster: null });
+        return;
+      }
+    } catch (e) {}
+    try {
+      initAdd();
+      $('add').classList.add('open');
+      if (title && $('aTitle')) $('aTitle').value = String(title);
+    } catch (e2) {
+      try { $('fab') && $('fab').click(); } catch (e3) {}
+    }
+  }
+  window.openLogPrefill98 = openLogPrefill;
+
+  function logBtn(attrs, label) {
+    return '<button type="button" class="btn-log98" ' + (attrs || 'data-log98="1"') + '>' + (label || '+ LOG IT') + '</button>';
+  }
+
+  /* Search / database results */
+  try {
+    var _rt = renderTm;
+    renderTm = function (el, r, n, box) {
+      var o = _rt.apply(this, arguments);
+      try {
+        if (!el) return o;
+        [].forEach.call(el.querySelectorAll('button.tm'), function (b) {
+          if (b.querySelector('.il') || b.querySelector('.btn-log98')) return;
+          var k = b.getAttribute('data-tm');
+          b.insertAdjacentHTML('beforeend', '<button type="button" class="btn-log98 tm-log98" data-logtm="' + k + '">+ LOG IT</button>');
+        });
+      } catch (e) {}
+      return o;
+    };
+  } catch (e) {}
+
+  /* Empty states — inject button once */
+  function paintEmpty(root) {
+    root = root || document;
+    [].forEach.call(root.querySelectorAll('.empty, .ui-empty, .e90'), function (el) {
+      if (el.querySelector('.btn-log98,[data-log98]')) return;
+      if (/Loading your log|LOADING|SEARCHING/i.test(el.textContent || '')) return;
+      el.insertAdjacentHTML('beforeend', logBtn('data-log98="1"'));
+    });
+    /* home "Not in your log" */
+    [].forEach.call(root.querySelectorAll('.empty'), function (el) {
+      if (/Not in your log/i.test(el.textContent || '') && !el.querySelector('.btn-log98')) {
+        el.insertAdjacentHTML('beforeend', logBtn('data-log98="1"'));
+      }
+    });
+  }
+
+  /* Detail pages: if title is not in log, show + LOG IT */
+  try {
+    var _od = openDetail;
+    openDetail = function (r) {
+      var o = _od.apply(this, arguments);
+      try {
+        var body = $('detailBody'); if (!body || !r) return o;
+        var missing = !inLog({ title: r.title, tv: r.type === 'TV Show' });
+        /* also when row looks like a stub / tmdb-only */
+        if (!missing && r && r._fresh98) missing = true;
+        body.querySelectorAll('.d-log98').forEach(function (x) { x.remove(); });
+        if (missing) {
+          var h2 = body.querySelector('h2.dt, h2');
+          var btn = document.createElement('div');
+          btn.innerHTML = logBtn('data-log98-title="' + esc(r.title) + '" data-log98-tv="' + (r.type === 'TV Show' ? '1' : '0') + '"', '+ LOG IT');
+          btn.className = 'd-log98';
+          (h2 || body).insertAdjacentElement(h2 ? 'afterend' : 'afterbegin', btn.firstChild);
+        }
+      } catch (e) {}
+      return o;
+    };
+  } catch (e) {}
+
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest && e.target.closest('[data-logtm]');
+    if (t) {
+      e.preventDefault(); e.stopImmediatePropagation();
+      var x = TM.res[t.getAttribute('data-logtm')];
+      if (x) openLogPrefill(x.title, !!x.tv);
+      else openLogPrefill('');
+      return;
+    }
+    var b = e.target.closest && e.target.closest('[data-log98-title]');
+    if (b) {
+      e.preventDefault(); e.stopImmediatePropagation();
+      openLogPrefill(b.getAttribute('data-log98-title'), b.getAttribute('data-log98-tv') === '1');
+      return;
+    }
+    var c = e.target.closest && e.target.closest('[data-log98], .btn-log98');
+    if (c && !c.getAttribute('data-logtm') && !c.getAttribute('data-log98-title')) {
+      e.preventDefault(); e.stopImmediatePropagation();
+      openLogPrefill('');
+    }
+  }, true);
+
+  try {
+    new MutationObserver(function () {
+      clearTimeout(paintEmpty.t);
+      paintEmpty.t = setTimeout(function () { paintEmpty(document); }, 80);
+    }).observe(document.body, { childList: true, subtree: true });
+    setTimeout(function () { paintEmpty(document); }, 900);
+  } catch (e) {}
+
+  /* Upgrade popup path: treat as update when prior lg_* exists (reuse 3.05 logic; bump seen to 3.06) */
+  try {
+    var KEY = 'lg_pn_seen';
+    function hasPriorUse() {
+      try {
+        for (var i = 0; i < localStorage.length; i++) {
+          var k = localStorage.key(i);
+          if (k && k.indexOf('lg_') === 0 && k !== KEY) return true;
+        }
+      } catch (e) {}
+      return false;
+    }
+    function maybePop() {
+      var seen = null; try { seen = localStorage.getItem(KEY); } catch (e) {}
+      if (seen === CUR) return;
+      if (seen == null && !hasPriorUse()) {
+        try { localStorage.setItem(KEY, CUR); } catch (e) {}
+        return;
+      }
+      try {
+        if (window.PN93 && PN93.popup) {
+          var note = (PN93.notes || []).filter(function (n) { return n.v === CUR; })[0] || (PN93.notes || [])[0];
+          PN93.popup(note || { v: CUR, lines: [] });
+        }
+      } catch (e) {}
+      try { localStorage.setItem(KEY, CUR); } catch (e) {}
+    }
+    setTimeout(maybePop, 1600);
+    setTimeout(maybePop, 3000);
   } catch (e) {}
 })();
 </script>
