@@ -146,6 +146,7 @@ function mock(fn, args, who) { if (global.MOCKX) { const x = global.MOCKX(fn, ar
         return { user: b.user, period: b.period, artists: b.top.artists, tracks: b.top.tracks.map(function (t) { return { n: t.n, a: t.a, c: t.c, y: Y[t.n] || '' }; }), albums: b.top.albums.concat([{ n: 'Interstellar (Original Motion Picture Soundtrack)', a: 'Hans Zimmer', c: Math.round(b.top.albums[0].c / 2), img: '' }]),
           recent: b.recent.concat(b.recent.map(function (r, i) { return { n: r.n, a: r.a, al: '', now: false, at: Date.now() - 864e5 * (1 + i % 4) - i * 3e5 }; })), tags: Object.keys(tg).map(function (k) { return { n: k, w: tg[k] }; }).sort(function (x, y) { return y.w - x.w; }) }; })();
       case 'favAll': return JSON.parse(JSON.stringify(FAV82));
+      case 'addYouTube': { var yi = args[0] || {}, yf = args[1] || {}, yt0 = String(yi.t || '').trim(); if (!yi.id || !yt0) return { __err: 'bad item' }; if (yi.k === 'channel' && !/channel/i.test(yt0)) yt0 += ' (Channel)'; var yr = { row: rows.reduce(function (m, r) { return Math.max(m, r.row || 0); }, 0) + 1, title: yt0, type: 'YouTube', genres: 'YouTube', suggestedBy: yf.suggestedBy || '', samWatched: yf.samWatched || 'Not yet', lewyWatched: yf.lewyWatched || 'Not yet', samRating: '', lewyRating: '', samComment: '', lewyComment: '', ytm: { k: yi.k || 'video', id: yi.id, ch: yi.ch || '', chId: yi.chId || '' }, dates: {} }; rows.push(yr); var yo = JSON.parse(JSON.stringify(yr)); yo.poster = yi.th; return yo; }
       case 'fbAll': return FB83();
       case 'tmdbMood': var pz = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 2 3\'><rect width=\'2\' height=\'3\' fill=\'%233a2f6b\'/></svg>'); return [{ id: 496243, tv: false, title: 'Parasite', year: '2019', poster: pz, vote: 8.5, overview: 'A poor family schemes to become employed by a wealthy household. Things spiral.' }, { id: 93405, tv: true, title: 'Squid Game', year: '2021', poster: pz, vote: 7.8, overview: 'Cash-strapped players accept an invitation to compete in deadly games.' }, { id: 70000, tv: false, title: 'Sky Heist', year: '2023', poster: pz, vote: 6.4, overview: 'A small indie caper nobody streams.' }];
       case 'omdbAwards': var A87 = { 'Parasite': 'Won 4 Oscars. 309 wins & 270 nominations total', 'Breaking Bad': 'Won 16 Primetime Emmys. 168 wins & 267 nominations total', 'The Dark Knight': 'Won 2 Oscars. 164 wins & 165 nominations total', 'Severance': 'Won 8 Primetime Emmys. 34 wins & 133 nominations total', 'Weapons': 'Nominated for 1 BAFTA Award. 12 wins & 48 nominations total' }, t87 = String((args[0] || {}).t || ''), h87 = 0; for (var j87 = 0; j87 < t87.length; j87++) h87 = (h87 * 31 + t87.charCodeAt(j87)) | 0;
@@ -5967,7 +5968,7 @@ function setHtml58() { var p = me(), hrs = []; for (var i = 0; i < 24; i++) hrs.
     grp58('🧠 TRIVIA', tg58('nTrivia', 'Daily quiz reminder', 'Ping at 9pm + when the other person finishes')) +
     grp58('🖥 DISPLAY', tg58('rm', 'Reduce motion', 'Fewer animations') + tg58('snd', 'App sounds', 'Bleeps & SFX') + sel58('fs', 'Text size', [[90, 'Small'], [100, 'Normal'], [110, 'Large'], [120, 'Extra large']]) + sel58('tab', 'Open on', [['home', 'Explore'], ['all', 'Logged'], ['int', 'Interested'], ['logging', 'Logging'], ['stats', 'Camp']])) +
     grp58('🔒 PRIVACY & DATA', '<p class="sn58">NOT FOR ME (' + nf.length + ')</p>' + (nf.length ? nf.map(function (t) { return '<div class="st58 sti"><span><b>' + esc(t) + '</b></span><button class="ui-btn" data-setnfm="' + esc(t) + '">RESTORE</button></div>'; }).join('') : '<p class="sn58 dim">Nothing hidden</p>') +
-      '<p class="sn58">HIDDEN FROM INTERESTED (' + hid.length + ')</p>' + (hid.length ? hid.map(function (k) { var o = INT[p][k]; return '<div class="st58 sti"><span><b>' + esc(o.t || k.replace(/^\w+:/, '')) + '</b></span><button class="ui-btn" data-setunhide="' + esc(k) + '">UN-HIDE</button></div>'; }).join('') : '<p class="sn58 dim">Nothing hidden</p>') +
+      '<div class="st58"><span><b>Not interested</b><small>Now in Cinema ☰ › NOT INTERESTED</small></span></div>' +
       btn58('rsclr', 'Clear search history', 'App + YouTube searches', 'warn') + btn58('mhclr', 'Clear Mood Pick history', '', 'warn') + btn58('export', 'Export my data', 'Download a JSON file')) +
     grp58('ℹ ABOUT', '<div class="st58"><span><b>Version</b><small>' + esc(window.APPV58 || 'r58') + '</small></span></div>' + btn58('new', 'What\u2019s new') + btn58('bug', 'Report a bug', 'Opens a GitHub issue')); }
 function setOpen58() { archClose(); var x = $('set58'); if (!x) { document.body.insertAdjacentHTML('beforeend', '<div id="set58" role="dialog" aria-label="Settings"></div>'); x = $('set58'); } SETL.snd = !muted; SETM58 = ''; x.innerHTML = setHtml58(); x.classList.add('open'); x.scrollTop = 0; }
@@ -7448,6 +7449,26 @@ body:has(#thm) #detailBody{padding-bottom:calc(100px + env(safe-area-inset-botto
 .sh90 h5 small{color:#9a9ac8;font-size:10px;margin-left:6px}
 .fb90 .r1 button{height:34px;min-height:0;line-height:1;display:inline-flex;align-items:center;gap:4px}
 .fb90 .r1 .fl b{display:inline-block!important;width:auto!important;height:auto!important;flex:0 0 auto;margin:0 0 0 4px!important;padding:3px 5px!important;font-size:11px!important;line-height:1!important}
+/* R91 */
+#ly91{display:none;background:linear-gradient(#ffd84a,#e8a800);color:#1a1000;font-size:20px;line-height:1;box-shadow:inset 0 2px 0 rgba(255,255,255,.45),0 3px 0 #000}
+body.s86-youtube #ly91{display:inline-flex;align-items:center;justify-content:center}
+#ly91:active{transform:translateY(2px);box-shadow:0 1px 0 #000}
+header h1 > #ly91,header h1 > #st91{flex:0 0 30px!important;width:30px!important;height:30px!important;padding:0}
+#st91{font-size:17px;line-height:1;display:inline-flex;align-items:center;justify-content:center}
+body.s86-settings #st91{background:var(--gold,#ffcc33);color:#111}
+#sh86 .g91{display:flex;align-items:center;gap:8px;width:100%;margin-top:6px;background:#141428;color:var(--gold,#ffcc33);letter-spacing:2px;font-size:11px;text-align:left}
+#sh86 .g91 b{flex:1}#sh86 .g91 small{color:#9a9ac8}#sh86 .g91 em{font-style:normal;color:#fff}
+#sh86 .gg91{display:none}#sh86 .gg91.op{display:block}
+#sh86 .gg91.top .si86{}
+#ni91 .ni91g{grid-template-columns:repeat(3,1fr)}
+.ni91c{display:flex;flex-direction:column;gap:4px;min-width:0}
+.ni91c .ni91u{font-size:10px;padding:5px 4px;width:100%}
+.ni91p{display:flex;flex-direction:column;gap:4px}.ni91p img,.ni91p i{width:100%;aspect-ratio:2/3;object-fit:cover;border:3px solid #000;background:#1c1c34;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:28px}
+.ni91p b{font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+header h1{gap:3px!important}
+header h1 > #sb88,header h1 > #lg88,header h1 > #ly91,header h1 > #st91,header h1 > #avPin,header h1 > #inboxB,header h1 > #mute,header h1 > #refresh{flex:0 0 28px!important;width:28px!important;height:28px!important;min-width:0!important;padding:0!important}
+header h1 > #avPin{margin-left:2px!important}
+#lb88{gap:4px}
 </style><script id="r80">/* ===== R80: QC fixes for 25a42cd ===== */
 (function () {
   /* toasts: flatten parts, drop repeats and pieces already contained in a longer piece */
@@ -7836,7 +7857,7 @@ body:has(#thm) #detailBody{padding-bottom:calc(100px + env(safe-area-inset-botto
   var mPushed = false;
   function openMenu() { closeSheet(); var b = $('lb88') || $('mb86'), r = b.getBoundingClientRect(), m = $('mn86'); if (m) m.remove();
     document.body.insertAdjacentHTML('beforeend', '<div id="mn86" role="menu" aria-label="Sections"><div class="bg86" data-m86x="1"></div><div class="pop86" style="top:' + Math.round(r.bottom + 6) + 'px;' + (b.id === 'lb88' ? 'left:' + Math.max(6, Math.round(r.left)) : 'right:' + Math.max(6, Math.round(innerWidth - r.right))) + 'px">' +
-      SECS.map(function (x) { return '<button role="menuitem" class="ab86 mi86' + (S86.s === x[0] ? ' on' : '') + '" data-m86="' + x[0] + '"><span class="mic86">' + icon(x[0]) + '</span><b>' + x[2] + '</b><small>' + x[3] + '</small></button>'; }).join('') + '</div></div>');
+      SECS.filter(function (x) { return x[0] !== 'settings'; }).map(function (x) { return '<button role="menuitem" class="ab86 mi86' + (S86.s === x[0] ? ' on' : '') + '" data-m86="' + x[0] + '"><span class="mic86">' + icon(x[0]) + '</span><b>' + x[2] + '</b><small>' + x[3] + '</small></button>'; }).join('') + '</div></div>');
     b.setAttribute('aria-expanded', 'true'); requestAnimationFrame(function () { var m = $('mn86'); m && m.classList.add('open'); });
     try { history.pushState({ m86: 1 }, ''); mPushed = true; } catch (e) {} SFX.tap && SFX.tap(); }
   function closeMenu(skipBack) { var m = $('mn86'); if (!m) return false; m.remove(); var b = $('lb88') || $('mb86'); b && b.setAttribute('aria-expanded', 'false');
@@ -7865,9 +7886,9 @@ body:has(#thm) #detailBody{padding-bottom:calc(100px + env(safe-area-inset-botto
   var CUR = null;
   function openSheet() { closeMenu(); var s = S86.s;
     if (s === 'youtube') { if (!isOpen('ytpage')) go('youtube', { quiet: 1 }); setTimeout(function () { ytDrawerOpen(); }, 30); return; }
-    CUR = items(s); closeSheet();
+    CUR = window.ITEMS91 ? ITEMS91(s, items(s)) : items(s); closeSheet();
     document.body.insertAdjacentHTML('beforeend', '<div id="sh86" role="dialog" aria-label="' + name(s) + ' menu"><div class="bg86" data-sh86x="1"></div><aside><div class="shh86"><span>' + icon(s) + '</span><b>' + name(s) + '</b><button class="ab86" data-sh86x="1" aria-label="Close">✕</button></div>' +
-      CUR.map(function (x, i) { return '<button class="ab86 si86' + (x[4] ? ' ' + x[4] : '') + '" data-sh86="' + i + '"><i>' + x[0] + '</i><b>' + x[1] + '</b>' + (x[2] ? '<small>' + x[2] + '</small>' : '') + '</button>'; }).join('') + '</aside></div>');
+      (window.SHEET91 ? SHEET91(CUR) : CUR.map(function (x, i) { return '<button class="ab86 si86' + (x[4] ? ' ' + x[4] : '') + '" data-sh86="' + i + '"><i>' + x[0] + '</i><b>' + x[1] + '</b>' + (x[2] ? '<small>' + x[2] + '</small>' : '') + '</button>'; }).join('')) + '</aside></div>');
     requestAnimationFrame(function () { var x = $('sh86'); x && x.classList.add('open'); }); SFX.tap && SFX.tap(); }
   function closeSheet() { var x = $('sh86'); if (x) x.remove(); }
   window.addEventListener('click', function (e) { var t = e.target; if (!t.closest) return;
@@ -7937,7 +7958,7 @@ body:has(#thm) #detailBody{padding-bottom:calc(100px + env(safe-area-inset-botto
 
 
 /* ===== R89b: soundtrack stays at the bottom on every details open (sync, no rAF race) + phones pick up new builds when the app comes back to the foreground ===== */
-window.APPV58 = 'r90';
+window.APPV58 = 'r91';
 (function () {
   var mv = function () { try { window.mv89 && mv89(); } catch (e) {} };
   /* r50's oxPlace() pinned #ostx under the title after every async soundtrack draw — make it pin to the bottom instead */
@@ -7945,7 +7966,7 @@ window.APPV58 = 'r90';
   var _od = openDetail; openDetail = function () { var r = _od.apply(this, arguments); mv(); setTimeout(mv, 0); setTimeout(mv, 400); setTimeout(mv, 2000); return r; };
   ['ostRedraw', 'ostxDraw'].forEach(function (n) { var f = window[n]; if (typeof f === 'function') window[n] = function () { var r = f.apply(this, arguments); mv(); return r; }; });
   /* stale-build guard: a home-screen app resumed from the background keeps old code; reload once when sw.js has a newer build */
-  var BUILD = 'logged-202610192027', busy = function () { var a = document.activeElement; return (a && /INPUT|TEXTAREA/.test(a.tagName)) || (window.OXA && !OXA.paused) || document.querySelector('#add.open,#fb83.open,#trv.open,#ytpage.open .yv'); };
+  var BUILD = 'logged-202610192040', busy = function () { var a = document.activeElement; return (a && /INPUT|TEXTAREA/.test(a.tagName)) || (window.OXA && !OXA.paused) || document.querySelector('#add.open,#fb83.open,#trv.open,#ytpage.open .yv'); };
   var last = 0; function check() { if (/demo=1/.test(location.search) || BUILD.indexOf('__') === 0 || Date.now() - last < 60000) return; last = Date.now();
     fetch('sw.js?b=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.ok ? r.text() : ''; }).then(function (t) { var m = t.match(/var V = '([^']+)'/); if (!m || m[1] === BUILD || busy()) return;
       try { if (sessionStorage.lg_rl89 === m[1]) return; sessionStorage.lg_rl89 = m[1]; } catch (e) {} try { toast('⟳ UPDATING LOGGED…'); } catch (e) {}
@@ -8014,6 +8035,48 @@ window.APPV58 = 'r90';
     if (Array.isArray(F[k])) F[k] = F[k].indexOf(v) >= 0 ? F[k].filter(function (x) { return x !== v; }) : F[k].concat([v]); else F[k] = F[k] === v ? '' : v; redraw(); }, true);
   try { if (window.NAV_OV && NAV_OV.indexOf('lf90m') < 0) NAV_OV.push('lf90m'); } catch (e) {}
 })();
+/* ===== R91: Cinema ☰ NOT INTERESTED list (moved out of Settings) · grouped/collapsible section menus · ⚙ Settings header button · ＋ LOG IT on YouTube ===== */
+(function () {
+  /* --- 1) NOT INTERESTED (per player, Cinema only) --- */
+  function niList() { var p = me(), I = INT[p] || {}; return Object.keys(I).filter(function (k) { return I[k] && I[k].v === 'n'; }).map(function (k) { var o = I[k], r = /^r:/.test(k) ? byTitle(k.slice(2)) : null; return { k: k, o: o, r: r }; })
+      .filter(function (x) { return x.r ? !isYT(x.r) : x.o.k !== 'yt'; }).sort(function (a, b) { return (b.o.at || 0) - (a.o.at || 0); }); }
+  window.niList91 = niList;
+  function niCard(x) { var r = x.r, t = r ? r.title : (x.o.t || x.k.replace(/^\w+:(\w+:)?/, '')), ps = r ? posters[r.title] : x.o.p, tv = r ? r.type === 'TV Show' : x.o.k === 'tv';
+    return '<div class="ni91c">' + (r ? pcard(r) : '<div class="ni91p">' + (ps && /^http|^data:/.test(ps) ? '<img loading="lazy" src="' + esc(ps) + '" alt="">' : '<i>' + (tv ? '📺' : '🎞') + '</i>') + '<b>' + esc(t) + '</b></div>') +
+      '<button class="ui-btn ni91u" data-ni91u="' + esc(x.k) + '" aria-label="Un-hide ' + esc(t) + '">↺ UN-HIDE</button></div>'; }
+  function niRender() { var P = $('ni91'); if (!P) { document.body.insertAdjacentHTML('beforeend', '<div class="page" id="ni91"><div class="pagein" id="ni91b"></div></div>'); P = $('ni91'); try { NAV_OV.indexOf('ni91') < 0 && NAV_OV.push('ni91'); } catch (e) {} }
+    var L = niList(), who = me() === 'lewy' ? '2P LEWY' : '1P SAM';
+    $('ni91b').innerHTML = '<div class="ptop"><button class="btn back" data-pclose="ni91">◀</button><h2>🚫 NOT INTERESTED<br><small>' + who + ' · ' + L.length + ' hidden from Interested</small></h2></div>' +
+      (L.length ? '<div class="pgrid ni91g">' + L.map(niCard).join('') + '</div>' : '<div class="e90"><p>👍</p>NOTHING HIDDEN<br><small>Swipe left or tap ✕ on a title in Interested / Swipe to hide it here.</small></div>'); return P; }
+  window.niOpen91 = function () { closePage('bpage'); closePage('gpage'); closePage('ipage'); niRender().classList.add('open'); $('ni91').scrollTop = 0; };
+  document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-ni91u]'); if (!b) return; e.stopImmediatePropagation(); e.preventDefault(); var k = b.dataset.ni91u, o = (INT[me()] || {})[k];
+    intSet(k, ''); niRender(); try { SFX.tap && SFX.tap(); } catch (x) {} toast('Back in Interested', function () { intSet(k, 'n', o); niRender(); }); }, true);
+
+  /* --- 2) grouped, collapsible section menus --- */
+  var GR = { cinema: [['', ['LOGGED', 'LOGGING', 'INTERESTED', 'NOT INTERESTED']], ['DISCOVER', ['EXPLORE', 'SEARCH', 'MOOD PICK', 'SWIPE', 'SPIN THE WHEEL', 'TONIGHT']], ['BROWSE', ['TV', 'FILMS', 'GENRES', 'TOP RATED', 'WATCHLIST', 'SPESH']], ['FUN & STATS', ['TRIVIA', 'STATS & CRITICS']]],
+    spotify: [['', ['HOME', 'FAVOURITES', 'LISTENING', 'SEARCH']], ['STATS', ['TOP SOUNDTRACKS', 'GENRE STATS', 'FUN FACTS', 'PERSONALITY', 'MUSIC AGE', 'LAST.FM STATS']], ['PLAYER & LAYOUT', ['SAM', 'LEWY', 'ARRANGE']]] };
+  var DROP = { cinema: ['LOG IT'] };
+  var OPEN = (function () { try { return JSON.parse(localStorage.lg_g91 || '{}'); } catch (e) { return {}; } })();
+  window.ITEMS91 = function (s, L) { if (s === 'cinema') { var i = L.map(function (x) { return x[1]; }).indexOf('INTERESTED'); L = L.slice(); L.splice(i + 1, 0, ['🚫', 'NOT INTERESTED', 'Hidden from Interested', function () { niOpen91(); }]); }
+    var G = GR[s], D = DROP[s] || []; L = L.filter(function (x) { return D.indexOf(x[1]) < 0; }); if (!G) return L;
+    var out = [], used = {}; G.forEach(function (g) { g[1].forEach(function (lab) { L.forEach(function (x, j) { if (x[1] === lab && !used[j]) { used[j] = 1; var y = x.slice(); y[5] = g[0]; out.push(y); } }); }); });
+    L.forEach(function (x, j) { if (!used[j]) { var y = x.slice(); y[5] = 'MORE'; out.push(y); } }); return out; };
+  window.SHEET91 = function (CUR) { var h = '', g = null, s = (window.S86 || {}).s;
+    CUR.forEach(function (x, i) { var gg = x[5] || ''; if (gg !== g) { if (g) h += '</div>'; g = gg; if (gg) { var n = CUR.filter(function (y) { return y[5] === gg; }).length, op = OPEN[s + '|' + gg]; h += '<button class="ab86 g91' + (op ? ' op' : '') + '" data-g91="' + esc(s + '|' + gg) + '" aria-expanded="' + !!op + '"><b>' + esc(gg) + '</b><small>' + n + '</small><em>' + (op ? '▾' : '▸') + '</em></button><div class="gg91' + (op ? ' op' : '') + '">'; } else h += '<div class="gg91 top op">'; }
+      h += '<button class="ab86 si86' + (x[4] ? ' ' + x[4] : '') + '" data-sh86="' + i + '"><i>' + x[0] + '</i><b>' + x[1] + '</b>' + (x[2] ? '<small>' + x[2] + '</small>' : '') + '</button>'; });
+    return h + (g !== null ? '</div>' : ''); };
+  window.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-g91]'); if (!b) return; e.stopImmediatePropagation(); e.preventDefault(); var k = b.dataset.g91, op = !OPEN[k]; if (op) OPEN[k] = 1; else delete OPEN[k]; try { localStorage.lg_g91 = JSON.stringify(OPEN); } catch (x) {}
+    b.classList.toggle('op', op); b.setAttribute('aria-expanded', String(op)); var em = b.querySelector('em'); if (em) em.textContent = op ? '▾' : '▸'; var c = b.nextElementSibling; c && c.classList.toggle('op', op); try { SFX.tap && SFX.tap(); } catch (x) {} }, true);
+
+  /* --- 3) ⚙ Settings button (top-right) + 4) ＋ LOG IT on YouTube --- */
+  function hdr() { var rf = $('refresh'); if (!rf || $('st91')) return;
+    rf.insertAdjacentHTML('afterend', '<button id="st91" class="icon px" type="button" aria-label="Settings">⚙</button>');
+    var lg = $('lg88'); lg && lg.insertAdjacentHTML('afterend', '<button id="ly91" class="icon px" type="button" aria-label="Log a YouTube video">＋</button>'); }
+  hdr(); setTimeout(hdr, 500);
+  window.addEventListener('click', function (e) { var t = e.target; if (!t.closest) return;
+    if (t.closest('#st91')) { e.stopImmediatePropagation(); e.preventDefault(); try { SFX.tap && SFX.tap(); } catch (x) {} var s = (window.S86 || {}).s; if (s === 'settings') { var c = document.querySelector('#set58 [data-seta="close"]'); if (c) c.click(); else go86(S86.prev || 'cinema'); } else go86('settings'); return; }
+    if (t.closest('#ly91')) { e.stopImmediatePropagation(); e.preventDefault(); try { SFX.tap && SFX.tap(); } catch (x) {} YTA = { q: '', res: null, pick: null, w: {} }; openYTAdd(); setTimeout(function () { var q = $('ytQ'); q && q.focus(); }, 80); } }, true);
+})();
 </script>
 </body></html>
 <!--RC85T-->
@@ -8023,3 +8086,4 @@ window.APPV58 = 'r90';
 <!--RC89T-->
 <!--RC89bT-->
 <!--RC90T-->
+<!--RC91T-->
