@@ -33,9 +33,10 @@ Object.assign(meta['Inception'] = meta['Inception'] || {}, { runtime: 148 }); me
 function mock(fn, args, who) { if (global.MOCKX) { const x = global.MOCKX(fn, args, who); if (x !== undefined) return x; }
   if (/^gw[A-Z]/.test(fn)) { try { return { __ok: gctx[fn].apply(null, args) }; } catch (e) { return { __err: e.message }; } } S.calls.push(fn);
   switch (fn) {
-    case 'getData': return { rows: JSON.parse(JSON.stringify(rows)), version: String((S.prof ? JSON.stringify(S.prof).length : 1)), posters: {"Inception": "https://upload.wikimedia.org/wikipedia/en/2/2e/Inception_%282010%29_theatrical_poster.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled", "Shrek": "https://upload.wikimedia.org/wikipedia/en/7/7b/Shrek_%282001_animated_feature_film%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled", "Garfield": "https://image.tmdb.org/t/p/w342/vqwTSWNLyH55g8kBT61s2DgNYEp.jpg", "Whiplash": "https://upload.wikimedia.org/wikipedia/en/0/01/Whiplash_poster.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled", "Breaking Bad (S2)": "https://example.invalid/missing.jpg"}, recent: [], profiles: JSON.parse(JSON.stringify(S.prof || { sam: {}, lewy: {} })), fetchedAt: new Date().toISOString() };
+    case 'getData': return { rows: JSON.parse(JSON.stringify(rows.map(function (r) { return S.ep[r.title] ? Object.assign({}, r, { ep: S.ep[r.title] }) : r; }))), version: String((S.prof ? JSON.stringify(S.prof).length : 1)), posters: {"Inception": "https://upload.wikimedia.org/wikipedia/en/2/2e/Inception_%282010%29_theatrical_poster.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled", "Shrek": "https://upload.wikimedia.org/wikipedia/en/7/7b/Shrek_%282001_animated_feature_film%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled", "Garfield": "https://image.tmdb.org/t/p/w342/vqwTSWNLyH55g8kBT61s2DgNYEp.jpg", "Whiplash": "https://upload.wikimedia.org/wikipedia/en/0/01/Whiplash_poster.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled", "Breaking Bad (S2)": "https://example.invalid/missing.jpg"}, recent: [], profiles: JSON.parse(JSON.stringify(S.prof || { sam: {}, lewy: {} })), fetchedAt: new Date().toISOString() };
     case 'getAllMeta': return meta; case 'getVersion': return '1';
-    case 'setEpisode': { const [t, p, n, seq] = args, o = S.ep[t] = S.ep[t] || {}; if (o[p] && o[p].q > seq) return Object.assign({ stale: 1 }, o); o[p] = { e: n, q: seq }; return JSON.parse(JSON.stringify(o)); }
+    case 'setEpisode': { const [t, p, n, seq] = args, o = S.ep[t] = S.ep[t] || JSON.parse(JSON.stringify((rows.find(x => x.title === t) || {}).ep || {})); if (o[p] && o[p].q > seq) return Object.assign({ stale: 1 }, o); o[p] = Object.assign({}, o[p] && o[p].r ? { r: o[p].r } : {}, { e: n, q: seq }); return JSON.parse(JSON.stringify(o)); }
+    case 'setEpRating': { const [t, p, n, v] = args, o = S.ep[t] = S.ep[t] || JSON.parse(JSON.stringify((rows.find(x => x.title === t) || {}).ep || {})); o[p] = o[p] || { e: 0 }; o[p].r = o[p].r || {}; if (Number(v)) o[p].r[n] = Number(v); else delete o[p].r[n]; return JSON.parse(JSON.stringify(o)); }
     case 'setThemes': { const [t, p, L] = args, b = t.replace(/\s*\(S\d+\)$/, ''); S.themes[b] = S.themes[b] || {}; S.themes[b][p] = L; return S.themes[b]; }
     case 'updateEntry': { S.upd++; const r = rows.find(x => x.row === args[0]); return Object.assign({}, r, args[1]); }
     case 'addEntry': return R(99, args[0].title, args[0].type || 'Movie', args[0]);
@@ -7665,6 +7666,63 @@ body.s86-profile header h1 > #lg88{
 .empty .btn-log98,.ui-empty .btn-log98,.e90 .btn-log98{margin-top:12px!important}
 .d-log98{margin:12px 0!important;width:100%!important}
 .tm{display:flex!important;align-items:center!important;flex-wrap:nowrap!important}
+/* R99 PREVIEW: TV show details redesign (app-rc only) */
+#detailBody.tv99{padding-top:0!important}
+#detailBody.tv99 > .btn.back,#detailBody.tv99 .dgrid .dtop,#detailBody.tv99 h2.dt,#detailBody.tv99 .dgrid .dts,#detailBody.tv99 .sh78,#detailBody.tv99 .dgrid .meta,#detailBody.tv99 .dgrid .tm92,#detailBody.tv99 .dgrid .gch{display:none!important}
+#detailBody.tv99 .dgrid{display:block!important}
+.tb99{position:sticky;top:0;z-index:6;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:8px;margin:0 -14px 10px;padding:calc(8px + env(safe-area-inset-top)) 14px 8px;background:rgba(11,11,20,.94);border-bottom:2px solid var(--line,#2c2c4a)}
+.tb99 .btn{min-height:44px;min-width:44px;margin:0;display:flex;align-items:center;justify-content:center;font:10px var(--pix);padding:0 12px}
+.tb99 .t99{font:9px/1.4 var(--pix);color:var(--dim,#9a94b8);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:1px;min-width:0}
+.tb99 .ey99{font-size:16px;padding:0;opacity:.45;filter:grayscale(1)}
+.tb99 .ey99.on{opacity:1;filter:none;border-color:var(--gold,#ffcc33)}
+.c99{background:var(--panel,#16162a);border:2px solid var(--line,#2c2c4a);box-shadow:3px 3px 0 #000;padding:12px;margin:0 0 12px}
+.l99{font:9px var(--pix);color:var(--dim,#9a94b8);letter-spacing:1px;margin:0 0 10px}
+.hc99{display:flex;gap:12px;align-items:flex-start}
+.pp99{width:96px;height:144px;flex:none;border:2px solid var(--line,#2c2c4a);overflow:hidden;position:relative;background:linear-gradient(160deg,#c9a23a,#5a3d12 60%,#1a1208);display:flex;align-items:flex-end}
+.pp99 img,.pp99 canvas,.pp99 .poster,.pp99 .px{width:100%!important;height:100%!important;object-fit:cover;display:block;margin:0!important;max-width:none!important}
+.pp99 .pico{display:none}
+.pp99 .pt99{font:7px/1.4 var(--pix);color:#fff3c4;padding:6px;text-shadow:1px 1px 0 #000;word-break:break-word}
+.hi99{flex:1;min-width:0}
+.hi99 h1{font:13px/1.5 var(--pix);margin:0 0 8px;color:var(--txt,#f1ecff);text-shadow:2px 2px 0 #000;word-break:break-word}
+.sc99{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 10px;margin:0 0 8px;font:9px var(--pix);color:var(--gold,#ffcc33);background:transparent;border:2px solid var(--gold,#ffcc33);box-shadow:2px 2px 0 #000;cursor:pointer}
+.mt99{font-size:18px;line-height:1.2;color:var(--dim,#9a94b8)}.mt99 b{color:var(--gold,#ffcc33);font-weight:normal}.mt99 div{white-space:normal}
+#epx.epx99{display:block!important;padding:0!important;margin:0!important;background:none!important;border:0!important;box-shadow:none!important}
+.pr99 .rw99{display:flex;align-items:center;gap:8px}
+.pr99 .nm99{font:9px var(--pix);width:40px;flex:none}
+.pr99 .br99{flex:1;min-width:24px;height:12px;border:2px solid var(--line,#2c2c4a);background:#0b0b14}.pr99 .br99 i{display:block;height:100%}
+.pr99 .s99{color:var(--p1,#4dc3ff)}.pr99 .l99c{color:var(--p2,#3ddc84)}
+.pr99 .ep99{flex:none;min-height:44px;padding:0 8px;font:9px var(--pix);color:inherit;background:none;border:2px solid currentColor;box-shadow:2px 2px 0 #000;white-space:nowrap;margin:0}
+.pr99 .pm99{flex:0 0 44px!important;width:44px!important;min-width:44px!important;max-width:none!important;min-height:44px;padding:0;margin:0;font:11px var(--pix);color:var(--txt,#f1ecff);background:#0b0b14;border:2px solid var(--line,#2c2c4a);box-shadow:2px 2px 0 #000;display:flex;align-items:center;justify-content:center}
+.pr99 .pm99.pl{border-color:currentColor;color:inherit}
+.pr99 .sn99{display:flex;align-items:center;margin:0 0 8px 48px;min-height:44px}
+.pr99 .sn99 button{min-height:44px;padding:0 4px;margin:0;font-size:17px;color:var(--dim,#9a94b8);background:none;border:0;box-shadow:none;text-align:left}
+.pr99 .sn99:last-child{margin-bottom:0}
+.rb99{width:100%;min-height:54px;margin:0 0 12px;font:12px var(--pix);color:#1a1208;background:var(--gold,#ffcc33);border:0;box-shadow:0 4px 0 #a07d10;display:flex;align-items:center;justify-content:center;gap:8px;text-align:center;line-height:1.4;padding:6px 10px}
+.rb99.dn{background:#2a2a44;color:var(--dim,#9a94b8);box-shadow:0 4px 0 #000}
+.el99 .ls99{margin:0 -4px;padding:0 4px}
+.el99 .ls99.lng{max-height:460px;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.el99 .e99{display:flex;align-items:center;gap:8px;width:100%;min-height:46px;margin:0;padding:0 6px;border:0;border-top:2px solid var(--line,#2c2c4a);background:none;box-shadow:none;color:var(--txt,#f1ecff);text-align:left;font-size:18px;cursor:pointer}
+.el99 .e99:first-child{border-top:0}
+.el99 .e99 .n{font:9px var(--pix);width:46px;flex:none;color:var(--dim,#9a94b8)}
+.el99 .e99 .ti{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.el99 .e99 .sv{font:9px var(--pix);width:52px;flex:none;text-align:right;white-space:nowrap}
+.el99 .e99 .sv.s{color:var(--p1,#4dc3ff)}.el99 .e99 .sv.l{color:var(--p2,#3ddc84)}
+.el99 .e99.nx{background:rgba(255,204,51,.08);outline:2px solid var(--gold,#ffcc33);outline-offset:-2px}
+.el99 .e99.nx .n{color:var(--gold,#ffcc33)}
+.el99 .tg99{font:7px var(--pix);color:var(--gold,#ffcc33);margin-left:6px;vertical-align:middle}
+.el99 .epq{margin:4px 0 8px}
+.el99 .epq .qrg{display:grid!important;grid-template-columns:repeat(5,1fr);gap:6px}
+.el99 .epq .qrg button,.el99 .epq .btn{min-height:44px!important;min-width:44px}
+.el99 .epq .epqh{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.el99 details.ch99{border-top:2px solid var(--line,#2c2c4a);margin-top:4px}
+.el99 details.ch99 summary{list-style:none;min-height:44px;display:flex;align-items:center;font:9px var(--pix);color:var(--dim,#9a94b8);cursor:pointer}
+.el99 details.ch99 summary::-webkit-details-marker{display:none}
+.el99 details.ch99[open] summary .ar{display:inline-block;transform:rotate(90deg)}
+.el99 .nt99,.st99 .nt99{font-size:17px;color:var(--dim,#9a94b8);margin-top:8px;line-height:1.2}
+.st99 .sg99{display:flex;gap:8px}.st99 .sg99 div{flex:1;min-width:0;text-align:center;border:2px solid var(--line,#2c2c4a);padding:8px 4px;font-size:18px}
+.st99 .sg99 b{display:block;font:8px var(--pix);color:var(--dim,#9a94b8);font-weight:normal;margin-bottom:4px}
+.st99 .sg99 small{display:block;font-size:15px;color:var(--dim,#9a94b8)}
+.ov99 .syn{margin:0!important}
 </style><script id="r80">/* ===== R80: QC fixes for 25a42cd ===== */
 (function () {
   /* toasts: flatten parts, drop repeats and pieces already contained in a longer piece */
@@ -8459,7 +8517,7 @@ window.APPV58 = '3.01';
     openPop(NOTES.filter(function (n) { return n.v === CUR; })[0] || NOTES[0]);
     try { localStorage.setItem(KEY, CUR); } catch (e) {}
   }
-  setTimeout(maybePop, 1200);
+  /* 3.07: single What's new timer below */ void (maybePop);
 
   try {
     if (window.H92 && H92.ov) {
@@ -9070,8 +9128,8 @@ window.APPV58 = '3.05';
     } catch (e) {}
     try { localStorage.setItem(KEY, CUR); } catch (e) {}
   }
-  setTimeout(maybePop97, 1400);
-  setTimeout(maybePop97, 2800);
+  /* 3.07: single What's new timer below */ void (maybePop97);
+  /* 3.07: single What's new timer below */ void (maybePop97);
 
   /* Keep H92 aware */
   try {
@@ -9387,9 +9445,136 @@ window.APPV58 = '3.06';
       } catch (e) {}
       try { localStorage.setItem(KEY, CUR); } catch (e) {}
     }
-    setTimeout(maybePop, 1600);
-    setTimeout(maybePop, 3000);
+    /* 3.07: single What's new timer below */ void (maybePop);
+    /* 3.07: single What's new timer below */ void (maybePop);
   } catch (e) {}
+})();
+/* ===== R99 / v3.07: TV show details redesign — top bar · header card · PROGRESS · RATE · episode list · stats ===== */
+(function () {
+  var SN = /\s*\((?:S|Season )(\d+)\)\s*$/i;
+  var C99 = {};
+  function who() { try { return (typeof WHO !== 'undefined' && WHO) || me() || 'sam'; } catch (e) { return 'sam'; } }
+  function curRow() { var t = $('detailBody') && $('detailBody').querySelector('[data-dedit]'); return t ? byId(t.dataset.dedit) : null; }
+  function snOf(r) { var m = SN.exec(String(r.title)); return m ? Number(m[1]) : 0; }
+  function fmt1(v) { return Math.round(v * 10) / 10; }
+  function rr(r, p, n) { try { return epR(r, p, n); } catch (e) { return null; } }
+  /* episode data for the season shown: [{n (absolute), name}] */
+  function seasonInfo(r) {
+    var m = M(r), id = m.tmdb, sn = snOf(r), tot = epTot(r), k = id + '|' + (sn || 'all');
+    var c = C99[k];
+    if (!c && id) { c = C99[k] = { busy: 1 };
+      var done = function () { c.busy = 0; var x = curRow(); if (x && x.row === r.row && $('detail').classList.contains('open')) epRedraw(x); };
+      var epsFor = function (s, off) { run('tmdbSeasonEps', [Number(id), Number(s)], function (o) { c.sn = s; c.off = off; c.eps = ((o && o.eps) || []).map(function (e) { return { n: e.n + off, name: e.name || '' }; }); done(); }, function () { done(); }); };
+      if (sn) epsFor(sn, 0);
+      else run('tmdbSeasons', [Number(id)], function (o) { var S = (o && o.seasons) || []; if (!S.length) return done(); var nx = Math.max(epOf(r, 'sam'), epOf(r, 'lewy'), 0) + 1, off = 0, pick = S[0], po = 0;
+          S.forEach(function (s) { if (nx > off) { pick = s; po = off; } off += s.eps || 0; }); c.seasons = S.length; epsFor(pick.n, po); }, function () { done(); });
+    }
+    c = c || {};
+    var off = c.off || 0, names = {}; (c.eps || []).forEach(function (e) { names[e.n] = e.name; });
+    var from = off + 1, to = c.eps && c.eps.length ? off + c.eps.length : tot;
+    if (sn || !c.eps) { from = 1; to = Math.max(tot, c.eps ? c.eps.length : 0); }
+    to = Math.max(to, epOf(r, 'sam'), epOf(r, 'lewy'));
+    return { sn: sn || c.sn || 1, from: from, to: to, names: names, seasons: m.seasons || c.seasons || 0 };
+  }
+  function nextFor(r, p, si) { var e = epOf(r, p); return e >= si.to ? 0 : Math.max(e + 1, si.from); }
+  function statsHtml(r) { var L = epRated(r); if (L.length < 2) return '';
+    var avg = function (n) { var a = rr(r, 'sam', n), b = rr(r, 'lewy', n); return a != null && b != null ? (a + b) / 2 : a != null ? a : b; };
+    var S = L.map(function (n) { return { n: n, v: avg(n) }; }), best = S.slice().sort(function (a, b) { return b.v - a.v || a.n - b.n; })[0], worst = S.slice().sort(function (a, b) { return a.v - b.v || a.n - b.n; })[0];
+    var both = L.filter(function (n) { return rr(r, 'sam', n) != null && rr(r, 'lewy', n) != null; }), ag = both.length ? Math.round(both.filter(function (n) { return Math.abs(rr(r, 'sam', n) - rr(r, 'lewy', n)) <= 1; }).length / both.length * 100) : null;
+    return '<div class="c99 st99" id="st99"><div class="l99">SEASON STATS</div><div class="sg99"><div><b>BEST</b>EP ' + best.n + '<small>★ ' + fmt1(best.v) + '</small></div><div><b>WORST</b>EP ' + worst.n + '<small>★ ' + fmt1(worst.v) + '</small></div><div><b>AGREE</b>' + (ag == null ? '—' : ag + '%') + '<small>' + (both.length ? 'within ±1 · ' + both.length + ' EP' + (both.length > 1 ? 'S' : '') : 'rate the same ep') + '</small></div></div></div>'; }
+  function chartHtml(r, si) { var cols = ''; for (var i = si.from; i <= si.to; i++) { var a = rr(r, 'sam', i), b = rr(r, 'lewy', i);
+      cols += '<div class="col"><i style="height:' + (a ? a * 10 : 0) + '%;background:var(--p1,#4dc3ff)"></i><i style="height:' + (b ? b * 10 : 0) + '%;background:var(--p2,#3ddc84)"></i></div>'; }
+    return '<details class="ch99"' + (EPR.open ? ' open' : '') + '><summary>CHART <span class="ar">▸</span></summary><div class="epg">' + cols + '</div><div class="glg"><span><b style="background:var(--p1,#4dc3ff)"></b>SAM</span><span><b style="background:var(--p2,#3ddc84)"></b>LEWY</span></div></details>'; }
+  function epHtml99(r) {
+    var si = seasonInfo(r), tot = si.to - si.from + 1, me1 = who(), d = r.dates || {};
+    var prog1 = function (p, cls, nm) { var e = epOf(r, p), inS = Math.max(0, Math.min(tot, e - si.from + 1)), st = d[p + 'Start'];
+      return '<div class="rw99 ' + cls + '"><span class="nm99">' + nm + '</span><span class="br99"><i style="width:' + (tot ? Math.min(100, inS / tot * 100) : 0) + '%;background:currentColor"></i></span>' +
+        '<button class="ep99 ekp" data-ekp="' + p + '" aria-label="' + nm + ' episode ' + inS + ' of ' + tot + ', pick episode">EP ' + inS + '/' + tot + ' ▾</button>' +
+        '<button class="pm99" data-ep="' + p + '" data-d="-1" aria-label="' + nm + ' back one episode">-</button><button class="pm99 pl" data-ep="' + p + '" data-d="1" aria-label="' + nm + ' plus one episode">+1</button></div>' +
+        '<div class="sn99"><button type="button" data-dt99="' + p + '">' + (st ? 'started ' + esc(fmtD(st)) : 'add start date') + ' ✎</button></div>'; };
+    var nx = nextFor(r, me1, si), NM = me1 === 'lewy' ? 'LEWY' : 'SAM';
+    var rate = nx ? '<button class="rb99" data-epc="' + nx + '">▶ RATE EP ' + (nx - si.from + 1) + ' · NEXT FOR ' + NM + '</button>' : '<button class="rb99 dn" data-epc="' + si.to + '">✓ ' + NM + ' FINISHED · RATE EP ' + tot + '</button>';
+    var rows99 = ''; for (var i = si.from; i <= si.to; i++) { var a = rr(r, 'sam', i), b = rr(r, 'lewy', i), isN = i === nx, k = i - si.from + 1;
+      rows99 += '<button class="e99' + (isN ? ' nx' : '') + '" data-epi="' + i + '" data-e99="' + i + '" aria-label="Episode ' + k + ', rate or edit"><span class="n">EP ' + k + '</span><span class="ti">' + esc(si.names[i] || ('Episode ' + k)) + (isN ? '<span class="tg99">NEXT</span>' : '') + '</span><span class="sv s">' + (a != null ? 'S ' + a : isN || a != null || b != null ? 'S –' : '–') + '</span><span class="sv l">' + (b != null ? 'L ' + b : isN || a != null || b != null ? 'L –' : '–') + '</span></button>';
+      if (EPR.rate && EPR.rate.row === r.row && EPR.rate.n === i) rows99 += epRateRow(r, i); }
+    return '<div class="epx99" id="epx" data-sp99="' + r.row + '">' +
+      '<div class="c99 pr99"><div class="l99">PROGRESS</div>' + prog1('sam', 's99', 'SAM') + prog1('lewy', 'l99c', 'LEWY') + '</div>' + rate +
+      '<div class="c99 el99"><div class="l99">SEASON ' + si.sn + ' EPISODES</div><div class="ls99' + (tot > 10 ? ' lng' : '') + '">' + rows99 + '</div>' + chartHtml(r, si) +
+      '<div class="nt99">Tap an episode to rate or edit it. Episode ratings don\u2019t change your show score.</div></div>' + statsHtml(r) + '</div>';
+  }
+  var _eh99 = epHtml; epHtml = function (r) { if (!r || r.type !== 'TV Show') return _eh99.apply(this, arguments); try { return epHtml99(r); } catch (e) { try { console.warn('r99', e); } catch (x) {} return _eh99.apply(this, arguments); } };
+  /* after any (re)draw: keep #epx under the header card, auto-scroll the list to NEXT / the open rating row */
+  function place() { var D = $('detailBody'); if (!D || !D.classList.contains('tv99')) return; var x = $('epx'), h = D.querySelector('.hc99'); if (x && h && x.previousElementSibling !== h) h.after(x);
+    var L = x && x.querySelector('.ls99'); if (!L) return; var q = L.querySelector('.epq'), n = q || L.querySelector('.e99.nx');
+    if (L.classList.contains('lng') && n && !L.__s99) { L.scrollTop = Math.max(0, n.offsetTop - L.offsetTop - 46 * 2); }
+    if (q && !q.__s99) { q.__s99 = 1; try { var R = q.getBoundingClientRect(); if (R.bottom > innerHeight - 10 || R.top < 70) q.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (e) {} } }
+  function metaLines(r) { var m = M(r), si = seasonInfo(r), eps = si.to - si.from + 1, rt = m.epRuntime || m.runtime, net = m.network || m.net || '';
+    try { var C = window.CI85, ci = C && m.tmdb && C['tv|' + m.tmdb]; if (ci && ci.net && !net) net = ci.net; } catch (e) {}
+    var L1 = [m.year, eps ? eps + ' eps' : '', rt ? '~' + rt + 'm' : ''].filter(Boolean).join(' · ');
+    var L2 = [m.rating ? '<b>TMDB ★ ' + esc(String(m.rating)) + '</b>' : '', si.seasons ? si.seasons + ' season' + (si.seasons > 1 ? 's' : '') : ''].filter(Boolean).join(' · ');
+    var g = genresOf(r).slice(0, 2); if (net) g.push(net); var L3 = g.map(esc).join(' · ');
+    return [L1 ? '<div>' + esc(L1) + '</div>' : '', L2 ? '<div>' + L2 + '</div>' : '', L3 ? '<div>' + L3 + '</div>' : ''].join(''); }
+  function build(r) { var D = $('detailBody'); if (!D || !r || r.type !== 'TV Show') { D && D.classList.remove('tv99'); return; }
+    D.classList.add('tv99'); [].forEach.call(D.querySelectorAll('.tb99,.hc99,.ov99l'), function (x) { x.remove(); });
+    var bt = baseTitle(r.title), si = seasonInfo(r), on = prog(r), pa = '';
+    try { pa = art(r); } catch (e) {}
+    var hasImg = /<img|<canvas/.test(pa);
+    D.insertAdjacentHTML('afterbegin', '<div class="tb99"><button class="btn back" data-closed="1">◀ BACK</button><div class="t99">' + esc(bt.toUpperCase()) + '</div><button class="btn ey99' + (on ? ' on' : '') + '" data-ey99="1" aria-pressed="' + (on ? 'true' : 'false') + '" aria-label="' + (on ? 'On your Logging list (watching)' : 'Not on your Logging list') + '">👁</button></div>' +
+      '<div class="c99 hc99"><div class="pp99">' + (hasImg ? pa : '<span class="pt99">' + esc(bt.toUpperCase()) + '</span>') + '</div><div class="hi99"><h1>' + esc(bt) + '</h1>' +
+      '<button class="sc99" data-sh78="' + esc(norm(bt)) + '" aria-label="Season ' + si.sn + ', pick season">SEASON ' + si.sn + ' ▼</button><div class="mt99">' + metaLines(r) + '</div></div></div>');
+    var syn = D.querySelector('.dgrid .syn'); if (syn && !syn.previousElementSibling?.classList?.contains('ov99l')) syn.insertAdjacentHTML('beforebegin', '<div class="l99 ov99l" style="margin-top:4px">OVERVIEW</div>');
+    if (!$('epx')) { var a = D.querySelector('.dedit'); a && a.insertAdjacentHTML('afterend', epHtml(r)); } else { $('epx').outerHTML = epHtml(r); }
+    place(); }
+  window.build99 = build;
+  var _od99 = openDetail; openDetail = function (r) { var o = _od99.apply(this, arguments); try { build(r); } catch (e) { try { console.warn('r99 build', e); } catch (x) {} } return o; };
+  try { new MutationObserver(function () { clearTimeout(place.t); place.t = setTimeout(function () { try { place(); var D = $('detailBody'), h = D && D.querySelector('.hc99 .mt99'), r = curRow(); if (h && r) { var ml = metaLines(r); if (h.innerHTML !== ml) h.innerHTML = ml; } } catch (e) {} }, 30); }).observe($('detail'), { childList: true, subtree: true }); } catch (e) {}
+  /* ✎ start date → the existing dates editor; 👁 → current player watching on/off */
+  document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-dt99],[data-ey99]'); if (!b || !b.closest('#detailBody')) return; e.preventDefault(); e.stopPropagation(); var r = curRow(); if (!r) return;
+    if (b.dataset.dt99) { if (typeof openDP === 'function' && /^(sam|lewy)$/.test(b.dataset.dt99)) { openDP(r, b.dataset.dt99 + 'Start'); return; } var t = $('detailBody').querySelector('.dedit,[data-dedit]'); t && t.click(); return; }
+    var p = who(), k = p + 'Watched', v = r[k] || 'Not yet', f = {};
+    if (v === 'Yes') { toast((p === 'lewy' ? 'LEWY' : 'SAM') + ' already watched it — use WATCHED? below'); return; }
+    f[k] = v === 'As we speak' ? 'Not yet' : 'As we speak'; saveFields(r, f, f[k] === 'As we speak' ? '👁 WATCHING' : '👁 OFF LOGGING'); setTimeout(function () { var x = curRow(); if (x && x.row === r.row) build(x); }, 60); }, true);
+  /* rating the next unwatched episode also moves your progress up to it */
+  window.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('#epx [data-epv]'); if (!b || !window.EPR || !EPR.rate) return; var r = curRow(); if (!r || EPR.rate.row !== r.row) return;
+    var p = who(), n = EPR.rate.n, v = Number(b.dataset.epv); if (!v || n <= epOf(r, p)) return;
+    setTimeout(function () { try { var k = String(r.title).trim() + '|' + p, q = EPQ[k] = EPQ[k] || {}; q.want = n; q.seq = Date.now() * 10 + ((q.c = ((q.c || 0) + 1) % 10)); epRedraw(r); epSend(r, p); } catch (er) {} }, 0); }, true);
+  /* chart open state */
+  document.addEventListener('toggle', function (e) { var t = e.target; if (t && t.classList && t.classList.contains('ch99')) EPR.open = t.open ? 1 : 0; }, true);
+  /* grouped multi-season shows (and Explore cards of logged shows) open the same TV details page */
+  try { var _ipd = ipDetails; ipDetails = function (c, opt) { try { if (c && c.kind === 'SHOW' && !(opt && /SEARCH/.test(opt.back || '')) && window.showGroup78) { var k = norm(baseTitle(c.t || '')), L = showGroup78.seasonsOf(k);
+          if (L && L.length) { var p = who(), pick = L.filter(function (x) { return x[p + 'Watched'] === 'As we speak'; }).slice(-1)[0] || L.filter(prog).slice(-1)[0] || L[L.length - 1]; openDetail(pick); return; } } } catch (e) {} return _ipd.apply(this, arguments); }; } catch (e) {}
+  /* dates DONE: show the picked dates straight away (the save is async; the page re-renders before it returns) */
+  window.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-dps2]'); if (!b) return; try { if (DP && DP.r) { var out = {}; Object.keys(DP.d).forEach(function (k) { if (DP.d[k]) out[k] = DP.d[k]; }); DP.r.dates = out; } } catch (x) {} }, true);
+})();
+
+/* ===== v3.07 — version, patch notes, ONE What's new pop-up (older per-version timers disabled) ===== */
+window.APPV58 = '3.07';
+(function () {
+  var CUR = '3.07', KEY = 'lg_pn_seen';
+  try {
+    if (window.PN93 && PN93.prepend) {
+      PN93.prepend({ v: '3.07', d: '22 Oct 2026', lines: [
+        'Show pages reorganised: season switcher up top, both players\u2019 progress in one card with \u2212 / +1 buttons.',
+        'A big \u25b6 RATE button for the next episode (it follows whoever is playing).',
+        'A tappable episode list \u2014 tap any episode to rate or edit it; long seasons jump to your next episode.',
+        'Season stats (best \u00b7 worst \u00b7 agree) appear once 2+ episodes are rated.'
+      ] });
+      try { PN93.v = CUR; } catch (e) {}
+    }
+  } catch (e) {}
+  function prior() {
+    try { for (var i = 0; i < localStorage.length; i++) { var k = localStorage.key(i) || ''; if (k !== KEY && /^lg_|^wl_|^sp_|^yt|^OST|^SF|^MP|^WHO/i.test(k)) return true; } } catch (e) {}
+    return false; }
+  var wasPrior = prior(), done = false;
+  function pop307() {
+    if (done) return; done = true;
+    var seen = null; try { seen = localStorage.getItem(KEY); } catch (e) {}
+    if (seen === CUR) return;
+    try { localStorage.setItem(KEY, CUR); } catch (e) {}
+    if (seen == null && !wasPrior) return; /* true fresh install: no pop-up */
+    try { if (window.PN93 && PN93.popup) { var L = PN93.notes || []; PN93.popup(L.filter(function (n) { return n.v === CUR; })[0] || L[0]); } } catch (e) {}
+  }
+  setTimeout(pop307, 1600);
 })();
 </script>
 </body></html>
