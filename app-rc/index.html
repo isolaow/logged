@@ -8250,7 +8250,7 @@ window.APPV58 = 'r91';
   var _od = openDetail; openDetail = function () { var r = _od.apply(this, arguments); mv(); setTimeout(mv, 0); setTimeout(mv, 400); setTimeout(mv, 2000); return r; };
   ['ostRedraw', 'ostxDraw'].forEach(function (n) { var f = window[n]; if (typeof f === 'function') window[n] = function () { var r = f.apply(this, arguments); mv(); return r; }; });
   /* stale-build guard: a home-screen app resumed from the background keeps old code; reload once when sw.js has a newer build */
-  var BUILD = /\/app-rc\//.test(location.pathname) ? 'logged-rc-1792763020' : 'logged-202610240043', busy = function () { var a = document.activeElement; return (a && /INPUT|TEXTAREA/.test(a.tagName)) || (window.OXA && !OXA.paused) || document.querySelector('#add.open,#fb83.open,#trv.open,#ytpage.open .yv'); };
+  var BUILD = /\/app-rc\//.test(location.pathname) ? 'logged-rc-1792765000' : 'logged-202610240123', busy = function () { var a = document.activeElement; return (a && /INPUT|TEXTAREA/.test(a.tagName)) || (window.OXA && !OXA.paused) || document.querySelector('#add.open,#fb83.open,#trv.open,#ytpage.open .yv'); };
   var last = 0; function check() { if (/demo=1/.test(location.search) || BUILD.indexOf('__') === 0 || Date.now() - last < 60000) return; last = Date.now();
     fetch('sw.js?b=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.ok ? r.text() : ''; }).then(function (t) { var m = t.match(/var V = '([^']+)'/); if (!m || m[1] === BUILD || busy()) return;
       try { if (sessionStorage.lg_rl89 === m[1]) return; sessionStorage.lg_rl89 = m[1]; } catch (e) {} try { toast('⟳ UPDATING LOGGED…'); } catch (e) {}
@@ -10111,6 +10111,46 @@ html body header #lb88[aria-expanded="true"] #ss88::after{transform:rotate(180de
   /* 4.01 */
   try { if (typeof banner==='function' && !banner.__b401){ var _b401=banner; banner=function(t,sub){ try { var T=String(t||''), S=String(sub||''); if (/UNLOCKED|LEGENDARY/i.test(T+' '+S) && window.achOld401 && achOld401(T+'|'+S)) return; } catch(e){} return _b401.apply(this,arguments); }; banner.__b401=1; } } catch(e){}
   try { window.APPV58='4.01'; if (window.PN93&&PN93.prepend) PN93.prepend({v:'4.01',d:'24 Oct 2026',lines:['Smoother and lighter: the intro now plays once, ignores early taps and hides the tab bar until you press start, status icons show your own status, long titles no longer hit the progress bar, and the details header shows the title\u2019s own shelf.']}); } catch(e){}
+})();
+</script>
+
+<style id="t402css">
+@font-face{font-family:'VT323L';src:url(fonts/vt323.woff) format('woff');font-display:swap}
+.pc .nm{font-family:'VT323L','VT323',monospace!important;font-size:15px!important;line-height:14px!important;height:28px!important;min-height:28px;letter-spacing:0!important;white-space:normal!important;word-break:normal!important;overflow-wrap:normal!important;word-wrap:normal!important;-webkit-hyphens:none!important;hyphens:none!important;display:-webkit-box!important;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+</style>
+<script id="t402">
+(function(){
+  var MIN=12, BASE=15, q=0;
+  function fit(n){
+    var c=n.closest('.pc'); if(!c) return;
+    var full=n.getAttribute('data-full'), cur=n.textContent;
+    if(full===null || (cur!==n.getAttribute('data-shown'))){ full=cur; n.setAttribute('data-full',full); n.removeAttribute('data-shown'); }
+    if(!n.clientWidth) return;
+    if(n.getAttribute('data-shown')!==null && n.getAttribute('data-fw')==String(n.clientWidth)) return;
+    if(n.textContent!==full) n.textContent=full;
+    n.style.removeProperty('font-size');
+    var W=n.clientWidth, H=n.clientHeight;
+    var words=full.split(/\s+/).filter(Boolean), m=document.createElement('span');
+    m.style.cssText='position:absolute;visibility:hidden;white-space:nowrap;font:inherit;letter-spacing:inherit';n.appendChild(m);
+    var fs=BASE, longest=words.reduce(function(a,b){return b.length>a.length?b:a},'');
+    m.textContent=longest; while(fs>MIN && m.offsetWidth>W){ fs--; n.style.setProperty('font-size',fs+'px','important'); }
+    m.remove();
+    if(n.scrollHeight>H+1){
+      var lo=0, hi=words.length-1, best=0;
+      while(lo<=hi){ var k=(lo+hi)>>1; n.textContent=words.slice(0,k).join(' ')+'\u2026'; if(k&&n.scrollHeight<=H+1){best=k;lo=k+1}else hi=k-1; }
+      n.textContent= best ? words.slice(0,best).join(' ')+'\u2026' : full;
+    }
+    n.setAttribute('data-shown',n.textContent); n.setAttribute('data-fw',String(W));
+    if(c.getAttribute('aria-label')!==full) c.setAttribute('aria-label',full);
+  }
+  function run(){ q=0; document.querySelectorAll('.pc .nm').forEach(function(n){ try{fit(n)}catch(e){} }); }
+  function sched(){ if(!q) q=requestAnimationFrame(run); }
+  new MutationObserver(function(ms){ for(var i=0;i<ms.length;i++){ var t=ms[i].target; if(!(t.classList&&t.classList.contains('nm'))) { sched(); return; } } }).observe(document.body,{childList:true,subtree:true});
+  document.addEventListener('click',function(){ setTimeout(sched,60); setTimeout(sched,700); },true);
+  addEventListener('resize',sched); addEventListener('pageshow',sched); window.addEventListener('intro401',function(){ setTimeout(sched,100); });
+  try{ document.fonts && document.fonts.load("15px VT323L").then(function(){ document.querySelectorAll('.pc .nm[data-fw]').forEach(function(n){n.removeAttribute('data-fw')}); sched(); }); }catch(e){}
+  sched();
+  try { window.APPV58='4.02'; if (window.PN93&&PN93.prepend) PN93.prepend({v:'4.02',d:'24 Oct 2026',lines:['Poster titles no longer get cut off mid-word. Long titles now wrap onto two lines in a narrower pixel font.']}); } catch(e){}
 })();
 </script>
 
