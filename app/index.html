@@ -34,7 +34,7 @@ function mock(fn, args, who) { if (global.MOCKX) { const x = global.MOCKX(fn, ar
   if (/^gw[A-Z]/.test(fn)) { try { return { __ok: gctx[fn].apply(null, args) }; } catch (e) { return { __err: e.message }; } } S.calls.push(fn);
   switch (fn) {
     case 'getData': return { rows: JSON.parse(JSON.stringify(rows.map(function (r) { return S.ep[r.title] ? Object.assign({}, r, { ep: S.ep[r.title] }) : r; }))), version: String((S.prof ? JSON.stringify(S.prof).length : 1)), posters: {"Inception": "https://upload.wikimedia.org/wikipedia/en/2/2e/Inception_%282010%29_theatrical_poster.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled", "Shrek": "https://upload.wikimedia.org/wikipedia/en/7/7b/Shrek_%282001_animated_feature_film%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled", "Garfield": "https://image.tmdb.org/t/p/w342/vqwTSWNLyH55g8kBT61s2DgNYEp.jpg", "Whiplash": "https://upload.wikimedia.org/wikipedia/en/0/01/Whiplash_poster.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled", "Breaking Bad (S2)": "https://example.invalid/missing.jpg"}, recent: [], profiles: JSON.parse(JSON.stringify(S.prof || { sam: {}, lewy: {} })), fetchedAt: new Date().toISOString() };
-    case 'getAllMeta': return meta; case 'getVersion': return '1';
+    case 'getAllMeta': return meta; case 'getVersion': return String((S.prof ? JSON.stringify(S.prof).length : 1));
     case 'setEpisode': { const [t, p, n, seq] = args, o = S.ep[t] = S.ep[t] || JSON.parse(JSON.stringify((rows.find(x => x.title === t) || {}).ep || {})); if (o[p] && o[p].q > seq) return Object.assign({ stale: 1 }, o); o[p] = Object.assign({}, o[p] && o[p].r ? { r: o[p].r } : {}, { e: n, q: seq }); return JSON.parse(JSON.stringify(o)); }
     case 'setEpRating': { const [t, p, n, v] = args, o = S.ep[t] = S.ep[t] || JSON.parse(JSON.stringify((rows.find(x => x.title === t) || {}).ep || {})); o[p] = o[p] || { e: 0 }; o[p].r = o[p].r || {}; if (Number(v)) o[p].r[n] = Number(v); else delete o[p].r[n]; return JSON.parse(JSON.stringify(o)); }
     case 'setThemes': { const [t, p, L] = args, b = t.replace(/\s*\(S\d+\)$/, ''); S.themes[b] = S.themes[b] || {}; S.themes[b][p] = L; return S.themes[b]; }
@@ -1701,10 +1701,23 @@ window.addEventListener('click',function(e){ if (window.__c400) window.__c400(e)
   function put(k,v){ M.delete(k); M.set(k,v); while (M.size>CAP){ var o=M.keys().next().value; M.delete(o); idb(function(d){ try{ d.transaction('p','readwrite').objectStore('p').delete(o);}catch(e){} }); }
     idb(function(d){ try{ d.transaction('p','readwrite').objectStore('p').put(v,k);}catch(e){} }); }
   S.getItem=function(k){ if (this===window.localStorage && typeof k==='string' && k.indexOf(P)===0) return M.has(k)?M.get(k):null; return gi.apply(this,arguments); };
-  S.setItem=function(k,v){ if (this===window.localStorage && typeof k==='string' && k.indexOf(P)===0) return put(k,String(v)); return si.apply(this,arguments); };
+  /* 4.01: lg_achshown keeps the newest 200 ids; older ones become short hashes in lg_achold (capped) so their banners never come back */
+  var AK='lg_achshown', AO='lg_achold';
+  function h4(x){ var h=2166136261; for (var i=0;i<x.length;i++){ h^=x.charCodeAt(i); h=Math.imul(h,16777619); } return (h>>>0).toString(36); }
+  function trimA(v){ try { var o=JSON.parse(v), ks=Object.keys(o); if (ks.length<=200) return v; var L=window.localStorage, old=String(gi.call(L,AO)||'').split(',').filter(Boolean); ks.slice(0,ks.length-200).forEach(function(k){ old.push(h4(k)); delete o[k]; }); if (old.length>1500) old=old.slice(-1500); si.call(L,AO,old.join(',')); return JSON.stringify(o); } catch(e){ return v; } }
+  window.achOld401=function(id){ try { return (','+(gi.call(window.localStorage,AO)||'')+',').indexOf(','+h4(String(id))+',')>=0; } catch(e){ return false; } };
+  S.setItem=function(k,v){ if (this===window.localStorage && typeof k==='string' && k.indexOf(P)===0) return put(k,String(v)); if (this===window.localStorage && k===AK) return si.call(this,k,trimA(String(v))); return si.apply(this,arguments); };
+  try { var a0=gi.call(window.localStorage,AK); if (a0){ var a1=trimA(a0); if (a1!==a0) si.call(window.localStorage,AK,a1); } } catch(e){}
   S.removeItem=function(k){ if (this===window.localStorage && typeof k==='string' && k.indexOf(P)===0){ M.delete(k); idb(function(d){ try{ d.transaction('p','readwrite').objectStore('p').delete(k);}catch(e){} }); } return ri.apply(this,arguments); };
   try { var L=window.localStorage, mv=[]; for (var i=0;i<L.length;i++){ var k=L.key(i); if (k && k.indexOf(P)===0) mv.push(k); } mv.forEach(function(k){ var v=gi.call(L,k); ri.call(L,k); if (v) put(k,v); }); } catch(e){}
   idb(function(d){ try { var st=d.transaction('p').objectStore('p'), c=st.openCursor(); c.onsuccess=function(){ var x=c.result; if (x){ if (!M.has(x.key)) M.set(x.key,x.value); x.continue(); } }; } catch(e){} });
+})();
+/* 4.01: app chrome stays hidden while the intro is up; taps on the intro are ignored for the first 1.5s */
+(function(){ var H=document.documentElement; H.classList.add('sp401'); try { var st=document.createElement('style'); st.id='e401css'; st.textContent='html.sp401 body>:not(#splash):not(#setup):not(#demo65t):not(script):not(style){visibility:hidden!important}#splash.lk401 #spPs{opacity:.35;filter:grayscale(1)}#splash.lk401{cursor:default}'; (document.head||H).appendChild(st); } catch(e){}
+  window.introDone401=function(){ if (H.classList.contains('sp401')){ H.classList.remove('sp401'); try { window.dispatchEvent(new Event('intro401')); } catch(e){} } };
+  var iv=setInterval(function(){ if (document.readyState==='loading') return; var s=document.getElementById('splash'); if (!s || s.dataset.done || getComputedStyle(s).display==='none'){ clearInterval(iv); window.introDone401(); } },400);
+  function blk(e){ if (!e.isTrusted) return; var s=document.getElementById('splash'); if (!s || !s.classList.contains('lk401') || s.dataset.done) return; if (e.target && e.target.closest && e.target.closest('#splash')){ e.stopImmediatePropagation(); if (e.cancelable) e.preventDefault(); } }
+  ['click','pointerdown','pointerup','touchstart','touchend','mousedown','mouseup'].forEach(function(t){ window.addEventListener(t,blk,{capture:true,passive:false}); });
 })();
 </script>
 <div id="splash" aria-label="Logged"></div>
@@ -2366,9 +2379,13 @@ function logTm(x, sn, go) {
 /* ---------- splash ---------- */
 (function splash() {
   var s = $('splash'); if (!s) return; var played = false, waiting = false;
+  /* 4.01: after an automatic update reload, skip the intro (it already played this open) */
+  var sk401 = false; try { var nv = performance.getEntriesByType && performance.getEntriesByType('navigation')[0], rl = sessionStorage.lg_rl89; if (nv && nv.type === 'reload' && rl && sessionStorage.lg_rl401 !== rl) { sessionStorage.lg_rl401 = rl; sk401 = true; } } catch (e) {}
+  if (sk401) { s.dataset.done = 1; s.style.display = 'none'; if (window.introDone401) introDone401(); return; }
+  s.classList.add('lk401'); var ul401 = function () { setTimeout(function () { s.classList.remove('lk401'); }, 1500); }; if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ul401); else ul401();
   s.innerHTML = logoSvg() + '<div class="lg">' + 'LOGGED'.split('').map(function (c, i) { return '<span style="animation-delay:' + (0.45 + i * 0.09).toFixed(2) + 's">' + c + '</span>'; }).join('') + '</div><div class="sl">SAM <b>&amp;</b> LEWY</div><div class="ps" id="spPs">▶ LOADING…</div>' +
     '<button class="spm px" id="spMute" aria-label="Sound" data-nosfx="1">' + (muted ? '🔇' : '🔊') + '</button>';
-  var done = function () { if (s.dataset.done) return; s.dataset.done = 1; s.style.opacity = 0; s.style.pointerEvents = 'none'; setTimeout(function () { s.style.display = 'none'; }, 330); };
+  var done = function () { if (s.dataset.done) return; s.dataset.done = 1; if (window.introDone401) introDone401(); s.style.opacity = 0; s.style.pointerEvents = 'none'; setTimeout(function () { s.style.display = 'none'; }, 330); };
   var play = function () { if (played || muted) return false; played = true; SFX.intro(); setTimeout(done, 2700); return true; };
   $('spMute').onclick = function (e) { e.stopPropagation(); $('mute').onclick(); this.textContent = muted ? '🔇' : '🔊'; if (muted && waiting) done(); };
   setTimeout(function () {
@@ -6640,7 +6657,7 @@ window.addEventListener('click', function (e) { var b = e.target.closest && e.ta
 var _sw68 = setWho; setWho = function () { var r = _sw68.apply(this, arguments); try { avPin(); } catch (e) {} return r; };
 
 /* splash: a tap starts the app straight away (the intro jingle keeps playing); label always readable */
-(function () { var s = $('splash'); if (!s) return; var hide = function () { if (s.dataset.done) return; s.dataset.done = 1; s.style.opacity = 0; s.style.pointerEvents = 'none'; setTimeout(function () { s.style.display = 'none'; }, 260); };
+(function () { var s = $('splash'); if (!s) return; var hide = function () { if (s.dataset.done) return; s.dataset.done = 1; if (window.introDone401) introDone401(); s.style.opacity = 0; s.style.pointerEvents = 'none'; setTimeout(function () { s.style.display = 'none'; }, 260); };
   s.addEventListener('click', function (e) { if (e.target.closest && e.target.closest('#spMute')) return; setTimeout(hide, 350); });
   setTimeout(function () { var ps = $('spPs'); if (ps && /LOADING/.test(ps.textContent) && !s.dataset.done) { ps.textContent = '▶ TAP TO START'; s.classList.add('tap'); } }, 1800); })();
 
@@ -8233,7 +8250,7 @@ window.APPV58 = 'r91';
   var _od = openDetail; openDetail = function () { var r = _od.apply(this, arguments); mv(); setTimeout(mv, 0); setTimeout(mv, 400); setTimeout(mv, 2000); return r; };
   ['ostRedraw', 'ostxDraw'].forEach(function (n) { var f = window[n]; if (typeof f === 'function') window[n] = function () { var r = f.apply(this, arguments); mv(); return r; }; });
   /* stale-build guard: a home-screen app resumed from the background keeps old code; reload once when sw.js has a newer build */
-  var BUILD = 'logged-202610200114', busy = function () { var a = document.activeElement; return (a && /INPUT|TEXTAREA/.test(a.tagName)) || (window.OXA && !OXA.paused) || document.querySelector('#add.open,#fb83.open,#trv.open,#ytpage.open .yv'); };
+  var BUILD = /\/app-rc\//.test(location.pathname) ? 'logged-rc-1792763020' : 'logged-202610240043', busy = function () { var a = document.activeElement; return (a && /INPUT|TEXTAREA/.test(a.tagName)) || (window.OXA && !OXA.paused) || document.querySelector('#add.open,#fb83.open,#trv.open,#ytpage.open .yv'); };
   var last = 0; function check() { if (/demo=1/.test(location.search) || BUILD.indexOf('__') === 0 || Date.now() - last < 60000) return; last = Date.now();
     fetch('sw.js?b=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.ok ? r.text() : ''; }).then(function (t) { var m = t.match(/var V = '([^']+)'/); if (!m || m[1] === BUILD || busy()) return;
       try { if (sessionStorage.lg_rl89 === m[1]) return; sessionStorage.lg_rl89 = m[1]; } catch (e) {} try { toast('⟳ UPDATING LOGGED…'); } catch (e) {}
@@ -8835,14 +8852,14 @@ window.APPV58 = '3.03';
   try {
     var fixNi = function () {
       [].forEach.call(document.querySelectorAll('.e90 small, .ni91g + .e90 small, #ni91 .e90 small'), function (s) {
-        if (/Swipe left or tap/.test(s.textContent) || /Interested \/ Swipe/.test(s.textContent)) {
-          s.textContent = 'Swipe left or tap ✕ on a title in Interested to hide it here.';
+        if ((/Swipe left or tap/.test(s.textContent) || /Interested \/ Swipe/.test(s.textContent)) && s.textContent !== 'Swipe left or tap ✕ on a title in To Log to hide it here.') {
+          s.textContent = 'Swipe left or tap ✕ on a title in To Log to hide it here.';
         }
       });
       [].forEach.call(document.querySelectorAll('.e90'), function (el) {
         if (/Swipe left or tap/.test(el.textContent) && /Interested \/ Swipe/.test(el.textContent)) {
           var sm = el.querySelector('small');
-          if (sm) sm.textContent = 'Swipe left or tap ✕ on a title in Interested to hide it here.';
+          if (sm && sm.textContent !== 'Swipe left or tap ✕ on a title in To Log to hide it here.') sm.textContent = 'Swipe left or tap ✕ on a title in To Log to hide it here.';
         }
       });
     };
@@ -8902,11 +8919,10 @@ window.APPV58 = '3.04';
     var h = document.querySelector('header h1'); if (!h) return;
     var s = (window.S86 || {}).s || 'cinema';
     var lg = $('lg88'), ly = $('ly91');
-    if (lg) { lg.setAttribute('aria-label', 'Log it'); lg.title = '＋ LOG IT'; }
-    if (ly) { ly.setAttribute('aria-label', 'Log a YouTube video'); ly.title = '＋ LOG IT'; }
+    var sa = function (e, k, v) { if (e && e.getAttribute(k) !== v) e.setAttribute(k, v); }, sd = function (e, v) { if (e && e.style.display !== v) e.style.display = v; };
+    sa(lg, 'aria-label', 'Log it'); sa(lg, 'title', '＋ LOG IT'); sa(ly, 'aria-label', 'Log a YouTube video'); sa(ly, 'title', '＋ LOG IT');
     /* show cinema + on cinema/spotify/profile; youtube + on youtube */
-    if (lg) lg.style.display = (s === 'youtube') ? 'none' : '';
-    if (ly) ly.style.display = (s === 'youtube') ? '' : 'none';
+    sd(lg, (s === 'youtube') ? 'none' : ''); sd(ly, (s === 'youtube') ? '' : 'none');
     if (s === 'youtube' && !ly) {
       var sb = $('sb88') || $('st91');
       if (sb) sb.insertAdjacentHTML('afterend', '<button id="ly91" class="icon px" type="button" aria-label="Log a YouTube video">＋</button>');
@@ -9684,7 +9700,7 @@ window.APPV58 = '3.08';
     if (seen == null && !wasPrior) return; /* true fresh install: no pop-up */
     try { if (window.PN93 && PN93.popup) { var L = PN93.notes || []; PN93.popup(L.filter(function (n) { return n.v === CUR; })[0] || L[0]); } } catch (e) {}
   }
-  setTimeout(popNew, 1600);
+  setTimeout(function w401() { var s = document.getElementById('splash'); if (document.documentElement.classList.contains('sp401') || (s && !s.dataset.done && s.style.display !== 'none')) return setTimeout(w401, 300); setTimeout(popNew, 500); }, 1600);
   /* an older close handler wrote '3.01' when the pop-up closed, so it came back every launch; once checked, never go backwards */
   function keepSeen() { if (!done) return; try { var CUR = String(window.APPV58 || ''), s = localStorage.getItem(KEY); if (vn(s) < vn(CUR)) localStorage.setItem(KEY, CUR); } catch (e) {} }
   function later() { setTimeout(keepSeen, 0); setTimeout(keepSeen, 400); }
@@ -9823,6 +9839,8 @@ html body header #ss88::after{content:''!important;display:inline-block!importan
 html body header #lb88[aria-expanded="true"] #ss88::after{transform:rotate(180deg)}
 
 /* ico400 */
+.pc .nm{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+.pc .nm+.epb{position:relative;display:block;left:auto;right:auto;bottom:auto;margin:5px 4px 0}
 .ic4{display:inline-block;vertical-align:middle;line-height:0;flex:none}
 .ic4 svg,.cc400 svg,#ci400 svg{width:100%;height:100%;display:block;image-rendering:pixelated;shape-rendering:crispEdges}
 #lb88 #ci400{width:48px!important;height:48px!important;flex:none}
@@ -9867,6 +9885,7 @@ html body header #lb88[aria-expanded="true"] #ss88::after{transform:rotate(180de
   /* ---- category-aware header ---- */
   function vis(id){ var e=typeof id==='string'?$(id):id; if(!e) return false; var cs=getComputedStyle(e); return cs.display!=='none' && cs.visibility!=='hidden' && e.getClientRects().length>0; }
   function category(){ var s=cur();
+    if (s==='cinema' && vis('detail') && typeof editing!=='undefined' && editing && editing.title){ var k4=rowCat(editing); return k4?[k4,{logged:'LOGGED',logging:'LOGGING',tolog:'TO LOG',cut:'CUT'}[k4]]:null; }
     if (s==='cinema'){ if (vis('ni91')) return ['cut','CUT']; var po=[].some.call(document.querySelectorAll('.page.open'),function(p){return p.id!=='ni91';}); if (po) return null;
       if (vis('v-logging')) return ['logging','LOGGING']; if (vis('v-int')) return ['tolog','TO LOG']; if (vis('v-all')) return ['logged','LOGGED']; return null; }
     if (s==='youtube' && window.R57 && vis('ytpage')){ var k=R57.sec; if (k==='lgg') return ['logging','LOGGING']; if (k==='lgd') return ['logged','LOGGED']; if (k==='int') return ['tolog','TO LOG']; }
@@ -9887,7 +9906,7 @@ html body header #lb88[aria-expanded="true"] #ss88::after{transform:rotate(180de
     [].forEach.call(document.querySelectorAll('#sh86 [data-sh86] i'),function(i){ if (i.textContent==='🚫') { i.className='ic400'; i.style.cssText='width:22px;height:22px;display:inline-block'; i.innerHTML=IC.cut; } });
     var nh=document.querySelector('#ni91b .ptop h2'); if (nh && nh.firstChild && nh.firstChild.nodeType===3 && /^\s*(🚫|✂)/.test(nh.firstChild.nodeValue)) { nh.firstChild.nodeValue=nh.firstChild.nodeValue.replace(/^\s*(🚫|✂)\s*/,''); nh.insertAdjacentHTML('afterbegin','<span class="ic400" style="display:inline-block;width:30px;height:30px;vertical-align:middle;margin-right:8px">'+IC.cut+'</span>'); }
     lfChips(); try { window.p400 && p400(); } catch(e){ console.warn('p400',e); }
-  } finally { busy=0; } }
+  } finally { busy=0; try { if (MO4) MO4.takeRecords(); } catch(e){} } }
   /* ---- display-only renames: Interested → To Log, Not interested / Not for me / Hidden → Cut ---- */
   var RN=[[/\bNOT INTERESTED\b/g,'CUT'],[/\bNot [Ii]nterested\b/g,'Cut'],[/\bnot interested\b/g,'cut'],[/\bNOT FOR ME\b/g,'CUT'],[/\bNot for me\b/g,'Cut'],[/🙈 HIDDEN\b/g,'✂ CUT'],[/\bHIDDEN\b/g,'CUT'],[/\bINTERESTED\b/g,'TO LOG'],[/\bInterested\b/g,'To Log'],[/🙈 CUT/g,'✂ CUT'],[/🚫 CUT/g,'✂ CUT']];
   function rn(s){ for (var i=0;i<RN.length;i++) s=s.replace(RN[i][0],RN[i][1]); return s; }
@@ -9913,7 +9932,7 @@ html body header #lb88[aria-expanded="true"] #ss88::after{transform:rotate(180de
     LG.row=null; renderLogged(); paint(); },true);
   /* ---- schedule ---- */
   var q=0; function sched(){ if (busy||q) return; q=requestAnimationFrame(function(){ q=0; paint(); }); }
-  new MutationObserver(function(ms){ if (busy) return; ms.forEach(function(m){ if (m.type==='childList') [].forEach.call(m.addedNodes,function(n){ rnTree(n); if (n.nodeType===1 && window.p400) FQ400.push(n); }); else if (m.type==='characterData') rnTree(m.target); }); sched(); }).observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['class','style']});
+  var MO4=new MutationObserver(function(ms){ if (busy) return; ms.forEach(function(m){ if (m.type==='childList') [].forEach.call(m.addedNodes,function(n){ rnTree(n); if (n.nodeType===1 && window.p400) FQ400.push(n); }); else if (m.type==='characterData') rnTree(m.target); }); sched(); }); MO4.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['class','style']});
   document.addEventListener('focusin',sched); document.addEventListener('focusout',function(){ setTimeout(sched,50); });
   /* ================= 4.0 build ================= */
   document.body.classList.add('l400');
@@ -9960,7 +9979,7 @@ html body header #lb88[aria-expanded="true"] #ss88::after{transform:rotate(180de
     cards.forEach(function(c){ var pc=Q('.pc[data-row]',c), r=pc&&window.rows?rows.find(function(x){return String(x.row)===pc.dataset.row;}):null, tv=r?r.type==='TV Show':/📺/.test((Q('.ni91p i',c)||{}).textContent||''); var ok=!CF4.type||(CF4.type==='tv')===tv; c.style.display=ok?'':'none'; if (ok) shown++; });
     var b=bar4(P,'sbct400',CF4.type?shown+' / '+cards.length:cards.length,' CUT',CF4.type?1:0,'cut'); chips4(b,'chct400',CF4.type?[[CF4.type==='tv'?'TYPE: 📺 TV':'TYPE: 🎞 FILMS',{cut:1}]]:[]); }
   /* Logged: compact count + FILTER label */
-  function logged(){ var top=Q('#lgd .lgtop'); if (!top) return; var h2=Q('h2',top), n=(window.LG&&LG.list)?LG.list.length:QA('#lgd .lgr,#lgd .pc').length; if (h2){ h2.classList.add('n4'); setH(h2,'<b>'+n+'</b> LOGGED'); }
+  function logged(){ var top=Q('#lgd .lgtop'); if (!top) return; var h2=Q('h2',top), n=(window.LG&&LG.list)?LG.list.length:QA('#lgd .lgr,#lgd .pc').length; if (h2){ if (!h2.classList.contains('n4')) h2.classList.add('n4'); setH(h2,'<b>'+n+'</b> LOGGED'); }
     var fb=Q('.lfb',top)||$('lfOpen'); if (fb){ var k=0; try { k=lfCountL(); } catch(e){} setH(fb,'⚙ FILTER'+(k?' <b>'+k+'</b>':'')); fb.classList.toggle('on',k>0); } var c=$('lfc400'); if (c) c.className='ch400'; }
   /* filter sheet for To Log / Logging / Cut */
   function openF(kind){ var G, title='FILTER';
@@ -10031,7 +10050,7 @@ html body header #lb88[aria-expanded="true"] #ss88::after{transform:rotate(180de
   /* --- card scores in player colours --- */
   function scores(){ QA('.pc .sc:not([data-c4])').forEach(function(s){ s.dataset.c4=1; s.innerHTML=s.innerHTML.replace(/\bS(\d+(?:\.\d)?)/,'<i class="s4">S$1</i>').replace(/\bL(\d+(?:\.\d)?)/,'<i class="l4">L$1</i>'); }); }
   /* --- one BACK style; header back on pushed pages --- */
-  function backs(){ QA('.page.open .ptop [data-pclose],.page.open .btn.back,#set58 [data-seta="close"],#ytBody .ytsh button:first-child').forEach(function(b){ b.classList.add('bk400'); }); }
+  function backs(){ QA('.page.open .ptop [data-pclose],.page.open .btn.back,#set58 [data-seta="close"],#ytBody .ytsh button:first-child').forEach(function(b){ if (!b.classList.contains('bk400')) b.classList.add('bk400'); }); }
   /* --- minimum readable type --- */
   var FQ=FQ400; function fontFix(){ var L=FQ.splice(0,FQ.length); L.forEach(function(root){ if (!root.isConnected || root.nodeType!==1) return; var els=[root].concat([].slice.call(root.querySelectorAll('*'))); if (els.length>2500) els=els.slice(0,2500);
       els.forEach(function(el){ if (el.dataset && el.dataset.f4) return; var own=false; for (var c=el.firstChild;c;c=c.nextSibling) if (c.nodeType===3 && c.nodeValue.trim()){ own=true; break; } if (!own) return; var cs=getComputedStyle(el), fs=parseFloat(cs.fontSize), pix=/Press|pix|VT323|Silkscreen/i.test(cs.fontFamily);
@@ -10063,7 +10082,7 @@ html body header #lb88[aria-expanded="true"] #ss88::after{transform:rotate(180de
   var NM4={'LOGGED':'logged','LOGGING':'logging','TO LOG':'tolog','CUT':'cut'};
   function ic4(k,s,c){ return '<span class="ic4 '+(c||'')+'" style="width:'+s+'px;height:'+s+'px">'+IC[k]+'</span>'; }
   try { window.lgI=function(){ return ic4('logging',16,'lgii'); }; } catch(e){}
-  function rowCat(r){ try { if (intGet(rKey(r))==='n') return 'cut'; if (prog(r)) return 'logging'; if (isWatched(r)) return 'logged'; return 'tolog'; } catch(e){ return ''; } }
+  function rowCat(r){ try { if (intGet(rKey(r))==='n') return 'cut'; var v=String(r[who()+'Watched']||''); if (/^As we speak/i.test(v)) return 'logging'; if (isY(v)) return 'logged'; return 'tolog'; } catch(e){ return ''; } }
   function ico4(){
     /* menu rows (Cinema + YouTube) */
     QA('#sh86 [data-sh86],#sh86 [data-yi400]').forEach(function(b){ var t=b.querySelector('b'); if (!t) return; var k=NM4[t.textContent.trim().toUpperCase()]; if (!k||b.dataset.c4===k) return;
@@ -10089,6 +10108,9 @@ html body header #lb88[aria-expanded="true"] #ss88::after{transform:rotate(180de
   window.p400=function(){ layout(); logged(); logging(); toLog(); cutPage(); home(); details(); spotify(); settings(); mini(); scores(); backs(); banner4(); fontFix(); try{ico4();}catch(e){} };
   window.addEventListener('popstate',sched); rnTree(document.body); paint();
   try { window.APPV58='4.0'; if (window.PN93&&PN93.prepend) PN93.prepend({v:'4.0',d:'23 Oct 2026',lines:PN400}); } catch(e){}
+  /* 4.01 */
+  try { if (typeof banner==='function' && !banner.__b401){ var _b401=banner; banner=function(t,sub){ try { var T=String(t||''), S=String(sub||''); if (/UNLOCKED|LEGENDARY/i.test(T+' '+S) && window.achOld401 && achOld401(T+'|'+S)) return; } catch(e){} return _b401.apply(this,arguments); }; banner.__b401=1; } } catch(e){}
+  try { window.APPV58='4.01'; if (window.PN93&&PN93.prepend) PN93.prepend({v:'4.01',d:'24 Oct 2026',lines:['Smoother and lighter: the intro now plays once, ignores early taps and hides the tab bar until you press start, status icons show your own status, long titles no longer hit the progress bar, and the details header shows the title\u2019s own shelf.']}); } catch(e){}
 })();
 </script>
 
