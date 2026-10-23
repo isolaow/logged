@@ -9574,7 +9574,109 @@ window.APPV58 = '3.07';
     if (seen == null && !wasPrior) return; /* true fresh install: no pop-up */
     try { if (window.PN93 && PN93.popup) { var L = PN93.notes || []; PN93.popup(L.filter(function (n) { return n.v === CUR; })[0] || L[0]); } } catch (e) {}
   }
-  setTimeout(pop307, 1600);
+  /* 3.08: single numeric What's new timer below */ void (pop307);
+})();
+
+/* ===== v3.08 — ONE rating picker per player (1–10 + .0–.9) everywhere; numeric What's new version check ===== */
+window.APPV58 = '3.08';
+(function () {
+  try { var st = document.createElement('style'); st.id = 'rp108css'; st.textContent =
+    '.rp108{margin:2px 0 4px}.rp108 .rpw,.rp108 .rpd{display:grid;grid-template-columns:repeat(10,1fr);gap:3px}' +
+    '.rp108 .rpd{margin-top:3px}' +
+    '.rp108 button{padding:0;background:var(--panel);border:2px solid #000;font:9px var(--pix);color:var(--txt,#fff);min-width:0}' +
+    '.rp108 .rpw button{height:40px}.rp108 .rpd button{height:32px;font-size:8px;background:#151528}' +
+    '.rp108 button.on{background:var(--gold);color:#000}' +
+    '.rp108.nw .rpd button,.rp108.t10 .rpd button:not(.on){opacity:.35}' +
+    '.rp108 .rpx{display:flex;align-items:center;justify-content:space-between;min-height:0;margin-top:4px;font:8px var(--pix);color:var(--dim,#aaa)}' +
+    '.rp108 .rpx b{color:var(--gold);font:9px var(--pix)}.rp108 .rpx button{height:28px;padding:0 10px;font-size:7px}.rp108.nw .rpx{display:none}.rp108{scroll-margin-bottom:calc(96px + env(safe-area-inset-bottom,0px))}';
+    document.head.appendChild(st); } catch (e) {}
+
+  function n10(v) { var n = num(v); if (n == null || isNaN(n)) return null; n = Math.round(n * 10) / 10; return n > 0 ? Math.min(10, n) : null; }
+  function parts(n) { if (n == null) return { w: 0, f: -1 }; var w = Math.floor(n + 1e-9); return { w: w, f: Math.round((n - w) * 10) }; }
+  function fmt(n) { return n == null ? '' : String(n); }
+  function html(k, val, extra) { var n = n10(val), P = parts(n), h = '<div class="rp108' + (n == null ? ' nw' : '') + (P.w >= 10 ? ' t10' : '') + '" data-rk="' + k + '" data-rv="' + fmt(n) + '"' + (extra || '') + '><div class="rpw">';
+    for (var i = 1; i <= 10; i++) h += '<button type="button" data-rpw="' + i + '" class="' + (P.w === i ? 'on' : '') + '">' + i + '</button>';
+    h += '</div><div class="rpd" aria-label="Decimal">';
+    for (var f = 0; f <= 9; f++) h += '<button type="button" data-rpd="' + f + '" class="' + (n != null && P.f === f ? 'on' : '') + '"' + ((n == null || (P.w >= 10 && f > 0)) ? ' aria-disabled="true"' : '') + '>.' + f + '</button>';
+    return h + '</div><div class="rpx"><span>SCORE <b>' + fmt(n) + '</b></span><button type="button" data-rpc="1">✕ CLEAR</button></div></div>'; }
+  window.rp108html = html;
+  /* the one builder every rating spot uses (detail sheet for films + shows, + LOG IT sheet) */
+  rateRow = function (k, val) { return html(k, val); };
+
+  function paint(box, n) { var P = parts(n); box.dataset.rv = fmt(n); box.classList.toggle('nw', n == null); box.classList.toggle('t10', P.w >= 10);
+    [].forEach.call(box.querySelectorAll('[data-rpw]'), function (b) { b.classList.toggle('on', +b.dataset.rpw === P.w); });
+    [].forEach.call(box.querySelectorAll('[data-rpd]'), function (b) { b.classList.toggle('on', n != null && +b.dataset.rpd === P.f); var off = n == null || (P.w >= 10 && +b.dataset.rpd > 0); if (off) b.setAttribute('aria-disabled', 'true'); else b.removeAttribute('aria-disabled'); });
+    var s = box.querySelector('.rpx b'); if (s) s.textContent = fmt(n); }
+  function chips(orig) { try { var D = $('detailBody'); if (!D || !orig) return; var s = num(orig.samRating), l = num(orig.lewyRating);
+      var inner = (s != null ? '<span class="pt s">S ' + s + '</span>' : '') + (l != null ? '<span class="pt l">L ' + l + '</span>' : '');
+      var ki = D.querySelector('.kv b.ki[title="Our ratings"]');
+      if (ki && ki.nextElementSibling) { if (inner) ki.nextElementSibling.innerHTML = inner; else { ki.nextElementSibling.remove(); ki.remove(); } }
+      else if (inner) { var kv = D.querySelector('.kv'); if (kv) kv.insertAdjacentHTML('afterbegin', '<b title="Our ratings" class="ki">👥</b><span>' + inner + '</span>'); } } catch (e) {} }
+
+  /* keep the tapped picker where it was on screen (the score chip above it can appear or go) */
+  function keep(box, t0) { try { var d = box.getBoundingClientRect().top - t0; if (Math.abs(d) < 1) return; var el = box.parentElement;
+      while (el && el !== document.body) { var cs = getComputedStyle(el); if (/(auto|scroll)/.test(cs.overflowY) && el.scrollHeight > el.clientHeight) { el.scrollTop += d; return; } el = el.parentElement; }
+      window.scrollBy(0, d); } catch (x) {} }
+  window.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('.rp108 button'); if (!b) return;
+    e.preventDefault(); e.stopImmediatePropagation();
+    var box = b.closest('.rp108'), k = box.dataset.rk, cur = n10(box.dataset.rv), P = parts(cur), v;
+    if (b.dataset.rpc) v = null;
+    else if (b.dataset.rpw) { var w = +b.dataset.rpw; v = (cur != null && P.w === w && P.f === 0) ? null : w; }
+    else { var f = +b.dataset.rpd; if (cur == null) { try { toast('Pick a whole number first'); } catch (x) {} return; }
+      if (P.w >= 10) { if (f) { try { toast('10 is the top score'); } catch (x) {} } return; } v = Math.round((P.w + f / 10) * 10) / 10; }
+    if (v === cur) return;
+    try { var ae = document.activeElement; if (ae && /^(INPUT|TEXTAREA)$/.test(ae.tagName)) ae.blur(); } catch (x) {} /* keyboard away: picker never sits under it */
+    var t0 = box.getBoundingClientRect().top; setTimeout(function () { keep(box, t0); }, 0);
+    paint(box, v); try { SFX.blip && SFX.blip(); } catch (x) {}
+    var sv = v == null ? '' : String(v);
+    if (box.dataset.qrp) { /* quick "rate it" pop-up */
+      try { if (!QR) return; QR.v[box.dataset.qrp] = v == null ? '' : v; qrAuto.q = QR; qrAuto(QR); if (v === 10 && typeof confetti === 'function') confetti();
+        var pv = $('qrm').querySelector('.qrp'), first = QR.ps.filter(function (p) { return QR.v[p]; })[0];
+        if (pv) pv.innerHTML = rbox('avg', first ? (first === 'sam' ? 'SAM' : 'LEWY') : 'TAP A SCORE', first ? QR.v[first] : null, QR.r.row); } catch (x) {}
+      return; }
+    if (box.closest('#aWBox')) { try { addState.w = addState.w || {}; addState.w[k] = sv; } catch (x) {} return; } /* + LOG IT sheet: saved with LOG IT */
+    try { if (typeof editing !== 'undefined' && editing) editing[k] = sv;
+      var orig = editing && byId(editing.row);
+      if (orig && orig.row < 1e9) { var o = {}; o[k] = sv; saveFields(orig, o, v == null ? '\u2605 Score cleared' : '\u2605 ' + v); chips(orig); } } catch (x) {}
+  }, true);
+
+  /* quick "rate it" pop-up: same picker (decimals too) instead of 1–10 only */
+  try { var _rq = renderQR; renderQR = function () { var o = _rq.apply(this, arguments);
+      try { var m = $('qrm'); if (m && QR) [].forEach.call(m.querySelectorAll('.qrg'), function (g) { var b0 = g.querySelector('[data-qr]'); if (!b0) return; var p = b0.dataset.qr;
+          g.outerHTML = html(p + 'Rating', QR.v[p], ' data-qrp="' + p + '"'); }); } catch (e) {}
+      return o; }; } catch (e) {}
+
+  try { if (window.PN93 && PN93.prepend) { PN93.prepend({ v: '3.08', d: '23 Oct 2026', lines: [
+    'Rating fixed: each of you now gets one score picker \u2014 tap a number, then a decimal (7 then .5 saves 7.5).',
+    'Tapping a decimal first no longer saves a wrong score; it asks you to pick a number first.',
+    '10 is the top score (no 10.5), and a score you already gave shows up picked when you open it.',
+    'CLEAR removes a score, and the page no longer jumps while you rate.'
+  ] }); try { PN93.v = '3.08'; } catch (e) {} } } catch (e) {}
+})();
+
+/* ===== ONE What's new timer: shows the newest notes once, comparing versions as numbers (4.0 is newer than 3.08) ===== */
+(function () {
+  var KEY = 'lg_pn_seen';
+  function vn(s) { var m = String(s == null ? '' : s).match(/^\s*v?(\d+)(?:\.(\d+))?/i); return m ? +m[1] + (m[2] ? +('0.' + m[2]) : 0) : 0; }
+  window.vnum108 = vn;
+  function prior() { try { for (var i = 0; i < localStorage.length; i++) { var k = localStorage.key(i) || ''; if (k !== KEY && /^lg_|^wl_|^sp_|^yt|^OST|^SF|^MP|^WHO/i.test(k)) return true; } } catch (e) {} return false; }
+  var wasPrior = prior(), done = false;
+  function popNew() {
+    if (done) return; done = true;
+    var CUR = String(window.APPV58 || ''), seen = null; try { seen = localStorage.getItem(KEY); } catch (e) {}
+    if (seen != null && vn(seen) >= vn(CUR)) return;
+    try { localStorage.setItem(KEY, CUR); } catch (e) {}
+    if (seen == null && !wasPrior) return; /* true fresh install: no pop-up */
+    try { if (window.PN93 && PN93.popup) { var L = PN93.notes || []; PN93.popup(L.filter(function (n) { return n.v === CUR; })[0] || L[0]); } } catch (e) {}
+  }
+  setTimeout(popNew, 1600);
+  /* an older close handler wrote '3.01' when the pop-up closed, so it came back every launch; once checked, never go backwards */
+  function keepSeen() { if (!done) return; try { var CUR = String(window.APPV58 || ''), s = localStorage.getItem(KEY); if (vn(s) < vn(CUR)) localStorage.setItem(KEY, CUR); } catch (e) {} }
+  function later() { setTimeout(keepSeen, 0); setTimeout(keepSeen, 400); }
+  try { new MutationObserver(function (M) { for (var i = 0; i < M.length; i++) if (/^pn93/.test(M[i].target.id || '')) { later(); return; } }).observe(document.documentElement, { subtree: true, attributes: true, attributeFilter: ['class'] }); } catch (e) {}
+  window.addEventListener('click', later, true); window.addEventListener('popstate', later); window.addEventListener('pagehide', keepSeen);
+  document.addEventListener('visibilitychange', keepSeen); document.addEventListener('keydown', later, true);
 })();
 </script>
 </body></html>
