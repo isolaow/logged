@@ -214,7 +214,7 @@ function mock(fn, args, who) { if (global.MOCKX) { const x = global.MOCKX(fn, ar
   var kv = { get: function (k) { return dbp.then(function (db) { return db ? new Promise(function (r) { var t = db.transaction('kv').objectStore('kv').get(k); t.onsuccess = function () { r(t.result); }; t.onerror = function () { r(undefined); }; }) : undefined; }); },
     set: function (k, v) { return dbp.then(function (db) { if (db) db.transaction('kv', 'readwrite').objectStore('kv').put(v, k); }); } };
   function rpc(fn, args, ms) {
-    var ctl = window.AbortController ? new AbortController() : null, t = ctl && setTimeout(function () { ctl.abort(); }, ms || (IDEM[fn] || QUEUEABLE[fn] ? 45000 : 30000));
+    var ctl = window.AbortController ? new AbortController() : null, t = ctl && setTimeout(function () { ctl.abort(); }, ms || ({ addEntry: 1, addFromTmdb: 1, addYouTube: 1 }[fn] ? 60000 : IDEM[fn] || QUEUEABLE[fn] ? 45000 : 30000));
     return fetch(EXEC, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, redirect: 'follow', signal: ctl && ctl.signal,
       body: JSON.stringify({ rpc: 1, cpush: 1, token: tok(), who: LS.getItem('lg_who') || '', fn: fn, args: args || [] }) })
       .then(function (r) { return r.text().then(function (tx) { try { return JSON.parse(tx); } catch (e) { var er = new Error('Server busy (HTTP ' + r.status + ')'); er.transient = true; throw er; } }); }).then(function (j) { clearTimeout(t); if (!j.ok) { var e = new Error(j.error || 'error'); e.server = true; throw e; } if (j.push) sendPush(j.push); return j.r; })
@@ -1685,6 +1685,7 @@ body:has(#ytdrw.open) .yback{display:none!important}
 .ekr.on{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold)}.ekr.seen{opacity:.6}
 .epx .ekp{font:7px var(--pix);padding:0 6px;white-space:nowrap}
 /* R78 grouped shows */
+.pc > .sz77{position:absolute;left:6px;top:32px;z-index:3;margin:0;font-size:7px;padding:2px 4px;box-shadow:2px 2px 0 #000;pointer-events:none}
 .sz77{display:inline-block;margin-left:4px;padding:1px 4px;font:6px var(--pix);background:var(--gold,#ffd23f);color:#000;vertical-align:middle;white-space:nowrap}
 #ssn78{position:fixed;inset:0;z-index:3400;background:rgba(0,0,0,.6);display:none;align-items:flex-end}#ssn78.open{display:flex}
 #ssn78 .sk{width:100%;max-height:78vh;overflow:auto;background:#1d1d33;border-top:3px solid #000;padding:10px 10px calc(16px + env(safe-area-inset-bottom))}
@@ -1777,7 +1778,7 @@ function toast(m, undo) {
   clearTimeout(toast.h); toast.h = setTimeout(function () { t.style.display = 'none'; }, undo ? 6000 : 2600);
 }
 function run(fn, args, ok, fail) {
-  var r = google.script.run.withSuccessHandler(ok || function () {}).withFailureHandler(function (e) { toast('⚠ ' + (e.message || e)); (fail || function () {})(e); });
+  var r = google.script.run.withSuccessHandler(ok || function () {}).withFailureHandler(function (e) { if (window.rc404 && window.rc404(fn, args, e, ok, fail)) return; toast('⚠ ' + (e.message || e)); (fail || function () {})(e); });
   r[fn].apply(r, args || []);
 }
 
@@ -2305,7 +2306,7 @@ $('aSave').onclick = function () {
   rows.push(tmp); render(); close('add'); busy++;
   run('addEntry', [f], function (r) { finishAdd(tmp, t, r); }, function () { busy--; rows.splice(rows.indexOf(tmp), 1); render(); });
 };
-function finishAdd(tmp, t, r) { busy--; touchRecent(r && r.title || t); if (r && r.poster) posters[r.title] = r.poster; if (r && r.meta) meta[r.title.trim()] = r.meta; if (r) { delete r.poster; delete r.meta; } Object.assign(tmp, r); render(); SFX.coin(); SFX.logged(); banner('NEW ENTRY LOGGED', t); toast('Logged ' + t); fetchPosters(); fetchMeta(); run('getVersion', [], function (v) { version = v; }); }
+function finishAdd(tmp, t, r) { busy--; touchRecent(r && r.title || t); if (r && r.poster) posters[r.title] = r.poster; if (r && r.meta) meta[r.title.trim()] = r.meta; if (r) { delete r.poster; delete r.meta; } Object.assign(tmp, r); render(); SFX.coin(); SFX.logged(); banner('NEW ENTRY LOGGED', t); toast('Logged ' + t); fetchPosters(); fetchMeta(); /* 4.04: version not synced here, so the next poll reloads and corrects */ }
 
 /* ---------- full-database search (TMDB via server; 8-bit posters) ---------- */
 var TM = { res: {}, seq: 0, h: {} };
@@ -5252,7 +5253,7 @@ var LGT2 = (function () { try { return JSON.parse(localStorage.lg_lgt2 || '{}');
 function lgtMark(title) { LGT2[String(title).trim()] = Date.now(); try { localStorage.lg_lgt2 = JSON.stringify(LGT2); } catch (e) {} }
 logTs = function (r) { var tt = String(r.title).trim(), t = LGT2[tt] || LGT[r.row] || 0; (recent || []).some(function (x) { if (x.t === tt) { t = Math.max(t, x.at || 0); return true; } }); var d = lastD(r); if (d) t = Math.max(t, Date.parse(d + 'T12:00:00') || 0); return t; };
 var _saveFields55 = saveFields; saveFields = function (orig, fields) { try { if (orig && fields && ['samWatched', 'lewyWatched', 'samRating', 'lewyRating'].some(function (k) { return k in fields && fields[k]; })) lgtMark(orig.title); } catch (e) {} return _saveFields55.apply(this, arguments); };
-var _run55a = run; run = function (fn, args, ok, fail) { if (fn === 'addEntry' || fn === 'addFromTmdb') { var ok2 = ok; ok = function (r) { try { var t = (r && r.title) || (args[0] && args[0].title) || (args[1] && args[1].title); if (t) { lgtMark(t); touchRecent(t); } if (r && r.row && !byId(r.row)) { rows.push(r); } render(); } catch (e) {} ok2 && ok2.apply(this, arguments); }; } return _run55a.call(this, fn, args, ok, fail); };
+var _run55a = run; run = function (fn, args, ok, fail) { if (fn === 'addEntry' || fn === 'addFromTmdb') { var ok2 = ok; ok = function (r) { try { var t = (r && r.title) || (args[0] && args[0].title) || (args[1] && args[1].title); if (t) { lgtMark(t); touchRecent(t); } render(); /* 4.04: no longer pushes the server row (finishAdd fills the temp row) */ } catch (e) {} ok2 && ok2.apply(this, arguments); }; } return _run55a.call(this, fn, args, ok, fail); };
 
 /* ---------- 6) YOUTUBE: counted ONLY when really finished (ENDED or ≥90%, with ≥50% actually played — seeks don't count); never on open/channel add ---------- */
 var YACC = (function () { try { return JSON.parse(localStorage.lg_ytacc || '{}'); } catch (e) { return {}; } })();
@@ -7171,9 +7172,10 @@ function sndList69(p) { var L = ((profiles[p] || {}).snd || []); return { none: 
   /* DOM layer: in every list, keep one card per show and relabel it */
   function scope(el) { return (el.closest && el.closest('.pgrid,.scroller,.list,ol,ul,.sec,.panel,section,[id^="v-"],#list,.ipl,.tlk')) || el.parentElement; }
   function relabel(el, r, n) { var bt = baseTitle(r.title), w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT), t, tp = null; while ((t = w.nextNode())) { if (t.nodeValue.indexOf(r.title) >= 0) { t.nodeValue = t.nodeValue.replace(r.title, bt); tp = tp || t.parentNode; } else if (SN.test(t.nodeValue) && t.nodeValue.indexOf(bt) >= 0) t.nodeValue = t.nodeValue.replace(SN, ''); }
-    if (!el.querySelector('.sz77')) { var host = (tp && tp !== el ? tp : null) || el.querySelector('.t,.ti b') || el; host.insertAdjacentHTML('beforeend', ' <span class="sz77">' + n + ' SEASONS</span>'); }
+    var nm4 = el.classList.contains('pc') && el.querySelector('.nm'); if (nm4) { nm4.textContent = bt; nm4.removeAttribute('data-fw'); }
+    if (!el.querySelector('.sz77')) { var host = nm4 ? el : (tp && tp !== el ? tp : null) || el.querySelector('.t,.ti b') || el; host.insertAdjacentHTML('beforeend', ' <span class="sz77">' + n + ' SEASONS</span>'); }
     var im = el.querySelector('img[alt]'); if (im && im.alt === r.title) im.alt = bt; el.setAttribute('aria-label', bt + ', ' + n + ' seasons'); }
-  function pass78() { var seen = new Map(); [].forEach.call(document.querySelectorAll('[data-open]'), function (el) { if (el.closest('#detailBody,#ipdet,#ssn78,#add,#arch')) return; var r = byId(el.dataset.open); if (!isSeason(r)) return; var k = key(r); if (!multi(k)) return;
+  function pass78() { var seen = new Map(); [].forEach.call(document.querySelectorAll('[data-open],.pc[data-row]'), function (el) { if (el.closest('#detailBody,#ipdet,#ssn78,#add,#arch')) return; var r = byId(el.dataset.open || el.dataset.row); if (!r || r.row >= 1e9 || !isSeason(r)) return; /* 4.04: 4.0 shelf cards are .pc[data-row] */ var k = key(r); if (!multi(k)) return;
       var sc = scope(el), m = seen.get(sc); if (!m) { m = {}; seen.set(sc, m); }
       if (m[k] && m[k] !== el) { el.style.display = 'none'; el.dataset.dup77 = '1'; return; } m[k] = el; if (el.dataset.dup77) { el.style.display = ''; delete el.dataset.dup77; }
       if (el.dataset.g77 !== k) { el.dataset.g77 = k; relabel(el, r, seasonsOf(k).length); } }); }
@@ -8250,7 +8252,7 @@ window.APPV58 = 'r91';
   var _od = openDetail; openDetail = function () { var r = _od.apply(this, arguments); mv(); setTimeout(mv, 0); setTimeout(mv, 400); setTimeout(mv, 2000); return r; };
   ['ostRedraw', 'ostxDraw'].forEach(function (n) { var f = window[n]; if (typeof f === 'function') window[n] = function () { var r = f.apply(this, arguments); mv(); return r; }; });
   /* stale-build guard: a home-screen app resumed from the background keeps old code; reload once when sw.js has a newer build */
-  var BUILD = /\/app-rc\//.test(location.pathname) ? 'logged-rc-1792765000' : 'logged-202610240123', busy = function () { var a = document.activeElement; return (a && /INPUT|TEXTAREA/.test(a.tagName)) || (window.OXA && !OXA.paused) || document.querySelector('#add.open,#fb83.open,#trv.open,#ytpage.open .yv'); };
+  var BUILD = /\/app-rc\//.test(location.pathname) ? 'logged-rc-1792770404' : 'logged-202610280114', busy = function () { var a = document.activeElement; return (a && /INPUT|TEXTAREA/.test(a.tagName)) || (window.OXA && !OXA.paused) || document.querySelector('#add.open,#fb83.open,#trv.open,#ytpage.open .yv'); };
   var last = 0; function check() { if (/demo=1/.test(location.search) || BUILD.indexOf('__') === 0 || Date.now() - last < 60000) return; last = Date.now();
     fetch('sw.js?b=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.ok ? r.text() : ''; }).then(function (t) { var m = t.match(/var V = '([^']+)'/); if (!m || m[1] === BUILD || busy()) return;
       try { if (sessionStorage.lg_rl89 === m[1]) return; sessionStorage.lg_rl89 = m[1]; } catch (e) {} try { toast('⟳ UPDATING LOGGED…'); } catch (e) {}
@@ -10154,4 +10156,83 @@ html body header #lb88[aria-expanded="true"] #ss88::after{transform:rotate(180de
 })();
 </script>
 
+<script id="t404">
+/* ===== 4.04 — one add = one row: busy guard, unique temp rows, request id, already-logged check, timeout → check before failing ===== */
+(function () {
+  var ADDF = { addEntry: 1, addFromTmdb: 1, addYouTube: 1 }, Q = {}, NQ = 0, TS = 0, FORCE = 0, lastClose = 0;
+  function low(t) { return String(t == null ? '' : t).trim().toLowerCase().replace(/\s+/g, ' '); }
+  function sn(t) { var m = /\((?:S|Season )(\d+)\)\s*$/i.exec(String(t || '')); return m ? +m[1] : 0; }
+  function info(fn, a) { a = a || [];
+    if (fn === 'addEntry') { var f = a[0] = a[0] || {}; return { f: f, title: String(f.title || '').trim(), type: f.type || 'Movie' }; }
+    if (fn === 'addFromTmdb') { var p = a[0] || {}, f2 = a[1] = a[1] || {}, s = p.tv && p.season ? +p.season : 0; return { f: f2, title: String(p.title || '').trim() + (s ? ' (S' + s + ')' : ''), type: p.tv ? 'TV Show' : 'Movie', tmdb: +p.id || 0 }; }
+    var it = a[0] || {}, f3 = a[1] = a[1] || {}, t = String(it.t || '').trim().slice(0, 180); if (it.k === 'channel' && !/channel/i.test(t)) t += ' (Channel)';
+    return { f: f3, title: t, type: 'YouTube', yt: it.id || '' }; }
+  /* shared "is this already in the log?" check (tmdb id and/or title+type) */
+  window.alreadyLogged = function (o) { o = o || {}; var t = norm(o.title || ''), ty = o.type || 'Movie', s = sn(o.title), base = norm(baseTitle(o.title || '')); if (!t) return null;
+    var L = rows.filter(function (r) { return r && r.title && r.row < 1e9; });
+    if (ty === 'YouTube') return L.filter(function (r) { return r.type === 'YouTube' && ((o.yt && r.ytm && r.ytm.id === o.yt) || norm(r.title) === t); })[0] || null;
+    var hit = L.filter(function (r) { return r.type === ty && norm(r.title) === t; })[0]; if (hit) return hit;
+    if (o.tmdb) { hit = L.filter(function (r) { var m = M(r); return r.type === ty && m && +m.tmdb === +o.tmdb && (!s || sn(r.title) === s); })[0]; if (hit) return hit; }
+    if (ty === 'TV Show' && !s && base) { var ss = L.filter(function (r) { return r.type === 'TV Show' && sn(r.title) && norm(baseTitle(r.title)) === base; }); if (ss.length) return ss[ss.length - 1]; }
+    return null; };
+  function ui() { var on = NQ > 0, b = $('aSave'); document.body.classList.toggle('lg404', on);
+    if (b) { if (on) { if (!b.dataset.l404) b.dataset.l404 = b.textContent; b.disabled = true; b.textContent = 'LOGGING…'; } else if (b.dataset.l404) { b.disabled = false; b.textContent = b.dataset.l404; delete b.dataset.l404; } } }
+  function dupNotice(ex, sheet) { if (!ex) return; try { SFX.tap && SFX.tap(); } catch (e) {}
+    if (sheet) { try { close('add'); } catch (e) {} try { openDetail(ex); } catch (e) {} toast('Already in your log — opened it'); }
+    else toast('Already in your log: ' + baseTitle(ex.title)); }
+  var _cl = close; close = function (id) { if (id === 'add') lastClose = Date.now(); return _cl.apply(this, arguments); };
+  var _r = run; run = function (fn, args, ok, fail) {
+    if (!ADDF[fn]) return _r.apply(this, arguments);
+    args = args || []; var I = info(fn, args), key = I.type + '|' + low(I.title), tmp = null, sheet = Date.now() - lastClose < 1500 || $('add').classList.contains('open');
+    for (var i = rows.length - 1; i >= 0; i--) if (rows[i] && rows[i].row === 1e9 && low(rows[i].title) === low(I.title)) { tmp = rows[i]; break; }
+    if (tmp) tmp.row = 1e9 + (++TS); /* unique temp ids */
+    var force = FORCE || I.f._force; FORCE = 0; if (force) I.f._force = 1;
+    if (Q[key]) { Q[key].push({ ok: ok, fail: fail }); toast('Already logging ' + baseTitle(I.title) + '…'); return; } /* second tap: no second request */
+    if (!force) { var ex = alreadyLogged(I); if (ex) { if (fn === 'addYouTube') { dupNotice(ex, sheet); if (fail) setTimeout(function () { fail({ message: 'already' }); }, 0); return; }
+        setTimeout(function () { ok && ok(Object.assign({}, ex, { dup: 1, _sheet: sheet })); }, 0); return; } }
+    I.f._rid = I.f._rid || (Date.now().toString(36) + Math.random().toString(36).slice(2, 8));
+    Q[key] = []; NQ++; ui();
+    return _r.call(this, fn, args, function (r) { var W = Q[key] || []; delete Q[key]; NQ = Math.max(0, NQ - 1); ui();
+        if (fn === 'addYouTube') { if (r && r.dup && byId(r.row)) { dupNotice(byId(r.row), sheet); if (fail) fail({ message: 'already' }); return; } return ok && ok.apply(this, arguments); }
+        if (r && typeof r === 'object') r._sheet = sheet;
+        ok && ok(r); W.forEach(function (w) { w.ok && w.ok(Object.assign({}, r, { dup: 1, _sheet: 0 })); }); },
+      function (e) { var W = Q[key] || []; delete Q[key]; NQ = Math.max(0, NQ - 1); ui(); fail && fail(e); if (fn !== 'addYouTube') W.forEach(function (w) { w.fail && w.fail(e); }); });
+  };
+  /* finishAdd: never leave two rows with the same row number; a duplicate reply opens the existing entry */
+  var _fa = finishAdd; finishAdd = function (tmp, t, r) { var sh = r && r._sheet; if (r) delete r._sheet;
+    if (r && r.dup) { delete r.dup; busy = Math.max(0, busy - 1); var ex = null;
+      for (var i = 0; i < rows.length; i++) if (rows[i] !== tmp && rows[i] && rows[i].row == r.row) { ex = rows[i]; break; }
+      if (ex) { var k = rows.indexOf(tmp); if (k >= 0) rows.splice(k, 1); }
+      else { if (r.poster) posters[r.title] = r.poster; if (r.meta) meta[String(r.title).trim()] = r.meta; delete r.poster; delete r.meta; Object.assign(tmp, r); ex = tmp; }
+      render(); dupNotice(ex, sh); return; }
+    if (r && r.row) for (var j = rows.length - 1; j >= 0; j--) if (rows[j] !== tmp && rows[j] && rows[j].row == r.row) rows.splice(j, 1);
+    return _fa.apply(this, arguments); };
+  /* timeout / no answer: reload the log and look for the title before saying it failed */
+  window.rc404 = function (fn, args, e, ok, fail) {
+    if (!ADDF[fn] || !window.__rpc || !e || e.server && !e.transient) return false;
+    if (!(e.offline || e.transient || /reach|time ?d? ?out|busy|network|abort/i.test(String(e.message || e)))) return false;
+    var I = info(fn, args); if (!I.title) return false;
+    var s = $('sync'); if (s) s.textContent = 'CHECKING…'; toast('Slow connection — checking if ' + baseTitle(I.title) + ' saved…');
+    window.__rpc('getData', [], 45000).then(function (d) { var L = (d && d.rows) || [], f = null;
+      for (var i = L.length - 1; i >= 0; i--) { var x = L[i]; if (x && low(x.title) === low(I.title) && (x.type || 'Movie') === I.type && (I.type !== 'YouTube' || !I.yt || !x.ytm || x.ytm.id === I.yt)) { f = x; break; } }
+      if (s) s.textContent = 'SYNCED';
+      if (f) { if (fn === 'addYouTube' && byId(f.row)) { if (fail) fail({ message: 'already' }); return; } ok && ok(f); }
+      else { toast('⚠ ' + (e.message || e)); (fail || function () {})(e); }
+    }, function () { if (s) s.textContent = 'OFFLINE'; toast('⚠ ' + (e.message || e)); (fail || function () {})(e); });
+    return true; };
+  /* LOG IT in the add sheet: ignore taps while logging; typed title already in the log → open it, or ADD AGAIN */
+  var sv = $('aSave'), _as = sv && sv.onclick;
+  if (sv && _as) sv.onclick = function (ev) {
+    if (NQ > 0 || sv.disabled) { toast('Logging… one moment'); return; }
+    var t = $('aTitle').value.trim(), self = this, a = arguments;
+    if (t && !addState.pick && !FORCE) { var ex = alreadyLogged({ title: t, type: addState.type || 'Movie' });
+      if (ex) { var d = $('dlg'); d.innerHTML = '<div class="box"><span class="ic">✓</span><h2>ALREADY IN YOUR LOG</h2><p>' + esc(ex.title) + ' is already logged. Open it, or add it again?</p><div class="acts"><button class="cancel" data-dlg4="open">OPEN IT</button><button class="save" data-dlg4="again" data-nosfx="1">ADD AGAIN</button></div></div>';
+        d.classList.add('open'); d.onclick = function (e) { var b = e.target.closest('[data-dlg4]'); if (!b && e.target !== d) return; d.classList.remove('open'); d.onclick = null; if (!b) return;
+          if (b.dataset.dlg4 === 'open') { close('add'); openDetail(ex); } else { FORCE = 1; $('aTitle').value = t; try { _as.apply(self, a); } finally { FORCE = 0; } } }; return; } }
+    return _as.apply(this, arguments); };
+  var st = document.createElement('style'); st.textContent = 'body.lg404 #aSave{opacity:.6;pointer-events:none}body.lg404 .tm-log98,body.lg404 .mpadd{opacity:.5;pointer-events:none}';
+  document.head.appendChild(st);
+  try { window.APPV58 = '4.04'; if (window.PN93 && PN93.prepend) PN93.prepend({ v: '4.04', d: '28 Oct 2026', lines: ['Tapping LOG IT twice (or a slow connection) no longer makes double entries — the button shows LOGGING… until it\u2019s saved.', 'If you log something that\u2019s already in your log, it opens the one you have (or lets you add it again).', 'If the connection is slow, the app checks whether it saved before saying it failed.', 'Shows with several seasons are back to one card with a SEASONS badge.'] }); } catch (e) {}
+})();
+</script>
 </body></html>
