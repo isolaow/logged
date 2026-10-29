@@ -82,6 +82,8 @@ function mock(fn, args, who) { if (global.MOCKX) { const x = global.MOCKX(fn, ar
       else if (k === 3) { o.samWatched = 'As we speak'; o.ep.sam = { e: 1 + h(i, +x[3] - 1) }; }
       else if (k === 4) { o.lewyWatched = 'As we speak'; o.ep.lewy = { e: 1 + h(i + 2, +x[3] - 1) }; }
       rows.push(R(n++, t, 'TV Show', o)); meta[t] = { year: x[1], eps: +x[3], runtime: 45, genres: x[2] }; });
+    /* 4.06: Hell's Kitchen S5 (15 eps, real TMDB id) to reproduce long-season episode rating on a phone: Sam on ep 9, Lewy on ep 7, a few rated */
+    rows.push(R(n++, "Hell's Kitchen (S5)", 'TV Show', { genres: 'Reality', suggestedBy: 'Sam', samWatched: 'As we speak', lewyWatched: 'As we speak', ep: { sam: { e: 9, r: { 2: 7, 3: 8, 5: 6 } }, lewy: { e: 7, r: { 2: 6, 4: 8 } } } })); meta["Hell's Kitchen (S5)"] = { year: '2009', eps: 15, runtime: 43, genres: 'Reality', tmdb: 2370, seasons: 23 };
     D68.yt.forEach(function (y, i) { rows.push(R(n++, y[1], 'YouTube', { samWatched: i % 2 ? 'Yes' : 'Not yet', lewyWatched: i % 2 ? 'Not yet' : 'Yes', suggestedBy: i % 2 ? 'Sam' : 'Lewy', ytm: { k: 'video', id: y[0], ch: y[2] } })); if (i % 5 === 0) { var r = rows[rows.length - 1]; r.samWatched = r.lewyWatched = 'Yes'; } });
     Object.assign(meta['Dune'] = meta['Dune'] || {}, { year: '2021', director: 'Denis Villeneuve', runtime: 155 }); Object.assign(meta['Past Lives'] = meta['Past Lives'] || {}, { year: '2023', director: 'Celine Song', runtime: 106 });
     Object.assign(meta['Garfield'] = meta['Garfield'] || {}, { year: '2004', runtime: 80 }); Object.assign(meta['Shrek'], { year: '2001', director: 'Andrew Adamson' }); Object.assign(meta['The Bear (S1)'] = meta['The Bear (S1)'] || {}, { year: '2022', eps: 8, runtime: 30 });
@@ -138,7 +140,8 @@ function mock(fn, args, who) { if (global.MOCKX) { const x = global.MOCKX(fn, ar
       case 'lfmUsers': return { sam: LFMU.sam, lewy: LFMU.lewy };
       case 'lfmSetUser': LFMU[args[0]] = String(args[1] || '').trim(); return { user: LFMU[args[0]] };
       case 'tmdbSeasons': return { seasons: [{ n: 1, eps: 9, year: 2022 }, { n: 2, eps: 10, year: 2025 }] };
-      case 'tmdbSeasonEps': { var EN = ['Pilot', 'Chapter Two', 'Chapter Three', 'Chapter Four', 'Chapter Five', 'Chapter Six', 'Chapter Seven', 'Chapter Eight', 'Chapter Nine', 'Finale']; var nE = Number(args[1]) === 2 ? 10 : 9; return { n: Number(args[1]), eps: EN.slice(0, nE).map(function (t, i) { return { n: i + 1, name: t, ov: 'Demo episode ' + (i + 1) + ': a longer description from TMDB season data so the card shows two or three lines and can be tapped to expand. Somebody makes a choice that changes everything for the rest of the season.', rt: 42 + (i % 5) * 3, air: '2022-0' + (2 + (i % 7)) + '-1' + (i % 9) }; }) }; }
+      case 'tmdbSeasonEps': if (Number(args[0]) === 2370) return { n: Number(args[1]), eps: ['18 Chefs Compete', '17 Chefs Compete', '16 Chefs Compete', '15 Chefs Compete', '14 Chefs Compete', '13 Chefs Compete', '12 Chefs Compete', '11 Chefs Compete', '10 Chefs Compete', '9 Chefs Compete', '8 Chefs Compete', '7 Chefs Compete', '6 Chefs Compete', '5 Chefs Compete', 'Winner Chosen'].map(function (t, i) { return { n: i + 1, name: t, ov: 'Demo Hell\u2019s Kitchen S5 episode ' + (i + 1) + '.', rt: 43, air: '2009-01-' + ('0' + (1 + i)).slice(-2) }; }) };
+      { var EN = ['Pilot', 'Chapter Two', 'Chapter Three', 'Chapter Four', 'Chapter Five', 'Chapter Six', 'Chapter Seven', 'Chapter Eight', 'Chapter Nine', 'Finale']; var nE = Number(args[1]) === 2 ? 10 : 9; return { n: Number(args[1]), eps: EN.slice(0, nE).map(function (t, i) { return { n: i + 1, name: t, ov: 'Demo episode ' + (i + 1) + ': a longer description from TMDB season data so the card shows two or three lines and can be tapped to expand. Somebody makes a choice that changes everything for the rest of the season.', rt: 42 + (i % 5) * 3, air: '2022-0' + (2 + (i % 7)) + '-1' + (i % 9) }; }) }; }
       case 'qqAll': return JSON.parse(JSON.stringify(QQ76));
       case 'qqSet': { var qt = String(args[0] || '').trim(); QQ76[qt] = QQ76[qt] || { sam: '', lewy: '' }; QQ76[qt][args[1]] = String(args[2] || '').slice(0, 200); return QQ76[qt]; }
       case 'lfmGet': return lfmDemo(args[0], args[1]);
@@ -166,7 +169,7 @@ function mock(fn, args, who) { if (global.MOCKX) { const x = global.MOCKX(fn, ar
         var score = function (t) { t = String(t || '').toLowerCase(); if (t === q) return 100; if (t.indexOf(q) === 0) return 90; if (t.indexOf(q) >= 0) return 70;
           var hit = 0; toks.forEach(function (w) { if (w.length >= 3 && t.indexOf(w) >= 0) hit++; }); return hit ? 40 + hit * 10 : (toks[0].length >= 4 && t.slice(0, 3) === toks[0].slice(0, 3) ? 15 : 0); };
         var POOL = rows.concat((typeof FRESH68 !== 'undefined' ? FRESH68 : []).map(function (f) { return { row: f.id, title: f.title, type: f.tv ? 'TV Show' : 'Movie', meta: { year: f.year } }; }), [{ row: 1, title: 'Oppenheimer', type: 'Movie', meta: { year: 2023 } }]);
-        var L = POOL.map(function (r) { return { id: r.row || r.title, tv: r.type === 'TV Show', overview: 'Demo synopsis for ' + r.title + '.', title: r.title, year: (r.meta && r.meta.year) || '', poster: posters[r.title] || '', genres: ((r.meta && r.meta.genres) || '').split(/,\s*/), via: '', _s: score(r.title) }; }).filter(function (x, i, A) { return x._s >= 40 && A.findIndex(function (y) { return y.title === x.title; }) === i; }).sort(function (a, b) { return b._s - a._s; }).slice(0, 8);
+        var L = POOL.map(function (r) { return { id: r.row || r.title, tv: r.type === 'TV Show', overview: 'Demo synopsis for ' + r.title + '.', title: r.title, year: (r.meta && r.meta.year) || '', poster: posters[r.title] || '', genres: ((r.meta && r.meta.genres) || '').split(/,\s*/), via: '', _s: score(r.title) }; }).filter(function (x, i, A) { return x._s >= 40 && A.findIndex(function (y) { return y.title === x.title; }) === i; }).sort(function (a, b) { return b._s - a._s; }).slice(0, 14);
         return { results: L }; })();
       case 'tmdbFresh': return FRESH68.slice();
       case 'ytFeed': var cat = String((args[0] || {}).cat || ''), V = function (L) { return L.map(function (y) { return { id: y[0], t: y[1], ch: y[2], th: 'https://i.ytimg.com/vi/' + y[0] + '/mqdefault.jpg' }; }); };
@@ -8305,7 +8308,7 @@ window.APPV58 = 'r91';
   var _od = openDetail; openDetail = function () { var r = _od.apply(this, arguments); mv(); setTimeout(mv, 0); setTimeout(mv, 400); setTimeout(mv, 2000); return r; };
   ['ostRedraw', 'ostxDraw'].forEach(function (n) { var f = window[n]; if (typeof f === 'function') window[n] = function () { var r = f.apply(this, arguments); mv(); return r; }; });
   /* stale-build guard: a home-screen app resumed from the background keeps old code; reload once when sw.js has a newer build */
-  var BUILD = /\/app-rc\//.test(location.pathname) ? 'logged-rc-1793111240' : 'logged-202610292238', busy = function () { var a = document.activeElement; return (a && /INPUT|TEXTAREA/.test(a.tagName)) || (window.OXA && !OXA.paused) || document.querySelector('#add.open,#fb83.open,#trv.open,#ytpage.open .yv'); };
+  var BUILD = /\/app-rc\//.test(location.pathname) ? 'logged-rc-1793276663' : 'logged-202610292332', busy = function () { var a = document.activeElement; return (a && /INPUT|TEXTAREA/.test(a.tagName)) || (window.OXA && !OXA.paused) || document.querySelector('#add.open,#fb83.open,#trv.open,#ytpage.open .yv'); };
   var last = 0; function check() { if (/demo=1/.test(location.search) || BUILD.indexOf('__') === 0 || Date.now() - last < 60000) return; last = Date.now();
     fetch('sw.js?b=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.ok ? r.text() : ''; }).then(function (t) { var m = t.match(/var V = '([^']+)'/); if (!m || m[1] === BUILD || busy()) return;
       try { if (sessionStorage.lg_rl89 === m[1]) return; sessionStorage.lg_rl89 = m[1]; } catch (e) {} try { toast('⟳ UPDATING LOGGED…'); } catch (e) {}
@@ -8841,6 +8844,7 @@ window.APPV58 = '3.03';
     var swap = function (root) {
       [].forEach.call((root || document).querySelectorAll('button, .chip, .btabs button, .sg button'), function (b) {
         var t = b.textContent || '';
+        if (b.closest && b.closest('.w400')) return; /* 4.06: the 4.00 NOT YET / WATCHING / WATCHED row owns its labels — swapping them here fought p400 details() in an endless re-render loop */
         if (/^▶\s*WATCHING$/.test(t.trim()) || t.trim() === 'WATCHING') b.innerHTML = b.innerHTML.replace(/▶\s*WATCHING|WATCHING/g, 'LOGGING');
       });
     };
@@ -10290,6 +10294,211 @@ html body header #lb88[aria-expanded="true"] #ss88::after{transform:rotate(180de
 </script>
 <script id="v405">/* ===== 4.05 — data safety + speed (preview) ===== */
 (function () { try { window.APPV58 = '4.05'; if (window.PN93 && PN93.prepend) PN93.prepend({ v: '4.05', d: '28 Oct 2026', lines: ['Opens faster: the extras (settings, trivia, achievements, alerts\u2026) now load in one go after your list appears, instead of a dozen separate requests at start-up.', 'Episode run-times for watch-time stats load quietly in the background and stop once they\u2019re done (no more repeat checking).', 'Safer saves: episode ratings, theme songs and YouTube watched marks can\u2019t overwrite each other when you both tap at once, and the server\u2019s cache file is saved more carefully.'] }); } catch (e) {} })();
+</script>
+<style id="v406css">
+/* 4.06: sticky, prominent LOG IT in the add sheet */
+#add.modal .sheet{padding-bottom:0!important}
+#add .sheet>.acts{position:sticky;bottom:0;z-index:5;margin:14px -16px 0;padding:10px 16px calc(12px + env(safe-area-inset-bottom));background:var(--bg,#0d0d1a);border-top:3px solid var(--yel,#ffd23f);box-shadow:0 -8px 14px rgba(0,0,0,.55)}
+#add .sheet>.acts .cancel{flex:0 0 32%;min-height:56px!important}
+#add .sheet>.acts #aSave,#add .sheet>.acts button.save{flex:1;min-height:56px!important;height:auto!important;background:var(--yel,#ffd23f);color:#000;font-size:13px;letter-spacing:1px;box-shadow:4px 4px 0 #000}
+#add .sheet>.acts #aSave::before{content:'+';font:bold 20px/1 system-ui,sans-serif;margin-right:8px;vertical-align:-2px}
+#add .sheet>.acts #aSave:disabled::before{content:'⏳ '}
+/* result rows: ＋ logs, row body opens details */
+.h406{font:8px var(--pix);color:var(--dim,#aab);margin:10px 0 6px;line-height:1.6}.h406 b{color:var(--yel,#ffd23f);font:bold 13px/1 system-ui,sans-serif}
+button.tm .lg406{flex:0 0 44px;width:44px;height:44px;min-height:44px;display:flex;align-items:center;justify-content:center;margin-left:auto;background:var(--yel,#ffd23f);color:#000;border:3px solid #000;box-shadow:2px 2px 0 #000;font:bold 26px/1 system-ui,sans-serif;cursor:pointer}
+button.tm .lg406.have406{background:var(--grn,#3ddc84);font-size:20px}
+button.tm .lg406:active{transform:translate(2px,2px);box-shadow:none}
+button.tm .lg406.busy{background:#666;color:#fff;font-size:10px}
+button.tm .il+.ty+.lg406,button.tm .ty+.lg406{margin-left:6px}
+.tms button.tm .ti{min-width:0;flex:1}
+.mr406{display:block;width:100%;min-height:44px;margin:6px 0;font:9px var(--pix)}
+/* saving feedback */
+#sv406{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 8px);transform:translate(-50%,-140%);z-index:1200;max-width:calc(100vw - 24px);display:flex;align-items:center;gap:8px;padding:10px 14px;min-height:44px;box-sizing:border-box;background:#141428;color:#fff;border:3px solid #000;box-shadow:0 0 0 3px var(--c406,#4da3ff),4px 4px 0 3px #000;font:9px var(--pix);line-height:1.5;transition:transform .18s steps(4);pointer-events:none}
+#sv406.on{transform:translate(-50%,0)}
+#sv406 i{font-style:normal;display:inline-block;width:14px;text-align:center}
+#sv406.wait i{animation:sv406s .6s steps(2) infinite}
+#sv406.ok{--c406:var(--grn,#3ddc84)}#sv406.err{--c406:#ff4d6d}
+#sv406 span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@keyframes sv406s{50%{opacity:.25}}
+.lg4.sv406{animation:sv406p .5s steps(2) infinite}
+.lg4.sv406 b{font-size:0!important}.lg4.sv406 b::after{content:'⏳';font-size:20px}
+@keyframes sv406p{50%{filter:brightness(.75)}}
+body.sv406on .pc[data-row^="10000000"],body.sv406on [data-open^="10000000"]{position:relative;animation:sv406p .6s steps(2) infinite}
+body.sv406on .pc[data-row^="10000000"]::after,body.sv406on [data-open^="10000000"]::after{content:'SAVING…';position:absolute;left:4px;right:4px;bottom:4px;z-index:3;background:#000;color:var(--yel,#ffd23f);font:7px var(--pix);text-align:center;padding:4px 0;pointer-events:none}
+</style>
+<script id="v406">/* ===== 4.06 — add UX: ＋ logs / row opens details, sticky LOG IT, visible saving state, ~10 results, show grouping hardening (preview) ===== */
+(function () {
+  var CAP = 10, FULL = {};
+  function low(t) { return String(t == null ? '' : t).trim().toLowerCase().replace(/\s+/g, ' '); }
+  /* ---- 5) about 10 results when searching to add ---- */
+  var _ts = tmSearch; tmSearch = function (q, box, n) { if (box === 'aTm') n = CAP; return _ts.call(this, q, box, n); };
+  function cap(r, n) { if (!r || !r.results || r.results.length <= n) return r; var T = r.results.filter(function (x) { return !x.via; }), V = r.results.filter(function (x) { return x.via; });
+    var tn = V.length ? Math.min(T.length, Math.max(n - Math.min(V.length, 3), 1)) : n; return Object.assign({}, r, { results: T.slice(0, tn).concat(V.slice(0, Math.max(0, n - tn))), titles: tn }); }
+  /* ---- 1) one add flow: ＋ on a result row LOGS it, the row body opens the details page ---- */
+  function deco(el, box, more) {
+    [].forEach.call(el.querySelectorAll('button.tm[data-tm]'), function (b) { var k = b.dataset.tm, x = TM.res[k]; if (!x) return;
+      [].forEach.call(b.querySelectorAll('.tm-log98,.btn-log98'), function (o) { o.remove(); });
+      var have = !x.tv && !!b.querySelector('.il'); if (!b.querySelector('.lg406')) b.insertAdjacentHTML('beforeend', '<span class="lg406' + (have ? ' have406' : '') + '" role="button" tabindex="0" data-lg406="' + k + '" aria-label="' + (have ? 'Already logged — open ' : 'Log ') + esc(x.title) + '">' + (have ? '✓' : '+') + '</span>');
+      b.setAttribute('aria-label', x.title + (x.year ? ' (' + x.year + ')' : '') + ' — open details'); });
+    [].forEach.call(el.querySelectorAll('.h'), function (h) { if (/TAP TO LOG/.test(h.textContent)) h.textContent = 'FROM THE FULL DATABASE:'; });
+    if (el.querySelector('button.tm') && !el.querySelector('.h406')) el.insertAdjacentHTML('afterbegin', '<div class="h406"><b>+</b> LOGS IT · TAP A TITLE FOR DETAILS</div>');
+    if (more > 0 && !el.querySelector('.mr406')) { var hint = el.querySelector('.hint:last-child,.tm58>.hint'); var h = '<button type="button" class="ui-btn mr406" data-mr406="' + box + '">MORE RESULTS (' + more + ')</button>'; if (hint) hint.insertAdjacentHTML('beforebegin', h); else el.insertAdjacentHTML('beforeend', h); }
+    paintBusy(); }
+  var _rt = renderTm; renderTm = function (el, r, n, box) {
+    if (!el || (box !== 'aTm' && box !== 'qTm')) return _rt.apply(this, arguments);
+    var more = 0, rr = r;
+    if (box === 'aTm' && r && r.results && !r.__all) { FULL[box] = r; var c = cap(r, CAP); more = r.results.length - c.results.length; rr = c; n = CAP; }
+    var o = _rt.call(this, el, rr, n, box); try { deco(el, box, more); } catch (e) {} return o; };
+  function cardOf(x) { return { t: x.title, y: x.year, p: x.poster || '', ov: x.overview || x.ov || '', kind: x.tv ? 'SHOW' : 'MOVIE', f: { id: x.id, tv: !!x.tv } }; }
+  function quickLog(x, k, b) {
+    if (document.body.classList.contains('lg404') && isFlying(x)) { toast('Already logging ' + x.title + '…'); return; }
+    try { SFX.tap && SFX.tap(); } catch (e) {}
+    if (k.indexOf('qTm') === 0) { if (x.tv) { openAddWith(x); return; } try { initAdd(); } catch (e) {} logTm(x, 0); return; }
+    if (!x.tv) { logTm(x, 0); return; }
+    var se = $('se_' + k); if (se && se.innerHTML) { se.scrollIntoView({ block: 'nearest' }); return; } /* seasons already open */
+    tmClick({ target: b, __77: 1 }); setTimeout(function () { se = $('se_' + k); se && se.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }, 400); }
+  window.addEventListener('click', function (e) {
+    var t = e.target.closest && e.target.closest('[data-lg406],[data-mr406]'); var row = !t && e.target.closest && e.target.closest('#qTm [data-tm]');
+    if (!t && !row) return;
+    if (row && e.target.closest('[data-ts]')) return;
+    e.preventDefault(); e.stopImmediatePropagation();
+    if (t && t.dataset.mr406) { var bx = t.dataset.mr406, R = FULL[bx]; if (R) renderTm($(bx), Object.assign({}, R, { __all: 1 }), R.results.length, bx); return; }
+    if (row) { var xq = TM.res[row.dataset.tm]; if (!xq) return; try { kbClose(); } catch (er) {} ipDetails(cardOf(xq), { back: '◀ BACK TO SEARCH', log: function () { quickLog(xq, row.dataset.tm, row); }, logLabel: xq.tv ? 'LOG IT · PICK SEASON' : 'LOG IT' }); return; }
+    var k = t.dataset.lg406, x = TM.res[k]; if (!x) return; if (t.classList.contains('have406')) { var hr = (window.rows || []).filter(function (r) { return low(baseTitle(r.title)) === low(x.title); })[0]; if (hr && window.openDetail) { toast('Already in your log'); openDetail(hr); } else quickLog(x, k, t.closest('[data-tm]')); return; } quickLog(x, k, t.closest('[data-tm]')); }, true);
+  document.addEventListener('keydown', function (e) { var t = e.target; if (t && t.dataset && t.dataset.lg406 && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); t.click(); } });
+  /* ---- 3) saving state: a clear LOGGING… pill + SAVING… card while an add is in flight; ✓ / ⚠ when it lands ---- */
+  var ADDF = { addEntry: 1, addFromTmdb: 1, addYouTube: 1 }, FLY = [], hideT = 0, slowT = 0, capT = 0;
+  function ttl(fn, a) { a = a || []; if (fn === 'addEntry') return String((a[0] || {}).title || '').trim(); if (fn === 'addFromTmdb') { var p = a[0] || {}; return String(p.title || '').trim() + (p.tv && p.season ? ' (S' + p.season + ')' : ''); } return String((a[0] || {}).t || '').trim(); }
+  function isFlying(x) { var t = low(x && x.title); return FLY.some(function (f) { return low(baseTitle(f.t)) === low(baseTitle(t)); }); }
+  function pill() { var p = $('sv406'); if (!p) { document.body.insertAdjacentHTML('beforeend', '<div id="sv406" role="status" aria-live="polite"><i></i><span></span></div>'); p = $('sv406'); } p.style.setProperty('--c406', me() === 'lewy' ? '#3ddc84' : '#4da3ff'); return p; }
+  function say(cls, ic, msg, ms) { var p = pill(); clearTimeout(hideT); p.className = 'on ' + cls; p.firstChild.textContent = ic; p.lastChild.textContent = msg; if (cls !== 'ok' && cls !== 'err') p.style.setProperty('--c406', me() === 'lewy' ? '#3ddc84' : '#4da3ff'); else p.style.removeProperty('--c406'); if (ms) hideT = setTimeout(function () { p.classList.remove('on'); }, ms); }
+  function paintBusy() { var on = FLY.length > 0; document.body.classList.toggle('sv406on', on); [].forEach.call(document.querySelectorAll('.lg4'), function (b) { b.classList.toggle('sv406', on); b.setAttribute('aria-label', on ? 'Logging… one moment' : 'Log it'); });
+    [].forEach.call(document.querySelectorAll('.lg406'), function (s) { var x = TM.res[s.dataset.lg406], f = on && x && isFlying(x); s.classList.toggle('busy', !!f); s.textContent = f ? '…' : (s.classList.contains('have406') ? '✓' : '+'); }); }
+  function waitMsg() { if (!FLY.length) return; var f = FLY[FLY.length - 1], n = FLY.length > 1 ? ' (+' + (FLY.length - 1) + ')' : '', slow = Date.now() - FLY[0].at > 8000;
+    say('wait', '⏳', (slow ? 'STILL SAVING ' : 'LOGGING ') + baseTitle(f.t).toUpperCase() + n + (slow ? ' · SLOW CONNECTION…' : '…'));
+    clearTimeout(slowT); if (!slow) slowT = setTimeout(waitMsg, 8200); }
+  function done(id, kind, r) { var i = -1; FLY.forEach(function (f, j) { if (f.id === id) i = j; }); if (i < 0) return; var f = FLY.splice(i, 1)[0]; paintBusy();
+    if (FLY.length) { waitMsg(); return; } clearTimeout(slowT); clearTimeout(capT);
+    if (kind === 'ok') say('ok', '✓', 'LOGGED ' + baseTitle((r && r.title) || f.t).toUpperCase(), 1800);
+    else if (kind === 'dup') { var p = $('sv406'); if (p) p.classList.remove('on'); }
+    else say('err', '⚠', 'DIDN\u2019T SAVE ' + baseTitle(f.t).toUpperCase() + ' — TRY AGAIN', 3600); }
+  var SEQ = 0, _r = run; run = function (fn, args, ok, fail) {
+    if (!ADDF[fn]) return _r.apply(this, arguments);
+    var id = ++SEQ, t = ttl(fn, args); FLY.push({ id: id, t: t || 'entry', at: Date.now() }); paintBusy(); waitMsg();
+    clearTimeout(capT); capT = setTimeout(function () { if (FLY.length) say('wait', '⏳', 'STILL CHECKING — IT\u2019LL APPEAR WHEN SAVED', 0); }, 60000);
+    return _r.call(this, fn, args, function (r) { done(id, r && r.dup ? 'dup' : 'ok', r); return ok && ok.apply(this, arguments); },
+      function (e) { done(id, e && /already/i.test(String(e.message || e)) ? 'dup' : 'err'); return fail && fail.apply(this, arguments); }); };
+  /* ---- 4) one card per show: also fold a whole-show row ("Show") into its season card ---- */
+  function scope(el) { return (el.closest && el.closest('.pgrid,.scroller,.list,ol,ul,.sec,.panel,section,[id^="v-"],#list,.ipl,.tlk')) || el.parentElement; }
+  var SN = /\s*\((S\d+|Season \d+)\)\s*$/i;
+  function pass() { if (!window.showGroup78) return; var G = showGroup78, seen = new Map(), L = [].slice.call(document.querySelectorAll('[data-open],.pc[data-row]'));
+    L.forEach(function (el) { if (el.closest('#detailBody,#ipdet,#ssn78,#add,#arch') || el.style.display === 'none') return; var r = byId(el.dataset.open || el.dataset.row); if (!r || r.row >= 1e9 || r.type !== 'TV Show') return; var k = G.key(r); if (!G.multi(k)) return;
+      var sc = scope(el), m = seen.get(sc); if (!m) { m = {}; seen.set(sc, m); } (m[k] = m[k] || []).push({ el: el, season: SN.test(String(r.title)), r: r }); });
+    seen.forEach(function (m) { Object.keys(m).forEach(function (k) { var A = m[k]; if (A.length < 2 && (A[0].season || A[0].el.dataset.g77)) return;
+      var keep = A.filter(function (a) { return a.season; })[0] || A[0];
+      A.forEach(function (a) { if (a !== keep && !a.season) { a.el.style.display = 'none'; a.el.dataset.dup406 = '1'; } });
+      if (!keep.season && keep.el.dataset.g77 !== k) { var el = keep.el, n = G.seasonsOf(k).filter(function (x) { return SN.test(String(x.title)); }).length || G.seasonsOf(k).length, bt = baseTitle(keep.r.title); el.dataset.g77 = k;
+        var nm = el.querySelector('.nm'); if (nm) nm.textContent = bt; if (!el.querySelector('.sz77')) (nm ? el : el.querySelector('.t,.ti b') || el).insertAdjacentHTML('beforeend', ' <span class="sz77">' + n + ' SEASONS</span>'); el.setAttribute('aria-label', bt + ', ' + n + ' seasons'); } }); }); }
+  var pt = 0; new MutationObserver(function () { clearTimeout(pt); pt = setTimeout(pass, 140); }).observe(document.body, { childList: true, subtree: true }); setTimeout(pass, 600);
+  window.V406 = { fly: FLY, pass: pass, cap: CAP };
+  try { window.APPV58 = '4.06'; if (window.PN93 && PN93.prepend) PN93.prepend({ v: '4.06', d: '29 Oct 2026', lines: [
+    'Adding is one flow now: in search results, the gold + on a row logs it straight away (TV shows ask which season; things you\u2019ve already logged show a green ✓), and tapping the title opens its full details page.',
+    'LOG IT stays pinned to the bottom of the add screen, bigger and gold, so it\u2019s never scrolled out of reach.',
+    'While something is saving you\u2019ll see LOGGING… at the top and a SAVING… tag on its poster, then ✓ LOGGED (or a clear “didn\u2019t save — try again”).',
+    'Search when adding shows up to 10 results, with MORE RESULTS if there are extra.',
+    'Shows with several seasons stay as one card with a SEASONS badge, even if the whole show was also logged.',
+    'Episode ratings: every episode in a long season is reachable (ep 1 too), the first tap always counts, and you can rate with decimals — tap 7, then .6 for 7.6.'] }); } catch (e) {}
+})();
+</script>
+<style id="v406e-css">
+/* 4.06: episode rating — list flows in the page (no nested scroller), one sleek whole + tenth picker, 44px targets */
+.el99 .ls99.lng,.el99 .ls99.lg406{max-height:none!important;overflow:visible!important}
+#epx .e99,#epx .rb99,#epx .epq button{touch-action:manipulation;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
+#epx .e99{scroll-margin-top:calc(76px + env(safe-area-inset-top));scroll-margin-bottom:24px}
+#epx .e99.op406{background:rgba(255,255,255,.06)}
+.eq406{--pc:var(--p1,#4dc3ff);display:block;background:#1d1640;border:3px solid #000;box-shadow:inset 0 0 0 2px var(--pc);padding:8px;margin:4px 0 8px;scroll-margin-top:calc(124px + env(safe-area-inset-top));scroll-margin-bottom:24px}
+.eq406.pl406{--pc:var(--p2,#3ddc84)}
+.eq406 .epqh{display:flex;align-items:center;gap:8px;margin-bottom:8px;font:8px var(--pix);color:var(--pc)}
+.eq406 .epqh .rd406{font:18px var(--pix);color:var(--pc);min-width:64px;text-align:center;margin-left:auto;text-shadow:2px 2px 0 #000}
+.eq406 .epqh .rd406.nil{color:#555;font-size:14px}
+.eq406 .epqh button{min-height:44px;min-width:44px;padding:0 8px;font:8px var(--pix);margin:0!important}
+.eq406 .g406{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.eq406 .g406 button{min-height:44px;padding:0;font:14px var(--pix);background:var(--panel,#16162a);border:3px solid #000;box-shadow:2px 2px 0 #000;color:var(--txt,#f1ecff);border-radius:0}
+.eq406 .g406 button:active{transform:translate(2px,2px);box-shadow:none}
+.eq406 .g406 button.on{background:var(--pc);color:#000}
+.eq406 .t406 button{font-size:12px;color:var(--dim,#9a94b8)}
+.eq406 .t406 button.on{color:#000}
+.eq406 .t406.off button{opacity:.3;pointer-events:none}
+.eq406 .tl406{font:7px var(--pix);color:var(--dim,#9a94b8);margin:8px 0 5px;letter-spacing:1px}
+.eq406 .ft406{display:grid;grid-template-columns:1fr 2fr;gap:6px;margin-top:8px}
+.eq406 .ft406 button{min-height:44px;font:9px var(--pix);border:3px solid #000;box-shadow:2px 2px 0 #000;background:var(--panel,#16162a);color:var(--txt,#f1ecff);border-radius:0}
+.eq406 .ft406 .ok{background:var(--pc);color:#000}
+.eq406 .ft406 button:disabled{opacity:.35}
+</style>
+<script id="v406e">/* ===== 4.06 — episode rating: reliable first taps, every episode reachable (ep 1 included), decimal ratings (whole + tenth), sleek picker (preview) ===== */
+(function () {
+  if (typeof epRateRow !== 'function' || typeof epRedraw !== 'function') return;
+  function cur() { var t = $('detailBody') && $('detailBody').querySelector('[data-dedit]'); return t ? byId(t.dataset.dedit) : null; }
+  function pl() { try { return (typeof WHO !== 'undefined' && WHO) || 'sam'; } catch (e) { return 'sam'; } }
+  function r1(v) { return Math.round(v * 10) / 10; }
+  function f1(v) { return v == null ? '–' : (Math.round(v * 10) % 10 ? String(r1(v)) : r1(v).toFixed(1)); }
+  /* 1) the season list is part of the page scroll: no 460px inner scroller that snapped back to NEXT on every redraw */
+  var _eh = epHtml; epHtml = function (r) { var h = _eh.apply(this, arguments); return typeof h === 'string' ? h.replace('class="ls99 lng"', 'class="ls99 lg406"') : h; };
+  /* 2) one picker: tap a whole number (saves), optionally tap a tenth (saves 7.6 and closes) */
+  epRateRow = function (r, n) { var p = pl(), c = epR(r, p, n), R = (window.EPR && EPR.rate) || {};
+    var w = R.p === p && R.w != null ? R.w : c != null ? Math.floor(c) : null, t = c != null && w === Math.floor(c) ? Math.round((c - Math.floor(c)) * 10) : (w != null ? 0 : null);
+    var v = w == null ? null : w + (t || 0) / 10, NM = p === 'lewy' ? 'LEWY' : 'SAM', OT = p === 'lewy' ? 'sam' : 'lewy';
+    var W = ''; for (var k = 1; k <= 10; k++) W += '<button type="button" data-erw="' + k + '" class="' + (w === k ? 'on' : '') + '" aria-label="' + k + ' out of 10" aria-pressed="' + (w === k) + '">' + k + '</button>';
+    var T = ''; for (var j = 0; j <= 9; j++) T += '<button type="button" data-ert="' + j + '" class="' + (w != null && t === j ? 'on' : '') + '" aria-label="' + (w != null ? w : 'x') + '.' + j + '">.' + j + '</button>';
+    return '<div class="epq eq406' + (p === 'lewy' ? ' pl406' : '') + '" data-epq="' + n + '" role="group" aria-label="' + NM + ' rating for episode ' + n + '">' +
+      '<div class="epqh"><span>★ ' + NM + ' · <span class="ek406">EP ' + n + '</span></span><b class="rd406' + (v == null ? ' nil' : '') + '">' + (v == null ? '–.–' : f1(v)) + '</b>' +
+      '<button type="button" class="btn" data-epp="' + OT + '" aria-label="Rate as ' + OT + '">⇄ ' + (OT === 'lewy' ? 'L' : 'S') + '</button><button type="button" class="btn" data-epqx="1" aria-label="Close">✕</button></div>' +
+      '<div class="g406 w406">' + W + '</div><div class="tl406">+ DECIMAL (OPTIONAL)</div><div class="g406 t406' + (w == null || w === 10 ? ' off' : '') + '">' + T + '</div>' +
+      '<div class="ft406"><button type="button" data-erc="1"' + (c == null && v == null ? ' disabled' : '') + '>CLEAR</button><button type="button" class="ok" data-erd="1">' + (v == null ? '✕ CLOSE' : '✓ DONE · ' + f1(v)) + '</button></div></div>'; };
+  /* saving: local first, one debounced setEpRating per episode (the final value wins), never overwrite newer local picks with an older reply */
+  var PEND = {}, FLY = {};
+  function busy(title) { var k = String(title).trim() + '|'; return Object.keys(PEND).some(function (x) { return x.indexOf(k) === 0; }) || (FLY[String(title).trim()] || 0) > 0; }
+  function send(key) { var q = PEND[key]; if (!q) return; clearTimeout(q.h); delete PEND[key]; var tt = String(q.r.title).trim(); FLY[tt] = (FLY[tt] || 0) + 1;
+    run('setEpRating', [q.r.title, q.p, q.n, q.v], function (o) { FLY[tt]--; if (o && !busy(q.r.title)) q.r.ep = Object.assign({}, q.r.ep || {}, o); }, function () { FLY[tt]--; toast('⚠ EP ' + q.n + ' rating didn\u2019t save — tap it again'); }); }
+  function flush() { Object.keys(PEND).forEach(send); }
+  function save(r, p, n, v, now) { r.ep = r.ep || {}; r.ep[p] = r.ep[p] || { e: epOf(r, p) }; r.ep[p].r = r.ep[p].r || {}; if (v) r.ep[p].r[n] = v; else delete r.ep[p].r[n];
+    var key = String(r.title).trim() + '|' + p + '|' + n, q = PEND[key]; if (q) clearTimeout(q.h); q = PEND[key] = { r: r, p: p, n: n, v: v }; q.h = setTimeout(function () { send(key); }, now ? 0 : 900);
+    if (v && n > epOf(r, p) && typeof EPQ !== 'undefined' && typeof epSend === 'function') { try { var k = String(r.title).trim() + '|' + p, e = EPQ[k] = EPQ[k] || {}; e.want = n; e.seq = Date.now() * 10 + ((e.c = ((e.c || 0) + 1) % 10)); epSend(r, p); } catch (x) {} } }
+  window.addEventListener('pagehide', flush); document.addEventListener('visibilitychange', function () { if (document.hidden) flush(); });
+  /* 3) anchored redraws: the row you tapped stays under your finger, the picker scrolls into view just enough (instant, no smooth drift mid-tap) */
+  var AN = null, WANT = 0;
+  function scroller(el) { for (var x = el && el.parentElement; x && x !== document.body; x = x.parentElement) { var o = getComputedStyle(x).overflowY; if ((o === 'auto' || o === 'scroll') && x.scrollHeight > x.clientHeight) return x; } return document.scrollingElement || document.documentElement; }
+  function topLimit(S) { var top = S === document.scrollingElement ? 0 : S.getBoundingClientRect().top, b = document.querySelector('#detailBody .tb99'); if (b && getComputedStyle(b).position === 'sticky') { var br = b.getBoundingClientRect(); if (br.bottom > top) top = br.bottom; } return top + 6; }
+  function mark() { var x = $('epx'); if (!x) return; [].forEach.call(x.querySelectorAll('.epq'), function (q) { q.__s99 = 1; var row = x.querySelector('[data-e99="' + q.dataset.epq + '"]'), lab = row && row.querySelector('.n'), ek = q.querySelector('.ek406'); if (lab && ek && ek.textContent !== lab.textContent) ek.textContent = lab.textContent; if (row && !row.classList.contains('op406')) row.classList.add('op406'); }); }
+  function post() { mark(); var x = $('epx'); if (!x) return;
+    if (AN) { var nr = x.querySelector(AN.sel); if (nr) { var S = scroller(nr), d = nr.getBoundingClientRect().top - AN.top; if (Math.abs(d) > 1) S.scrollTop += d; } AN = null; }
+    if (WANT) { WANT = 0; var q = x.querySelector('.epq'); if (q) { var S2 = scroller(q), top = topLimit(S2), bot = (S2 === document.scrollingElement ? innerHeight : Math.min(innerHeight, S2.getBoundingClientRect().bottom)) - 10, row = q.previousElementSibling, rr = row && row.classList.contains('e99') ? row.getBoundingClientRect() : q.getBoundingClientRect(), qr = q.getBoundingClientRect();
+        if (qr.bottom > bot) S2.scrollTop += Math.min(qr.bottom - bot, rr.top - top); else if (rr.top < top) S2.scrollTop -= top - rr.top; } } }
+  var _er = epRedraw; epRedraw = function (r) { var o = _er.apply(this, arguments); try { post(); } catch (e) {} return o; };
+  try { new MutationObserver(function () { try { mark(); } catch (e) {} }).observe($('detail'), { childList: true, subtree: true }); } catch (e) {}
+  /* 4) taps: rows toggle the picker; picker buttons act on first tap; a redraw that lands mid-tap (progress / save reply / TMDB load) no longer eats it */
+  window.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('#epx [data-erw],#epx [data-ert],#epx [data-erc],#epx [data-erd],#epx [data-epi],#epx [data-epc],#epx [data-epqx],#epx [data-epp]'); if (!b) return;
+    if (SW && e.isTrusted && Date.now() - SW.t < 600 && b.matches(SW.sel)) { SW = null; e.stopImmediatePropagation(); e.preventDefault(); return; }
+    var r = cur(); if (!r || !window.EPR) return;
+    if (b.dataset.epi || b.dataset.epc) { var n = Number(b.dataset.epi || b.dataset.epc); flush();
+      if (b.dataset.epi && EPR.rate && EPR.rate.row === r.row && EPR.rate.n === n) { e.stopImmediatePropagation(); e.preventDefault(); EPR.rate = null; AN = { sel: '[data-e99="' + n + '"]', top: b.getBoundingClientRect().top }; epRedraw(r); return; }
+      if (b.dataset.epi) AN = { sel: '[data-e99="' + n + '"]', top: b.getBoundingClientRect().top }; WANT = 1; try { SFX.tap && SFX.tap(); } catch (x) {} return; /* the original handler opens it; epRedraw → post() anchors */ }
+    if (b.dataset.epqx || b.dataset.epp) { flush(); if (b.dataset.epp && EPR.rate) EPR.rate.w = null; return; }
+    e.stopImmediatePropagation(); e.preventDefault(); if (!EPR.rate || EPR.rate.row !== r.row) return;
+    var p = pl(), N = EPR.rate.n, c = epR(r, p, N), w0 = EPR.rate.p === p && EPR.rate.w != null ? EPR.rate.w : c != null ? Math.floor(c) : null;
+    if (b.dataset.erw) { var w = Number(b.dataset.erw); EPR.rate.w = w; EPR.rate.p = p; save(r, p, N, w, w === 10); try { SFX.coin && SFX.coin(); } catch (x) {}
+      if (w === 10) { EPR.rate = null; if (typeof confetti === 'function') confetti(); toast('👑 EP ' + N + ' → 10'); } AN = { sel: '[data-e99="' + N + '"]', top: (($('epx').querySelector('[data-e99="' + N + '"]') || b).getBoundingClientRect()).top }; epRedraw(r); return; }
+    if (b.dataset.ert) { if (w0 == null || w0 >= 10) return; var v = r1(w0 + Number(b.dataset.ert) / 10); save(r, p, N, v, true); EPR.rate = null; try { SFX.coin && SFX.coin(); } catch (x) {} toast(tico(v) + ' EP ' + N + ' → ' + f1(v)); AN = { sel: '[data-e99="' + N + '"]', top: (($('epx').querySelector('[data-e99="' + N + '"]') || b).getBoundingClientRect()).top }; epRedraw(r); return; }
+    if (b.dataset.erc) { save(r, p, N, 0, true); EPR.rate = null; toast('EP ' + N + ' cleared'); epRedraw(r); return; }
+    if (b.dataset.erd) { var vv = epR(r, p, N); flush(); EPR.rate = null; if (vv != null) toast(tico(vv) + ' EP ' + N + ' → ' + f1(vv)); AN = { sel: '[data-e99="' + N + '"]', top: (($('epx').querySelector('[data-e99="' + N + '"]') || b).getBoundingClientRect()).top }; epRedraw(r); return; } }, true);
+  var TSEL = '[data-erw],[data-ert],[data-erc],[data-erd],[data-epi],[data-epc],[data-epqx],[data-epp]', TG = null, SW = null;
+  function selOf(el) { for (var i = 0, A = TSEL.split(','); i < A.length; i++) { var a = A[i].slice(1, -1); if (el.hasAttribute(a)) return '[' + a + '="' + el.getAttribute(a) + '"]'; } return null; }
+  window.addEventListener('pointerdown', function (e) { TG = null; var b = e.target.closest && e.target.closest('#epx ' + TSEL.split(',').join(',#epx ')); if (!b || e.button > 0) return; TG = { el: b, sel: selOf(b), x: e.clientX, y: e.clientY, t: Date.now() }; }, true);
+  window.addEventListener('pointercancel', function () { TG = null; }, true);
+  window.addEventListener('pointerup', function (e) { var g = TG; TG = null; if (!g || !g.sel || g.el.isConnected || Math.abs(e.clientX - g.x) > 12 || Math.abs(e.clientY - g.y) > 12 || Date.now() - g.t > 900) return;
+    var x = $('epx'), nb = x && x.querySelector(g.sel); if (!nb) return; SW = { sel: g.sel, t: Date.now() }; nb.click(); }, true);
+  window.EPR406 = { flush: flush, pend: PEND };
+})();
 </script>
 </body></html>
 <!--RC305T-->
