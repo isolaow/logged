@@ -174,6 +174,9 @@ function mock(fn, args, who) { if (global.MOCKX) { const x = global.MOCKX(fn, ar
         var L = cat === '10' ? MUS : cat === '1' || cat === '24' ? FILM : cat ? FILM.concat(MUS.slice(0, 4)) : MUS.slice(0, 8).concat(FILM.slice(0, 3));
         return { cats: [{ id: '', t: 'ALL' }, { id: '10', t: 'MUSIC' }, { id: '20', t: 'GAMING' }, { id: '23', t: 'COMEDY' }, { id: '1', t: 'FILM' }], rec: V(FILM.slice(0, 2).concat(MUS.slice(0, 2))), trending: V(L) };
       case 'ytSearch': var qq = String(args[0] || '').toLowerCase(), hit = D68.yt.filter(function (y) { return (y[1] + ' ' + y[2]).toLowerCase().indexOf(qq) >= 0; }); return (hit.length ? hit : D68.yt.slice(0, 6)).map(function (y) { return { k: 'video', id: y[0], t: y[1], ch: y[2], th: 'https://i.ytimg.com/vi/' + y[0] + '/mqdefault.jpg' }; });
+      case 'bootBundle': return (function () { var BR = {}, BE = {}, OKF = { appConfig: 1, connStatus: 1, getSettings: 1, getAlerts: 1, triviaStats: 1, getInterest: 1, getOurTop: 1, lfmUsers: 1, getNotForMe: 1, getMoodHist: 1, getTriviaPush: 1, getAch: 1, triviaDays: 1, qqAll: 1 }; /* 4.05 demo: same whitelist as the server */
+        (args[0] || []).slice(0, 20).forEach(function (c) { var k = String(c && c.k); if (!c || !OKF[c.fn]) { BE[k] = 'not allowed in bundle'; return; } try { var v = mock(c.fn, c.args || [], who); if (v && v.__err) BE[k] = v.__err; else BR[k] = v && typeof v === 'object' && '__ok' in v ? v.__ok : (v === undefined ? null : v); } catch (e) { BE[k] = String(e && e.message || e); } });
+        return { r: BR, e: BE }; })();
       case 'getMeta': var o = {}; (args[0] || []).forEach(function (x) { if (!x) return; var t = String(x.title || ''), h = 0; for (var i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) >>> 0; var m = meta[t] = meta[t] || {}, tv = x.type === 'TV Show', b = t.replace(/\s*\((S\d+|\d{4})\)\s*$/, ''); if (!m.syn) m.syn = b + (tv ? ' follows a tight-knit group through one wild season — big swings, sharp writing and a finale people still argue about.' : ' is a ' + ['gripping', 'funny', 'tense', 'big-hearted', 'twisty'][h % 5] + ' story about people pushed to the edge, told with style and a killer last act.'); if (!m.rating) m.rating = (6.4 + (h % 25) / 10).toFixed(1); if (!m.ratingSrc) m.ratingSrc = 'TMDB'; if (tv && !m.seasons) m.seasons = 1 + h % 5; if (!tv && !m.runtime) m.runtime = 90 + h % 70; if (!m.director && !tv) m.director = ['Greta Gerwig', 'Denis Villeneuve', 'Bong Joon-ho', 'Edgar Wright', 'Jordan Peele'][h % 5]; if (!m.creator && tv) m.creator = ['Dan Erickson', 'Vince Gilligan', 'Phoebe Waller-Bridge', 'Jesse Armstrong'][h % 4]; o[t] = m; }); return o; }
     return _mock68.apply(this, arguments); };
   var _fetch = window.fetch.bind(window), J = function (o) { return Promise.resolve(new Response(JSON.stringify(o), { status: 200, headers: { 'Content-Type': 'application/json' } })); };
@@ -1781,6 +1784,39 @@ function run(fn, args, ok, fail) {
   var r = google.script.run.withSuccessHandler(ok || function () {}).withFailureHandler(function (e) { if (window.rc404 && window.rc404(fn, args, e, ok, fail)) return; toast('⚠ ' + (e.message || e)); (fail || function () {})(e); });
   r[fn].apply(r, args || []);
 }
+/* ===== 4.05 — boot RPC diet: the non-critical reads fired in the first seconds (settings, alerts, trivia, achievements…) are collected
+   and sent as ONE bootBundle request once getData has painted. If the server doesn't know bootBundle yet (older backend), they fall back to
+   single calls, staggered ~300 ms apart while idle — never a burst at t=0. Identical calls in the window share one request. ===== */
+var BB405 = (function () {
+  var FNS = { appConfig: 1, connStatus: 1, getSettings: 1, getAlerts: 1, triviaStats: 1, getInterest: 1, getOurTop: 1, lfmUsers: 1, getNotForMe: 1, getMoodHist: 1, getTriviaPush: 1, getAch: 1, triviaDays: 1, qqAll: 1 };
+  var T0 = Date.now(), open = true, Q = [], by = {}, timer = 0, dataOk = false, stats = { bundled: 0, single: 0, deduped: 0, mode: '' };
+  var LS = window.localStorage, noBB = function () { try { return +(LS.getItem('lg_bb405no') || 0) > Date.now(); } catch (e) { return false; } };
+  var idle = function (f, ms) { return window.requestIdleCallback ? requestIdleCallback(f, { timeout: ms || 1500 }) : setTimeout(f, 50); };
+  function deliver(it, ok, v) { it.cbs.forEach(function (c) { try { ok ? c.ok && c.ok(v) : c.fail && c.fail(v); } catch (e) { setTimeout(function () { throw e; }, 0); } }); }
+  function singles(L) { stats.mode = stats.mode || 'single'; var i = 0;
+    (function next() { if (i >= L.length) return; var it = L[i++]; stats.single++;
+      _run405(it.fn, it.args, function (v) { deliver(it, true, v); }, function (e) { deliver(it, false, e); });
+      setTimeout(function () { idle(next, 1200); }, 300); })(); }
+  function send() { if (!open) return; open = false; clearTimeout(timer); var L = Q; Q = []; by = {}; if (!L.length) return;
+    if (!window.__rpc || noBB() || !LS.getItem('lg_token')) return singles(L);
+    stats.bundled = L.length; stats.mode = 'bundle';
+    window.__rpc('bootBundle', [L.map(function (it, i) { return { k: String(i), fn: it.fn, args: it.args || [] }; })], 40000).then(function (o) {
+      var R = (o && o.r) || {}, E = (o && o.e) || {}, miss = [];
+      L.forEach(function (it, i) { var k = String(i); if (k in R) deliver(it, true, R[k]); else if (k in E) deliver(it, false, new Error(E[k])); else miss.push(it); });
+      if (miss.length) singles(miss);
+    }, function (e) { if (e && e.server && /unknown fn|not wired/i.test(e.message || '')) { try { LS.setItem('lg_bb405no', String(Date.now() + 6 * 36e5)); } catch (x) {} }
+      stats.mode = 'fallback'; singles(L); }); }
+  function arm() { clearTimeout(timer); var wait = Math.max(0, 3300 - (Date.now() - T0)); timer = setTimeout(function () { if (dataOk || Date.now() - T0 > 8000) idle(send, 1500); else arm2(); }, wait); }
+  function arm2() { timer = setTimeout(function () { if (dataOk || Date.now() - T0 > 8000) idle(send, 1500); else arm2(); }, 400); }
+  return { want: function (fn, args, ok, fail) { if (!open || !FNS[fn]) return false; var key = fn + '|' + JSON.stringify(args || []);
+      if (by[key]) { by[key].cbs.push({ ok: ok, fail: fail }); stats.deduped++; return true; }
+      var it = by[key] = { fn: fn, args: args || [], cbs: [{ ok: ok, fail: fail }] }; Q.push(it); if (!timer) arm(); return true; },
+    dataOk: function () { dataOk = true; }, flush: send, stats: stats, FNS: FNS };
+})();
+var _run405 = run; run = function (fn, args, ok, fail) {
+  if (fn === 'getData' && !BB405._g) { BB405._g = 1; var o0 = ok; ok = function () { BB405.dataOk(); return o0 && o0.apply(this, arguments); }; var f0 = fail; fail = function () { BB405.dataOk(); return f0 && f0.apply(this, arguments); }; }
+  if (BB405.want(fn, args, ok, fail)) return;
+  return _run405.apply(this, [fn, args, ok, fail]); };
 
 /* ---------- 8-bit sound ---------- */
 var AC = null, muted = localStorage.getItem('wl_mute') === '1';
@@ -5522,9 +5558,26 @@ var EPRT = (function () { try { return JSON.parse(localStorage.lg_eprt || '{}');
 function epWatched(r, p) { var w = r[p + 'Watched'], e = epOf(r, p), L = EPRT[String(r.title).trim()], tot = L && L.r.length ? L.r.length : epTot(r); return isY(w) ? tot : Math.min(e || 0, tot || e || 0); }
 function epMinutes(r, n) { var L = EPRT[String(r.title).trim()], m = M(r), avg = (L && L.avg) || m.epRuntime || 0, s = 0; for (var i = 0; i < n; i++) { var v = L && L.r[i]; s += v || avg; } return s; }
 runtimeOf = function (r, p) { var m = M(r); if (r.type !== 'TV Show') return m.runtime || 0; var n = p ? epWatched(r, p) : Math.max(epWatched(r, 'sam'), epWatched(r, 'lewy')); return epMinutes(r, n); };
-function eprtLoad() { var need = rows.filter(function (r) { return r.type === 'TV Show' && !EPRT[String(r.title).trim()] && (isY(r.samWatched) || isY(r.lewyWatched) || epOf(r, 'sam') || epOf(r, 'lewy')); }).slice(0, 25); if (!need.length) return;
-  run('epRuntimes', [need.map(function (r) { return { t: String(r.title).trim(), id: M(r).tmdb || 0 }; })], function (o) { var got = 0; Object.keys(o || {}).forEach(function (k) { EPRT[k] = o[k]; got++; }); try { localStorage.lg_eprt = JSON.stringify(EPRT); } catch (e) {} if (got) { if (view === 'stats') renderStats(); setTimeout(eprtLoad, 1500); } }, function () {}); }
-setTimeout(eprtLoad, 4000);
+/* 4.05: episode runtimes load politely — one batch of up to 25 shows at a time, only titles not already known, a title the server couldn't
+   answer is skipped for 3 days (lg_eprt_miss), it backs off between rounds (2 s → 4 s → 8 s…), stops after 6 rounds per session or when a
+   round brings nothing new, waits for the phone to be idle and pauses while the app is hidden. */
+var EPRT_MISS = (function () { try { return JSON.parse(localStorage.lg_eprt_miss || '{}'); } catch (e) { return {}; } })(), EPRT405 = { rounds: 0, busy: 0, gap: 2000, done: 0, sent: 0, tried: {} };
+function eprtNeed405() { var now = Date.now(), seen = {}; return rows.filter(function (r) { var t = String(r.title).trim(); if (seen[t]) return false; seen[t] = 1;
+  return r.type === 'TV Show' && !EPRT[t] && !(EPRT_MISS[t] > now) && (isY(r.samWatched) || isY(r.lewyWatched) || epOf(r, 'sam') || epOf(r, 'lewy')); }); }
+function eprtLoad() { if (EPRT405.busy || EPRT405.done) return; if (document.hidden) { document.addEventListener('visibilitychange', function f() { if (!document.hidden) { document.removeEventListener('visibilitychange', f); eprtLater405(1500); } }); return; }
+  if (EPRT405.rounds >= 6) { EPRT405.done = 1; return; }
+  var need = eprtNeed405().slice(0, 25); if (!need.length) { EPRT405.done = 1; return; }
+  EPRT405.busy = 1; EPRT405.rounds++; EPRT405.sent += need.length;
+  run('epRuntimes', [need.map(function (r) { return { t: String(r.title).trim(), id: M(r).tmdb || 0 }; })], function (o) { EPRT405.busy = 0; o = o || {}; var got = 0, until = Date.now() + 3 * 864e5;
+    var miss = []; need.forEach(function (r) { var t = String(r.title).trim(), v = o[t]; if (v && Array.isArray(v.r)) { if (!EPRT[t]) got++; EPRT[t] = v; delete EPRT_MISS[t]; } else miss.push(t); });
+    /* unanswered: the server may have run out of time this round, so try once more this session; a second miss (or a round with nothing new) = skip for 3 days */
+    miss.forEach(function (t) { var n = EPRT405.tried[t] = (EPRT405.tried[t] || 0) + 1; if (n >= 2 || !got) EPRT_MISS[t] = until; });
+    try { localStorage.lg_eprt = JSON.stringify(EPRT); localStorage.lg_eprt_miss = JSON.stringify(EPRT_MISS); } catch (e) {}
+    if (got && view === 'stats') renderStats();
+    if (!got) { EPRT405.done = 1; return; } EPRT405.gap = Math.min(30000, EPRT405.gap * 2); eprtLater405(EPRT405.gap); },
+  function () { EPRT405.busy = 0; EPRT405.gap = Math.min(60000, EPRT405.gap * 3); if (EPRT405.rounds < 3) eprtLater405(EPRT405.gap); else EPRT405.done = 1; }); }
+function eprtLater405(ms) { setTimeout(function () { window.requestIdleCallback ? requestIdleCallback(eprtLoad, { timeout: 4000 }) : eprtLoad(); }, ms); }
+eprtLater405(9000);
 /* ---------- LOGGING FILTER (Interested-style sheet; combinable; persisted; counts) ---------- */
 var LGF = (function () { var d = { type: [], who: [], prog: [], g: [], svc: [], last: '', sort: 'recent' }; try { return Object.assign(d, JSON.parse(localStorage.lg_lgf || '{}')); } catch (e) { return d; } })();
 function lfSave() { try { localStorage.lg_lgf = JSON.stringify(LGF); } catch (e) {} }
@@ -8252,7 +8305,7 @@ window.APPV58 = 'r91';
   var _od = openDetail; openDetail = function () { var r = _od.apply(this, arguments); mv(); setTimeout(mv, 0); setTimeout(mv, 400); setTimeout(mv, 2000); return r; };
   ['ostRedraw', 'ostxDraw'].forEach(function (n) { var f = window[n]; if (typeof f === 'function') window[n] = function () { var r = f.apply(this, arguments); mv(); return r; }; });
   /* stale-build guard: a home-screen app resumed from the background keeps old code; reload once when sw.js has a newer build */
-  var BUILD = /\/app-rc\//.test(location.pathname) ? 'logged-rc-1792770404' : 'logged-202610280114', busy = function () { var a = document.activeElement; return (a && /INPUT|TEXTAREA/.test(a.tagName)) || (window.OXA && !OXA.paused) || document.querySelector('#add.open,#fb83.open,#trv.open,#ytpage.open .yv'); };
+  var BUILD = /\/app-rc\//.test(location.pathname) ? 'logged-rc-1793111240' : 'logged-202610292238', busy = function () { var a = document.activeElement; return (a && /INPUT|TEXTAREA/.test(a.tagName)) || (window.OXA && !OXA.paused) || document.querySelector('#add.open,#fb83.open,#trv.open,#ytpage.open .yv'); };
   var last = 0; function check() { if (/demo=1/.test(location.search) || BUILD.indexOf('__') === 0 || Date.now() - last < 60000) return; last = Date.now();
     fetch('sw.js?b=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.ok ? r.text() : ''; }).then(function (t) { var m = t.match(/var V = '([^']+)'/); if (!m || m[1] === BUILD || busy()) return;
       try { if (sessionStorage.lg_rl89 === m[1]) return; sessionStorage.lg_rl89 = m[1]; } catch (e) {} try { toast('⟳ UPDATING LOGGED…'); } catch (e) {}
@@ -10235,4 +10288,8 @@ html body header #lb88[aria-expanded="true"] #ss88::after{transform:rotate(180de
   try { window.APPV58 = '4.04'; if (window.PN93 && PN93.prepend) PN93.prepend({ v: '4.04', d: '28 Oct 2026', lines: ['Tapping LOG IT twice (or a slow connection) no longer makes double entries — the button shows LOGGING… until it\u2019s saved.', 'If you log something that\u2019s already in your log, it opens the one you have (or lets you add it again).', 'If the connection is slow, the app checks whether it saved before saying it failed.', 'Shows with several seasons are back to one card with a SEASONS badge.'] }); } catch (e) {}
 })();
 </script>
+<script id="v405">/* ===== 4.05 — data safety + speed (preview) ===== */
+(function () { try { window.APPV58 = '4.05'; if (window.PN93 && PN93.prepend) PN93.prepend({ v: '4.05', d: '28 Oct 2026', lines: ['Opens faster: the extras (settings, trivia, achievements, alerts\u2026) now load in one go after your list appears, instead of a dozen separate requests at start-up.', 'Episode run-times for watch-time stats load quietly in the background and stop once they\u2019re done (no more repeat checking).', 'Safer saves: episode ratings, theme songs and YouTube watched marks can\u2019t overwrite each other when you both tap at once, and the server\u2019s cache file is saved more carefully.'] }); } catch (e) {} })();
+</script>
 </body></html>
+<!--RC305T-->
