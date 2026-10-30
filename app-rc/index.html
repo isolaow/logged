@@ -39,7 +39,7 @@ function mock(fn, args, who) { if (global.MOCKX) { const x = global.MOCKX(fn, ar
     case 'setEpRating': { const [t, p, n, v] = args, o = S.ep[t] = S.ep[t] || JSON.parse(JSON.stringify((rows.find(x => x.title === t) || {}).ep || {})); o[p] = o[p] || { e: 0 }; o[p].r = o[p].r || {}; if (Number(v)) o[p].r[n] = Number(v); else delete o[p].r[n]; return JSON.parse(JSON.stringify(o)); }
     case 'setThemes': { const [t, p, L] = args, b = t.replace(/\s*\(S\d+\)$/, ''); S.themes[b] = S.themes[b] || {}; S.themes[b][p] = L; return S.themes[b]; }
     case 'updateEntry': { S.upd++; const r = rows.find(x => x.row === args[0]); return Object.assign({}, r, args[1]); }
-    case 'addEntry': return R(99, args[0].title, args[0].type || 'Movie', args[0]);
+    case 'addEntry': { const nr = R(rows.reduce((m, x) => Math.max(m, x.row), 1) + 1, args[0].title, args[0].type || 'Movie', args[0]); rows.push(nr); return JSON.parse(JSON.stringify(nr)); }
     case 'searchTitles': return { results: [{ id: 1, tv: false, title: 'Oppenheimer', year: 2023, poster: '', genres: ['Drama'], via: 'Christopher Nolan (dir.)' }] };
     case 'songVideo': return { id: 'fJ9rUzIMcZQ', t: 'Queen – Bohemian Rhapsody (Official Video)', ch: 'Queen Official' };
     case 'ytAutoLog': S.ytlog.push(args[0]); return { title: args[0].t, logged: true };
@@ -82,6 +82,8 @@ function mock(fn, args, who) { if (global.MOCKX) { const x = global.MOCKX(fn, ar
       else if (k === 3) { o.samWatched = 'As we speak'; o.ep.sam = { e: 1 + h(i, +x[3] - 1) }; }
       else if (k === 4) { o.lewyWatched = 'As we speak'; o.ep.lewy = { e: 1 + h(i + 2, +x[3] - 1) }; }
       rows.push(R(n++, t, 'TV Show', o)); meta[t] = { year: x[1], eps: +x[3], runtime: 45, genres: x[2] }; });
+    /* 4.06: Hell's Kitchen S5 (15 eps, real TMDB id) to reproduce long-season episode rating on a phone: Sam on ep 9, Lewy on ep 7, a few rated */
+    rows.push(R(n++, "Hell's Kitchen (S5)", 'TV Show', { genres: 'Reality', suggestedBy: 'Sam', samWatched: 'As we speak', lewyWatched: 'As we speak', ep: { sam: { e: 9, r: { 2: 7, 3: 8, 5: 6 } }, lewy: { e: 7, r: { 2: 6, 4: 8 } } } })); meta["Hell's Kitchen (S5)"] = { year: '2009', eps: 15, runtime: 43, genres: 'Reality', tmdb: 2370, seasons: 23 };
     D68.yt.forEach(function (y, i) { rows.push(R(n++, y[1], 'YouTube', { samWatched: i % 2 ? 'Yes' : 'Not yet', lewyWatched: i % 2 ? 'Not yet' : 'Yes', suggestedBy: i % 2 ? 'Sam' : 'Lewy', ytm: { k: 'video', id: y[0], ch: y[2] } })); if (i % 5 === 0) { var r = rows[rows.length - 1]; r.samWatched = r.lewyWatched = 'Yes'; } });
     Object.assign(meta['Dune'] = meta['Dune'] || {}, { year: '2021', director: 'Denis Villeneuve', runtime: 155 }); Object.assign(meta['Past Lives'] = meta['Past Lives'] || {}, { year: '2023', director: 'Celine Song', runtime: 106 });
     Object.assign(meta['Garfield'] = meta['Garfield'] || {}, { year: '2004', runtime: 80 }); Object.assign(meta['Shrek'], { year: '2001', director: 'Andrew Adamson' }); Object.assign(meta['The Bear (S1)'] = meta['The Bear (S1)'] || {}, { year: '2022', eps: 8, runtime: 30 });
@@ -138,7 +140,8 @@ function mock(fn, args, who) { if (global.MOCKX) { const x = global.MOCKX(fn, ar
       case 'lfmUsers': return { sam: LFMU.sam, lewy: LFMU.lewy };
       case 'lfmSetUser': LFMU[args[0]] = String(args[1] || '').trim(); return { user: LFMU[args[0]] };
       case 'tmdbSeasons': return { seasons: [{ n: 1, eps: 9, year: 2022 }, { n: 2, eps: 10, year: 2025 }] };
-      case 'tmdbSeasonEps': { var EN = ['Pilot', 'Chapter Two', 'Chapter Three', 'Chapter Four', 'Chapter Five', 'Chapter Six', 'Chapter Seven', 'Chapter Eight', 'Chapter Nine', 'Finale']; var nE = Number(args[1]) === 2 ? 10 : 9; return { n: Number(args[1]), eps: EN.slice(0, nE).map(function (t, i) { return { n: i + 1, name: t, ov: 'Demo episode ' + (i + 1) + ': a longer description from TMDB season data so the card shows two or three lines and can be tapped to expand. Somebody makes a choice that changes everything for the rest of the season.', rt: 42 + (i % 5) * 3, air: '2022-0' + (2 + (i % 7)) + '-1' + (i % 9) }; }) }; }
+      case 'tmdbSeasonEps': if (Number(args[0]) === 2370) return { n: Number(args[1]), eps: ['18 Chefs Compete', '17 Chefs Compete', '16 Chefs Compete', '15 Chefs Compete', '14 Chefs Compete', '13 Chefs Compete', '12 Chefs Compete', '11 Chefs Compete', '10 Chefs Compete', '9 Chefs Compete', '8 Chefs Compete', '7 Chefs Compete', '6 Chefs Compete', '5 Chefs Compete', 'Winner Chosen'].map(function (t, i) { return { n: i + 1, name: t, ov: 'Demo Hell\u2019s Kitchen S5 episode ' + (i + 1) + '.', rt: 43, air: '2009-01-' + ('0' + (1 + i)).slice(-2) }; }) };
+      { var EN = ['Pilot', 'Chapter Two', 'Chapter Three', 'Chapter Four', 'Chapter Five', 'Chapter Six', 'Chapter Seven', 'Chapter Eight', 'Chapter Nine', 'Finale']; var nE = Number(args[1]) === 2 ? 10 : 9; return { n: Number(args[1]), eps: EN.slice(0, nE).map(function (t, i) { return { n: i + 1, name: t, ov: 'Demo episode ' + (i + 1) + ': a longer description from TMDB season data so the card shows two or three lines and can be tapped to expand. Somebody makes a choice that changes everything for the rest of the season.', rt: 42 + (i % 5) * 3, air: '2022-0' + (2 + (i % 7)) + '-1' + (i % 9) }; }) }; }
       case 'qqAll': return JSON.parse(JSON.stringify(QQ76));
       case 'qqSet': { var qt = String(args[0] || '').trim(); QQ76[qt] = QQ76[qt] || { sam: '', lewy: '' }; QQ76[qt][args[1]] = String(args[2] || '').slice(0, 200); return QQ76[qt]; }
       case 'lfmGet': return lfmDemo(args[0], args[1]);
@@ -166,7 +169,7 @@ function mock(fn, args, who) { if (global.MOCKX) { const x = global.MOCKX(fn, ar
         var score = function (t) { t = String(t || '').toLowerCase(); if (t === q) return 100; if (t.indexOf(q) === 0) return 90; if (t.indexOf(q) >= 0) return 70;
           var hit = 0; toks.forEach(function (w) { if (w.length >= 3 && t.indexOf(w) >= 0) hit++; }); return hit ? 40 + hit * 10 : (toks[0].length >= 4 && t.slice(0, 3) === toks[0].slice(0, 3) ? 15 : 0); };
         var POOL = rows.concat((typeof FRESH68 !== 'undefined' ? FRESH68 : []).map(function (f) { return { row: f.id, title: f.title, type: f.tv ? 'TV Show' : 'Movie', meta: { year: f.year } }; }), [{ row: 1, title: 'Oppenheimer', type: 'Movie', meta: { year: 2023 } }]);
-        var L = POOL.map(function (r) { return { id: r.row || r.title, tv: r.type === 'TV Show', overview: 'Demo synopsis for ' + r.title + '.', title: r.title, year: (r.meta && r.meta.year) || '', poster: posters[r.title] || '', genres: ((r.meta && r.meta.genres) || '').split(/,\s*/), via: '', _s: score(r.title) }; }).filter(function (x, i, A) { return x._s >= 40 && A.findIndex(function (y) { return y.title === x.title; }) === i; }).sort(function (a, b) { return b._s - a._s; }).slice(0, 8);
+        var L = POOL.map(function (r) { return { id: r.row || r.title, tv: r.type === 'TV Show', overview: 'Demo synopsis for ' + r.title + '.', title: r.title, year: (r.meta && r.meta.year) || '', poster: posters[r.title] || '', genres: ((r.meta && r.meta.genres) || '').split(/,\s*/), via: '', _s: score(r.title) }; }).filter(function (x, i, A) { return x._s >= 40 && A.findIndex(function (y) { return y.title === x.title; }) === i; }).sort(function (a, b) { return b._s - a._s; }).slice(0, 14);
         return { results: L }; })();
       case 'tmdbFresh': return FRESH68.slice();
       case 'ytFeed': var cat = String((args[0] || {}).cat || ''), V = function (L) { return L.map(function (y) { return { id: y[0], t: y[1], ch: y[2], th: 'https://i.ytimg.com/vi/' + y[0] + '/mqdefault.jpg' }; }); };
@@ -174,6 +177,9 @@ function mock(fn, args, who) { if (global.MOCKX) { const x = global.MOCKX(fn, ar
         var L = cat === '10' ? MUS : cat === '1' || cat === '24' ? FILM : cat ? FILM.concat(MUS.slice(0, 4)) : MUS.slice(0, 8).concat(FILM.slice(0, 3));
         return { cats: [{ id: '', t: 'ALL' }, { id: '10', t: 'MUSIC' }, { id: '20', t: 'GAMING' }, { id: '23', t: 'COMEDY' }, { id: '1', t: 'FILM' }], rec: V(FILM.slice(0, 2).concat(MUS.slice(0, 2))), trending: V(L) };
       case 'ytSearch': var qq = String(args[0] || '').toLowerCase(), hit = D68.yt.filter(function (y) { return (y[1] + ' ' + y[2]).toLowerCase().indexOf(qq) >= 0; }); return (hit.length ? hit : D68.yt.slice(0, 6)).map(function (y) { return { k: 'video', id: y[0], t: y[1], ch: y[2], th: 'https://i.ytimg.com/vi/' + y[0] + '/mqdefault.jpg' }; });
+      case 'bootBundle': return (function () { var BR = {}, BE = {}, OKF = { appConfig: 1, connStatus: 1, getSettings: 1, getAlerts: 1, triviaStats: 1, getInterest: 1, getOurTop: 1, lfmUsers: 1, getNotForMe: 1, getMoodHist: 1, getTriviaPush: 1, getAch: 1, triviaDays: 1, qqAll: 1 }; /* 4.05 demo: same whitelist as the server */
+        (args[0] || []).slice(0, 20).forEach(function (c) { var k = String(c && c.k); if (!c || !OKF[c.fn]) { BE[k] = 'not allowed in bundle'; return; } try { var v = mock(c.fn, c.args || [], who); if (v && v.__err) BE[k] = v.__err; else BR[k] = v && typeof v === 'object' && '__ok' in v ? v.__ok : (v === undefined ? null : v); } catch (e) { BE[k] = String(e && e.message || e); } });
+        return { r: BR, e: BE }; })();
       case 'getMeta': var o = {}; (args[0] || []).forEach(function (x) { if (!x) return; var t = String(x.title || ''), h = 0; for (var i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) >>> 0; var m = meta[t] = meta[t] || {}, tv = x.type === 'TV Show', b = t.replace(/\s*\((S\d+|\d{4})\)\s*$/, ''); if (!m.syn) m.syn = b + (tv ? ' follows a tight-knit group through one wild season — big swings, sharp writing and a finale people still argue about.' : ' is a ' + ['gripping', 'funny', 'tense', 'big-hearted', 'twisty'][h % 5] + ' story about people pushed to the edge, told with style and a killer last act.'); if (!m.rating) m.rating = (6.4 + (h % 25) / 10).toFixed(1); if (!m.ratingSrc) m.ratingSrc = 'TMDB'; if (tv && !m.seasons) m.seasons = 1 + h % 5; if (!tv && !m.runtime) m.runtime = 90 + h % 70; if (!m.director && !tv) m.director = ['Greta Gerwig', 'Denis Villeneuve', 'Bong Joon-ho', 'Edgar Wright', 'Jordan Peele'][h % 5]; if (!m.creator && tv) m.creator = ['Dan Erickson', 'Vince Gilligan', 'Phoebe Waller-Bridge', 'Jesse Armstrong'][h % 4]; o[t] = m; }); return o; }
     return _mock68.apply(this, arguments); };
   var _fetch = window.fetch.bind(window), J = function (o) { return Promise.resolve(new Response(JSON.stringify(o), { status: 200, headers: { 'Content-Type': 'application/json' } })); };
@@ -214,7 +220,7 @@ function mock(fn, args, who) { if (global.MOCKX) { const x = global.MOCKX(fn, ar
   var kv = { get: function (k) { return dbp.then(function (db) { return db ? new Promise(function (r) { var t = db.transaction('kv').objectStore('kv').get(k); t.onsuccess = function () { r(t.result); }; t.onerror = function () { r(undefined); }; }) : undefined; }); },
     set: function (k, v) { return dbp.then(function (db) { if (db) db.transaction('kv', 'readwrite').objectStore('kv').put(v, k); }); } };
   function rpc(fn, args, ms) {
-    var ctl = window.AbortController ? new AbortController() : null, t = ctl && setTimeout(function () { ctl.abort(); }, ms || (IDEM[fn] || QUEUEABLE[fn] ? 45000 : 30000));
+    var ctl = window.AbortController ? new AbortController() : null, t = ctl && setTimeout(function () { ctl.abort(); }, ms || ({ addEntry: 1, addFromTmdb: 1, addYouTube: 1 }[fn] ? 60000 : IDEM[fn] || QUEUEABLE[fn] ? 45000 : 30000));
     return fetch(EXEC, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, redirect: 'follow', signal: ctl && ctl.signal,
       body: JSON.stringify({ rpc: 1, cpush: 1, token: tok(), who: LS.getItem('lg_who') || '', fn: fn, args: args || [] }) })
       .then(function (r) { return r.text().then(function (tx) { try { return JSON.parse(tx); } catch (e) { var er = new Error('Server busy (HTTP ' + r.status + ')'); er.transient = true; throw er; } }); }).then(function (j) { clearTimeout(t); if (!j.ok) { var e = new Error(j.error || 'error'); e.server = true; throw e; } if (j.push) sendPush(j.push); return j.r; })
@@ -1685,6 +1691,7 @@ body:has(#ytdrw.open) .yback{display:none!important}
 .ekr.on{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold)}.ekr.seen{opacity:.6}
 .epx .ekp{font:7px var(--pix);padding:0 6px;white-space:nowrap}
 /* R78 grouped shows */
+.pc > .sz77{position:absolute;left:6px;top:32px;z-index:3;margin:0;font-size:7px;padding:2px 4px;box-shadow:2px 2px 0 #000;pointer-events:none}
 .sz77{display:inline-block;margin-left:4px;padding:1px 4px;font:6px var(--pix);background:var(--gold,#ffd23f);color:#000;vertical-align:middle;white-space:nowrap}
 #ssn78{position:fixed;inset:0;z-index:3400;background:rgba(0,0,0,.6);display:none;align-items:flex-end}#ssn78.open{display:flex}
 #ssn78 .sk{width:100%;max-height:78vh;overflow:auto;background:#1d1d33;border-top:3px solid #000;padding:10px 10px calc(16px + env(safe-area-inset-bottom))}
@@ -1777,9 +1784,42 @@ function toast(m, undo) {
   clearTimeout(toast.h); toast.h = setTimeout(function () { t.style.display = 'none'; }, undo ? 6000 : 2600);
 }
 function run(fn, args, ok, fail) {
-  var r = google.script.run.withSuccessHandler(ok || function () {}).withFailureHandler(function (e) { toast('⚠ ' + (e.message || e)); (fail || function () {})(e); });
+  var r = google.script.run.withSuccessHandler(ok || function () {}).withFailureHandler(function (e) { if (window.rc404 && window.rc404(fn, args, e, ok, fail)) return; toast('⚠ ' + (e.message || e)); (fail || function () {})(e); });
   r[fn].apply(r, args || []);
 }
+/* ===== 4.05 — boot RPC diet: the non-critical reads fired in the first seconds (settings, alerts, trivia, achievements…) are collected
+   and sent as ONE bootBundle request once getData has painted. If the server doesn't know bootBundle yet (older backend), they fall back to
+   single calls, staggered ~300 ms apart while idle — never a burst at t=0. Identical calls in the window share one request. ===== */
+var BB405 = (function () {
+  var FNS = { appConfig: 1, connStatus: 1, getSettings: 1, getAlerts: 1, triviaStats: 1, getInterest: 1, getOurTop: 1, lfmUsers: 1, getNotForMe: 1, getMoodHist: 1, getTriviaPush: 1, getAch: 1, triviaDays: 1, qqAll: 1 };
+  var T0 = Date.now(), open = true, Q = [], by = {}, timer = 0, dataOk = false, stats = { bundled: 0, single: 0, deduped: 0, mode: '' };
+  var LS = window.localStorage, noBB = function () { try { return +(LS.getItem('lg_bb405no') || 0) > Date.now(); } catch (e) { return false; } };
+  var idle = function (f, ms) { return window.requestIdleCallback ? requestIdleCallback(f, { timeout: ms || 1500 }) : setTimeout(f, 50); };
+  function deliver(it, ok, v) { it.cbs.forEach(function (c) { try { ok ? c.ok && c.ok(v) : c.fail && c.fail(v); } catch (e) { setTimeout(function () { throw e; }, 0); } }); }
+  function singles(L) { stats.mode = stats.mode || 'single'; var i = 0;
+    (function next() { if (i >= L.length) return; var it = L[i++]; stats.single++;
+      _run405(it.fn, it.args, function (v) { deliver(it, true, v); }, function (e) { deliver(it, false, e); });
+      setTimeout(function () { idle(next, 1200); }, 300); })(); }
+  function send() { if (!open) return; open = false; clearTimeout(timer); var L = Q; Q = []; by = {}; if (!L.length) return;
+    if (!window.__rpc || noBB() || !LS.getItem('lg_token')) return singles(L);
+    stats.bundled = L.length; stats.mode = 'bundle';
+    window.__rpc('bootBundle', [L.map(function (it, i) { return { k: String(i), fn: it.fn, args: it.args || [] }; })], 40000).then(function (o) {
+      var R = (o && o.r) || {}, E = (o && o.e) || {}, miss = [];
+      L.forEach(function (it, i) { var k = String(i); if (k in R) deliver(it, true, R[k]); else if (k in E) deliver(it, false, new Error(E[k])); else miss.push(it); });
+      if (miss.length) singles(miss);
+    }, function (e) { if (e && e.server && /unknown fn|not wired/i.test(e.message || '')) { try { LS.setItem('lg_bb405no', String(Date.now() + 6 * 36e5)); } catch (x) {} }
+      stats.mode = 'fallback'; singles(L); }); }
+  function arm() { clearTimeout(timer); var wait = Math.max(0, 3300 - (Date.now() - T0)); timer = setTimeout(function () { if (dataOk || Date.now() - T0 > 8000) idle(send, 1500); else arm2(); }, wait); }
+  function arm2() { timer = setTimeout(function () { if (dataOk || Date.now() - T0 > 8000) idle(send, 1500); else arm2(); }, 400); }
+  return { want: function (fn, args, ok, fail) { if (!open || !FNS[fn]) return false; var key = fn + '|' + JSON.stringify(args || []);
+      if (by[key]) { by[key].cbs.push({ ok: ok, fail: fail }); stats.deduped++; return true; }
+      var it = by[key] = { fn: fn, args: args || [], cbs: [{ ok: ok, fail: fail }] }; Q.push(it); if (!timer) arm(); return true; },
+    dataOk: function () { dataOk = true; }, flush: send, stats: stats, FNS: FNS };
+})();
+var _run405 = run; run = function (fn, args, ok, fail) {
+  if (fn === 'getData' && !BB405._g) { BB405._g = 1; var o0 = ok; ok = function () { BB405.dataOk(); return o0 && o0.apply(this, arguments); }; var f0 = fail; fail = function () { BB405.dataOk(); return f0 && f0.apply(this, arguments); }; }
+  if (BB405.want(fn, args, ok, fail)) return;
+  return _run405.apply(this, [fn, args, ok, fail]); };
 
 /* ---------- 8-bit sound ---------- */
 var AC = null, muted = localStorage.getItem('wl_mute') === '1';
@@ -2305,7 +2345,7 @@ $('aSave').onclick = function () {
   rows.push(tmp); render(); close('add'); busy++;
   run('addEntry', [f], function (r) { finishAdd(tmp, t, r); }, function () { busy--; rows.splice(rows.indexOf(tmp), 1); render(); });
 };
-function finishAdd(tmp, t, r) { busy--; touchRecent(r && r.title || t); if (r && r.poster) posters[r.title] = r.poster; if (r && r.meta) meta[r.title.trim()] = r.meta; if (r) { delete r.poster; delete r.meta; } Object.assign(tmp, r); render(); SFX.coin(); SFX.logged(); banner('NEW ENTRY LOGGED', t); toast('Logged ' + t); fetchPosters(); fetchMeta(); run('getVersion', [], function (v) { version = v; }); }
+function finishAdd(tmp, t, r) { busy--; touchRecent(r && r.title || t); if (r && r.poster) posters[r.title] = r.poster; if (r && r.meta) meta[r.title.trim()] = r.meta; if (r) { delete r.poster; delete r.meta; } Object.assign(tmp, r); render(); SFX.coin(); SFX.logged(); banner('NEW ENTRY LOGGED', t); toast('Logged ' + t); fetchPosters(); fetchMeta(); /* 4.04: version not synced here, so the next poll reloads and corrects */ }
 
 /* ---------- full-database search (TMDB via server; 8-bit posters) ---------- */
 var TM = { res: {}, seq: 0, h: {} };
@@ -3678,7 +3718,7 @@ function debounce(fn, ms) { var h; var d = function () { var a = arguments; clea
 var QSAVE = 0, _toastR23 = toast; toast = function (m, u) { if (m === 'Saved ✓' && Date.now() - QSAVE < 20000) return savedTick(); return _toastR23.apply(this, arguments); };
 var _saveFieldsR23 = saveFields; saveFields = function (orig, fields, msg, isUndo) { if (msg === '__auto') { QSAVE = Date.now(); msg = 'Saved ✓'; } return _saveFieldsR23(orig, fields, msg, isUndo); };
 var detAuto = debounce(function () { if (!editing || !$('detail').classList.contains('open')) return; [].forEach.call($('detailBody').querySelectorAll('[data-t]'), function (el) { editing[el.dataset.t] = el.value; });
-  var orig = byId(editing.row); if (!orig || orig.row >= 1e9) return; var f = {}, n = 0; FIELDS.forEach(function (k) { if (String(editing[k] || '') !== String(orig[k] || '')) { f[k] = editing[k]; n++; } }); if (n) saveFields(orig, f, '__auto'); }, 700);
+  var orig = byId(editing.row); if (!orig) return; var f = {}, n = 0; FIELDS.forEach(function (k) { if (String(editing[k] || '') !== String(orig[k] || '')) { f[k] = editing[k]; n++; } }); if (n) saveFields(orig, f, '__auto'); }, 700);
 $('detailBody').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; if (b.id === 'eSave') return; if (b.dataset.cycle || b.dataset.e || (b.parentNode && b.parentNode.dataset && b.parentNode.dataset.k)) detAuto(); });
 $('detailBody').addEventListener('input', function (e) { if (e.target.matches('[data-t]')) detAuto(); });
 $('detailBody').addEventListener('change', function (e) { if (e.target.matches('[data-t]')) detAuto.flush(); });
@@ -5252,7 +5292,7 @@ var LGT2 = (function () { try { return JSON.parse(localStorage.lg_lgt2 || '{}');
 function lgtMark(title) { LGT2[String(title).trim()] = Date.now(); try { localStorage.lg_lgt2 = JSON.stringify(LGT2); } catch (e) {} }
 logTs = function (r) { var tt = String(r.title).trim(), t = LGT2[tt] || LGT[r.row] || 0; (recent || []).some(function (x) { if (x.t === tt) { t = Math.max(t, x.at || 0); return true; } }); var d = lastD(r); if (d) t = Math.max(t, Date.parse(d + 'T12:00:00') || 0); return t; };
 var _saveFields55 = saveFields; saveFields = function (orig, fields) { try { if (orig && fields && ['samWatched', 'lewyWatched', 'samRating', 'lewyRating'].some(function (k) { return k in fields && fields[k]; })) lgtMark(orig.title); } catch (e) {} return _saveFields55.apply(this, arguments); };
-var _run55a = run; run = function (fn, args, ok, fail) { if (fn === 'addEntry' || fn === 'addFromTmdb') { var ok2 = ok; ok = function (r) { try { var t = (r && r.title) || (args[0] && args[0].title) || (args[1] && args[1].title); if (t) { lgtMark(t); touchRecent(t); } if (r && r.row && !byId(r.row)) { rows.push(r); } render(); } catch (e) {} ok2 && ok2.apply(this, arguments); }; } return _run55a.call(this, fn, args, ok, fail); };
+var _run55a = run; run = function (fn, args, ok, fail) { if (fn === 'addEntry' || fn === 'addFromTmdb') { var ok2 = ok; ok = function (r) { try { var t = (r && r.title) || (args[0] && args[0].title) || (args[1] && args[1].title); if (t) { lgtMark(t); touchRecent(t); } render(); /* 4.04: no longer pushes the server row (finishAdd fills the temp row) */ } catch (e) {} ok2 && ok2.apply(this, arguments); }; } return _run55a.call(this, fn, args, ok, fail); };
 
 /* ---------- 6) YOUTUBE: counted ONLY when really finished (ENDED or ≥90%, with ≥50% actually played — seeks don't count); never on open/channel add ---------- */
 var YACC = (function () { try { return JSON.parse(localStorage.lg_ytacc || '{}'); } catch (e) { return {}; } })();
@@ -5521,9 +5561,26 @@ var EPRT = (function () { try { return JSON.parse(localStorage.lg_eprt || '{}');
 function epWatched(r, p) { var w = r[p + 'Watched'], e = epOf(r, p), L = EPRT[String(r.title).trim()], tot = L && L.r.length ? L.r.length : epTot(r); return isY(w) ? tot : Math.min(e || 0, tot || e || 0); }
 function epMinutes(r, n) { var L = EPRT[String(r.title).trim()], m = M(r), avg = (L && L.avg) || m.epRuntime || 0, s = 0; for (var i = 0; i < n; i++) { var v = L && L.r[i]; s += v || avg; } return s; }
 runtimeOf = function (r, p) { var m = M(r); if (r.type !== 'TV Show') return m.runtime || 0; var n = p ? epWatched(r, p) : Math.max(epWatched(r, 'sam'), epWatched(r, 'lewy')); return epMinutes(r, n); };
-function eprtLoad() { var need = rows.filter(function (r) { return r.type === 'TV Show' && !EPRT[String(r.title).trim()] && (isY(r.samWatched) || isY(r.lewyWatched) || epOf(r, 'sam') || epOf(r, 'lewy')); }).slice(0, 25); if (!need.length) return;
-  run('epRuntimes', [need.map(function (r) { return { t: String(r.title).trim(), id: M(r).tmdb || 0 }; })], function (o) { var got = 0; Object.keys(o || {}).forEach(function (k) { EPRT[k] = o[k]; got++; }); try { localStorage.lg_eprt = JSON.stringify(EPRT); } catch (e) {} if (got) { if (view === 'stats') renderStats(); setTimeout(eprtLoad, 1500); } }, function () {}); }
-setTimeout(eprtLoad, 4000);
+/* 4.05: episode runtimes load politely — one batch of up to 25 shows at a time, only titles not already known, a title the server couldn't
+   answer is skipped for 3 days (lg_eprt_miss), it backs off between rounds (2 s → 4 s → 8 s…), stops after 6 rounds per session or when a
+   round brings nothing new, waits for the phone to be idle and pauses while the app is hidden. */
+var EPRT_MISS = (function () { try { return JSON.parse(localStorage.lg_eprt_miss || '{}'); } catch (e) { return {}; } })(), EPRT405 = { rounds: 0, busy: 0, gap: 2000, done: 0, sent: 0, tried: {} };
+function eprtNeed405() { var now = Date.now(), seen = {}; return rows.filter(function (r) { var t = String(r.title).trim(); if (seen[t]) return false; seen[t] = 1;
+  return r.type === 'TV Show' && !EPRT[t] && !(EPRT_MISS[t] > now) && (isY(r.samWatched) || isY(r.lewyWatched) || epOf(r, 'sam') || epOf(r, 'lewy')); }); }
+function eprtLoad() { if (EPRT405.busy || EPRT405.done) return; if (document.hidden) { document.addEventListener('visibilitychange', function f() { if (!document.hidden) { document.removeEventListener('visibilitychange', f); eprtLater405(1500); } }); return; }
+  if (EPRT405.rounds >= 6) { EPRT405.done = 1; return; }
+  var need = eprtNeed405().slice(0, 25); if (!need.length) { EPRT405.done = 1; return; }
+  EPRT405.busy = 1; EPRT405.rounds++; EPRT405.sent += need.length;
+  run('epRuntimes', [need.map(function (r) { return { t: String(r.title).trim(), id: M(r).tmdb || 0 }; })], function (o) { EPRT405.busy = 0; o = o || {}; var got = 0, until = Date.now() + 3 * 864e5;
+    var miss = []; need.forEach(function (r) { var t = String(r.title).trim(), v = o[t]; if (v && Array.isArray(v.r)) { if (!EPRT[t]) got++; EPRT[t] = v; delete EPRT_MISS[t]; } else miss.push(t); });
+    /* unanswered: the server may have run out of time this round, so try once more this session; a second miss (or a round with nothing new) = skip for 3 days */
+    miss.forEach(function (t) { var n = EPRT405.tried[t] = (EPRT405.tried[t] || 0) + 1; if (n >= 2 || !got) EPRT_MISS[t] = until; });
+    try { localStorage.lg_eprt = JSON.stringify(EPRT); localStorage.lg_eprt_miss = JSON.stringify(EPRT_MISS); } catch (e) {}
+    if (got && view === 'stats') renderStats();
+    if (!got) { EPRT405.done = 1; return; } EPRT405.gap = Math.min(30000, EPRT405.gap * 2); eprtLater405(EPRT405.gap); },
+  function () { EPRT405.busy = 0; EPRT405.gap = Math.min(60000, EPRT405.gap * 3); if (EPRT405.rounds < 3) eprtLater405(EPRT405.gap); else EPRT405.done = 1; }); }
+function eprtLater405(ms) { setTimeout(function () { window.requestIdleCallback ? requestIdleCallback(eprtLoad, { timeout: 4000 }) : eprtLoad(); }, ms); }
+eprtLater405(9000);
 /* ---------- LOGGING FILTER (Interested-style sheet; combinable; persisted; counts) ---------- */
 var LGF = (function () { var d = { type: [], who: [], prog: [], g: [], svc: [], last: '', sort: 'recent' }; try { return Object.assign(d, JSON.parse(localStorage.lg_lgf || '{}')); } catch (e) { return d; } })();
 function lfSave() { try { localStorage.lg_lgf = JSON.stringify(LGF); } catch (e) {} }
@@ -7113,7 +7170,7 @@ function sndList69(p) { var L = ((profiles[p] || {}).snd || []); return { none: 
     var row = b.parentNode, k = row.dataset.k, add = !!b.closest('#aWBox'), S = add ? (addState.w || {}) : window.editing; if (!S) return;
     var base = Math.floor((num(S[k]) || 0) + 1e-9); if (!base) { var on = row.previousElementSibling && row.previousElementSibling.querySelector('button.on'); base = on ? Number(on.dataset.v) : 0; }
     if (!base) { toast('Pick a whole number first'); return; }
-    var d = Number(b.dataset.d), v = base >= 10 ? 10 : Math.round((base + d / 10) * 10) / 10; S[k] = String(v);
+    var d = Number(b.dataset.d), v = base >= 10 ? 10 : Math.round((base + d / 10) * 10) / 10; S[k] = String(v); if (!add) { try { detAuto(); detAuto.flush && detAuto.flush(); } catch (x) {} } /* 4.07a: the decimal tap now saves */
     [].forEach.call(row.children, function (x) { x.classList.toggle('on', x === b && (base < 10 || d === 0)); }); if (base >= 10) row.firstChild.classList.add('on'); SFX.blip && SFX.blip(); }, true);
   /* whole-number tap resets the decimal row to .0 */
   document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('.rate button'); if (!b) return; setTimeout(function () { var r = b.parentNode.nextElementSibling; if (!r || !r.classList.contains('rd77')) return; var sel = b.classList.contains('on'); [].forEach.call(r.children, function (x, i) { x.classList.toggle('on', sel && i === 0); }); }, 0); });
@@ -7171,9 +7228,10 @@ function sndList69(p) { var L = ((profiles[p] || {}).snd || []); return { none: 
   /* DOM layer: in every list, keep one card per show and relabel it */
   function scope(el) { return (el.closest && el.closest('.pgrid,.scroller,.list,ol,ul,.sec,.panel,section,[id^="v-"],#list,.ipl,.tlk')) || el.parentElement; }
   function relabel(el, r, n) { var bt = baseTitle(r.title), w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT), t, tp = null; while ((t = w.nextNode())) { if (t.nodeValue.indexOf(r.title) >= 0) { t.nodeValue = t.nodeValue.replace(r.title, bt); tp = tp || t.parentNode; } else if (SN.test(t.nodeValue) && t.nodeValue.indexOf(bt) >= 0) t.nodeValue = t.nodeValue.replace(SN, ''); }
-    if (!el.querySelector('.sz77')) { var host = (tp && tp !== el ? tp : null) || el.querySelector('.t,.ti b') || el; host.insertAdjacentHTML('beforeend', ' <span class="sz77">' + n + ' SEASONS</span>'); }
+    var nm4 = el.classList.contains('pc') && el.querySelector('.nm'); if (nm4) { nm4.textContent = bt; nm4.removeAttribute('data-fw'); }
+    if (!el.querySelector('.sz77')) { var host = nm4 ? el : (tp && tp !== el ? tp : null) || el.querySelector('.t,.ti b') || el; host.insertAdjacentHTML('beforeend', ' <span class="sz77">' + n + ' SEASONS</span>'); }
     var im = el.querySelector('img[alt]'); if (im && im.alt === r.title) im.alt = bt; el.setAttribute('aria-label', bt + ', ' + n + ' seasons'); }
-  function pass78() { var seen = new Map(); [].forEach.call(document.querySelectorAll('[data-open]'), function (el) { if (el.closest('#detailBody,#ipdet,#ssn78,#add,#arch')) return; var r = byId(el.dataset.open); if (!isSeason(r)) return; var k = key(r); if (!multi(k)) return;
+  function pass78() { var seen = new Map(); [].forEach.call(document.querySelectorAll('[data-open],.pc[data-row]'), function (el) { if (el.closest('#detailBody,#ipdet,#ssn78,#add,#arch')) return; var r = byId(el.dataset.open || el.dataset.row); if (!r || r.row >= 1e9 || !isSeason(r)) return; /* 4.04: 4.0 shelf cards are .pc[data-row] */ var k = key(r); if (!multi(k)) return;
       var sc = scope(el), m = seen.get(sc); if (!m) { m = {}; seen.set(sc, m); }
       if (m[k] && m[k] !== el) { el.style.display = 'none'; el.dataset.dup77 = '1'; return; } m[k] = el; if (el.dataset.dup77) { el.style.display = ''; delete el.dataset.dup77; }
       if (el.dataset.g77 !== k) { el.dataset.g77 = k; relabel(el, r, seasonsOf(k).length); } }); }
@@ -8250,7 +8308,7 @@ window.APPV58 = 'r91';
   var _od = openDetail; openDetail = function () { var r = _od.apply(this, arguments); mv(); setTimeout(mv, 0); setTimeout(mv, 400); setTimeout(mv, 2000); return r; };
   ['ostRedraw', 'ostxDraw'].forEach(function (n) { var f = window[n]; if (typeof f === 'function') window[n] = function () { var r = f.apply(this, arguments); mv(); return r; }; });
   /* stale-build guard: a home-screen app resumed from the background keeps old code; reload once when sw.js has a newer build */
-  var BUILD = /\/app-rc\//.test(location.pathname) ? 'logged-rc-1792765000' : 'logged-202610240123', busy = function () { var a = document.activeElement; return (a && /INPUT|TEXTAREA/.test(a.tagName)) || (window.OXA && !OXA.paused) || document.querySelector('#add.open,#fb83.open,#trv.open,#ytpage.open .yv'); };
+  var BUILD = /\/app-rc\//.test(location.pathname) ? 'logged-rc-1793278243' : 'logged-202610302246', busy = function () { var a = document.activeElement; return (a && /INPUT|TEXTAREA/.test(a.tagName)) || (window.OXA && !OXA.paused) || document.querySelector('#add.open,#fb83.open,#trv.open,#ytpage.open .yv'); };
   var last = 0; function check() { if (/demo=1/.test(location.search) || BUILD.indexOf('__') === 0 || Date.now() - last < 60000) return; last = Date.now();
     fetch('sw.js?b=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.ok ? r.text() : ''; }).then(function (t) { var m = t.match(/var V = '([^']+)'/); if (!m || m[1] === BUILD || busy()) return;
       try { if (sessionStorage.lg_rl89 === m[1]) return; sessionStorage.lg_rl89 = m[1]; } catch (e) {} try { toast('⟳ UPDATING LOGGED…'); } catch (e) {}
@@ -8752,7 +8810,7 @@ window.APPV58 = '3.03';
         if (!r || !$('detailBody')) return o;
         ['samRating', 'lewyRating'].forEach(function (k) {
           var host = document.querySelector('#detailBody .rate[data-k="' + k + '"]');
-          if (!host || host.dataset.r95) return;
+          if (!host || host.dataset.r95 || window.V407A) return; /* 4.07a: one picker (rp108) */
           host.dataset.r95 = '1';
           var n = num(r[k]), whole = n != null ? Math.floor(n + 1e-9) : null, frac = n != null ? Math.round((n - whole) * 10) : null;
           var h = '<div class="rate95" data-rk="' + k + '"><div class="lbl95">1 – 10</div>';
@@ -8767,7 +8825,7 @@ window.APPV58 = '3.03';
     };
     document.addEventListener('click', function (e) {
       var b = e.target.closest && e.target.closest('.rate95 button');
-      if (!b) return;
+      if (!b || window.V407A) return;
       e.preventDefault(); e.stopImmediatePropagation();
       var box = b.closest('.rate95'), k = box.dataset.rk, r = window.__od92 || window.editing;
       if (!r || !k) return;
@@ -8786,6 +8844,7 @@ window.APPV58 = '3.03';
     var swap = function (root) {
       [].forEach.call((root || document).querySelectorAll('button, .chip, .btabs button, .sg button'), function (b) {
         var t = b.textContent || '';
+        if (b.closest && b.closest('.w400')) return; /* 4.06: the 4.00 NOT YET / WATCHING / WATCHED row owns its labels — swapping them here fought p400 details() in an endless re-render loop */
         if (/^▶\s*WATCHING$/.test(t.trim()) || t.trim() === 'WATCHING') b.innerHTML = b.innerHTML.replace(/▶\s*WATCHING|WATCHING/g, 'LOGGING');
       });
     };
@@ -9668,7 +9727,7 @@ window.APPV58 = '3.08';
     if (box.closest('#aWBox')) { try { addState.w = addState.w || {}; addState.w[k] = sv; } catch (x) {} return; } /* + LOG IT sheet: saved with LOG IT */
     try { if (typeof editing !== 'undefined' && editing) editing[k] = sv;
       var orig = editing && byId(editing.row);
-      if (orig && orig.row < 1e9) { var o = {}; o[k] = sv; saveFields(orig, o, v == null ? '\u2605 Score cleared' : '\u2605 ' + v); chips(orig); } } catch (x) {}
+      if (orig) { var o = {}; o[k] = sv; saveFields(orig, o, v == null ? '\u2605 Score cleared' : '\u2605 ' + v); chips(orig); } } catch (x) {}
   }, true);
 
   /* quick "rate it" pop-up: same picker (decimals too) instead of 1–10 only */
@@ -10154,5 +10213,377 @@ html body header #lb88[aria-expanded="true"] #ss88::after{transform:rotate(180de
 })();
 </script>
 
+<script id="t404">
+/* ===== 4.04 — one add = one row: busy guard, unique temp rows, request id, already-logged check, timeout → check before failing ===== */
+(function () {
+  var ADDF = { addEntry: 1, addFromTmdb: 1, addYouTube: 1 }, Q = {}, NQ = 0, TS = 0, FORCE = 0, lastClose = 0;
+  function low(t) { return String(t == null ? '' : t).trim().toLowerCase().replace(/\s+/g, ' '); }
+  function sn(t) { var m = /\((?:S|Season )(\d+)\)\s*$/i.exec(String(t || '')); return m ? +m[1] : 0; }
+  function info(fn, a) { a = a || [];
+    if (fn === 'addEntry') { var f = a[0] = a[0] || {}; return { f: f, title: String(f.title || '').trim(), type: f.type || 'Movie' }; }
+    if (fn === 'addFromTmdb') { var p = a[0] || {}, f2 = a[1] = a[1] || {}, s = p.tv && p.season ? +p.season : 0; return { f: f2, title: String(p.title || '').trim() + (s ? ' (S' + s + ')' : ''), type: p.tv ? 'TV Show' : 'Movie', tmdb: +p.id || 0 }; }
+    var it = a[0] || {}, f3 = a[1] = a[1] || {}, t = String(it.t || '').trim().slice(0, 180); if (it.k === 'channel' && !/channel/i.test(t)) t += ' (Channel)';
+    return { f: f3, title: t, type: 'YouTube', yt: it.id || '' }; }
+  /* shared "is this already in the log?" check (tmdb id and/or title+type) */
+  window.alreadyLogged = function (o) { o = o || {}; var t = norm(o.title || ''), ty = o.type || 'Movie', s = sn(o.title), base = norm(baseTitle(o.title || '')); if (!t) return null;
+    var L = rows.filter(function (r) { return r && r.title && r.row < 1e9; });
+    if (ty === 'YouTube') return L.filter(function (r) { return r.type === 'YouTube' && ((o.yt && r.ytm && r.ytm.id === o.yt) || norm(r.title) === t); })[0] || null;
+    var hit = L.filter(function (r) { return r.type === ty && norm(r.title) === t; })[0]; if (hit) return hit;
+    if (o.tmdb) { hit = L.filter(function (r) { var m = M(r); return r.type === ty && m && +m.tmdb === +o.tmdb && (!s || sn(r.title) === s); })[0]; if (hit) return hit; }
+    if (ty === 'TV Show' && !s && base) { var ss = L.filter(function (r) { return r.type === 'TV Show' && sn(r.title) && norm(baseTitle(r.title)) === base; }); if (ss.length) return ss[ss.length - 1]; }
+    return null; };
+  function ui() { var on = NQ > 0, b = $('aSave'); document.body.classList.toggle('lg404', on);
+    if (b) { if (on) { if (!b.dataset.l404) b.dataset.l404 = b.textContent; b.disabled = true; b.textContent = 'ADDING…'; } else if (b.dataset.l404) { b.disabled = false; b.textContent = b.dataset.l404; delete b.dataset.l404; } } }
+  function dupNotice(ex, sheet) { if (!ex) return; try { SFX.tap && SFX.tap(); } catch (e) {}
+    if (sheet) { try { close('add'); } catch (e) {} try { openDetail(ex); } catch (e) {} toast('Already in your log — opened it'); }
+    else toast('Already in your log: ' + baseTitle(ex.title)); }
+  var _cl = close; close = function (id) { if (id === 'add') lastClose = Date.now(); return _cl.apply(this, arguments); };
+  var _r = run; run = function (fn, args, ok, fail) {
+    if (!ADDF[fn]) return _r.apply(this, arguments);
+    args = args || []; var I = info(fn, args), key = I.type + '|' + low(I.title), tmp = null, sheet = Date.now() - lastClose < 1500 || $('add').classList.contains('open');
+    for (var i = rows.length - 1; i >= 0; i--) if (rows[i] && rows[i].row === 1e9 && low(rows[i].title) === low(I.title)) { tmp = rows[i]; break; }
+    if (tmp) tmp.row = 1e9 + (++TS); /* unique temp ids */
+    var force = FORCE || I.f._force; FORCE = 0; if (force) I.f._force = 1;
+    if (Q[key]) { Q[key].push({ ok: ok, fail: fail }); toast('Already logging ' + baseTitle(I.title) + '…'); return; } /* second tap: no second request */
+    if (!force) { var ex = alreadyLogged(I); if (ex) { if (fn === 'addYouTube') { dupNotice(ex, sheet); if (fail) setTimeout(function () { fail({ message: 'already' }); }, 0); return; }
+        setTimeout(function () { ok && ok(Object.assign({}, ex, { dup: 1, _sheet: sheet })); }, 0); return; } }
+    I.f._rid = I.f._rid || (Date.now().toString(36) + Math.random().toString(36).slice(2, 8));
+    Q[key] = []; NQ++; ui();
+    return _r.call(this, fn, args, function (r) { var W = Q[key] || []; delete Q[key]; NQ = Math.max(0, NQ - 1); ui();
+        if (fn === 'addYouTube') { if (r && r.dup && byId(r.row)) { dupNotice(byId(r.row), sheet); if (fail) fail({ message: 'already' }); return; } return ok && ok.apply(this, arguments); }
+        if (r && typeof r === 'object') r._sheet = sheet;
+        ok && ok(r); W.forEach(function (w) { w.ok && w.ok(Object.assign({}, r, { dup: 1, _sheet: 0 })); }); },
+      function (e) { var W = Q[key] || []; delete Q[key]; NQ = Math.max(0, NQ - 1); ui(); fail && fail(e); if (fn !== 'addYouTube') W.forEach(function (w) { w.fail && w.fail(e); }); });
+  };
+  /* finishAdd: never leave two rows with the same row number; a duplicate reply opens the existing entry */
+  var _fa = finishAdd; finishAdd = function (tmp, t, r) { var sh = r && r._sheet; if (r) delete r._sheet;
+    if (r && r.dup) { delete r.dup; busy = Math.max(0, busy - 1); var ex = null;
+      for (var i = 0; i < rows.length; i++) if (rows[i] !== tmp && rows[i] && rows[i].row == r.row) { ex = rows[i]; break; }
+      if (ex) { var k = rows.indexOf(tmp); if (k >= 0) rows.splice(k, 1); }
+      else { if (r.poster) posters[r.title] = r.poster; if (r.meta) meta[String(r.title).trim()] = r.meta; delete r.poster; delete r.meta; Object.assign(tmp, r); ex = tmp; }
+      render(); dupNotice(ex, sh); return; }
+    if (r && r.row) for (var j = rows.length - 1; j >= 0; j--) if (rows[j] !== tmp && rows[j] && rows[j].row == r.row) rows.splice(j, 1);
+    return _fa.apply(this, arguments); };
+  /* timeout / no answer: reload the log and look for the title before saying it failed */
+  window.rc404 = function (fn, args, e, ok, fail) {
+    if (!ADDF[fn] || !window.__rpc || !e || e.server && !e.transient) return false;
+    if (!(e.offline || e.transient || /reach|time ?d? ?out|busy|network|abort/i.test(String(e.message || e)))) return false;
+    var I = info(fn, args); if (!I.title) return false;
+    var s = $('sync'); if (s) s.textContent = 'CHECKING…'; toast('Slow connection — checking if ' + baseTitle(I.title) + ' saved…');
+    window.__rpc('getData', [], 45000).then(function (d) { var L = (d && d.rows) || [], f = null;
+      for (var i = L.length - 1; i >= 0; i--) { var x = L[i]; if (x && low(x.title) === low(I.title) && (x.type || 'Movie') === I.type && (I.type !== 'YouTube' || !I.yt || !x.ytm || x.ytm.id === I.yt)) { f = x; break; } }
+      if (s) s.textContent = 'SYNCED';
+      if (f) { if (fn === 'addYouTube' && byId(f.row)) { if (fail) fail({ message: 'already' }); return; } ok && ok(f); }
+      else { toast('⚠ ' + (e.message || e)); (fail || function () {})(e); }
+    }, function () { if (s) s.textContent = 'OFFLINE'; toast('⚠ ' + (e.message || e)); (fail || function () {})(e); });
+    return true; };
+  /* LOG IT in the add sheet: ignore taps while logging; typed title already in the log → open it, or ADD AGAIN */
+  var sv = $('aSave'), _as = sv && sv.onclick;
+  if (sv && _as) sv.onclick = function (ev) {
+    if (NQ > 0 || sv.disabled) { toast('Logging… one moment'); return; }
+    var t = $('aTitle').value.trim(), self = this, a = arguments;
+    if (t && !addState.pick && !FORCE) { var ex = alreadyLogged({ title: t, type: addState.type || 'Movie' });
+      if (ex) { var d = $('dlg'); d.innerHTML = '<div class="box"><span class="ic">✓</span><h2>ALREADY IN YOUR LOG</h2><p>' + esc(ex.title) + ' is already logged. Open it, or add it again?</p><div class="acts"><button class="cancel" data-dlg4="open">OPEN IT</button><button class="save" data-dlg4="again" data-nosfx="1">ADD AGAIN</button></div></div>';
+        d.classList.add('open'); d.onclick = function (e) { var b = e.target.closest('[data-dlg4]'); if (!b && e.target !== d) return; d.classList.remove('open'); d.onclick = null; if (!b) return;
+          if (b.dataset.dlg4 === 'open') { close('add'); openDetail(ex); } else { FORCE = 1; $('aTitle').value = t; try { _as.apply(self, a); } finally { FORCE = 0; } } }; return; } }
+    return _as.apply(this, arguments); };
+  var st = document.createElement('style'); st.textContent = 'body.lg404 #aSave{opacity:.6;pointer-events:none}body.lg404 .tm-log98,body.lg404 .mpadd{opacity:.5;pointer-events:none}';
+  document.head.appendChild(st);
+  try { window.APPV58 = '4.04'; if (window.PN93 && PN93.prepend) PN93.prepend({ v: '4.04', d: '28 Oct 2026', lines: ['Tapping LOG IT twice (or a slow connection) no longer makes double entries — the button shows LOGGING… until it\u2019s saved.', 'If you log something that\u2019s already in your log, it opens the one you have (or lets you add it again).', 'If the connection is slow, the app checks whether it saved before saying it failed.', 'Shows with several seasons are back to one card with a SEASONS badge.'] }); } catch (e) {}
+})();
+</script>
+<script id="v405">/* ===== 4.05 — data safety + speed (preview) ===== */
+(function () { try { window.APPV58 = '4.05'; if (window.PN93 && PN93.prepend) PN93.prepend({ v: '4.05', d: '28 Oct 2026', lines: ['Opens faster: the extras (settings, trivia, achievements, alerts\u2026) now load in one go after your list appears, instead of a dozen separate requests at start-up.', 'Episode run-times for watch-time stats load quietly in the background and stop once they\u2019re done (no more repeat checking).', 'Safer saves: episode ratings, theme songs and YouTube watched marks can\u2019t overwrite each other when you both tap at once, and the server\u2019s cache file is saved more carefully.'] }); } catch (e) {} })();
+</script>
+<style id="v406css">
+/* 4.06: sticky, prominent LOG IT in the add sheet */
+#add.modal .sheet{padding-bottom:0!important}
+#add .sheet>.acts{position:sticky;bottom:0;z-index:5;margin:14px -16px 0;padding:10px 16px calc(12px + env(safe-area-inset-bottom));background:var(--bg,#0d0d1a);border-top:3px solid var(--yel,#ffd23f);box-shadow:0 -8px 14px rgba(0,0,0,.55)}
+#add .sheet>.acts .cancel{flex:0 0 32%;min-height:56px!important}
+#add .sheet>.acts #aSave,#add .sheet>.acts button.save{flex:1;min-height:56px!important;height:auto!important;background:var(--yel,#ffd23f);color:#000;font-size:13px;letter-spacing:1px;box-shadow:4px 4px 0 #000}
+#add .sheet>.acts #aSave::before{content:'+';font:bold 20px/1 system-ui,sans-serif;margin-right:8px;vertical-align:-2px}
+#add .sheet>.acts #aSave:disabled::before{content:'⏳ '}
+/* result rows: ＋ logs, row body opens details */
+.h406{font:8px var(--pix);color:var(--dim,#aab);margin:10px 0 6px;line-height:1.6}.h406 b{color:var(--yel,#ffd23f);font:bold 13px/1 system-ui,sans-serif}
+button.tm .lg406{flex:0 0 44px;width:44px;height:44px;min-height:44px;display:flex;align-items:center;justify-content:center;margin-left:auto;background:var(--yel,#ffd23f);color:#000;border:3px solid #000;box-shadow:2px 2px 0 #000;font:bold 26px/1 system-ui,sans-serif;cursor:pointer}
+button.tm .lg406.have406{background:var(--grn,#3ddc84);font-size:20px}
+button.tm .lg406:active{transform:translate(2px,2px);box-shadow:none}
+button.tm .lg406.busy{background:#666;color:#fff;font-size:10px}
+button.tm .il+.ty+.lg406,button.tm .ty+.lg406{margin-left:6px}
+.tms button.tm .ti{min-width:0;flex:1}
+.mr406{display:block;width:100%;min-height:44px;margin:6px 0;font:9px var(--pix)}
+/* saving feedback */
+#sv406{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 8px);transform:translate(-50%,-140%);z-index:1200;max-width:calc(100vw - 24px);display:flex;align-items:center;gap:8px;padding:10px 14px;min-height:44px;box-sizing:border-box;background:#141428;color:#fff;border:3px solid #000;box-shadow:0 0 0 3px var(--c406,#4da3ff),4px 4px 0 3px #000;font:9px var(--pix);line-height:1.5;transition:transform .18s steps(4);pointer-events:none}
+#sv406.on{transform:translate(-50%,0)}
+#sv406 i{font-style:normal;display:inline-block;width:14px;text-align:center}
+#sv406.wait i{animation:sv406s .6s steps(2) infinite}
+#sv406.ok{--c406:var(--grn,#3ddc84)}#sv406.err{--c406:#ff4d6d}
+#sv406 span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@keyframes sv406s{50%{opacity:.25}}
+.lg4.sv406{animation:sv406p .5s steps(2) infinite}
+.lg4.sv406 b{font-size:0!important}.lg4.sv406 b::after{content:'⏳';font-size:20px}
+@keyframes sv406p{50%{filter:brightness(.75)}}
+body.sv406on .pc[data-row^="10000000"],body.sv406on [data-open^="10000000"]{position:relative;animation:sv406p .6s steps(2) infinite}
+body.sv406on .pc[data-row^="10000000"]::after,body.sv406on [data-open^="10000000"]::after{content:'SAVING…';position:absolute;left:4px;right:4px;bottom:4px;z-index:3;background:#000;color:var(--yel,#ffd23f);font:7px var(--pix);text-align:center;padding:4px 0;pointer-events:none}
+</style>
+<script id="v406">/* ===== 4.06 — add UX: ＋ logs / row opens details, sticky LOG IT, visible saving state, ~10 results, show grouping hardening (preview) ===== */
+(function () {
+  var CAP = 10, FULL = {};
+  function low(t) { return String(t == null ? '' : t).trim().toLowerCase().replace(/\s+/g, ' '); }
+  /* ---- 5) about 10 results when searching to add ---- */
+  var _ts = tmSearch; tmSearch = function (q, box, n) { if (box === 'aTm') n = CAP; return _ts.call(this, q, box, n); };
+  function cap(r, n) { if (!r || !r.results || r.results.length <= n) return r; var T = r.results.filter(function (x) { return !x.via; }), V = r.results.filter(function (x) { return x.via; });
+    var tn = V.length ? Math.min(T.length, Math.max(n - Math.min(V.length, 3), 1)) : n; return Object.assign({}, r, { results: T.slice(0, tn).concat(V.slice(0, Math.max(0, n - tn))), titles: tn }); }
+  /* ---- 1) one add flow: ＋ on a result row LOGS it, the row body opens the details page ---- */
+  function deco(el, box, more) {
+    [].forEach.call(el.querySelectorAll('button.tm[data-tm]'), function (b) { var k = b.dataset.tm, x = TM.res[k]; if (!x) return;
+      [].forEach.call(b.querySelectorAll('.tm-log98,.btn-log98'), function (o) { o.remove(); });
+      var have = !x.tv && !!b.querySelector('.il'); if (!b.querySelector('.lg406')) b.insertAdjacentHTML('beforeend', '<span class="lg406' + (have ? ' have406' : '') + '" role="button" tabindex="0" data-lg406="' + k + '" aria-label="' + (have ? 'Already logged — open ' : 'Log ') + esc(x.title) + '">' + (have ? '✓' : '+') + '</span>');
+      b.setAttribute('aria-label', x.title + (x.year ? ' (' + x.year + ')' : '') + ' — open details'); });
+    [].forEach.call(el.querySelectorAll('.h'), function (h) { if (/TAP TO LOG/.test(h.textContent)) h.textContent = 'FROM THE FULL DATABASE:'; });
+    if (el.querySelector('button.tm') && !el.querySelector('.h406')) el.insertAdjacentHTML('afterbegin', '<div class="h406"><b>+</b> LOGS IT · TAP A TITLE FOR DETAILS</div>');
+    if (more > 0 && !el.querySelector('.mr406')) { var hint = el.querySelector('.hint:last-child,.tm58>.hint'); var h = '<button type="button" class="ui-btn mr406" data-mr406="' + box + '">MORE RESULTS (' + more + ')</button>'; if (hint) hint.insertAdjacentHTML('beforebegin', h); else el.insertAdjacentHTML('beforeend', h); }
+    paintBusy(); }
+  var _rt = renderTm; renderTm = function (el, r, n, box) {
+    if (!el || (box !== 'aTm' && box !== 'qTm')) return _rt.apply(this, arguments);
+    var more = 0, rr = r;
+    if (box === 'aTm' && r && r.results && !r.__all) { FULL[box] = r; var c = cap(r, CAP); more = r.results.length - c.results.length; rr = c; n = CAP; }
+    var o = _rt.call(this, el, rr, n, box); try { deco(el, box, more); } catch (e) {} return o; };
+  function cardOf(x) { return { t: x.title, y: x.year, p: x.poster || '', ov: x.overview || x.ov || '', kind: x.tv ? 'SHOW' : 'MOVIE', f: { id: x.id, tv: !!x.tv } }; }
+  function quickLog(x, k, b) {
+    if (document.body.classList.contains('lg404') && isFlying(x)) { toast('Already logging ' + x.title + '…'); return; }
+    try { SFX.tap && SFX.tap(); } catch (e) {}
+    if (k.indexOf('qTm') === 0) { if (x.tv) { openAddWith(x); return; } try { initAdd(); } catch (e) {} logTm(x, 0); return; }
+    if (!x.tv) { logTm(x, 0); return; }
+    var se = $('se_' + k); if (se && se.innerHTML) { se.scrollIntoView({ block: 'nearest' }); return; } /* seasons already open */
+    tmClick({ target: b, __77: 1 }); setTimeout(function () { se = $('se_' + k); se && se.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }, 400); }
+  window.addEventListener('click', function (e) {
+    var t = e.target.closest && e.target.closest('[data-lg406],[data-mr406]'); var row = !t && e.target.closest && e.target.closest('#qTm [data-tm]');
+    if (!t && !row) return;
+    if (row && e.target.closest('[data-ts]')) return;
+    e.preventDefault(); e.stopImmediatePropagation();
+    if (t && t.dataset.mr406) { var bx = t.dataset.mr406, R = FULL[bx]; if (R) renderTm($(bx), Object.assign({}, R, { __all: 1 }), R.results.length, bx); return; }
+    if (row) { var xq = TM.res[row.dataset.tm]; if (!xq) return; try { kbClose(); } catch (er) {} ipDetails(cardOf(xq), { back: '◀ BACK TO SEARCH', log: function () { quickLog(xq, row.dataset.tm, row); }, logLabel: xq.tv ? 'LOG IT · PICK SEASON' : 'LOG IT' }); return; }
+    var k = t.dataset.lg406, x = TM.res[k]; if (!x) return; if (t.classList.contains('have406')) { var hr = (window.rows || []).filter(function (r) { return low(baseTitle(r.title)) === low(x.title); })[0]; if (hr && window.openDetail) { toast('Already in your log'); openDetail(hr); } else quickLog(x, k, t.closest('[data-tm]')); return; } quickLog(x, k, t.closest('[data-tm]')); }, true);
+  document.addEventListener('keydown', function (e) { var t = e.target; if (t && t.dataset && t.dataset.lg406 && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); t.click(); } });
+  /* ---- 3) saving state: a clear LOGGING… pill + SAVING… card while an add is in flight; ✓ / ⚠ when it lands ---- */
+  var ADDF = { addEntry: 1, addFromTmdb: 1, addYouTube: 1 }, FLY = [], hideT = 0, slowT = 0, capT = 0;
+  function ttl(fn, a) { a = a || []; if (fn === 'addEntry') return String((a[0] || {}).title || '').trim(); if (fn === 'addFromTmdb') { var p = a[0] || {}; return String(p.title || '').trim() + (p.tv && p.season ? ' (S' + p.season + ')' : ''); } return String((a[0] || {}).t || '').trim(); }
+  function isFlying(x) { var t = low(x && x.title); return FLY.some(function (f) { return low(baseTitle(f.t)) === low(baseTitle(t)); }); }
+  function pill() { var p = $('sv406'); if (!p) { document.body.insertAdjacentHTML('beforeend', '<div id="sv406" role="status" aria-live="polite"><i></i><span></span></div>'); p = $('sv406'); } p.style.setProperty('--c406', me() === 'lewy' ? '#3ddc84' : '#4da3ff'); return p; }
+  function say(cls, ic, msg, ms) { var p = pill(); clearTimeout(hideT); p.className = 'on ' + cls; p.firstChild.textContent = ic; p.lastChild.textContent = msg; if (cls !== 'ok' && cls !== 'err') p.style.setProperty('--c406', me() === 'lewy' ? '#3ddc84' : '#4da3ff'); else p.style.removeProperty('--c406'); if (ms) hideT = setTimeout(function () { p.classList.remove('on'); }, ms); }
+  function paintBusy() { var on = FLY.length > 0; document.body.classList.toggle('sv406on', on); [].forEach.call(document.querySelectorAll('.lg4'), function (b) { b.classList.toggle('sv406', on); b.setAttribute('aria-label', on ? 'Logging… one moment' : 'Log it'); });
+    [].forEach.call(document.querySelectorAll('.lg406'), function (s) { var x = TM.res[s.dataset.lg406], f = on && x && isFlying(x); s.classList.toggle('busy', !!f); s.textContent = f ? '…' : (s.classList.contains('have406') ? '✓' : '+'); }); }
+  function waitMsg() { if (!FLY.length) return; var f = FLY[FLY.length - 1], n = FLY.length > 1 ? ' (+' + (FLY.length - 1) + ')' : '', slow = Date.now() - FLY[0].at > 8000;
+    say('wait', '⏳', (slow ? 'STILL SAVING ' : 'ADDING ') + baseTitle(f.t).toUpperCase() + n + (slow ? ' · SLOW CONNECTION…' : '…'));
+    clearTimeout(slowT); if (!slow) slowT = setTimeout(waitMsg, 8200); }
+  function done(id, kind, r) { var i = -1; FLY.forEach(function (f, j) { if (f.id === id) i = j; }); if (i < 0) return; var f = FLY.splice(i, 1)[0]; paintBusy();
+    if (FLY.length) { waitMsg(); return; } clearTimeout(slowT); clearTimeout(capT);
+    if (kind === 'ok') say('ok', '✓', 'ADDED ' + baseTitle((r && r.title) || f.t).toUpperCase(), 1800);
+    else if (kind === 'dup') { var p = $('sv406'); if (p) p.classList.remove('on'); }
+    else say('err', '⚠', 'DIDN\u2019T SAVE ' + baseTitle(f.t).toUpperCase() + ' — TRY AGAIN', 3600); }
+  var SEQ = 0, _r = run; run = function (fn, args, ok, fail) {
+    if (!ADDF[fn]) return _r.apply(this, arguments);
+    var id = ++SEQ, t = ttl(fn, args); FLY.push({ id: id, t: t || 'entry', at: Date.now() }); paintBusy(); waitMsg();
+    clearTimeout(capT); capT = setTimeout(function () { if (FLY.length) say('wait', '⏳', 'STILL CHECKING — IT\u2019LL APPEAR WHEN SAVED', 0); }, 60000);
+    return _r.call(this, fn, args, function (r) { done(id, r && r.dup ? 'dup' : 'ok', r); return ok && ok.apply(this, arguments); },
+      function (e) { done(id, e && /already/i.test(String(e.message || e)) ? 'dup' : 'err'); return fail && fail.apply(this, arguments); }); };
+  /* ---- 4) one card per show: also fold a whole-show row ("Show") into its season card ---- */
+  function scope(el) { return (el.closest && el.closest('.pgrid,.scroller,.list,ol,ul,.sec,.panel,section,[id^="v-"],#list,.ipl,.tlk')) || el.parentElement; }
+  var SN = /\s*\((S\d+|Season \d+)\)\s*$/i;
+  function pass() { if (!window.showGroup78) return; var G = showGroup78, seen = new Map(), L = [].slice.call(document.querySelectorAll('[data-open],.pc[data-row]'));
+    L.forEach(function (el) { if (el.closest('#detailBody,#ipdet,#ssn78,#add,#arch') || el.style.display === 'none') return; var r = byId(el.dataset.open || el.dataset.row); if (!r || r.row >= 1e9 || r.type !== 'TV Show') return; var k = G.key(r); if (!G.multi(k)) return;
+      var sc = scope(el), m = seen.get(sc); if (!m) { m = {}; seen.set(sc, m); } (m[k] = m[k] || []).push({ el: el, season: SN.test(String(r.title)), r: r }); });
+    seen.forEach(function (m) { Object.keys(m).forEach(function (k) { var A = m[k]; if (A.length < 2 && (A[0].season || A[0].el.dataset.g77)) return;
+      var keep = A.filter(function (a) { return a.season; })[0] || A[0];
+      A.forEach(function (a) { if (a !== keep && !a.season) { a.el.style.display = 'none'; a.el.dataset.dup406 = '1'; } });
+      if (!keep.season && keep.el.dataset.g77 !== k) { var el = keep.el, n = G.seasonsOf(k).filter(function (x) { return SN.test(String(x.title)); }).length || G.seasonsOf(k).length, bt = baseTitle(keep.r.title); el.dataset.g77 = k;
+        var nm = el.querySelector('.nm'); if (nm) nm.textContent = bt; if (!el.querySelector('.sz77')) (nm ? el : el.querySelector('.t,.ti b') || el).insertAdjacentHTML('beforeend', ' <span class="sz77">' + n + ' SEASONS</span>'); el.setAttribute('aria-label', bt + ', ' + n + ' seasons'); } }); }); }
+  var pt = 0; new MutationObserver(function () { clearTimeout(pt); pt = setTimeout(pass, 140); }).observe(document.body, { childList: true, subtree: true }); setTimeout(pass, 600);
+  window.V406 = { fly: FLY, pass: pass, cap: CAP };
+  try { window.APPV58 = '4.06'; if (window.PN93 && PN93.prepend) PN93.prepend({ v: '4.06', d: '29 Oct 2026', lines: [
+    'Adding is one flow now: in search results, the gold + on a row logs it straight away (TV shows ask which season; things you\u2019ve already logged show a green ✓), and tapping the title opens its full details page.',
+    'LOG IT stays pinned to the bottom of the add screen, bigger and gold, so it\u2019s never scrolled out of reach.',
+    'While something is saving you\u2019ll see LOGGING… at the top and a SAVING… tag on its poster, then ✓ LOGGED (or a clear “didn\u2019t save — try again”).',
+    'Search when adding shows up to 10 results, with MORE RESULTS if there are extra.',
+    'Shows with several seasons stay as one card with a SEASONS badge, even if the whole show was also logged.',
+    'Episode ratings: every episode in a long season is reachable (ep 1 too), the first tap always counts, and you can rate with decimals — tap 7, then .6 for 7.6.'] }); } catch (e) {}
+})();
+</script>
+<style id="v406e-css">
+/* 4.06: episode rating — list flows in the page (no nested scroller), one sleek whole + tenth picker, 44px targets */
+.el99 .ls99.lng,.el99 .ls99.lg406{max-height:none!important;overflow:visible!important}
+#epx .e99,#epx .rb99,#epx .epq button{touch-action:manipulation;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
+#epx .e99{scroll-margin-top:calc(76px + env(safe-area-inset-top));scroll-margin-bottom:24px}
+#epx .e99.op406{background:rgba(255,255,255,.06)}
+.eq406{--pc:var(--p1,#4dc3ff);display:block;background:#1d1640;border:3px solid #000;box-shadow:inset 0 0 0 2px var(--pc);padding:8px;margin:4px 0 8px;scroll-margin-top:calc(124px + env(safe-area-inset-top));scroll-margin-bottom:24px}
+.eq406.pl406{--pc:var(--p2,#3ddc84)}
+.eq406 .epqh{display:flex;align-items:center;gap:8px;margin-bottom:8px;font:8px var(--pix);color:var(--pc)}
+.eq406 .epqh .rd406{font:18px var(--pix);color:var(--pc);min-width:64px;text-align:center;margin-left:auto;text-shadow:2px 2px 0 #000}
+.eq406 .epqh .rd406.nil{color:#555;font-size:14px}
+.eq406 .epqh button{min-height:44px;min-width:44px;padding:0 8px;font:8px var(--pix);margin:0!important}
+.eq406 .g406{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.eq406 .g406 button{min-height:44px;padding:0;font:14px var(--pix);background:var(--panel,#16162a);border:3px solid #000;box-shadow:2px 2px 0 #000;color:var(--txt,#f1ecff);border-radius:0}
+.eq406 .g406 button:active{transform:translate(2px,2px);box-shadow:none}
+.eq406 .g406 button.on{background:var(--pc);color:#000}
+.eq406 .t406 button{font-size:12px;color:var(--dim,#9a94b8)}
+.eq406 .t406 button.on{color:#000}
+.eq406 .t406.off button{opacity:.3;pointer-events:none}
+.eq406 .tl406{font:7px var(--pix);color:var(--dim,#9a94b8);margin:8px 0 5px;letter-spacing:1px}
+.eq406 .ft406{display:grid;grid-template-columns:1fr 2fr;gap:6px;margin-top:8px}
+.eq406 .ft406 button{min-height:44px;font:9px var(--pix);border:3px solid #000;box-shadow:2px 2px 0 #000;background:var(--panel,#16162a);color:var(--txt,#f1ecff);border-radius:0}
+.eq406 .ft406 .ok{background:var(--pc);color:#000}
+.eq406 .ft406 button:disabled{opacity:.35}
+</style>
+<script id="v406e">/* ===== 4.06 — episode rating: reliable first taps, every episode reachable (ep 1 included), decimal ratings (whole + tenth), sleek picker (preview) ===== */
+(function () {
+  if (typeof epRateRow !== 'function' || typeof epRedraw !== 'function') return;
+  function cur() { var t = $('detailBody') && $('detailBody').querySelector('[data-dedit]'); return t ? byId(t.dataset.dedit) : null; }
+  function pl() { try { return (typeof WHO !== 'undefined' && WHO) || 'sam'; } catch (e) { return 'sam'; } }
+  function r1(v) { return Math.round(v * 10) / 10; }
+  function f1(v) { return v == null ? '–' : (Math.round(v * 10) % 10 ? String(r1(v)) : r1(v).toFixed(1)); }
+  /* 1) the season list is part of the page scroll: no 460px inner scroller that snapped back to NEXT on every redraw */
+  var _eh = epHtml; epHtml = function (r) { var h = _eh.apply(this, arguments); return typeof h === 'string' ? h.replace('class="ls99 lng"', 'class="ls99 lg406"') : h; };
+  /* 2) one picker: tap a whole number (saves), optionally tap a tenth (saves 7.6 and closes) */
+  epRateRow = function (r, n) { var p = pl(), c = epR(r, p, n), R = (window.EPR && EPR.rate) || {};
+    var w = R.p === p && R.w != null ? R.w : c != null ? Math.floor(c) : null, t = c != null && w === Math.floor(c) ? Math.round((c - Math.floor(c)) * 10) : (w != null ? 0 : null);
+    var v = w == null ? null : w + (t || 0) / 10, NM = p === 'lewy' ? 'LEWY' : 'SAM', OT = p === 'lewy' ? 'sam' : 'lewy';
+    var W = ''; for (var k = 1; k <= 10; k++) W += '<button type="button" data-erw="' + k + '" class="' + (w === k ? 'on' : '') + '" aria-label="' + k + ' out of 10" aria-pressed="' + (w === k) + '">' + k + '</button>';
+    var T = ''; for (var j = 0; j <= 9; j++) T += '<button type="button" data-ert="' + j + '" class="' + (w != null && t === j ? 'on' : '') + '" aria-label="' + (w != null ? w : 'x') + '.' + j + '">.' + j + '</button>';
+    return '<div class="epq eq406' + (p === 'lewy' ? ' pl406' : '') + '" data-epq="' + n + '" role="group" aria-label="' + NM + ' rating for episode ' + n + '">' +
+      '<div class="epqh"><span>★ ' + NM + ' · <span class="ek406">EP ' + n + '</span></span><b class="rd406' + (v == null ? ' nil' : '') + '">' + (v == null ? '–.–' : f1(v)) + '</b>' +
+      '<button type="button" class="btn" data-epp="' + OT + '" aria-label="Rate as ' + OT + '">⇄ ' + (OT === 'lewy' ? 'L' : 'S') + '</button><button type="button" class="btn" data-epqx="1" aria-label="Close">✕</button></div>' +
+      '<div class="g406 w406">' + W + '</div><div class="tl406">+ DECIMAL (OPTIONAL)</div><div class="g406 t406' + (w == null || w === 10 ? ' off' : '') + '">' + T + '</div>' +
+      '<div class="ft406"><button type="button" data-erc="1"' + (c == null && v == null ? ' disabled' : '') + '>CLEAR</button><button type="button" class="ok" data-erd="1">' + (v == null ? '✕ CLOSE' : '✓ DONE · ' + f1(v)) + '</button></div></div>'; };
+  /* saving: local first, one debounced setEpRating per episode (the final value wins), never overwrite newer local picks with an older reply */
+  var PEND = {}, FLY = {};
+  function busy(title) { var k = String(title).trim() + '|'; return Object.keys(PEND).some(function (x) { return x.indexOf(k) === 0; }) || (FLY[String(title).trim()] || 0) > 0; }
+  function send(key) { var q = PEND[key]; if (!q) return; clearTimeout(q.h); delete PEND[key]; var tt = String(q.r.title).trim(); FLY[tt] = (FLY[tt] || 0) + 1;
+    run('setEpRating', [q.r.title, q.p, q.n, q.v], function (o) { FLY[tt]--; if (o && !busy(q.r.title)) q.r.ep = Object.assign({}, q.r.ep || {}, o); }, function () { FLY[tt]--; toast('⚠ EP ' + q.n + ' rating didn\u2019t save — tap it again'); }); }
+  function flush() { Object.keys(PEND).forEach(send); }
+  function save(r, p, n, v, now) { r.ep = r.ep || {}; r.ep[p] = r.ep[p] || { e: epOf(r, p) }; r.ep[p].r = r.ep[p].r || {}; if (v) r.ep[p].r[n] = v; else delete r.ep[p].r[n];
+    var key = String(r.title).trim() + '|' + p + '|' + n, q = PEND[key]; if (q) clearTimeout(q.h); q = PEND[key] = { r: r, p: p, n: n, v: v }; q.h = setTimeout(function () { send(key); }, now ? 0 : 900);
+    if (v && n > epOf(r, p) && typeof EPQ !== 'undefined' && typeof epSend === 'function') { try { var k = String(r.title).trim() + '|' + p, e = EPQ[k] = EPQ[k] || {}; e.want = n; e.seq = Date.now() * 10 + ((e.c = ((e.c || 0) + 1) % 10)); epSend(r, p); } catch (x) {} } }
+  window.addEventListener('pagehide', flush); document.addEventListener('visibilitychange', function () { if (document.hidden) flush(); });
+  /* 3) anchored redraws: the row you tapped stays under your finger, the picker scrolls into view just enough (instant, no smooth drift mid-tap) */
+  var AN = null, WANT = 0;
+  function scroller(el) { for (var x = el && el.parentElement; x && x !== document.body; x = x.parentElement) { var o = getComputedStyle(x).overflowY; if ((o === 'auto' || o === 'scroll') && x.scrollHeight > x.clientHeight) return x; } return document.scrollingElement || document.documentElement; }
+  function topLimit(S) { var top = S === document.scrollingElement ? 0 : S.getBoundingClientRect().top, b = document.querySelector('#detailBody .tb99'); if (b && getComputedStyle(b).position === 'sticky') { var br = b.getBoundingClientRect(); if (br.bottom > top) top = br.bottom; } return top + 6; }
+  function mark() { var x = $('epx'); if (!x) return; [].forEach.call(x.querySelectorAll('.epq'), function (q) { q.__s99 = 1; var row = x.querySelector('[data-e99="' + q.dataset.epq + '"]'), lab = row && row.querySelector('.n'), ek = q.querySelector('.ek406'); if (lab && ek && ek.textContent !== lab.textContent) ek.textContent = lab.textContent; if (row && !row.classList.contains('op406')) row.classList.add('op406'); }); }
+  function post() { mark(); var x = $('epx'); if (!x) return;
+    if (AN) { var nr = x.querySelector(AN.sel); if (nr) { var S = scroller(nr), d = nr.getBoundingClientRect().top - AN.top; if (Math.abs(d) > 1) S.scrollTop += d; } AN = null; }
+    if (WANT) { WANT = 0; var q = x.querySelector('.epq'); if (q) { var S2 = scroller(q), top = topLimit(S2), bot = (S2 === document.scrollingElement ? innerHeight : Math.min(innerHeight, S2.getBoundingClientRect().bottom)) - 10, row = q.previousElementSibling, rr = row && row.classList.contains('e99') ? row.getBoundingClientRect() : q.getBoundingClientRect(), qr = q.getBoundingClientRect();
+        if (qr.bottom > bot) S2.scrollTop += Math.min(qr.bottom - bot, rr.top - top); else if (rr.top < top) S2.scrollTop -= top - rr.top; } } }
+  var _er = epRedraw; epRedraw = function (r) { var o = _er.apply(this, arguments); try { post(); } catch (e) {} return o; };
+  try { new MutationObserver(function () { try { mark(); } catch (e) {} }).observe($('detail'), { childList: true, subtree: true }); } catch (e) {}
+  /* 4) taps: rows toggle the picker; picker buttons act on first tap; a redraw that lands mid-tap (progress / save reply / TMDB load) no longer eats it */
+  window.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('#epx [data-erw],#epx [data-ert],#epx [data-erc],#epx [data-erd],#epx [data-epi],#epx [data-epc],#epx [data-epqx],#epx [data-epp]'); if (!b) return;
+    if (SW && e.isTrusted && Date.now() - SW.t < 600 && b.matches(SW.sel)) { SW = null; e.stopImmediatePropagation(); e.preventDefault(); return; }
+    var r = cur(); if (!r || !window.EPR) return;
+    if (b.dataset.epi || b.dataset.epc) { var n = Number(b.dataset.epi || b.dataset.epc); flush();
+      if (b.dataset.epi && EPR.rate && EPR.rate.row === r.row && EPR.rate.n === n) { e.stopImmediatePropagation(); e.preventDefault(); EPR.rate = null; AN = { sel: '[data-e99="' + n + '"]', top: b.getBoundingClientRect().top }; epRedraw(r); return; }
+      if (b.dataset.epi) AN = { sel: '[data-e99="' + n + '"]', top: b.getBoundingClientRect().top }; WANT = 1; try { SFX.tap && SFX.tap(); } catch (x) {} return; /* the original handler opens it; epRedraw → post() anchors */ }
+    if (b.dataset.epqx || b.dataset.epp) { flush(); if (b.dataset.epp && EPR.rate) EPR.rate.w = null; return; }
+    e.stopImmediatePropagation(); e.preventDefault(); if (!EPR.rate || EPR.rate.row !== r.row) return;
+    var p = pl(), N = EPR.rate.n, c = epR(r, p, N), w0 = EPR.rate.p === p && EPR.rate.w != null ? EPR.rate.w : c != null ? Math.floor(c) : null;
+    if (b.dataset.erw) { var w = Number(b.dataset.erw); EPR.rate.w = w; EPR.rate.p = p; save(r, p, N, w, w === 10); try { SFX.coin && SFX.coin(); } catch (x) {}
+      if (w === 10) { EPR.rate = null; if (typeof confetti === 'function') confetti(); toast('👑 EP ' + N + ' → 10'); } AN = { sel: '[data-e99="' + N + '"]', top: (($('epx').querySelector('[data-e99="' + N + '"]') || b).getBoundingClientRect()).top }; epRedraw(r); return; }
+    if (b.dataset.ert) { if (w0 == null || w0 >= 10) return; var v = r1(w0 + Number(b.dataset.ert) / 10); save(r, p, N, v, true); EPR.rate = null; try { SFX.coin && SFX.coin(); } catch (x) {} toast(tico(v) + ' EP ' + N + ' → ' + f1(v)); AN = { sel: '[data-e99="' + N + '"]', top: (($('epx').querySelector('[data-e99="' + N + '"]') || b).getBoundingClientRect()).top }; epRedraw(r); return; }
+    if (b.dataset.erc) { save(r, p, N, 0, true); EPR.rate = null; toast('EP ' + N + ' cleared'); epRedraw(r); return; }
+    if (b.dataset.erd) { var vv = epR(r, p, N); flush(); EPR.rate = null; if (vv != null) toast(tico(vv) + ' EP ' + N + ' → ' + f1(vv)); AN = { sel: '[data-e99="' + N + '"]', top: (($('epx').querySelector('[data-e99="' + N + '"]') || b).getBoundingClientRect()).top }; epRedraw(r); return; } }, true);
+  var TSEL = '[data-erw],[data-ert],[data-erc],[data-erd],[data-epi],[data-epc],[data-epqx],[data-epp]', TG = null, SW = null;
+  function selOf(el) { for (var i = 0, A = TSEL.split(','); i < A.length; i++) { var a = A[i].slice(1, -1); if (el.hasAttribute(a)) return '[' + a + '="' + el.getAttribute(a) + '"]'; } return null; }
+  window.addEventListener('pointerdown', function (e) { TG = null; var b = e.target.closest && e.target.closest('#epx ' + TSEL.split(',').join(',#epx ')); if (!b || e.button > 0) return; TG = { el: b, sel: selOf(b), x: e.clientX, y: e.clientY, t: Date.now() }; }, true);
+  window.addEventListener('pointercancel', function () { TG = null; }, true);
+  window.addEventListener('pointerup', function (e) { var g = TG; TG = null; if (!g || !g.sel || g.el.isConnected || Math.abs(e.clientX - g.x) > 12 || Math.abs(e.clientY - g.y) > 12 || Date.now() - g.t > 900) return;
+    var x = $('epx'), nb = x && x.querySelector(g.sel); if (!nb) return; SW = { sel: g.sel, t: Date.now() }; nb.click(); }, true);
+  window.EPR406 = { flush: flush, pend: PEND };
+})();
+</script>
+<style id="v407acss">/* ===== 4.07a — categories: ADD, viewer-only Logging, Cut leaves, phone layout ===== */
+#lg88::after{content:'ADD'!important}
+.aw407{font:8px var(--pix);color:#9fb3c8;letter-spacing:.5px;margin:10px 0 -2px;line-height:1.5}
+.aw407 b{color:#ffd54a}
+/* movie/TV details: BACK no longer floats over the synopsis */
+#detailBody .bk400{position:static!important;top:auto!important}
+/* status rows / last controls clear the fixed nav + FAB */
+#detailBody{padding-bottom:calc(170px + env(safe-area-inset-bottom))!important;scroll-padding-bottom:calc(170px + env(safe-area-inset-bottom))}
+#detailBody .w400{scroll-margin-bottom:calc(170px + env(safe-area-inset-bottom))}
+/* swipe CUT / TO LOG pinned above the nav */
+.ipa{position:sticky!important;bottom:calc(92px + env(safe-area-inset-bottom))!important;z-index:30;background:#10141c;padding-top:8px;padding-bottom:8px;box-shadow:0 -6px 12px rgba(0,0,0,.55)}
+.ipa button{min-height:44px}
+/* add sheet: ADD stays pinned in view even with Already watched open */
+#add .sheet>.acts{position:sticky!important;bottom:0!important;z-index:20;background:#10141c;box-shadow:0 -8px 14px rgba(0,0,0,.6)}
+#add .sheet{padding-bottom:calc(8px + env(safe-area-inset-bottom))}
+</style>
+<script id="v407a">/* ===== 4.07a — categories + cinema decimal fix ===== */
+(function () {
+  window.V407A = 1;
+  var meK = function () { try { return me() + 'Watched'; } catch (e) { return 'samWatched'; } };
+  /* 1) Logging = only THIS viewer's Watching titles (matches the ▶ badge) */
+  try { prog = function (r) { return !!r && r[meK()] === 'As we speak'; }; } catch (e) {}
+
+  /* 2) saveFields: pending (just-added) rows queue the edit instead of dropping it; Cut titles leave Cut when marked Watching/Watched */
+  var _sf = saveFields;
+  saveFields = function (orig, fields, msg) {
+    try {
+      if (orig && orig.row >= 1e9 && fields) {
+        orig.__q407 = Object.assign(orig.__q407 || {}, fields); Object.keys(fields).forEach(function (k) { orig[k] = fields[k]; });
+        try { render(); } catch (e) {}
+        if (msg !== '__auto') toast('Saved — syncing when the add finishes'); return;
+      }
+      var k = meK(), v = fields && fields[k], left = false;
+      if (orig && (v === 'As we speak' || v === 'Yes')) {
+        try { var key = rKey(orig); if (intGet(key) === 'n') { intSet(key, ''); left = true; } } catch (e) {}
+        try { var p = me(), t = String(orig.title).trim(); if ((NFM[p] || []).indexOf(t) >= 0) { nfmSet(orig, false, true); left = true; } } catch (e) {}
+        if (left) setTimeout(function () { toast('↺ Out of Cut — now in ' + (v === 'Yes' ? 'Logged' : 'Logging')); }, 1600);
+      }
+    } catch (e) {}
+    return _sf.apply(this, arguments);
+  };
+
+  /* 3) finishAdd: say where it landed; flush any rating tapped while it was saving */
+  var LAND = null, _bn = banner, _ts = toast;
+  banner = function (a) { var A = [].slice.call(arguments); if (LAND && Date.now() < LAND.until && /^(NEW ENTRY LOGGED|ADDED TO INTERESTED|ADDED TO TO LOG)$/.test(A[0])) A[0] = 'ADDED TO ' + LAND.where.toUpperCase(); return _bn.apply(this, A); };
+  toast = function (m) { var A = [].slice.call(arguments); if (LAND && Date.now() < LAND.until && /^(Logged |Added to (Interested|To Log) · )/.test(String(A[0]))) { A[0] = 'Added to ' + LAND.where; LAND.until = 0; } return _ts.apply(this, A); };
+  var _fa = finishAdd;
+  finishAdd = function (tmp, t, r) {
+    var q = tmp && tmp.__q407;
+    try { var w = (r && r[meK()]) || (tmp && tmp[meK()]); LAND = { where: w === 'Yes' ? 'Logged' : w === 'As we speak' ? 'Logging' : 'To Log', until: Date.now() + 3000 }; } catch (e) {}
+    var res = _fa.apply(this, arguments);
+    try { if (q && tmp && tmp.row < 1e9) { delete tmp.__q407; setTimeout(function () { saveFields(tmp, q, '__auto'); }, 50); } } catch (e) {}
+    return res;
+  };
+
+  /* 4) add sheet: make "who watched" obvious + untoggle-able */
+  var _aw = renderAW;
+  renderAW = function () { var x = _aw.apply(this, arguments); try { var bx = $('aWBox'), who = bx && bx.querySelector('.who'); if (who && !bx.querySelector('.aw407')) { var h = document.createElement('div'); h.className = 'aw407'; h.innerHTML = 'WHO WATCHED? <b>tap a name</b> to switch it to Not yet'; who.parentNode.insertBefore(h, who); } } catch (e) {} return x; };
+
+  /* 5) Cut / menu copy */
+  if (window.ITEMS91) { var _it = window.ITEMS91; window.ITEMS91 = function (s, L) { return _it(s, L).map(function (x) { x = x.slice(); if (/^(Fully watched|Hidden from (Interested|To Log))$/.test(x[2] || '')) x[2] = ''; return x; }); }; }
+
+  /* 6) labels: LOG IT → ADD, UN-HIDE → RESTORE */
+  var SKIP = '#pn93,#pn93pop,#arch,#sh86,script,style,textarea,input';
+  function fix(n) {
+    if (n.nodeType === 3) { var s = n.nodeValue, o = s; if (/LOG IT|UN-HIDE/.test(s)) { var el = n.parentNode; if (el && el.closest && el.closest(SKIP)) return; s = s.replace(/LOG IT/g, 'ADD').replace(/UN-HIDE/g, 'RESTORE'); if (s !== o) n.nodeValue = s; } return; }
+    if (n.nodeType !== 1 || (n.closest && n.closest(SKIP))) return;
+    var w = document.createTreeWalker(n, 4), t; while ((t = w.nextNode())) fix(t);
+    [].forEach.call(n.querySelectorAll ? n.querySelectorAll('[aria-label],[title]') : [], function (e) { ['aria-label', 'title'].forEach(function (a) { var v = e.getAttribute(a); if (v && /LOG IT|Log it|Un-hide|UN-HIDE/.test(v)) e.setAttribute(a, v.replace(/LOG IT/g, 'ADD').replace(/Log it/g, 'Add').replace(/Un-hide|UN-HIDE/g, 'Restore')); }); });
+  }
+  /* 7) TV details: status rows above the episode list */
+  function lift() { var d = $('detailBody'); if (!d) return; var w = d.querySelector('.w400'), e = d.querySelector('#epx'); if (w && e && (w.compareDocumentPosition(e) & 4) === 0 && e.parentNode) { e.parentNode.insertBefore(w, e); } }
+  var busy = false;
+  new MutationObserver(function (M) { if (busy) return; busy = true; try { M.forEach(function (m) { if (m.type === 'characterData') fix(m.target); else [].forEach.call(m.addedNodes, fix); }); lift(); } catch (e) {} busy = false; }).observe(document.body, { childList: true, subtree: true, characterData: true });
+  try { fix(document.body); } catch (e) {}
+
+  try { window.APPV58 = '4.07a'; if (window.PN93 && PN93.prepend) PN93.prepend({ v: '4.07a', d: '29 Oct 2026', lines: [
+    'Cinema ratings with decimals now always save. Before, if you rated something you\u2019d only just added (while it was still saving), the 7.6 quietly vanished; now it waits for the add to finish and then saves.',
+    '\u201cLOG IT\u201d is now ADD. After adding you\u2019ll see where it went: \u201cAdded to To Log\u201d (or Logged, if you ticked Already watched). In Already watched, tap a name to switch them to Not yet.',
+    'Logging now only shows what YOU are watching, so the shelves match the badges on each poster.',
+    'Marking a Cut title as Watching or Watched brings it back out of Cut (with a heads-up). UN-HIDE is now RESTORE, and the old menu hints are gone.',
+    'iPhone: the ADD button stays pinned on the add screen, BACK no longer covers the synopsis, status buttons sit clear of the bottom bar (and above the episode list on TV), and the swipe CUT / TO LOG buttons stay above the bar.',
+    'Episode ratings keep their decimal (7.6) after a reload.'] }); } catch (e) {}
+})();
+</script>
 </body></html>
 <!--RC305T-->

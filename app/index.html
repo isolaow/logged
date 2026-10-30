@@ -39,7 +39,7 @@ function mock(fn, args, who) { if (global.MOCKX) { const x = global.MOCKX(fn, ar
     case 'setEpRating': { const [t, p, n, v] = args, o = S.ep[t] = S.ep[t] || JSON.parse(JSON.stringify((rows.find(x => x.title === t) || {}).ep || {})); o[p] = o[p] || { e: 0 }; o[p].r = o[p].r || {}; if (Number(v)) o[p].r[n] = Number(v); else delete o[p].r[n]; return JSON.parse(JSON.stringify(o)); }
     case 'setThemes': { const [t, p, L] = args, b = t.replace(/\s*\(S\d+\)$/, ''); S.themes[b] = S.themes[b] || {}; S.themes[b][p] = L; return S.themes[b]; }
     case 'updateEntry': { S.upd++; const r = rows.find(x => x.row === args[0]); return Object.assign({}, r, args[1]); }
-    case 'addEntry': return R(99, args[0].title, args[0].type || 'Movie', args[0]);
+    case 'addEntry': { const nr = R(rows.reduce((m, x) => Math.max(m, x.row), 1) + 1, args[0].title, args[0].type || 'Movie', args[0]); rows.push(nr); return JSON.parse(JSON.stringify(nr)); }
     case 'searchTitles': return { results: [{ id: 1, tv: false, title: 'Oppenheimer', year: 2023, poster: '', genres: ['Drama'], via: 'Christopher Nolan (dir.)' }] };
     case 'songVideo': return { id: 'fJ9rUzIMcZQ', t: 'Queen – Bohemian Rhapsody (Official Video)', ch: 'Queen Official' };
     case 'ytAutoLog': S.ytlog.push(args[0]); return { title: args[0].t, logged: true };
@@ -3718,7 +3718,7 @@ function debounce(fn, ms) { var h; var d = function () { var a = arguments; clea
 var QSAVE = 0, _toastR23 = toast; toast = function (m, u) { if (m === 'Saved ✓' && Date.now() - QSAVE < 20000) return savedTick(); return _toastR23.apply(this, arguments); };
 var _saveFieldsR23 = saveFields; saveFields = function (orig, fields, msg, isUndo) { if (msg === '__auto') { QSAVE = Date.now(); msg = 'Saved ✓'; } return _saveFieldsR23(orig, fields, msg, isUndo); };
 var detAuto = debounce(function () { if (!editing || !$('detail').classList.contains('open')) return; [].forEach.call($('detailBody').querySelectorAll('[data-t]'), function (el) { editing[el.dataset.t] = el.value; });
-  var orig = byId(editing.row); if (!orig || orig.row >= 1e9) return; var f = {}, n = 0; FIELDS.forEach(function (k) { if (String(editing[k] || '') !== String(orig[k] || '')) { f[k] = editing[k]; n++; } }); if (n) saveFields(orig, f, '__auto'); }, 700);
+  var orig = byId(editing.row); if (!orig) return; var f = {}, n = 0; FIELDS.forEach(function (k) { if (String(editing[k] || '') !== String(orig[k] || '')) { f[k] = editing[k]; n++; } }); if (n) saveFields(orig, f, '__auto'); }, 700);
 $('detailBody').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; if (b.id === 'eSave') return; if (b.dataset.cycle || b.dataset.e || (b.parentNode && b.parentNode.dataset && b.parentNode.dataset.k)) detAuto(); });
 $('detailBody').addEventListener('input', function (e) { if (e.target.matches('[data-t]')) detAuto(); });
 $('detailBody').addEventListener('change', function (e) { if (e.target.matches('[data-t]')) detAuto.flush(); });
@@ -7170,7 +7170,7 @@ function sndList69(p) { var L = ((profiles[p] || {}).snd || []); return { none: 
     var row = b.parentNode, k = row.dataset.k, add = !!b.closest('#aWBox'), S = add ? (addState.w || {}) : window.editing; if (!S) return;
     var base = Math.floor((num(S[k]) || 0) + 1e-9); if (!base) { var on = row.previousElementSibling && row.previousElementSibling.querySelector('button.on'); base = on ? Number(on.dataset.v) : 0; }
     if (!base) { toast('Pick a whole number first'); return; }
-    var d = Number(b.dataset.d), v = base >= 10 ? 10 : Math.round((base + d / 10) * 10) / 10; S[k] = String(v);
+    var d = Number(b.dataset.d), v = base >= 10 ? 10 : Math.round((base + d / 10) * 10) / 10; S[k] = String(v); if (!add) { try { detAuto(); detAuto.flush && detAuto.flush(); } catch (x) {} } /* 4.07a: the decimal tap now saves */
     [].forEach.call(row.children, function (x) { x.classList.toggle('on', x === b && (base < 10 || d === 0)); }); if (base >= 10) row.firstChild.classList.add('on'); SFX.blip && SFX.blip(); }, true);
   /* whole-number tap resets the decimal row to .0 */
   document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('.rate button'); if (!b) return; setTimeout(function () { var r = b.parentNode.nextElementSibling; if (!r || !r.classList.contains('rd77')) return; var sel = b.classList.contains('on'); [].forEach.call(r.children, function (x, i) { x.classList.toggle('on', sel && i === 0); }); }, 0); });
@@ -8308,7 +8308,7 @@ window.APPV58 = 'r91';
   var _od = openDetail; openDetail = function () { var r = _od.apply(this, arguments); mv(); setTimeout(mv, 0); setTimeout(mv, 400); setTimeout(mv, 2000); return r; };
   ['ostRedraw', 'ostxDraw'].forEach(function (n) { var f = window[n]; if (typeof f === 'function') window[n] = function () { var r = f.apply(this, arguments); mv(); return r; }; });
   /* stale-build guard: a home-screen app resumed from the background keeps old code; reload once when sw.js has a newer build */
-  var BUILD = /\/app-rc\//.test(location.pathname) ? 'logged-rc-1793276663' : 'logged-202610292332', busy = function () { var a = document.activeElement; return (a && /INPUT|TEXTAREA/.test(a.tagName)) || (window.OXA && !OXA.paused) || document.querySelector('#add.open,#fb83.open,#trv.open,#ytpage.open .yv'); };
+  var BUILD = /\/app-rc\//.test(location.pathname) ? 'logged-rc-1793278243' : 'logged-202610302246', busy = function () { var a = document.activeElement; return (a && /INPUT|TEXTAREA/.test(a.tagName)) || (window.OXA && !OXA.paused) || document.querySelector('#add.open,#fb83.open,#trv.open,#ytpage.open .yv'); };
   var last = 0; function check() { if (/demo=1/.test(location.search) || BUILD.indexOf('__') === 0 || Date.now() - last < 60000) return; last = Date.now();
     fetch('sw.js?b=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.ok ? r.text() : ''; }).then(function (t) { var m = t.match(/var V = '([^']+)'/); if (!m || m[1] === BUILD || busy()) return;
       try { if (sessionStorage.lg_rl89 === m[1]) return; sessionStorage.lg_rl89 = m[1]; } catch (e) {} try { toast('⟳ UPDATING LOGGED…'); } catch (e) {}
@@ -8810,7 +8810,7 @@ window.APPV58 = '3.03';
         if (!r || !$('detailBody')) return o;
         ['samRating', 'lewyRating'].forEach(function (k) {
           var host = document.querySelector('#detailBody .rate[data-k="' + k + '"]');
-          if (!host || host.dataset.r95) return;
+          if (!host || host.dataset.r95 || window.V407A) return; /* 4.07a: one picker (rp108) */
           host.dataset.r95 = '1';
           var n = num(r[k]), whole = n != null ? Math.floor(n + 1e-9) : null, frac = n != null ? Math.round((n - whole) * 10) : null;
           var h = '<div class="rate95" data-rk="' + k + '"><div class="lbl95">1 – 10</div>';
@@ -8825,7 +8825,7 @@ window.APPV58 = '3.03';
     };
     document.addEventListener('click', function (e) {
       var b = e.target.closest && e.target.closest('.rate95 button');
-      if (!b) return;
+      if (!b || window.V407A) return;
       e.preventDefault(); e.stopImmediatePropagation();
       var box = b.closest('.rate95'), k = box.dataset.rk, r = window.__od92 || window.editing;
       if (!r || !k) return;
@@ -9727,7 +9727,7 @@ window.APPV58 = '3.08';
     if (box.closest('#aWBox')) { try { addState.w = addState.w || {}; addState.w[k] = sv; } catch (x) {} return; } /* + LOG IT sheet: saved with LOG IT */
     try { if (typeof editing !== 'undefined' && editing) editing[k] = sv;
       var orig = editing && byId(editing.row);
-      if (orig && orig.row < 1e9) { var o = {}; o[k] = sv; saveFields(orig, o, v == null ? '\u2605 Score cleared' : '\u2605 ' + v); chips(orig); } } catch (x) {}
+      if (orig) { var o = {}; o[k] = sv; saveFields(orig, o, v == null ? '\u2605 Score cleared' : '\u2605 ' + v); chips(orig); } } catch (x) {}
   }, true);
 
   /* quick "rate it" pop-up: same picker (decimals too) instead of 1–10 only */
@@ -10233,7 +10233,7 @@ html body header #lb88[aria-expanded="true"] #ss88::after{transform:rotate(180de
     if (ty === 'TV Show' && !s && base) { var ss = L.filter(function (r) { return r.type === 'TV Show' && sn(r.title) && norm(baseTitle(r.title)) === base; }); if (ss.length) return ss[ss.length - 1]; }
     return null; };
   function ui() { var on = NQ > 0, b = $('aSave'); document.body.classList.toggle('lg404', on);
-    if (b) { if (on) { if (!b.dataset.l404) b.dataset.l404 = b.textContent; b.disabled = true; b.textContent = 'LOGGING…'; } else if (b.dataset.l404) { b.disabled = false; b.textContent = b.dataset.l404; delete b.dataset.l404; } } }
+    if (b) { if (on) { if (!b.dataset.l404) b.dataset.l404 = b.textContent; b.disabled = true; b.textContent = 'ADDING…'; } else if (b.dataset.l404) { b.disabled = false; b.textContent = b.dataset.l404; delete b.dataset.l404; } } }
   function dupNotice(ex, sheet) { if (!ex) return; try { SFX.tap && SFX.tap(); } catch (e) {}
     if (sheet) { try { close('add'); } catch (e) {} try { openDetail(ex); } catch (e) {} toast('Already in your log — opened it'); }
     else toast('Already in your log: ' + baseTitle(ex.title)); }
@@ -10375,11 +10375,11 @@ body.sv406on .pc[data-row^="10000000"]::after,body.sv406on [data-open^="10000000
   function paintBusy() { var on = FLY.length > 0; document.body.classList.toggle('sv406on', on); [].forEach.call(document.querySelectorAll('.lg4'), function (b) { b.classList.toggle('sv406', on); b.setAttribute('aria-label', on ? 'Logging… one moment' : 'Log it'); });
     [].forEach.call(document.querySelectorAll('.lg406'), function (s) { var x = TM.res[s.dataset.lg406], f = on && x && isFlying(x); s.classList.toggle('busy', !!f); s.textContent = f ? '…' : (s.classList.contains('have406') ? '✓' : '+'); }); }
   function waitMsg() { if (!FLY.length) return; var f = FLY[FLY.length - 1], n = FLY.length > 1 ? ' (+' + (FLY.length - 1) + ')' : '', slow = Date.now() - FLY[0].at > 8000;
-    say('wait', '⏳', (slow ? 'STILL SAVING ' : 'LOGGING ') + baseTitle(f.t).toUpperCase() + n + (slow ? ' · SLOW CONNECTION…' : '…'));
+    say('wait', '⏳', (slow ? 'STILL SAVING ' : 'ADDING ') + baseTitle(f.t).toUpperCase() + n + (slow ? ' · SLOW CONNECTION…' : '…'));
     clearTimeout(slowT); if (!slow) slowT = setTimeout(waitMsg, 8200); }
   function done(id, kind, r) { var i = -1; FLY.forEach(function (f, j) { if (f.id === id) i = j; }); if (i < 0) return; var f = FLY.splice(i, 1)[0]; paintBusy();
     if (FLY.length) { waitMsg(); return; } clearTimeout(slowT); clearTimeout(capT);
-    if (kind === 'ok') say('ok', '✓', 'LOGGED ' + baseTitle((r && r.title) || f.t).toUpperCase(), 1800);
+    if (kind === 'ok') say('ok', '✓', 'ADDED ' + baseTitle((r && r.title) || f.t).toUpperCase(), 1800);
     else if (kind === 'dup') { var p = $('sv406'); if (p) p.classList.remove('on'); }
     else say('err', '⚠', 'DIDN\u2019T SAVE ' + baseTitle(f.t).toUpperCase() + ' — TRY AGAIN', 3600); }
   var SEQ = 0, _r = run; run = function (fn, args, ok, fail) {
@@ -10498,6 +10498,91 @@ body.sv406on .pc[data-row^="10000000"]::after,body.sv406on [data-open^="10000000
   window.addEventListener('pointerup', function (e) { var g = TG; TG = null; if (!g || !g.sel || g.el.isConnected || Math.abs(e.clientX - g.x) > 12 || Math.abs(e.clientY - g.y) > 12 || Date.now() - g.t > 900) return;
     var x = $('epx'), nb = x && x.querySelector(g.sel); if (!nb) return; SW = { sel: g.sel, t: Date.now() }; nb.click(); }, true);
   window.EPR406 = { flush: flush, pend: PEND };
+})();
+</script>
+<style id="v407acss">/* ===== 4.07a — categories: ADD, viewer-only Logging, Cut leaves, phone layout ===== */
+#lg88::after{content:'ADD'!important}
+.aw407{font:8px var(--pix);color:#9fb3c8;letter-spacing:.5px;margin:10px 0 -2px;line-height:1.5}
+.aw407 b{color:#ffd54a}
+/* movie/TV details: BACK no longer floats over the synopsis */
+#detailBody .bk400{position:static!important;top:auto!important}
+/* status rows / last controls clear the fixed nav + FAB */
+#detailBody{padding-bottom:calc(170px + env(safe-area-inset-bottom))!important;scroll-padding-bottom:calc(170px + env(safe-area-inset-bottom))}
+#detailBody .w400{scroll-margin-bottom:calc(170px + env(safe-area-inset-bottom))}
+/* swipe CUT / TO LOG pinned above the nav */
+.ipa{position:sticky!important;bottom:calc(92px + env(safe-area-inset-bottom))!important;z-index:30;background:#10141c;padding-top:8px;padding-bottom:8px;box-shadow:0 -6px 12px rgba(0,0,0,.55)}
+.ipa button{min-height:44px}
+/* add sheet: ADD stays pinned in view even with Already watched open */
+#add .sheet>.acts{position:sticky!important;bottom:0!important;z-index:20;background:#10141c;box-shadow:0 -8px 14px rgba(0,0,0,.6)}
+#add .sheet{padding-bottom:calc(8px + env(safe-area-inset-bottom))}
+</style>
+<script id="v407a">/* ===== 4.07a — categories + cinema decimal fix ===== */
+(function () {
+  window.V407A = 1;
+  var meK = function () { try { return me() + 'Watched'; } catch (e) { return 'samWatched'; } };
+  /* 1) Logging = only THIS viewer's Watching titles (matches the ▶ badge) */
+  try { prog = function (r) { return !!r && r[meK()] === 'As we speak'; }; } catch (e) {}
+
+  /* 2) saveFields: pending (just-added) rows queue the edit instead of dropping it; Cut titles leave Cut when marked Watching/Watched */
+  var _sf = saveFields;
+  saveFields = function (orig, fields, msg) {
+    try {
+      if (orig && orig.row >= 1e9 && fields) {
+        orig.__q407 = Object.assign(orig.__q407 || {}, fields); Object.keys(fields).forEach(function (k) { orig[k] = fields[k]; });
+        try { render(); } catch (e) {}
+        if (msg !== '__auto') toast('Saved — syncing when the add finishes'); return;
+      }
+      var k = meK(), v = fields && fields[k], left = false;
+      if (orig && (v === 'As we speak' || v === 'Yes')) {
+        try { var key = rKey(orig); if (intGet(key) === 'n') { intSet(key, ''); left = true; } } catch (e) {}
+        try { var p = me(), t = String(orig.title).trim(); if ((NFM[p] || []).indexOf(t) >= 0) { nfmSet(orig, false, true); left = true; } } catch (e) {}
+        if (left) setTimeout(function () { toast('↺ Out of Cut — now in ' + (v === 'Yes' ? 'Logged' : 'Logging')); }, 1600);
+      }
+    } catch (e) {}
+    return _sf.apply(this, arguments);
+  };
+
+  /* 3) finishAdd: say where it landed; flush any rating tapped while it was saving */
+  var LAND = null, _bn = banner, _ts = toast;
+  banner = function (a) { var A = [].slice.call(arguments); if (LAND && Date.now() < LAND.until && /^(NEW ENTRY LOGGED|ADDED TO INTERESTED|ADDED TO TO LOG)$/.test(A[0])) A[0] = 'ADDED TO ' + LAND.where.toUpperCase(); return _bn.apply(this, A); };
+  toast = function (m) { var A = [].slice.call(arguments); if (LAND && Date.now() < LAND.until && /^(Logged |Added to (Interested|To Log) · )/.test(String(A[0]))) { A[0] = 'Added to ' + LAND.where; LAND.until = 0; } return _ts.apply(this, A); };
+  var _fa = finishAdd;
+  finishAdd = function (tmp, t, r) {
+    var q = tmp && tmp.__q407;
+    try { var w = (r && r[meK()]) || (tmp && tmp[meK()]); LAND = { where: w === 'Yes' ? 'Logged' : w === 'As we speak' ? 'Logging' : 'To Log', until: Date.now() + 3000 }; } catch (e) {}
+    var res = _fa.apply(this, arguments);
+    try { if (q && tmp && tmp.row < 1e9) { delete tmp.__q407; setTimeout(function () { saveFields(tmp, q, '__auto'); }, 50); } } catch (e) {}
+    return res;
+  };
+
+  /* 4) add sheet: make "who watched" obvious + untoggle-able */
+  var _aw = renderAW;
+  renderAW = function () { var x = _aw.apply(this, arguments); try { var bx = $('aWBox'), who = bx && bx.querySelector('.who'); if (who && !bx.querySelector('.aw407')) { var h = document.createElement('div'); h.className = 'aw407'; h.innerHTML = 'WHO WATCHED? <b>tap a name</b> to switch it to Not yet'; who.parentNode.insertBefore(h, who); } } catch (e) {} return x; };
+
+  /* 5) Cut / menu copy */
+  if (window.ITEMS91) { var _it = window.ITEMS91; window.ITEMS91 = function (s, L) { return _it(s, L).map(function (x) { x = x.slice(); if (/^(Fully watched|Hidden from (Interested|To Log))$/.test(x[2] || '')) x[2] = ''; return x; }); }; }
+
+  /* 6) labels: LOG IT → ADD, UN-HIDE → RESTORE */
+  var SKIP = '#pn93,#pn93pop,#arch,#sh86,script,style,textarea,input';
+  function fix(n) {
+    if (n.nodeType === 3) { var s = n.nodeValue, o = s; if (/LOG IT|UN-HIDE/.test(s)) { var el = n.parentNode; if (el && el.closest && el.closest(SKIP)) return; s = s.replace(/LOG IT/g, 'ADD').replace(/UN-HIDE/g, 'RESTORE'); if (s !== o) n.nodeValue = s; } return; }
+    if (n.nodeType !== 1 || (n.closest && n.closest(SKIP))) return;
+    var w = document.createTreeWalker(n, 4), t; while ((t = w.nextNode())) fix(t);
+    [].forEach.call(n.querySelectorAll ? n.querySelectorAll('[aria-label],[title]') : [], function (e) { ['aria-label', 'title'].forEach(function (a) { var v = e.getAttribute(a); if (v && /LOG IT|Log it|Un-hide|UN-HIDE/.test(v)) e.setAttribute(a, v.replace(/LOG IT/g, 'ADD').replace(/Log it/g, 'Add').replace(/Un-hide|UN-HIDE/g, 'Restore')); }); });
+  }
+  /* 7) TV details: status rows above the episode list */
+  function lift() { var d = $('detailBody'); if (!d) return; var w = d.querySelector('.w400'), e = d.querySelector('#epx'); if (w && e && (w.compareDocumentPosition(e) & 4) === 0 && e.parentNode) { e.parentNode.insertBefore(w, e); } }
+  var busy = false;
+  new MutationObserver(function (M) { if (busy) return; busy = true; try { M.forEach(function (m) { if (m.type === 'characterData') fix(m.target); else [].forEach.call(m.addedNodes, fix); }); lift(); } catch (e) {} busy = false; }).observe(document.body, { childList: true, subtree: true, characterData: true });
+  try { fix(document.body); } catch (e) {}
+
+  try { window.APPV58 = '4.07a'; if (window.PN93 && PN93.prepend) PN93.prepend({ v: '4.07a', d: '29 Oct 2026', lines: [
+    'Cinema ratings with decimals now always save. Before, if you rated something you\u2019d only just added (while it was still saving), the 7.6 quietly vanished; now it waits for the add to finish and then saves.',
+    '\u201cLOG IT\u201d is now ADD. After adding you\u2019ll see where it went: \u201cAdded to To Log\u201d (or Logged, if you ticked Already watched). In Already watched, tap a name to switch them to Not yet.',
+    'Logging now only shows what YOU are watching, so the shelves match the badges on each poster.',
+    'Marking a Cut title as Watching or Watched brings it back out of Cut (with a heads-up). UN-HIDE is now RESTORE, and the old menu hints are gone.',
+    'iPhone: the ADD button stays pinned on the add screen, BACK no longer covers the synopsis, status buttons sit clear of the bottom bar (and above the episode list on TV), and the swipe CUT / TO LOG buttons stay above the bar.',
+    'Episode ratings keep their decimal (7.6) after a reload.'] }); } catch (e) {}
 })();
 </script>
 </body></html>
