@@ -164,6 +164,44 @@ function mock(fn, args, who) { if (global.MOCKX) { const x = global.MOCKX(fn, ar
       case 'fbDel': { var fd = FB83(); localStorage.setItem('lg_fb83demo', JSON.stringify(fd.filter(function (x) { return !(x.id === args[0] && x.who === args[1]); }))); return { ok: true }; }
       case 'favSet': FAV82[args[0]] = (args[1] || []).slice(0, 60); return FAV82[args[0]];
       case 'songPv': return (args[0] || []).map(function (c) { return { u: 'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/e0/1d/a4/e01da4a2-a75f-7ebf-9971-3d49e17efc57/mzaf_10500078769097048384.plus.aac.p.m4a', id: '', via: 'it' }; });
+      case 'searchV2': return (function () { /* 4.07b demo: two-phase typo-tolerant search (fast = exact-ish only, full = fuzzy + did-you-mean + chips) */
+        var N = function (s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/&/g, ' and ').replace(/['’]/g, '').replace(/[^a-z0-9]+/g, ' ').trim(); };
+        var lv = function (a, b) { var m = a.length, n = b.length, d = [], i, j; if (!m) return n; if (!n) return m; for (i = 0; i <= m; i++) d[i] = [i]; for (j = 0; j <= n; j++) d[0][j] = j; for (i = 1; i <= m; i++) for (j = 1; j <= n; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); return d[m][n]; };
+        var sim = function (q, t) { q = N(q); t = N(t); if (!q || !t) return 0; var t2 = t.replace(/^(the|a|an) /, ''); if (q === t || q === t2) return 1; if (t.indexOf(q) === 0 || t2.indexOf(q) === 0) return 0.92; if ((' ' + t + ' ').indexOf(' ' + q) >= 0) return 0.85;
+          var qw = q.split(' '), tw = t2.split(' '), tot = 0; qw.forEach(function (w) { var b = 0; tw.forEach(function (x) { var s = w === x ? 1 : (x.indexOf(w) === 0 && w.length >= 3) ? 0.9 : 1 - lv(w, x) / Math.max(w.length, x.length); if (s > b) b = s; }); tot += b < 0.6 ? 0 : b; });
+          var whole = 1 - lv(q, t2) / Math.max(q.length, t2.length); return Math.max(tot / qw.length * 0.88, whole * 0.88); };
+        var POST = function (t, c) { var s = '<svg xmlns="http://www.w3.org/2000/svg" width="92" height="138"><rect width="92" height="138" fill="' + c + '"/><rect x="6" y="6" width="80" height="126" fill="none" stroke="#000" stroke-width="4"/><text x="46" y="76" font-family="monospace" font-size="15" font-weight="bold" fill="#fff" text-anchor="middle">' + t.split(' ').map(function (w) { return w[0]; }).join('').slice(0, 3).toUpperCase() + '</text></svg>'; return 'data:image/svg+xml;utf8,' + encodeURIComponent(s); };
+        var EX = [[872585, 'Oppenheimer', 2023, 0, ['Drama', 'History'], ['Christopher Nolan|director', 'Cillian Murphy|actor'], ['nuclear weapons', 'biography', 'cold war'], '#c2571a', 'The story of J. Robert Oppenheimer and the making of the atomic bomb.'],
+          [2370, "Hell's Kitchen", 2005, 1, ['Reality'], ['Gordon Ramsay|actor'], ['cooking competition', 'chef'], '#d8323f', 'Aspiring chefs battle it out in Gordon Ramsay\u2019s kitchen.'],
+          [157336, 'Interstellar', 2014, 0, ['Sci-Fi', 'Drama'], ['Christopher Nolan|director', 'Matthew McConaughey|actor'], ['space travel', 'time'], '#2b4a7a', 'Explorers travel through a wormhole to save humanity.'],
+          [155, 'The Dark Knight', 2008, 0, ['Action', 'Crime'], ['Christopher Nolan|director', 'Christian Bale|actor'], ['superhero'], '#222833', 'Batman faces the Joker.'],
+          [374720, 'Dunkirk', 2017, 0, ['War', 'Drama'], ['Christopher Nolan|director'], ['world war ii'], '#5b6b73', 'Allied soldiers are evacuated from Dunkirk.'],
+          [1124, 'The Prestige', 2006, 0, ['Mystery', 'Drama'], ['Christopher Nolan|director', 'Hugh Jackman|actor'], ['magician'], '#5a2a5e', 'Two rival magicians.'],
+          [4194, 'Kitchen Nightmares', 2007, 1, ['Reality'], ['Gordon Ramsay|actor'], ['cooking competition', 'restaurant'], '#a8321f', 'Gordon Ramsay rescues failing restaurants.'],
+          [136315, 'The Bear', 2022, 1, ['Comedy', 'Drama'], ['Jeremy Allen White|actor'], ['chef', 'restaurant'], '#1f5d4a', 'A young chef runs his family sandwich shop.'],
+          [9812, 'MasterChef Australia', 2009, 1, ['Reality'], [], ['cooking competition'], '#c99a12', 'Home cooks compete.'],
+          [466420, 'Killers of the Flower Moon', 2023, 0, ['Crime', 'Drama'], ['Martin Scorsese|director', 'Leonardo DiCaprio|actor'], ['osage nation', 'true crime'], '#7a3b1d', 'Members of the Osage Nation are murdered after oil is found on their land.'],
+          [840430, 'The Holdovers', 2023, 0, ['Comedy', 'Drama'], ['Alexander Payne|director', 'Paul Giamatti|actor'], ['boarding school', 'christmas'], '#2a5a3a', 'A cranky teacher babysits the students stuck at school over Christmas.'],
+          [1022789, 'Inside Out 2', 2024, 0, ['Animation', 'Family'], [], ['emotions'], '#3a6fd8', 'Riley\u2019s new emotions arrive.']];
+        var pool = EX.map(function (e) { return { id: e[0], title: e[1], year: e[2], tv: !!e[3], genres: e[4], poster: POST(e[1], e[7]), overview: e[8], pop: 40, votes: 900, _p: e[5], _k: e[6] }; });
+        try { FRESH68.forEach(function (x) { pool.push({ id: x.id, title: x.title, year: x.year, tv: x.tv, genres: [], poster: x.poster || '', overview: x.overview || '', pop: 10, votes: 50, _p: [], _k: [] }); }); } catch (e) {}
+        var clean = function (x, s, m) { return { id: x.id, title: x.title, year: x.year, tv: x.tv, genres: x.genres, poster: x.poster, overview: x.overview, pop: x.pop, votes: x.votes, s: Math.round(s * 100) / 100, score: s, m: m || 'title' }; };
+        var ph = args[1] === 'full' || args[1] === 'theme' ? args[1] : 'fast', q = String(args[0] || '');
+        if (ph === 'theme') { var L = pool.filter(function (x) { return x._k.indexOf(q) >= 0; }).map(function (x) { return clean(x, 0.5, 'theme'); }); return { v: 3, phase: 'theme', q: q, label: args[2] || q, results: L, chips: [], people: [], _demoMs: 400 }; }
+        var T = pool.map(function (x) { return { x: x, s: sim(q, x.title) }; }), fast = T.filter(function (o) { return o.s >= 0.85; }).sort(function (a, b) { return b.s - a.s; });
+        var weak = !fast.some(function (o) { return o.s >= 0.8; }), R = fast.map(function (o) { return clean(o.x, o.s); });
+        if (ph === 'fast') return { v: 3, phase: 'fast', q: q, results: R, weak: weak, more: true, _demoMs: 120 };
+        var fz = T.filter(function (o) { return o.s >= 0.6 && o.s < 0.85; }).sort(function (a, b) { return b.s - a.s; }), best = fz[0], people = [], P = {}, chips = [], dym = '';
+        pool.forEach(function (x) { x._p.forEach(function (pp) { var nm = pp.split('|')[0]; if (sim(q, nm) >= 0.8) { (P[nm] = P[nm] || []).push(x); } }); });
+        var pitems = []; Object.keys(P).forEach(function (nm, i) { people.push({ id: 5000 + i, name: nm, dept: 'Directing', s: sim(q, nm) }); P[nm].forEach(function (x) { var it = clean(x, 0.5, 'person'); it.via = nm + ' (' + (x._p.filter(function (p) { return p.indexOf(nm) === 0; })[0].split('|')[1] === 'director' ? 'dir.' : 'actor') + ')'; it.person = nm; pitems.push(it); }); });
+        if (weak && people[0] && N(people[0].name) !== N(q)) dym = people[0].name; else if (weak && best && best.s >= 0.7) dym = best.x.title;
+        var lead = (fast[0] && !weak && fast[0].x) || (best && best.x) || null;
+        if (dym && !(people[0] && dym === people[0].name)) chips.push({ k: 'title', t: dym, sub: 'did you mean' });
+        people.forEach(function (p) { chips.push({ k: 'person', t: p.name, sub: 'director', id: p.id }); });
+        if (lead) { lead._p.forEach(function (pp) { var a = pp.split('|'); if (!chips.some(function (c) { return c.t === a[0]; })) chips.push({ k: 'person', t: a[0], sub: a[1], id: 6000 + chips.length }); }); lead._k.slice(0, 3).forEach(function (k) { chips.push({ k: 'theme', t: k, sub: 'theme', id: k }); }); }
+        var F = fz.map(function (o) { return clean(o.x, o.s, 'fuzzy'); });
+        var results = weak ? (people.length ? pitems.concat(F, R) : F.concat(R, pitems)) : R.concat(F, pitems);
+        return { v: 3, phase: 'full', q: q, results: results, weak: weak, dym: dym, chips: chips.slice(0, 8), people: people, titles: R.length, _demoMs: 900 }; })();
       case 'searchTitles': return (function () { var q = String(args[0] || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim(), toks = q.split(/\s+/).filter(Boolean);
         if (!toks.length) return { results: [] };
         var score = function (t) { t = String(t || '').toLowerCase(); if (t === q) return 100; if (t.indexOf(q) === 0) return 90; if (t.indexOf(q) >= 0) return 70;
@@ -187,7 +225,7 @@ function mock(fn, args, who) { if (global.MOCKX) { const x = global.MOCKX(fn, ar
     if (/script\.google(usercontent)?\.com/.test(url)) { var j = {}; try { j = JSON.parse(opt && opt.body || '{}'); } catch (e) {}
       if (/^gw[A-Z]/.test(j.fn || '')) return new Promise(function (r) { setTimeout(function () { r(new Response(JSON.stringify({ ok: true, r: null }), { status: 200 })); }, 40); });
       var m; try { m = mock(j.fn, j.args || [], j.who || L.getItem('lg_who')); } catch (e) { m = null; }
-      return new Promise(function (r) { setTimeout(function () { r(new Response(JSON.stringify(m && m.__err ? { ok: false, error: m.__err } : { ok: true, r: m && typeof m === 'object' && '__ok' in m ? m.__ok : (m === undefined ? null : m) }), { status: 200, headers: { 'Content-Type': 'application/json' } })); }, 60); }); }
+      return new Promise(function (r) { setTimeout(function () { r(new Response(JSON.stringify(m && m.__err ? { ok: false, error: m.__err } : { ok: true, r: m && typeof m === 'object' && '__ok' in m ? m.__ok : (m === undefined ? null : m) }), { status: 200, headers: { 'Content-Type': 'application/json' } })); }, (m && m._demoMs) || 60); }); }
     if (/ntfy\.sh/.test(url)) return J({ demo: true });
     return _fetch(u, opt); };
   var sb = navigator.sendBeacon; if (sb) navigator.sendBeacon = function (u) { return /script\.google|ntfy/.test(String(u)) ? true : sb.apply(navigator, arguments); };
@@ -8308,7 +8346,7 @@ window.APPV58 = 'r91';
   var _od = openDetail; openDetail = function () { var r = _od.apply(this, arguments); mv(); setTimeout(mv, 0); setTimeout(mv, 400); setTimeout(mv, 2000); return r; };
   ['ostRedraw', 'ostxDraw'].forEach(function (n) { var f = window[n]; if (typeof f === 'function') window[n] = function () { var r = f.apply(this, arguments); mv(); return r; }; });
   /* stale-build guard: a home-screen app resumed from the background keeps old code; reload once when sw.js has a newer build */
-  var BUILD = /\/app-rc\//.test(location.pathname) ? 'logged-rc-1793278243' : 'logged-202610302246', busy = function () { var a = document.activeElement; return (a && /INPUT|TEXTAREA/.test(a.tagName)) || (window.OXA && !OXA.paused) || document.querySelector('#add.open,#fb83.open,#trv.open,#ytpage.open .yv'); };
+  var BUILD = /\/app-rc\//.test(location.pathname) ? 'logged-rc-1793361514' : 'logged-202610302321', busy = function () { var a = document.activeElement; return (a && /INPUT|TEXTAREA/.test(a.tagName)) || (window.OXA && !OXA.paused) || document.querySelector('#add.open,#fb83.open,#trv.open,#ytpage.open .yv'); };
   var last = 0; function check() { if (/demo=1/.test(location.search) || BUILD.indexOf('__') === 0 || Date.now() - last < 60000) return; last = Date.now();
     fetch('sw.js?b=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.ok ? r.text() : ''; }).then(function (t) { var m = t.match(/var V = '([^']+)'/); if (!m || m[1] === BUILD || busy()) return;
       try { if (sessionStorage.lg_rl89 === m[1]) return; sessionStorage.lg_rl89 = m[1]; } catch (e) {} try { toast('⟳ UPDATING LOGGED…'); } catch (e) {}
@@ -10583,6 +10621,105 @@ body.sv406on .pc[data-row^="10000000"]::after,body.sv406on [data-open^="10000000
     'Marking a Cut title as Watching or Watched brings it back out of Cut (with a heads-up). UN-HIDE is now RESTORE, and the old menu hints are gone.',
     'iPhone: the ADD button stays pinned on the add screen, BACK no longer covers the synopsis, status buttons sit clear of the bottom bar (and above the episode list on TV), and the swipe CUT / TO LOG buttons stay above the bar.',
     'Episode ratings keep their decimal (7.6) after a reload.'] }); } catch (e) {}
+})();
+</script>
+<style id="v407bcss">
+/* 4.07b: did-you-mean + suggestion chips over search results */
+.sg407{margin:2px 0 8px;display:flex;flex-direction:column;gap:6px;min-width:0;max-width:100%;overflow:hidden}.sg407>*{min-width:0;max-width:100%}
+.sg407 .dy407{display:flex;align-items:center;flex-wrap:wrap;gap:6px;font:8px/1.4 'Press Start 2P',monospace;color:#ffcc33;letter-spacing:.5px}
+.sg407 .dy407 button{min-height:44px;padding:6px 12px;border:3px solid #000;background:#ffcc33;color:#000;font:18px/1 'VT323',monospace;box-shadow:3px 3px 0 #000;cursor:pointer;text-align:left}
+.sg407 .ch407{display:flex;gap:6px;overflow-x:auto;padding:2px 2px 6px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.sg407 .ch407::-webkit-scrollbar{display:none}
+.sg407 .c407{flex:0 0 auto;min-height:44px;min-width:44px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:2px;padding:5px 10px;border:3px solid #000;background:#14142a;color:#fff;box-shadow:2px 2px 0 #000;cursor:pointer;max-width:70vw}
+.sg407 .c407 b{font:17px/1 'VT323',monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.sg407 .c407 small{font:6px/1 'Press Start 2P',monospace;color:#9a9ab8;text-transform:uppercase;letter-spacing:.5px}
+.sg407 .c407.k-person{border-color:#000;background:#1a2a3a}.sg407 .c407.k-person b{color:var(--c407,var(--p1))}
+.sg407 .c407.k-theme b::before{content:'# ';color:#9a9ab8}
+.sg407 .c407.k-title{background:#2a2410}.sg407 .c407.k-title b{color:#ffcc33}
+body.p2-407 .sg407{--c407:var(--p2)}body:not(.p2-407) .sg407{--c407:var(--p1)}
+.sp407{font:7px/1.6 'Press Start 2P',monospace;color:#9a9ab8;padding:6px 2px;animation:uispin 1.2s steps(2) infinite}
+.th407{font:8px/1.4 'Press Start 2P',monospace;color:#ffcc33;padding:4px 2px}
+#detail.v407b #epx,#detail.v407b .w400,#detail.v407b .rp108,#detail.v407b .st89,#detail.v407b .btn-log98{display:none!important}
+#detail .btn.back[data-b407]{background:var(--gold,#ffcc33);color:#000}
+#detail .ad407 button{min-height:44px}
+</style>
+<script id="v407b">
+/* 4.07b: typo-tolerant two-phase search (searchV2 fast → full, did-you-mean + chips) and result taps open the FULL title page */
+(function () {
+  if (window.V407B) return; window.V407B = 1;
+  var CAP = (window.V406 && V406.cap) || 10, V2 = { ok: true }, _ts407 = tmSearch;
+  var gs = function (fn, args, ok, bad) { var R = google.script.run.withSuccessHandler(ok).withFailureHandler(bad || function () {}); R[fn].apply(R, args); };
+  var box2input = { aTm: 'aTitle', qTm: 'q' };
+  try { document.body.classList.toggle('p2-407', typeof me === 'function' && me() === 'lewy'); } catch (e) {}
+  function busy(el) { return !!el.querySelector('.seas:not(:empty),.tm.sel,.seas.open'); }
+  function chipsHtml(r, q) { var C = (r && r.chips) || [], dym = r && r.dym ? String(r.dym) : '', h = '';
+    if (dym && norm(dym) !== norm(q)) h += '<div class="dy407">DID YOU MEAN <button type="button" data-sg407="title" data-q="' + esc(dym) + '">' + esc(dym) + '?</button></div>';
+    C = C.filter(function (c) { return c && c.t && !(c.k === 'title' && dym && c.t === dym && c.sub === 'did you mean'); });
+    if (C.length) h += '<div class="ch407" role="group" aria-label="Suggestions">' + C.map(function (c) { var k = c.k === 'person' || c.k === 'theme' ? c.k : 'title';
+      return '<button type="button" class="c407 k-' + k + '" data-sg407="' + k + '" data-q="' + esc(c.t) + '"' + (c.id != null ? ' data-id="' + esc(String(c.id)) + '"' : '') + '><b>' + esc(c.t) + '</b>' + (c.sub ? '<small>' + esc(c.sub) + '</small>' : '') + '</button>'; }).join('') + '</div>';
+    return h ? '<div class="sg407">' + h + '</div>' : ''; }
+  function paint(el, r, n, box, q, stage) {
+    var has = r && r.results && r.results.length;
+    if (stage === 'fast' && !has && !r.nokey) el.innerHTML = '<div class="sp407">🔎 NO EXACT MATCH — CHECKING SPELLING…</div>';
+    else if (stage === 'full' && busy(el)) { /* user is mid-pick (season panel open): only refresh the chips */ }
+    else renderTm(el, Object.assign({}, r, { v: 2 }), n, box);
+    var old = el.querySelector('.sg407'); if (old) old.remove();
+    var sp = el.querySelector('.sp407'); if (sp && stage !== 'fast') sp.remove();
+    if (stage === 'full' && !has && !el.querySelector('.tm')) el.innerHTML = box === 'aTm' ? '<div class="hint">No database matches — you can still add it by name.</div>' : '';
+    if (stage === 'fast' && has && (r.weak || r.more)) el.insertAdjacentHTML('beforeend', '<div class="sp407">' + (r.weak ? '🔎 CHECKING SPELLING…' : '🔎 LOOKING FOR MORE…') + '</div>');
+    if (stage === 'theme') el.insertAdjacentHTML('afterbegin', '<div class="th407"># ' + esc(String(r.label || q).toUpperCase()) + '</div>');
+    var ch = chipsHtml(r, q); if (ch) { var h = el.querySelector('.h406'); if (h) h.insertAdjacentHTML('afterend', ch); else el.insertAdjacentHTML('afterbegin', ch); }
+  }
+  tmSearch = function (q, box, n) {
+    if ((box !== 'aTm' && box !== 'qTm') || !V2.ok) return _ts407.apply(this, arguments);
+    if (box === 'aTm') n = Math.max(n || 0, CAP); var el = $(box); if (!el) return;
+    clearTimeout(TM.h[box]); q = String(q || '').trim(); if (q.length < 2) { el.innerHTML = ''; return; }
+    TM.h[box] = setTimeout(function () { var my = ++TM.seq; if (!el.querySelector('.tm')) el.innerHTML = '<div class="sp407">🔎 SEARCHING…</div>';
+      gs('searchV2', [q, 'fast'], function (r) { if (my !== TM.seq) return; r = r || {}; if (r.nokey) return renderTm(el, r, n, box);
+        paint(el, r, n, box, q, 'fast');
+        gs('searchV2', [q, 'full'], function (f) { if (my !== TM.seq || !f) return; paint(el, f, n, box, q, 'full'); }, function () { if (my !== TM.seq) return; var s = el.querySelectorAll('.sp407'); [].forEach.call(s, function (x) { x.remove(); }); });
+      }, function (e) { if (my !== TM.seq) return; if (/not allowed|unknown|not a function|no such/i.test(String(e && e.message || e))) V2.ok = false;
+        google.script.run.withSuccessHandler(function (r) { if (my === TM.seq) renderTm(el, r || {}, n, box); }).withFailureHandler(function () { if (my === TM.seq) el.innerHTML = ''; }).searchTitles(q); });
+    }, 300);
+  };
+  function theme(box, id, label) { var el = $(box), n = box === 'aTm' ? CAP : 4, my = ++TM.seq; el.innerHTML = '<div class="sp407">🔎 ' + esc(String(label).toUpperCase()) + '…</div>';
+    gs('searchV2', [String(id), 'theme', label], function (r) { if (my !== TM.seq) return; r = r || {}; r.label = r.label || label; paint(el, r, n, box, label, 'theme'); }, function () { if (my === TM.seq) el.innerHTML = ''; }); }
+  window.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-sg407]'); if (!b) return; var el = b.closest('#aTm,#qTm'); if (!el) return;
+    e.stopImmediatePropagation(); e.preventDefault(); try { SFX.tap && SFX.tap(); } catch (x) {}
+    var box = el.id, inp = $(box2input[box]), k = b.dataset.sg407, q = b.dataset.q;
+    if (k === 'theme') return theme(box, b.dataset.id || q, q);
+    if (inp) { inp.value = q; inp.dispatchEvent(new Event('input', { bubbles: true })); } }, true);
+
+  /* ---- result tap → FULL title page (same openDetail path as Explore), not the mini pop-up ---- */
+  var S7 = { on: 0 }, _ipd407 = ipDetails;
+  function haveRow(x) { if (x.tv) return null; var b = norm(x.title); return rows.filter(function (r) { return r.type === 'Movie' && norm(baseTitle(r.title)) === b; })[0] || null; }
+  function addSheetOpen() { var a = $('add'); return !!(a && a.classList.contains('open')); }
+  function deco() { var d = $('detail'), b = $('detailBody'); if (!S7.on || !d || !b) return; if (!S7.have) d.classList.add('tmdbv', 'v407b');
+    var bk = b.querySelector('.btn.back'); if (bk && !bk.hasAttribute('data-b407')) { bk.textContent = '◀ BACK TO SEARCH'; bk.setAttribute('data-b407', '1'); bk.removeAttribute('data-closed'); }
+    [].forEach.call(b.querySelectorAll('.d-log98'), function (x) { x.remove(); });
+    if (S7.have) return; var t = b.querySelector('h2.dt'); if (t && !b.querySelector('.ad407')) t.insertAdjacentHTML('afterend', '<div class="mpnew ad407"><span>' + (S7.x && S7.x.tv && inLog(S7.x) ? '✦ IN YOUR LOG · ADD ANOTHER SEASON' : '✦ NOT IN YOUR LOG YET') + '</span><button class="btn y" data-ad407="1">＋ ADD' + (S7.x && S7.x.tv ? ' · PICK SEASON' : '') + '</button></div>'); }
+  function reopen() { if (!S7.on || !$('detail').classList.contains('open')) return; var sc = $('detail').scrollTop; openDetail(S7.row); deco(); $('detail').scrollTop = sc; }
+  function leave(toAdd) { var from = S7.from, hv = S7.have; S7.on = 0; if (!hv) MPD.tmp = null; $('detail').classList.remove('tmdbv', 'v407b'); closeDetail();
+    if (toAdd && from === 'add') { $('add').classList.add('open'); } else if (from === 'home') { try { var q = $('q'); q && q.focus({ preventScroll: true }); } catch (e) {} } return from; }
+  function full(c, opt) { var x = { id: c.f.id, tv: !!c.f.tv, title: c.t, year: c.y, poster: c.p, overview: c.ov }, from = addSheetOpen() ? 'add' : 'home';
+    var have = haveRow(x); if (have) { S7 = { on: 1, have: 1, from: from, opt: opt, row: have, x: x }; if (from === 'add') { $('add').classList.remove('open'); try { kbClose(); } catch (e) {} } openDetail(have); deco(); try { $('detail').scrollTop = 0; } catch (e) {} return; }
+    var row = mpTmpRow({ id: x.id, tv: x.tv, title: x.title, year: x.year, poster: x.poster, overview: x.overview });
+    S7 = { on: 1, from: from, opt: opt, row: row, x: x }; MPD.back = 0; MPD.tmp = row;
+    if (from === 'add') { $('add').classList.remove('open'); try { kbClose(); } catch (e) {} }
+    openDetail(row); deco(); try { $('detail').scrollTop = 0; } catch (e) {}
+    run('getMeta', [[{ title: row.title, type: row.type }]], function (mm) { for (var k in mm) if (mm[k]) meta[k] = Object.assign({}, meta[k] || {}, mm[k]); if (S7.row === row) reopen(); }, function () {}); }
+  ipDetails = function (c, opt) { if (opt && /BACK TO SEARCH/.test(opt.back || '') && c && c.f && c.f.id) { try { return full(c, opt); } catch (e) { console.warn('4.07b full page', e); S7.on = 0; } } return _ipd407.apply(this, arguments); };
+  window.addEventListener('click', function (e) { var t = e.target; if (!t.closest || !S7.on) return;
+    if (t.closest('#detail [data-b407]')) { e.stopImmediatePropagation(); e.preventDefault(); leave(true); return; }
+    if (t.closest('#detail [data-ad407]')) { e.stopImmediatePropagation(); e.preventDefault(); var o = S7.opt; leave(true); try { o && o.log && o.log(); } catch (x) { console.warn('4.07b add', x); } } }, true);
+  var _cd407 = closeDetail; closeDetail = function () { var on = S7.on, from = S7.from; if (on) { S7.on = 0; if (!S7.have) MPD.tmp = null; $('detail').classList.remove('tmdbv', 'v407b'); } var r = _cd407.apply(this, arguments); if (on && from === 'add') $('add').classList.add('open'); return r; };
+  var _nr407 = typeof navReset === 'function' ? navReset : null; if (_nr407) navReset = function () { if (S7.on) { S7.on = 0; $('detail').classList.remove('tmdbv', 'v407b'); } return _nr407.apply(this, arguments); };
+  try { var db = $('detailBody'); if (db) new MutationObserver(function () { if (S7.on && !db.querySelector(S7.have ? '[data-b407]' : '.ad407')) deco(); }).observe(db, { childList: true }); } catch (e) {}
+
+  try { window.APPV58 = '4.07b'; if (window.PN93 && PN93.prepend) PN93.prepend({ v: '4.07b', d: '30 Oct 2026', lines: [
+    'Search forgives typos now — \u201coppenhemer\u201d still finds Oppenheimer. You get a \u201cdid you mean\u201d plus quick chips for people and themes.',
+    'Tap a search result and you get its full details page, not the little pop-up. \u25c0 BACK TO SEARCH takes you straight back, \uff0b ADD logs it.',
+    'Works in the home search too.'] }); } catch (e) {}
 })();
 </script>
 </body></html>
