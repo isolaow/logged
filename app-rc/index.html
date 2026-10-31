@@ -8346,7 +8346,7 @@ window.APPV58 = 'r91';
   var _od = openDetail; openDetail = function () { var r = _od.apply(this, arguments); mv(); setTimeout(mv, 0); setTimeout(mv, 400); setTimeout(mv, 2000); return r; };
   ['ostRedraw', 'ostxDraw'].forEach(function (n) { var f = window[n]; if (typeof f === 'function') window[n] = function () { var r = f.apply(this, arguments); mv(); return r; }; });
   /* stale-build guard: a home-screen app resumed from the background keeps old code; reload once when sw.js has a newer build */
-  var BUILD = /\/app-rc\//.test(location.pathname) ? 'logged-rc-1793361514' : 'logged-202610302321', busy = function () { var a = document.activeElement; return (a && /INPUT|TEXTAREA/.test(a.tagName)) || (window.OXA && !OXA.paused) || document.querySelector('#add.open,#fb83.open,#trv.open,#ytpage.open .yv'); };
+  var BUILD = /\/app-rc\//.test(location.pathname) ? 'logged-rc-1793363431' : 'logged-202610312339', busy = function () { var a = document.activeElement; return (a && /INPUT|TEXTAREA/.test(a.tagName)) || (window.OXA && !OXA.paused) || document.querySelector('#add.open,#fb83.open,#trv.open,#ytpage.open .yv'); };
   var last = 0; function check() { if (/demo=1/.test(location.search) || BUILD.indexOf('__') === 0 || Date.now() - last < 60000) return; last = Date.now();
     fetch('sw.js?b=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.ok ? r.text() : ''; }).then(function (t) { var m = t.match(/var V = '([^']+)'/); if (!m || m[1] === BUILD || busy()) return;
       try { if (sessionStorage.lg_rl89 === m[1]) return; sessionStorage.lg_rl89 = m[1]; } catch (e) {} try { toast('⟳ UPDATING LOGGED…'); } catch (e) {}
@@ -8483,7 +8483,7 @@ window.APPV58='3.06';
   /* 9) details info: demo gets real-looking info; live never shows "Loading info…" forever; TMDB ★ line above AWARDS */
   function tmLine() { var D = $('detailBody'); if (!D) return; var r = window.editing || null; var meta = D.querySelector('.meta'); if (!meta) return; var t = D.querySelector('h2.dt'), row = t && byTitle ? null : null;
     var cur = window.__od92; if (!cur) return; var m = M(cur), ex = D.querySelector('.tm92');
-    var bits = []; if (m.rating) bits.push('TMDB ★ ' + m.rating); if (cur.type === 'TV Show' && m.seasons) bits.push(m.seasons + ' SEASON' + (m.seasons > 1 ? 'S' : '')); else if (cur.type !== 'TV Show' && m.runtime) bits.push(m.runtime + ' MIN');
+    var bits = []; if (m.rating) bits.push('TMDB ★ ' + m.rating); if (cur.type === 'TV Show' && m.seasons) bits.push(m.seasons + ' SEASON' + (m.seasons > 1 ? 'S' : '')); /* 4.07c: movie runtime already shows once (2h 19m) in the meta line — no second ‘139 MIN’ */
     if (!bits.length) { ex && ex.remove(); return; } var h = '<div class="tm92">' + esc(bits.join(' · ')) + '</div>'; if (ex) { if (ex.textContent !== bits.join(' · ')) ex.outerHTML = h; } else meta.insertAdjacentHTML('afterend', h);
     var nw = D.querySelector('.tm92'), aw = D.querySelector('.aw87'); if (aw && nw && aw.previousElementSibling !== nw) nw.insertAdjacentElement('afterend', aw); }
   function unstick() { var s = $q('#detailBody .syn'); if (s && /^Loading info/.test(s.textContent)) s.remove(); }
@@ -10720,6 +10720,43 @@ body.p2-407 .sg407{--c407:var(--p2)}body:not(.p2-407) .sg407{--c407:var(--p1)}
     'Search forgives typos now — \u201coppenhemer\u201d still finds Oppenheimer. You get a \u201cdid you mean\u201d plus quick chips for people and themes.',
     'Tap a search result and you get its full details page, not the little pop-up. \u25c0 BACK TO SEARCH takes you straight back, \uff0b ADD logs it.',
     'Works in the home search too.'] }); } catch (e) {}
+})();
+</script>
+<script id="v407c">
+/* 4.07c: three soft UX nits — one toast after an add, one runtime on movie details (see tmLine), TYPE follows the highlighted search result */
+(function () {
+  if (window.V407C) return; window.V407C = 1;
+  /* ---- 1) after an add: ONE toast ("Added to Logged / Logging / To Log"), no extra Saved / Logged / ✓ pill / banner stacked on top ---- */
+  var WIN = { until: 0 }, _t = toast, _b = banner, _s = window.savedTick;
+  var meK = function () { try { return me() + 'Watched'; } catch (e) { return 'samWatched'; } };
+  var NOISE_T = /^(Logged |LOGGED!|Added to (Logged|Logging|To Log|Interested)\b|Saved ✓$|Saved — syncing|★ Saved|✓ Added to )/;
+  var NOISE_B = /^(NEW ENTRY LOGGED|ADDED TO |LOGGED!)/;
+  function on() { return Date.now() < WIN.until; }
+  toast = function (m) { if (on() && NOISE_T.test(String(m == null ? '' : m))) return; return _t.apply(this, arguments); };
+  banner = function (t) { if (on() && NOISE_B.test(String(t == null ? '' : t)) && !/UNLOCKED|LEGENDARY/i.test(String(t))) return; return _b.apply(this, arguments); };
+  if (_s) savedTick = window.savedTick = function () { if (on()) return; return _s.apply(this, arguments); };
+  var _fa = finishAdd;
+  finishAdd = function (tmp, t, r) {
+    var where = 'To Log'; try { var w = (r && r[meK()]) || (tmp && tmp[meK()]); where = w === 'Yes' ? 'Logged' : w === 'As we speak' ? 'Logging' : 'To Log'; } catch (e) {}
+    WIN.until = 0; try { _t.call(window, 'Added to ' + where); } catch (e) {}
+    WIN.until = Date.now() + 6000; WIN.where = where;
+    try { var fl = (window.V406 && V406.fly) || []; var pl = $('sv406'); if (pl && !fl.length && /\bok\b/.test(pl.className)) pl.classList.remove('on'); } catch (e) {}
+    return _fa.apply(this, arguments);
+  };
+  window.V407C_WIN = WIN;
+
+  /* ---- 3) add sheet: highlighting / focusing a search result sets TYPE to match it (before tapping +) ---- */
+  function setType(tv) { var seg = $('aType'); if (!seg) return; var want = tv ? 'TV Show' : 'Movie', hit = null;
+    [].forEach.call(seg.querySelectorAll('button'), function (b) { if (b.dataset.v === want) hit = b; });
+    if (!hit || hit.classList.contains('on')) return; [].forEach.call(seg.children, function (x) { x.classList.remove('on'); }); hit.classList.add('on'); try { addState.type = want; } catch (e) {} }
+  function sync(el) { var b = el && el.closest && el.closest('#aTm [data-tm]'); if (!b) return; var x = TM.res[b.dataset.tm]; if (x) setType(!!x.tv); }
+  ['pointerdown', 'focusin'].forEach(function (ev) { document.addEventListener(ev, function (e) { try { sync(e.target); } catch (x) {} }, true); });
+  try { new MutationObserver(function (M) { M.forEach(function (m) { if (m.type === 'attributes' && m.target.classList && m.target.classList.contains('sel')) sync(m.target); }); }).observe($('aTm'), { subtree: true, attributes: true, attributeFilter: ['class'] }); } catch (e) {}
+
+  try { window.APPV58 = '4.07c'; if (window.PN93 && PN93.prepend) PN93.prepend({ v: '4.07c', d: '30 Oct 2026', lines: [
+    'After adding something you get one clear message \u2014 \u201cAdded to Logged\u201d, \u201cAdded to Logging\u201d or \u201cAdded to To Log\u201d \u2014 instead of a pile of Saved / Logged pop-ups.',
+    'Movie details show the runtime once (like 2h 19m), not twice.',
+    'On the add screen, tapping a TV show or movie in the results switches TYPE to match it.'] }); } catch (e) {}
 })();
 </script>
 </body></html>
